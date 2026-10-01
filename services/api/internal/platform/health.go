@@ -38,10 +38,10 @@ func Capabilities(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store")
 	json.NewEncoder(w).Encode(map[string]any{
 		"schema_version": 1,
-		"capabilities": map[string]bool{"platform_runtime": true, "observations": false,
+		"capabilities": map[string]bool{"platform_runtime": true, "observations": true,
 			"expected_state": false, "profile_anomaly": false, "field_sampling": false,
 			"official_advisories": false, "trip_assessment": false},
-		"limitations": []string{"Phase 0 is offline feasibility tooling; scientific serving is not enabled."},
+		"limitations": []string{"Argo original-level observations are enabled; scientific model serving and operational source approval remain unavailable."},
 	})
 }
 

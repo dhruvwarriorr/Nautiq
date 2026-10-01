@@ -214,6 +214,8 @@ UI:
 
 A profile displayed in the browser can be traced back to the exact raw file.
 
+Local implementation and measured API/rendered-page/raw-byte verification are recorded in `11-Phase-2-Delivery.md`; browser visual acceptance is reported separately.
+
 ---
 
 ## 6. Phase 3 — data correctness and reproducibility

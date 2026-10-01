@@ -11,7 +11,7 @@
 
 The project is deliberately split into six documents so each topic has one owner and information is not repeated.
 
-The six documents define the target product. Execution contracts in `08-Execution-Contracts.md`, the failure register in `09-Edge-Case-Register.md`, and measured Phase 0 evidence in `10-Phase-0-Delivery.md` make the target actionable. `07-Phase-1-Delivery.md` records the actual platform. A design statement is not an implementation or validation claim.
+The six documents define the target product. Execution contracts in `08-Execution-Contracts.md`, the failure register in `09-Edge-Case-Register.md`, and measured Phase 0 evidence in `10-Phase-0-Delivery.md` make the target actionable. `07-Phase-1-Delivery.md` records the actual platform; `11-Phase-2-Delivery.md` records the delivered Argo slice. A design statement is not an implementation or validation claim.
 
 | File | Owns |
 |---|---|
@@ -25,6 +25,7 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `08-Execution-Contracts.md` | Versioned execution policies and cross-service contracts |
 | `09-Edge-Case-Register.md` | Failure scenarios, expected behavior and verification ownership |
 | `10-Phase-0-Delivery.md` | Feasibility tooling, measured source/science evidence and outstanding gates |
+| `11-Phase-2-Delivery.md` | Argo ingestion, canonical profiles, API/explorer and measured recovery checks |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

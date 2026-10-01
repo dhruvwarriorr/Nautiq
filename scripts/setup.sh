@@ -12,3 +12,5 @@ GOBIN="$PWD/.tools/bin" go install google.golang.org/protobuf/cmd/protoc-gen-go@
 GOBIN="$PWD/.tools/bin" go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.1
 bash scripts/generate-proto.sh
 (cd services/api && go mod download)
+(cd services/ingestion && go mod download)
+uv pip install --python .venv/bin/python -r ml/requirements-argo.lock

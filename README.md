@@ -51,12 +51,31 @@ make test-migrations # Fresh/legacy/checksum/rollback tests in a disposable data
 
 Generated protobuf code is retained in the repository so container builds require no generation toolchain. After contract edits, run `make proto`. Generation runs locally; it does not depend on a remote plugin service.
 
+## Phase 2: Argo observation slice
+
+```sh
+make setup
+make up
+make ingest             # One bounded live batch
+make reconcile          # One bounded historical batch and repair
+make phase2-verify      # Offline NetCDF contracts
+make phase2-reliability # Disposable DB/object replay and recovery checks
+make phase2-broker      # Brief local broker outage; restores services afterward
+make phase2-smoke       # Live API, rendered pages and exact raw SHA verification
+```
+
+Open http://localhost:3000/profiles for real Argo positions and original-level temperature/salinity charts. Each profile includes source QC, parameter modes, timestamps, method versions and raw/canonical/Parquet hashes. The raw download is pinned to the displayed revision. List queries require a bounding box and UTC start/end, accept at most 366 days and use signed snapshot pagination. The [Phase 2 delivery](docs/11-Phase-2-Delivery.md) records implementation, measured verification and limits.
+
+The source config is `packages/source-catalog/argo.json`: three workers, at most 20 files per run, six-hour live polling and daily historical reconciliation. `ARGO_OBSERVED_SINCE` fixes a persistent scope start (local default 2025-10-01); these batches do not establish complete source coverage. Raw artifacts remain immutable in MinIO; migrations preserve existing volumes. Display QC accepts source QC 1 with per-variable missingness; Phase 0 training keeps its separate strict D-only policy.
+
 ## Local services
 
 | Service | Purpose |
 | --- | --- |
-| Next.js | Application shell and dependency status page |
-| Go API | HTTP API and bounded concurrent dependency probes |
+| Next.js | Observation explorer, profile charts and dependency status page |
+| Go API | Bounded profile/provenance API and dependency probes |
+| Go ingestion | GDAC discovery, immutable raw acquisition and leased outbox publisher |
+| Python normalizer | Durable Argo consumer, canonical revisions and immutable Parquet |
 | Python ML runtime | gRPC scientific package runtime; no model loaded yet |
 | Python field runtime | gRPC field-service boundary; no gridded data loaded yet |
 | PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
@@ -64,16 +83,16 @@ Generated protobuf code is retained in the repository so container builds requir
 | Redis | Cache runtime |
 | NATS | JetStream enabled with persistent local storage |
 
-The diagnostic health API returns HTTP 200 only when all checks pass; failures return HTTP 503 and the status page shows them. Traffic readiness checks the required DB/schema capabilities; Redis/NATS/ML/web failure does not remove API readiness. Error responses suppress connection details and credentials. Scientific gRPC and public capability flags explicitly report that no production model, observations, fields, advisories or trip engine are served yet.
+The diagnostic health API returns HTTP 200 only when all checks pass; failures return HTTP 503 and the status page shows them. Traffic readiness checks the required DB/schema capabilities; Redis/NATS/ML/web failure does not remove API readiness. Error responses suppress connection details and credentials. Scientific gRPC and public capability flags explicitly report that no production model, gridded fields, advisories or trip engine are served yet. The local observation slice is implemented; this does not establish production source approval.
 
 MinIO Community is source-only; the local Dockerfile builds the pinned server release rather than relying on unavailable registry images. See [the upstream release instructions](https://github.com/minio/minio/releases). This establishes the requested local runtime, not a production storage recommendation.
 
 ## Database and persistence
 
-The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded to schema 2 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; their publisher/consumer implementations arrive in Phase 2. `make down` preserves volumes. Never reset volumes to apply an upgrade.
+The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 3 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. `make down` preserves volumes. Never reset volumes to apply an upgrade.
 
 ## Scope
 
-Phase 0 feasibility tooling and real-source pilot are implemented. Phase 1 is upgraded platform plumbing. Canonical production ingestion (Phase 2), model serving, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. MLflow, worker services and maps arrive when their phase requires them.
+Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform and Phase 2 Argo observation slice are implemented. Model serving, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow and production operations arrive in their owning phases.
 
 See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiuq-Implementation-Blueprint.md).

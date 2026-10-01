@@ -11,6 +11,7 @@ dependencies = ["grpcio==1.78.0", "protobuf==6.33.5"]
 
 [project.optional-dependencies]
 dev = ["grpcio-tools==1.78.0", "pytest==9.0.2", "ruff==0.15.7", "jsonschema>=4.23,<5"]
+argo = ["numpy>=2.2,<3", "netCDF4>=1.7,<2", "pyarrow>=19,<24", "gsw>=3.6,<4", "psycopg[binary]>=3.2,<4", "minio>=7.2,<8", "nats-py>=2.9,<3"]
 phase0 = ["numpy>=2.2,<3", "scipy>=1.15,<2", "scikit-learn>=1.6,<2", "lightgbm>=4.6,<5", "xarray>=2025.1", "netCDF4>=1.7,<2", "pyarrow>=19,<24", "gsw>=3.6,<4"]
 
 [project.scripts]

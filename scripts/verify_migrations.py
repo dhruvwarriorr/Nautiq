@@ -43,7 +43,7 @@ def main():
             sql(database, migration_sql(directory))
             assert (
                 sql(database, "SELECT max(version) FROM platform_schema_version;")
-                == "2"
+                == "3"
             )
             sql(
                 database,
@@ -57,7 +57,7 @@ def main():
             )
             sql(database, migration_sql(directory), expected_success=False)
             (directory / "002_reliability.sql").write_text(original)
-            (directory / "003_failure.sql").write_text(
+            (directory / "004_failure.sql").write_text(
                 "CREATE TABLE must_rollback(value integer); SELECT 1/0;"
             )
             sql(database, migration_sql(directory), expected_success=False)
@@ -65,13 +65,13 @@ def main():
                 sql(database, "SELECT to_regclass('public.must_rollback') IS NULL;")
                 == "t"
             )
-            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "2"
-            (directory / "003_failure.sql").unlink()
+            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "3"
+            (directory / "004_failure.sql").unlink()
             # Reset only the disposable DB to the original legacy v1 bootstrap.
             sql(database, "DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
             sql(database, (ROOT / "migrations/001_platform.sql").read_text())
             sql(database, migration_sql(directory))
-            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "2"
+            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "3"
             # Unique events and inbox delivery identities are actual DB constraints.
             event = str(uuid.uuid4())
             digest = "a" * 64

@@ -73,3 +73,19 @@ This is an implementation and verification register, not a claim that all future
 ## Verification discipline
 
 The register prioritizes high-impact source loss, scientific leakage and false reassurance. Each future implementation links its tests and acceptance evidence here. “Planned” rows are blocked capabilities or required future work, not silently completed fixes. Phase 0 source results and Phase 1 live verification are dated in `10` and `07`; rerun after code/config changes before claiming current acceptance.
+
+## Phase 2 execution update — 2026-10-01
+
+See [Phase 2 delivery](11-Phase-2-Delivery.md) for code paths, exact verification commands and local acceptance limits. This updates the earlier planned states above without promoting unrelated capabilities.
+
+| IDs | Argo slice status |
+| --- | --- |
+| D01–D06 | Bounded discovery/transport and public-destination pinning implemented; offline discovery/order/line/expansion/path/domain/time/provider-error/size/unsafe-URL checks and live GDAC acquisition passed. Actual provider outage/429 behavior is not a live cadence audit. |
+| D07–D14 | Overlap cursors, immutable revisions/source links, R/A/D per-variable display QC, native multiprofile identity and parser quotas implemented. Synthetic and real corpus checks passed, including secondary profiles and explicit rejection records. |
+| A01–A03, A05 | Outbox/inbox, ack ordering, lease tokens, durable quarantine and raw/lake reconstruction implemented. Local broker outage/expired lease plus disposable SQL rollback/replay/orphan/missing/corrupt artifact checks passed. |
+| A06 | Separate live/backfill scopes, live-first scheduling and bounded retained-stream reconstruction implemented. Production capacity/retention load testing remains a gate. |
+| A11 | NetCDF parser child deadline, bounded arrays/objects and restricted normalizer container implemented; corrupt-file and dimension policy checks are local acceptance only. |
+| P01, P02, P04 | Empty/null/typed invalid query responses, explicit UTC/bbox policy, bounded signed filter-bound snapshot pagination implemented and verified. Dateline-crossing requests are rejected and must be split explicitly. |
+| P03, P13 | Explorer shows original observation position/depth, coordinate table and textual QC/missingness. Rendered HTML passed; actual visual/browser accessibility acceptance remains unverified because computer-use access was denied. |
+
+No model, forecast/advisory, trip, auth, export, production restore or scientific-promotion state is changed by this update.

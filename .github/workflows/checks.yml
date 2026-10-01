@@ -19,4 +19,6 @@ jobs:
         run: git diff --exit-code -- services/api/gen ml/nautiuq_ml/gen
       - run: make lint
       - run: make test
+      - name: Verify offline Argo normalization contracts
+        run: make phase2-verify
       - run: make build
