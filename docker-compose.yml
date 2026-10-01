@@ -1,0 +1,88 @@
+name: nautiuq
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nautiuq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nautiuq_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-nautiuq}
+    volumes:
+      - postgres_data:/home/postgres/pgdata/data
+      - ./migrations/001_platform.sql:/docker-entrypoint-initdb.d/001_platform.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --appendonly, 'yes']
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  nats:
+    image: nats:2.11-alpine
+    command: [-js, -sd, /data, -m, '8222']
+    volumes: [nats_data:/data]
+  minio:
+    build: {context: ., dockerfile: infrastructure/minio/Dockerfile, target: server}
+    command: [server, /data, --console-address, ':9001']
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nautiuq_local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiuq_local_storage}
+    volumes: [minio_data:/data]
+    ports: ['127.0.0.1:9001:9001']
+  storage-init:
+    build: {context: ., dockerfile: infrastructure/minio/Dockerfile, target: client}
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nautiuq_local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiuq_local_storage}
+    entrypoint: [/bin/sh, -ec]
+    command:
+      - |
+        attempts=0
+        until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do
+          attempts=$$((attempts + 1))
+          [ "$$attempts" -lt 60 ] || exit 1
+          sleep 2
+        done
+        mc mb --ignore-existing local/nautiuq
+    depends_on: [minio]
+  ml-inference:
+    build: {context: ., dockerfile: ml/Dockerfile}
+    environment: {SERVICE_NAME: ml-inference}
+  field-service:
+    build: {context: ., dockerfile: ml/Dockerfile}
+    environment: {SERVICE_NAME: field-service}
+  api:
+    build: {context: ., dockerfile: services/api/Dockerfile}
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-nautiuq}:${POSTGRES_PASSWORD:-nautiuq_local_dev}@postgres:5432/${POSTGRES_DB:-nautiuq}?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nautiuq_local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiuq_local_storage}
+      ML_GRPC_ADDR: ml-inference:50051
+      FIELD_GRPC_ADDR: field-service:50051
+    ports: ['127.0.0.1:${API_PORT:-8080}:8080']
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+      nats: {condition: service_started}
+      ml-inference: {condition: service_started}
+      field-service: {condition: service_started}
+  web:
+    build: {context: ., dockerfile: apps/web/Dockerfile}
+    environment: {API_INTERNAL_URL: 'http://api:8080'}
+    ports: ['127.0.0.1:${WEB_PORT:-3000}:3000']
+    depends_on: [api]
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  nats_data:

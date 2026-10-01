@@ -1,0 +1,46 @@
+{
+  "openapi": "3.1.0",
+  "info": {"title": "Nautiuq observation slice — planned contract", "version": "1.0.0", "description": "Not implemented in Phase 0/1. Phase 2 endpoints must conform before enablement."},
+  "servers": [{"url": "/api/v1"}],
+  "paths": {
+    "/profiles": {"get": {
+      "operationId": "listProfiles", "summary": "Current accepted profile revisions in an as-of query snapshot",
+      "parameters": [
+        {"name": "bbox", "in": "query", "required": true, "description": "west,south,east,north; west<east, south<north; dateline uses two requests", "schema": {"type": "string"}},
+        {"name": "start", "in": "query", "required": true, "schema": {"type": "string", "format": "date-time"}},
+        {"name": "end", "in": "query", "required": true, "description": "Exclusive; start<end, max 366 days", "schema": {"type": "string", "format": "date-time"}},
+        {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 200, "default": 50}},
+        {"name": "cursor", "in": "query", "schema": {"type": "string", "maxLength": 2048}}
+      ],
+      "responses": {"200": {"description": "Possibly empty results", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ProfilePage"}}}}, "400": {"$ref": "#/components/responses/Problem"}, "422": {"$ref": "#/components/responses/Problem"}, "429": {"$ref": "#/components/responses/Problem"}, "503": {"$ref": "#/components/responses/Problem"}}
+    }},
+    "/profiles/{id}": {"get": {
+      "operationId": "getProfile", "summary": "Current canonical profile with original levels and provenance",
+      "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "minLength": 1, "maxLength": 128}}],
+      "responses": {"200": {"description": "QC accepted profile", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}}, "404": {"$ref": "#/components/responses/Problem"}, "503": {"$ref": "#/components/responses/Problem"}}
+    }}
+  },
+  "components": {
+    "responses": {"Problem": {"description": "Typed error without internal details", "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/Problem"}}}}},
+    "schemas": {
+      "Problem": {"type": "object", "required": ["type", "title", "status", "code", "request_id"], "additionalProperties": false, "properties": {"type": {"type": "string", "format": "uri-reference"}, "title": {"type": "string"}, "status": {"type": "integer", "minimum": 400, "maximum": 599}, "code": {"type": "string"}, "request_id": {"type": "string"}}},
+      "ProfilePage": {"type": "object", "additionalProperties": false, "required": ["items", "next_cursor", "snapshot_at"], "properties": {"items": {"type": "array", "maxItems": 200, "items": {"$ref": "#/components/schemas/ProfileSummary"}}, "next_cursor": {"type": ["string", "null"]}, "snapshot_at": {"type": "string", "format": "date-time"}}},
+      "ProfileSummary": {"type": "object", "required": ["id", "revision_sha256", "platform_id", "observed_at", "received_at", "latitude", "longitude", "data_mode", "qc_version", "source_id"], "properties": {
+        "id": {"type": "string"}, "revision_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "platform_id": {"type": "string"},
+        "observed_at": {"type": "string", "format": "date-time"}, "received_at": {"type": "string", "format": "date-time"},
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90}, "longitude": {"type": "number", "minimum": -180, "exclusiveMaximum": 180},
+        "data_mode": {"type": "string", "enum": ["R", "A", "D"]}, "qc_version": {"type": "string"}, "source_id": {"type": "string"}
+      }},
+      "Profile": {"allOf": [{"$ref": "#/components/schemas/ProfileSummary"}, {"type": "object", "required": ["levels", "provenance"], "properties": {
+        "levels": {"type": "array", "maxItems": 10000, "items": {"type": "object", "additionalProperties": false, "required": ["pressure_dbar", "depth_m", "temperature_c", "practical_salinity", "missing_reasons", "qc_flags"], "properties": {
+          "pressure_dbar": {"type": "number", "minimum": 0, "maximum": 12000}, "depth_m": {"type": "number", "minimum": 0},
+          "temperature_c": {"type": ["number", "null"]}, "practical_salinity": {"type": ["number", "null"]},
+          "missing_reasons": {"type": "object", "additionalProperties": {"type": "string"}}, "qc_flags": {"type": "object", "additionalProperties": {"type": "string"}}
+        }}},
+        "provenance": {"type": "object", "additionalProperties": false, "required": ["raw_sha256", "source_url", "depth_conversion_version", "normalizer_version"], "properties": {
+          "raw_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "source_url": {"type": "string", "format": "uri"}, "depth_conversion_version": {"type": "string"}, "normalizer_version": {"type": "string"}
+        }}
+      }}], "unevaluatedProperties": false}
+    }
+  }
+}

@@ -1,0 +1,22 @@
+name: Platform checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.1'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: astral-sh/setup-uv@v6
+      - run: make setup
+      - name: Install locked offline scientific test dependencies
+        run: make phase0-setup
+      - name: Check generated contract reproducibility
+        run: git diff --exit-code -- services/api/gen ml/nautiuq_ml/gen
+      - run: make lint
+      - run: make test
+      - run: make build

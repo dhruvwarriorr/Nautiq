@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "domain": {"south": 0, "north": 30, "west": 45, "east": 100},
+  "baseline": {"start_year": 2005, "end_year": 2024},
+  "splits": {"train_end": 2016, "tune_end": 2019, "calibration_end": 2021},
+  "standard_depths_m": [10, 20, 30, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 1500, 2000],
+  "max_interpolation_gap_m": 250,
+  "max_profiles": 192,
+  "seed": 42,
+  "limits": {"max_object_bytes": 67108864, "max_index_expanded_bytes": 536870912, "max_total_download_bytes": 201326592, "timeout_seconds": 30, "request_deadline_seconds": 120, "attempts": 3},
+  "sources": [
+    {
+      "id": "argo_gdac", "kind": "profiles", "access": "https_netcdf",
+      "index_url": "https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz",
+      "base_url": "https://data-argo.ifremer.fr/dac/",
+      "allowed_hosts": ["data-argo.ifremer.fr"],
+      "terms_url": "https://argo.ucsd.edu/data/acknowledging-argo/",
+      "license_state": "public_unrestricted_with_acknowledgement",
+      "attribution": "International Argo Program and contributing national programs; https://doi.org/10.17882/42182",
+      "expected_update_hours": 24, "production_approved": false
+    },
+    {
+      "id": "noaa_oisst", "kind": "sst_analysis", "access": "https_netcdf",
+      "sample_url": "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/202409/oisst-avhrr-v02r01.20240901.nc",
+      "allowed_hosts": ["www.ncei.noaa.gov"],
+      "terms_url": "https://www.ncei.noaa.gov/products/optimum-interpolation-sst",
+      "license_state": "attribution_and_product_terms_review_required",
+      "attribution": "NOAA NCEI OISST v2.1; Huang et al. (2021), doi:10.1175/JCLI-D-20-0166.1",
+      "expected_update_hours": 24, "production_approved": false
+    },
+    {
+      "id": "open_meteo_marine", "kind": "wave_forecast", "access": "https_json",
+      "sample_url": "https://marine-api.open-meteo.com/v1/marine?latitude=15&longitude=70&hourly=wave_height,wave_period,wave_direction&forecast_days=2&timezone=GMT",
+      "allowed_hosts": ["marine-api.open-meteo.com"],
+      "terms_url": "https://open-meteo.com/en/docs/marine-weather-api",
+      "license_state": "evaluation_only_free_endpoint_noncommercial; data_CC_BY_4.0",
+      "attribution": "Open-Meteo and DWD ICON Wave; commercial endpoint agreement required for commercial service",
+      "expected_update_hours": null, "production_approved": false
+    },
+    {
+      "id": "open_meteo_weather", "kind": "wind_forecast", "access": "https_json",
+      "sample_url": "https://api.open-meteo.com/v1/forecast?latitude=15&longitude=70&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m&wind_speed_unit=ms&forecast_days=2&timezone=GMT&models=gfs_seamless&cell_selection=nearest",
+      "allowed_hosts": ["api.open-meteo.com"],
+      "terms_url": "https://open-meteo.com/en/pricing",
+      "license_state": "evaluation_only_free_endpoint_noncommercial; data_CC_BY_4.0",
+      "attribution": "Open-Meteo and NOAA GFS; commercial endpoint agreement required for commercial service",
+      "expected_update_hours": null, "production_approved": false
+    },
+    {
+      "id": "ndma_cap_rss", "kind": "advisory_index", "access": "https_xml",
+      "sample_url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml",
+      "allowed_hosts": ["sachet.ndma.gov.in"],
+      "terms_url": "https://sachet.ndma.gov.in/docs/Integration_Guide_For_Agencies.pdf",
+      "license_state": "public_CAP_integration_documented; marine_completeness_and_redistribution_review_required",
+      "attribution": "NDMA SACHET and original CAP issuing authority; ETag caching mandatory for repeated CAP XML requests",
+      "expected_update_hours": null, "production_approved": false
+    },
+    {
+      "id": "incois_advisories", "kind": "official_advisory", "access": "unconfirmed",
+      "reference_url": "https://www.incois.gov.in/oceanservices/osfforecast.jsp",
+      "allowed_hosts": ["www.incois.gov.in"],
+      "terms_url": "https://www.incois.gov.in/",
+      "license_state": "machine_feed_and_redistribution_unconfirmed",
+      "attribution": "INCOIS; retain issuer and original bulletin link",
+      "expected_update_hours": null, "production_approved": false
+    }
+  ]
+}

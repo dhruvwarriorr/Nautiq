@@ -1,0 +1,816 @@
+{
+  "argo_index": {
+    "baseline_domain_profiles": 128892,
+    "baseline_platforms": 857,
+    "delayed_mode_candidates": 115275,
+    "domain_profiles_all_years": 145367,
+    "index_rows": 3415420,
+    "invalid_index_rows": 57404,
+    "selected_profiles": 192
+  },
+  "gates": {
+    "argo_slice_feasible": true,
+    "official_advisory_feed_verified": false,
+    "operational_source_cadence_validated": false,
+    "production_licenses_approved": false,
+    "scientific_prototype_executed": true,
+    "scientific_release_validated": false,
+    "sst_sample_accessible": true,
+    "trip_forecast_cycles_reproducible": false,
+    "wave_and_wind_samples_accessible": true
+  },
+  "limitations": [
+    "Counts from a GDAC index are availability counts, not QC-passed training counts.",
+    "One acquisition cannot establish cadence, uptime or coastal representativeness.",
+    "No trip verdicts, official advisories, production model or event detector are released."
+  ],
+  "measured_at": "2026-10-01T15:59:21.310005+00:00",
+  "schema_version": 1,
+  "science": {
+    "limitations": [
+      "Convenience pilot sample, not a representative training census or model release.",
+      "Temporal partitions may share platforms; independent platform/spatial audits required before promotion.",
+      "Bootstrap groups profiles, not floats; serial dependence may make intervals optimistic.",
+      "No bathymetry/coast-distance source validated; those features are omitted.",
+      "No automatic promotion or adaptive calibration release."
+    ],
+    "seed": 42,
+    "status": "exploratory_only",
+    "variables": {
+      "practical_salinity": {
+        "profile_anomaly": {
+          "complete_profiles": {
+            "calibration": 21,
+            "test": 21,
+            "train": 24,
+            "tune": 23
+          },
+          "depths_m": [
+            10,
+            20,
+            30,
+            50,
+            75,
+            100,
+            150,
+            200,
+            300,
+            400,
+            500
+          ],
+          "explained_variance_ratio": [
+            0.3971649434145547,
+            0.20924203935514576,
+            0.1567011238491408
+          ],
+          "limitations": [
+            "Complete-case 10\u2013500m prototype; not a sparse functional-data model.",
+            "No expert labels or validated quiet periods; false-alert rate and event recall unknown."
+          ],
+          "method": "weighted-discrete-FPCA-prototype-v1",
+          "scale_floor": 0.01,
+          "status": "exploratory",
+          "test_scores": {
+            "depth_weighted_squared_residual": {
+              "median": 3.377730283018181,
+              "median_calibration_percentile": 57.14285714285714,
+              "synthetic_layer_perturbation_median_change": -0.2854883196295104
+            },
+            "fpca_reconstruction_error": {
+              "median": 2.7247244194462406,
+              "median_calibration_percentile": 57.14285714285714,
+              "synthetic_layer_perturbation_median_change": -0.48736697854783895
+            },
+            "shrinkage_mahalanobis_squared": {
+              "median": 93.38633661160229,
+              "median_calibration_percentile": 57.14285714285714,
+              "synthetic_layer_perturbation_median_change": -20.14846008931351
+            }
+          }
+        },
+        "profile_counts": {
+          "calibration": 22,
+          "test": 22,
+          "train": 30,
+          "tune": 28
+        },
+        "selected_on_tuning_only": {
+          "hgbr": {
+            "num_leaves": 15,
+            "tuning_profile_mae": 0.277833117465865
+          },
+          "lightgbm": {
+            "num_leaves": 15,
+            "tuning_profile_mae": 0.27517380501089705
+          }
+        },
+        "status": "exploratory",
+        "supported_profile_counts": {
+          "calibration": 22,
+          "test": 22,
+          "train": 30,
+          "tune": 28
+        },
+        "test_metrics": {
+          "climatology": {
+            "bias": 0.6349304686007967,
+            "mae": 0.7560693777309109,
+            "median_absolute_error": 0.37595500825873174,
+            "profile_bootstrap_mae_95_interval": [
+              0.54920269873125,
+              1.4732493642247915
+            ],
+            "profile_weighted_mae": 0.8651005323829701,
+            "profiles": 22,
+            "rmse": 1.2793492735187446,
+            "rows": 300,
+            "subgroups": {
+              "0-100m": {
+                "bias": 1.0811197760475635,
+                "mae": 1.3026687714123448,
+                "median_absolute_error": 1.051307105134672,
+                "profile_bootstrap_mae_95_interval": [
+                  0.9297227963922682,
+                  1.8756251199311635
+                ],
+                "profile_weighted_mae": 1.3026687714123444,
+                "profiles": 22,
+                "rmse": 1.7897118783545578,
+                "rows": 132
+              },
+              "100-500m": {
+                "bias": 0.338303063561866,
+                "mae": 0.39486495926483417,
+                "median_absolute_error": 0.26943849953932997,
+                "profile_bootstrap_mae_95_interval": [
+                  0.2495103158034734,
+                  1.0474504563863867
+                ],
+                "profile_weighted_mae": 0.5385428796635945,
+                "profiles": 22,
+                "rmse": 0.7287685285446491,
+                "rows": 106
+              },
+              "500m+": {
+                "bias": 0.19211621620004574,
+                "mae": 0.20988467436727995,
+                "median_absolute_error": 0.1262690511093858,
+                "profile_bootstrap_mae_95_interval": [
+                  0.10826205588959407,
+                  0.3943690222604753
+                ],
+                "profile_weighted_mae": 0.20935263862508532,
+                "profiles": 21,
+                "rmse": 0.4384417913676778,
+                "rows": 62
+              },
+              "arabian": {
+                "bias": -0.3952064908122762,
+                "mae": 0.40140562965200016,
+                "median_absolute_error": 0.22952744250292767,
+                "profile_bootstrap_mae_95_interval": [
+                  0.38681208194997363,
+                  0.42100929162161654
+                ],
+                "profile_weighted_mae": 0.40140562965200016,
+                "profiles": 3,
+                "rmse": 0.5743765340920434,
+                "rows": 42
+              },
+              "bay_bengal": {
+                "bias": 0.802627182923855,
+                "mae": 0.8138053367205008,
+                "median_absolute_error": 0.3898461794158159,
+                "profile_bootstrap_mae_95_interval": [
+                  0.51459052298638,
+                  1.6281744141685834
+                ],
+                "profile_weighted_mae": 0.9383155170247023,
+                "profiles": 19,
+                "rmse": 1.3599535676259522,
+                "rows": 258
+              }
+            }
+          },
+          "hgbr": {
+            "bias": 0.31178609923716627,
+            "mae": 0.5053134091521394,
+            "median_absolute_error": 0.19857390671204556,
+            "profile_bootstrap_mae_95_interval": [
+              0.30539573852134166,
+              1.1141285410695785
+            ],
+            "profile_weighted_mae": 0.5990399943475526,
+            "profiles": 22,
+            "rmse": 0.9652347899264421,
+            "rows": 300,
+            "subgroups": {
+              "0-100m": {
+                "bias": 0.5546692278154999,
+                "mae": 0.8463595530220606,
+                "median_absolute_error": 0.5413026244708163,
+                "profile_bootstrap_mae_95_interval": [
+                  0.5322582513188372,
+                  1.3652890178499537
+                ],
+                "profile_weighted_mae": 0.8463595530220606,
+                "profiles": 22,
+                "rmse": 1.319867814308277,
+                "rows": 132
+              },
+              "100-500m": {
+                "bias": 0.1462317980420343,
+                "mae": 0.28120456444825404,
+                "median_absolute_error": 0.13050222573166437,
+                "profile_bootstrap_mae_95_interval": [
+                  0.12847018353774456,
+                  0.8488929248148979
+                ],
+                "profile_weighted_mae": 0.4149444945697774,
+                "profiles": 22,
+                "rmse": 0.617183920883666,
+                "rows": 106
+              },
+              "500m+": {
+                "bias": 0.07772453398464949,
+                "mae": 0.16236899863249865,
+                "median_absolute_error": 0.07931070911808646,
+                "profile_bootstrap_mae_95_interval": [
+                  0.07083225314002553,
+                  0.3282542967671595
+                ],
+                "profile_weighted_mae": 0.1638545010779373,
+                "profiles": 21,
+                "rmse": 0.384699851492825,
+                "rows": 62
+              },
+              "arabian": {
+                "bias": -0.12436932385195865,
+                "mae": 0.21535629603314344,
+                "median_absolute_error": 0.1491828058871114,
+                "profile_bootstrap_mae_95_interval": [
+                  0.16813702193851027,
+                  0.26208143302572395
+                ],
+                "profile_weighted_mae": 0.21535629603314346,
+                "profiles": 3,
+                "rmse": 0.2871236252529589,
+                "rows": 42
+              },
+              "bay_bengal": {
+                "bias": 0.3827881448563261,
+                "mae": 0.5525157298924412,
+                "median_absolute_error": 0.2029349422628215,
+                "profile_bootstrap_mae_95_interval": [
+                  0.34197708450389463,
+                  1.2563907420779898
+                ],
+                "profile_weighted_mae": 0.6596216309235119,
+                "profiles": 19,
+                "rmse": 1.034372410005535,
+                "rows": 258
+              }
+            }
+          },
+          "lightgbm": {
+            "bias": 0.3116865652411169,
+            "mae": 0.49620078498913833,
+            "median_absolute_error": 0.1812232253459598,
+            "profile_bootstrap_mae_95_interval": [
+              0.30465066164244337,
+              1.104826637961105
+            ],
+            "profile_weighted_mae": 0.5897973812612993,
+            "profiles": 22,
+            "rmse": 0.9590151706115745,
+            "rows": 300,
+            "subgroups": {
+              "0-100m": {
+                "bias": 0.554703452070538,
+                "mae": 0.8378593071842212,
+                "median_absolute_error": 0.5390767743158058,
+                "profile_bootstrap_mae_95_interval": [
+                  0.5283457767336225,
+                  1.3505103737184634
+                ],
+                "profile_weighted_mae": 0.8378593071842212,
+                "profiles": 22,
+                "rmse": 1.3132193693979919,
+                "rows": 132
+              },
+              "100-500m": {
+                "bias": 0.1481030263826171,
+                "mae": 0.2710587410581759,
+                "median_absolute_error": 0.13056747523772927,
+                "profile_bootstrap_mae_95_interval": [
+                  0.12442331923951878,
+                  0.8322553874496014
+                ],
+                "profile_weighted_mae": 0.40387980191243816,
+                "profiles": 22,
+                "rmse": 0.6088300712558222,
+                "rows": 106
+              },
+              "500m+": {
+                "bias": 0.0739708564913975,
+                "mae": 0.15371903864931724,
+                "median_absolute_error": 0.07181189463222637,
+                "profile_bootstrap_mae_95_interval": [
+                  0.06612631505365442,
+                  0.31460709839439416
+                ],
+                "profile_weighted_mae": 0.15450007931828538,
+                "profiles": 21,
+                "rmse": 0.3806112344938795,
+                "rows": 62
+              },
+              "arabian": {
+                "bias": -0.10918204581709678,
+                "mae": 0.20893944768430708,
+                "median_absolute_error": 0.14374359692941852,
+                "profile_bootstrap_mae_95_interval": [
+                  0.1732357990628692,
+                  0.24449051371018593
+                ],
+                "profile_weighted_mae": 0.20893944768430708,
+                "profiles": 3,
+                "rmse": 0.27978552615973956,
+                "rows": 42
+              },
+              "bay_bengal": {
+                "bias": 0.38020006006454704,
+                "mae": 0.5429642585038784,
+                "median_absolute_error": 0.19060600368166192,
+                "profile_bootstrap_mae_95_interval": [
+                  0.33288480438282914,
+                  1.2490474206984388
+                ],
+                "profile_weighted_mae": 0.6499328444576664,
+                "profiles": 19,
+                "rmse": 1.0279528684406218,
+                "rows": 258
+              }
+            }
+          }
+        },
+        "uncertainty": {
+          "calibration_profiles": 22,
+          "calibration_unit": "maximum_score_per_profile",
+          "crossing_rate_before_rearrangement": 0.18041237113402062,
+          "interpretation": "Predictive variability of observations around fixed normal, not confidence in the climatological mean; dependent profiles invalidate an unconditional coverage guarantee.",
+          "nominal_coverage": 0.8,
+          "offset": 1.160237761656056,
+          "test_mean_width": 2.740461696607061,
+          "test_row_coverage": 0.9133333333333333,
+          "test_simultaneous_profile_coverage": 0.6818181818181818
+        },
+        "unsupported_depth_rows": 4
+      },
+      "temperature_c": {
+        "profile_anomaly": {
+          "complete_profiles": {
+            "calibration": 24,
+            "test": 26,
+            "train": 27,
+            "tune": 26
+          },
+          "depths_m": [
+            10,
+            20,
+            30,
+            50,
+            75,
+            100,
+            150,
+            200,
+            300,
+            400,
+            500
+          ],
+          "explained_variance_ratio": [
+            0.47009219072897024,
+            0.2617895253124134,
+            0.10388536408230391
+          ],
+          "limitations": [
+            "Complete-case 10\u2013500m prototype; not a sparse functional-data model.",
+            "No expert labels or validated quiet periods; false-alert rate and event recall unknown."
+          ],
+          "method": "weighted-discrete-FPCA-prototype-v1",
+          "scale_floor": 0.05,
+          "status": "exploratory",
+          "test_scores": {
+            "depth_weighted_squared_residual": {
+              "median": 4.324772974954026,
+              "median_calibration_percentile": 62.5,
+              "synthetic_layer_perturbation_median_change": 0.7419864977985582
+            },
+            "fpca_reconstruction_error": {
+              "median": 0.907003783924079,
+              "median_calibration_percentile": 41.66666666666667,
+              "synthetic_layer_perturbation_median_change": 0.576346227888274
+            },
+            "shrinkage_mahalanobis_squared": {
+              "median": 49.66893068548812,
+              "median_calibration_percentile": 56.25,
+              "synthetic_layer_perturbation_median_change": 35.88360827087291
+            }
+          }
+        },
+        "profile_counts": {
+          "calibration": 25,
+          "test": 27,
+          "train": 33,
+          "tune": 31
+        },
+        "selected_on_tuning_only": {
+          "hgbr": {
+            "num_leaves": 15,
+            "tuning_profile_mae": 0.9928231321659361
+          },
+          "lightgbm": {
+            "num_leaves": 15,
+            "tuning_profile_mae": 0.9743676278531467
+          }
+        },
+        "status": "exploratory",
+        "supported_profile_counts": {
+          "calibration": 25,
+          "test": 27,
+          "train": 33,
+          "tune": 31
+        },
+        "test_metrics": {
+          "climatology": {
+            "bias": -0.1811222532829113,
+            "mae": 1.1062714065052264,
+            "median_absolute_error": 0.8904986475856811,
+            "profile_bootstrap_mae_95_interval": [
+              0.9727797029064924,
+              1.252463765703421
+            ],
+            "profile_weighted_mae": 1.102187350716645,
+            "profiles": 27,
+            "rmse": 1.50404825705813,
+            "rows": 370,
+            "subgroups": {
+              "0-100m": {
+                "bias": -1.0495001599357527,
+                "mae": 1.513854073807068,
+                "median_absolute_error": 1.2574517852407148,
+                "profile_bootstrap_mae_95_interval": [
+                  1.2894335726560004,
+                  1.7569873187726093
+                ],
+                "profile_weighted_mae": 1.5138540738070678,
+                "profiles": 27,
+                "rmse": 1.9329493891560574,
+                "rows": 162
+              },
+              "100-500m": {
+                "bias": 0.574796597839421,
+                "mae": 0.9626925392504059,
+                "median_absolute_error": 0.8010071138941459,
+                "profile_bootstrap_mae_95_interval": [
+                  0.7676611679788191,
+                  1.2089699437413528
+                ],
+                "profile_weighted_mae": 0.9556220665178772,
+                "profiles": 27,
+                "rmse": 1.2358552306182444,
+                "rows": 131
+              },
+              "500m+": {
+                "bias": 0.3598108815318266,
+                "mae": 0.49303036114786425,
+                "median_absolute_error": 0.3622334827737328,
+                "profile_bootstrap_mae_95_interval": [
+                  0.3884765875147326,
+                  0.6233419415506903
+                ],
+                "profile_weighted_mae": 0.496490773503831,
+                "profiles": 26,
+                "rmse": 0.641009856699161,
+                "rows": 77
+              },
+              "arabian": {
+                "bias": -0.6068243257078091,
+                "mae": 0.8676652777477587,
+                "median_absolute_error": 0.6015534732894805,
+                "profile_bootstrap_mae_95_interval": [
+                  0.6105755250666788,
+                  1.0939659826136099
+                ],
+                "profile_weighted_mae": 0.8676652777477587,
+                "profiles": 7,
+                "rmse": 1.340768292184029,
+                "rows": 98
+              },
+              "bay_bengal": {
+                "bias": -0.027744300718058418,
+                "mae": 1.1922397911310785,
+                "median_absolute_error": 1.0172746458290032,
+                "profile_bootstrap_mae_95_interval": [
+                  1.0110829933393013,
+                  1.3265466713127407
+                ],
+                "profile_weighted_mae": 1.1842700762557554,
+                "profiles": 20,
+                "rmse": 1.5586912248118612,
+                "rows": 272
+              }
+            }
+          },
+          "hgbr": {
+            "bias": -0.4825417994701557,
+            "mae": 1.0965249681563574,
+            "median_absolute_error": 0.7684283038961723,
+            "profile_bootstrap_mae_95_interval": [
+              0.9138608771494824,
+              1.2616536331140715
+            ],
+            "profile_weighted_mae": 1.0911700296788571,
+            "profiles": 27,
+            "rmse": 1.5499017938270099,
+            "rows": 370,
+            "subgroups": {
+              "0-100m": {
+                "bias": -0.9843513773959998,
+                "mae": 1.5884858047848627,
+                "median_absolute_error": 1.276744578054469,
+                "profile_bootstrap_mae_95_interval": [
+                  1.2543856006638427,
+                  1.9354448816611545
+                ],
+                "profile_weighted_mae": 1.5884858047848625,
+                "profiles": 27,
+                "rmse": 2.090714109825638,
+                "rows": 162
+              },
+              "100-500m": {
+                "bias": 0.0002344438811824241,
+                "mae": 0.8947036726028531,
+                "median_absolute_error": 0.7587823036316266,
+                "profile_bootstrap_mae_95_interval": [
+                  0.7391600070762688,
+                  1.0716480975906737
+                ],
+                "profile_weighted_mae": 0.892632562887776,
+                "profiles": 27,
+                "rmse": 1.1073126510850313,
+                "rows": 131
+              },
+              "500m+": {
+                "bias": -0.24813317940572144,
+                "mae": 0.4048487887237748,
+                "median_absolute_error": 0.32928896735258917,
+                "profile_bootstrap_mae_95_interval": [
+                  0.30862492689776144,
+                  0.5066217389069316
+                ],
+                "profile_weighted_mae": 0.4034341433929773,
+                "profiles": 26,
+                "rmse": 0.5105637400710396,
+                "rows": 77
+              },
+              "arabian": {
+                "bias": -0.6495660955603141,
+                "mae": 1.0508579197404275,
+                "median_absolute_error": 0.7718953103461041,
+                "profile_bootstrap_mae_95_interval": [
+                  0.6507367007090167,
+                  1.4094115460146466
+                ],
+                "profile_weighted_mae": 1.0508579197404273,
+                "profiles": 7,
+                "rmse": 1.5493873420120823,
+                "rows": 98
+              },
+              "bay_bengal": {
+                "bias": -0.422363928084731,
+                "mae": 1.1129785370709202,
+                "median_absolute_error": 0.7628508129945395,
+                "profile_bootstrap_mae_95_interval": [
+                  0.9517772209441004,
+                  1.301697767860004
+                ],
+                "profile_weighted_mae": 1.1052792681573078,
+                "profiles": 20,
+                "rmse": 1.550087105949585,
+                "rows": 272
+              }
+            }
+          },
+          "lightgbm": {
+            "bias": -0.4878256792399819,
+            "mae": 1.1032439364956785,
+            "median_absolute_error": 0.7577844086396088,
+            "profile_bootstrap_mae_95_interval": [
+              0.9096209482984144,
+              1.282047648753878
+            ],
+            "profile_weighted_mae": 1.0980570470368167,
+            "profiles": 27,
+            "rmse": 1.5721877994513322,
+            "rows": 370,
+            "subgroups": {
+              "0-100m": {
+                "bias": -0.9748154310257247,
+                "mae": 1.5915910667720914,
+                "median_absolute_error": 1.1850200692334685,
+                "profile_bootstrap_mae_95_interval": [
+                  1.2556633664554682,
+                  1.924094163531312
+                ],
+                "profile_weighted_mae": 1.5915910667720912,
+                "profiles": 27,
+                "rmse": 2.1152480750789517,
+                "rows": 162
+              },
+              "100-500m": {
+                "bias": -0.017962730721652557,
+                "mae": 0.9083538573719556,
+                "median_absolute_error": 0.7614903702432123,
+                "profile_bootstrap_mae_95_interval": [
+                  0.7341525316269342,
+                  1.0981087705534793
+                ],
+                "profile_weighted_mae": 0.9087075663337302,
+                "profiles": 27,
+                "rmse": 1.1375180702134724,
+                "rows": 131
+              },
+              "500m+": {
+                "bias": -0.2626270619232391,
+                "mae": 0.4073785502674811,
+                "median_absolute_error": 0.4097555372450179,
+                "profile_bootstrap_mae_95_interval": [
+                  0.29805642487865996,
+                  0.5114631277760026
+                ],
+                "profile_weighted_mae": 0.4038099201350907,
+                "profiles": 26,
+                "rmse": 0.5124045217202453,
+                "rows": 77
+              },
+              "arabian": {
+                "bias": -0.6135757300100647,
+                "mae": 1.051181339200309,
+                "median_absolute_error": 0.7466144485682538,
+                "profile_bootstrap_mae_95_interval": [
+                  0.6529528457399365,
+                  1.4149537377026071
+                ],
+                "profile_weighted_mae": 1.051181339200309,
+                "profiles": 7,
+                "rmse": 1.5552236637346073,
+                "rows": 98
+              },
+              "bay_bengal": {
+                "bias": -0.442518675653702,
+                "mae": 1.1220017840506278,
+                "median_absolute_error": 0.7595301761863618,
+                "profile_bootstrap_mae_95_interval": [
+                  0.948632029545789,
+                  1.3243188693848826
+                ],
+                "profile_weighted_mae": 1.1144635447795945,
+                "profiles": 20,
+                "rmse": 1.5782551949901118,
+                "rows": 272
+              }
+            }
+          }
+        },
+        "uncertainty": {
+          "calibration_profiles": 25,
+          "calibration_unit": "maximum_score_per_profile",
+          "crossing_rate_before_rearrangement": 0.1203104786545925,
+          "interpretation": "Predictive variability of observations around fixed normal, not confidence in the climatological mean; dependent profiles invalidate an unconditional coverage guarantee.",
+          "nominal_coverage": 0.8,
+          "offset": 2.9301087010044533,
+          "test_mean_width": 7.616769379672211,
+          "test_row_coverage": 0.9891891891891892,
+          "test_simultaneous_profile_coverage": 0.8518518518518519
+        },
+        "unsupported_depth_rows": 5
+      }
+    }
+  },
+  "snapshot": {
+    "catalog_sha256": "e41e3d84f6dbbc5f6198975e45abca1bbe8f9305a0892cf2bb68178e46d3e682",
+    "code_sha256": "de2ed55639e1693ae0d87fced75552d6ee2533818628029f84fe57ef91127b08",
+    "environment": {
+      "gsw": "3.6.23",
+      "lightgbm": "4.7.0",
+      "netCDF4": "1.7.4",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "python": "3.12.13",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xarray": "2026.9.0"
+    },
+    "parquet_sha256": "6f5c0376dbdbf167e589aacc13234f2b74ba18c296f6335203a1c801b029db55",
+    "profiles": 116,
+    "rows": 2913,
+    "split_profiles": {
+      "calibration": 25,
+      "test": 27,
+      "train": 33,
+      "tune": 31
+    }
+  },
+  "sources": {
+    "argo_gdac": {
+      "license_state": "public_unrestricted_with_acknowledgement",
+      "qc_rejections": {
+        "duplicate_pressure_levels": 1,
+        "multiprofile_file_requires_phase2_parser": 63,
+        "no_qc_passed_standard_levels": 12
+      },
+      "status": "sample_validated"
+    },
+    "incois_advisories": {
+      "license_state": "machine_feed_and_redistribution_unconfirmed",
+      "reason": "No verified machine-readable feed, completeness contract or redistribution permission; webpage reachability is not a feed probe.",
+      "status": "blocked"
+    },
+    "ndma_cap_rss": {
+      "license_state": "public_CAP_integration_documented; marine_completeness_and_redistribution_review_required",
+      "sample": {
+        "advisory_state": "unknown",
+        "distinct_author_labels": 12,
+        "items": 99,
+        "limitation": "Official RSS index accessible; CAP validity/geometry/cancellations, marine coverage and operational completeness remain unverified. Empty feed is not known-none.",
+        "marine_completeness_confirmed": false,
+        "newest_published_at": "2026-10-01T15:33:14+00:00",
+        "schema_valid": true
+      },
+      "status": "sample_validated"
+    },
+    "noaa_oisst": {
+      "license_state": "attribution_and_product_terms_review_required",
+      "sample": {
+        "domain_missing_cells": 10698,
+        "domain_valid_cells": 15702,
+        "limitation": "OISST blends satellite and in-situ data; not independent satellite truth or proof of current freshness.",
+        "range_c": [
+          19.639999389648438,
+          35.099998474121094
+        ],
+        "role": "historical_blended_analysis",
+        "schema_valid": true,
+        "valid_time": "2024-09-01T12:00:00.000000000"
+      },
+      "status": "sample_validated"
+    },
+    "open_meteo_marine": {
+      "license_state": "evaluation_only_free_endpoint_noncommercial; data_CC_BY_4.0",
+      "sample": {
+        "cycle_provenance_confirmed": false,
+        "forecast_cycle": null,
+        "future_horizon_hours_at_acquisition": 31.581568658055556,
+        "hours": 48,
+        "limitation": "Point forecast accessible; model initialization time absent. Not accepted for reproducible trip verdicts.",
+        "missing_hours": {
+          "wave_direction": 0,
+          "wave_height": 0,
+          "wave_period": 0
+        },
+        "sample_coordinates": {
+          "latitude": 15.041664,
+          "longitude": 69.95834
+        },
+        "schema_valid": true,
+        "valid_end": "2026-10-02T23:00Z",
+        "valid_start": "2026-10-01T00:00Z"
+      },
+      "status": "sample_validated"
+    },
+    "open_meteo_weather": {
+      "license_state": "evaluation_only_free_endpoint_noncommercial; data_CC_BY_4.0",
+      "sample": {
+        "cycle_provenance_confirmed": false,
+        "forecast_cycle": null,
+        "future_horizon_hours_at_acquisition": 31.581379696388886,
+        "hours": 48,
+        "limitation": "Point forecast accessible; model initialization time absent. Not accepted for reproducible trip verdicts.",
+        "missing_hours": {
+          "wind_direction_10m": 0,
+          "wind_gusts_10m": 0,
+          "wind_speed_10m": 0
+        },
+        "sample_coordinates": {
+          "latitude": 15.053696,
+          "longitude": 69.96094
+        },
+        "schema_valid": true,
+        "valid_end": "2026-10-02T23:00Z",
+        "valid_start": "2026-10-01T00:00Z"
+      },
+      "status": "sample_validated"
+    }
+  },
+  "status": "partial"
+}

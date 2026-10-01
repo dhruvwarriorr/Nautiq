@@ -1,0 +1,15 @@
+syntax = "proto3";
+package nautiuq.platform.v1;
+option go_package = "nautiuq.local/api/gen/nautiuq/platform/v1;platformv1";
+// Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+service PlatformService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+message CheckRequest {}
+message CheckResponse {
+  string service = 1;
+  string version = 2;
+  bool ready = 3;
+  // Runtime responsiveness and loaded scientific capabilities are independent.
+  map<string, bool> capabilities = 4;
+}
