@@ -679,3 +679,8 @@ A unique stable profile plus immutable revisions is separate from time-series le
 ## 24. Source feasibility versus operational readiness
 
 `packages/source-catalog/phase0.json` pins sample products, endpoints, limits, attribution and unresolved approvals. The probe proves bounded sample access and schema compatibility; it cannot establish long-term cadence or uptime in one fetch. Record availability counts separately from QC-passed training counts. Credentials, scraped page content and transport error bodies must not enter public reports. Full provenance belongs in restricted artifacts; public evidence exposes reviewed source identifiers and links.
+
+
+## 24. Implemented reproducibility layer
+
+`12-Phase-3-Delivery.md` records the local schema-4 implementation: grouped QC rejection audit, source metadata and separate provider/local freshness, deterministic raw replay, calculation manifests, revision-safe summary recomputation and frozen original-level Parquet snapshots. Existing immutable canonical revisions and source links are preserved. The snapshot builder selects historical revisions as of an explicit UTC time and pins raw/canonical/Parquet digests, strict D/QC1 label policy and chronological split assignments. Later revisions invalidate live summaries, while stored snapshots remain frozen. This does not establish source coverage or scientific production approval.

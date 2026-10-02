@@ -33,6 +33,8 @@ def sql(database, text, expected_success=True):
 
 
 def main():
+    version = len(list((ROOT / "migrations").glob("*.sql")))
+    failure_name = f"{version + 1:03}_failure.sql"
     database = "nautiuq_migration_test_" + uuid.uuid4().hex[:12]
     sql(None, f"CREATE DATABASE {database};")
     try:
@@ -41,10 +43,9 @@ def main():
             for path in (ROOT / "migrations").glob("*.sql"):
                 shutil.copyfile(path, directory / path.name)
             sql(database, migration_sql(directory))
-            assert (
-                sql(database, "SELECT max(version) FROM platform_schema_version;")
-                == "3"
-            )
+            assert sql(
+                database, "SELECT max(version) FROM platform_schema_version;"
+            ) == str(version)
             sql(
                 database,
                 "CREATE TABLE sentinel(value text); INSERT INTO sentinel VALUES ('preserved');",
@@ -57,7 +58,7 @@ def main():
             )
             sql(database, migration_sql(directory), expected_success=False)
             (directory / "002_reliability.sql").write_text(original)
-            (directory / "004_failure.sql").write_text(
+            (directory / failure_name).write_text(
                 "CREATE TABLE must_rollback(value integer); SELECT 1/0;"
             )
             sql(database, migration_sql(directory), expected_success=False)
@@ -65,13 +66,17 @@ def main():
                 sql(database, "SELECT to_regclass('public.must_rollback') IS NULL;")
                 == "t"
             )
-            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "3"
-            (directory / "004_failure.sql").unlink()
+            assert sql(database, "SELECT count(*) FROM platform_migrations;") == str(
+                version
+            )
+            (directory / failure_name).unlink()
             # Reset only the disposable DB to the original legacy v1 bootstrap.
             sql(database, "DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
             sql(database, (ROOT / "migrations/001_platform.sql").read_text())
             sql(database, migration_sql(directory))
-            assert sql(database, "SELECT count(*) FROM platform_migrations;") == "3"
+            assert sql(database, "SELECT count(*) FROM platform_migrations;") == str(
+                version
+            )
             # Unique events and inbox delivery identities are actual DB constraints.
             event = str(uuid.uuid4())
             digest = "a" * 64

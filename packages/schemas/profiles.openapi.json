@@ -3,7 +3,7 @@
   "info": {
     "title": "Nautiuq Argo observation slice",
     "version": "1.0.0",
-    "description": "Implemented Phase 2 bounded profile API with immutable raw provenance."
+    "description": "Bounded canonical profile API with immutable raw provenance and calculation evidence."
   },
   "servers": [
     {
@@ -427,6 +427,13 @@
                         "D"
                       ]
                     }
+                  },
+                  "calculation_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uuid"
                   }
                 }
               }

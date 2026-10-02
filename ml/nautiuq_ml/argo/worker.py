@@ -1,7 +1,6 @@
 """Durable raw.received consumer, immutable lake artifacts, and replay repair."""
 
 import asyncio
-import hashlib
 import io
 import itertools
 import json
@@ -14,7 +13,6 @@ import sys
 import tempfile
 import time
 import uuid
-import urllib3
 from datetime import datetime
 from pathlib import Path
 
@@ -22,7 +20,6 @@ import nats
 import psycopg
 import pyarrow as pa
 import pyarrow.parquet as pq
-from minio import Minio
 from minio.error import S3Error
 from nats.js.api import ConsumerConfig, AckPolicy, DeliverPolicy
 from nats.js.errors import NotFoundError
@@ -30,61 +27,13 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from .parser import InvalidProfile, parse, revision_digest
+from .storage import digest, store, read_object, put_immutable
+from . import evidence
 
 CONSUMER = "argo-normalizer-v1"
 MAX_BYTES = 64 * 1024 * 1024
 _lake_cursor = None
 _raw_cursor = None
-
-
-def store():
-    return Minio(
-        os.environ["MINIO_ENDPOINT"],
-        access_key=os.environ["MINIO_ROOT_USER"],
-        secret_key=os.environ["MINIO_ROOT_PASSWORD"],
-        secure=False,
-        http_client=urllib3.PoolManager(
-            timeout=urllib3.Timeout(connect=5, read=10),
-            retries=urllib3.Retry(total=1, backoff_factor=0.5),
-        ),
-    )
-
-
-def digest(data):
-    return hashlib.sha256(data).hexdigest()
-
-
-def read_object(s3, key, expected, limit=MAX_BYTES):
-    response = s3.get_object("nautiuq", key)
-    try:
-        data = response.read(limit + 1)
-    finally:
-        response.close()
-        response.release_conn()
-    if len(data) > limit or digest(data) != expected:
-        raise InvalidProfile("artifact_checksum_or_budget")
-    return data
-
-
-def put_immutable(s3, key, data):
-    try:
-        info = s3.stat_object("nautiuq", key)
-        if info.size != len(data) or info.metadata.get("x-amz-meta-sha256") != digest(
-            data
-        ):
-            raise InvalidProfile("immutable_lake_conflict")
-        read_object(s3, key, digest(data))
-    except S3Error as error:
-        if error.code != "NoSuchKey":
-            raise
-        s3.put_object(
-            "nautiuq",
-            key,
-            io.BytesIO(data),
-            len(data),
-            metadata={"sha256": digest(data)},
-        )
-        read_object(s3, key, digest(data))
 
 
 def decode_envelope(data):
@@ -158,6 +107,12 @@ def quarantine(db, event_id, artifact, reason):
     db.execute(
         "INSERT INTO ingestion_quarantine(quarantine_id,event_id,artifact_id,reason_code) VALUES(%s,%s,%s,%s) ON CONFLICT(event_id) DO NOTHING",
         (str(uuid.uuid4()), event_id, artifact, reason),
+    )
+    evidence.qc_record(
+        db,
+        artifact,
+        "argo_gdac",
+        {"rule_id": "artifact.integrity", "reason_code": reason},
     )
     db.execute(
         "INSERT INTO consumer_inbox(consumer_name,event_id) VALUES(%s,%s) ON CONFLICT DO NOTHING",
@@ -233,17 +188,20 @@ def lake(s3, profile, raw_sha):
     return revision, key, digest(data)
 
 
-def process(event_data, s3=None):
+def process(event_data, s3=None, replay=False):
     event = decode_envelope(event_data)
     s3 = s3 or store()
     with psycopg.connect(
         os.environ["DATABASE_URL"], row_factory=dict_row, connect_timeout=5
     ) as db:
         db.execute("SET statement_timeout='15s'; SET lock_timeout='5s'")
-        if db.execute(
-            "SELECT 1 FROM consumer_inbox WHERE consumer_name=%s AND event_id=%s",
-            (CONSUMER, event["event_id"]),
-        ).fetchone():
+        if (
+            not replay
+            and db.execute(
+                "SELECT 1 FROM consumer_inbox WHERE consumer_name=%s AND event_id=%s",
+                (CONSUMER, event["event_id"]),
+            ).fetchone()
+        ):
             return "duplicate"
         raw = db.execute(
             "SELECT * FROM raw_artifacts WHERE artifact_id=%s",
@@ -273,6 +231,10 @@ def process(event_data, s3=None):
             return "quarantined"
         # Object/lake publication precedes one atomic canonical+inbox+outbox commit.
         # A DB failure leaves immutable staged objects that replay reuses.
+        calculations = {
+            revision: evidence.normalization(s3, profile, revision, raw["sha256"])
+            for profile, revision, _, _ in prepared
+        }
         db.execute("SELECT pg_advisory_xact_lock(78192402)")
         for profile, revision, parquet_key, parquet_sha in prepared:
             profile_id = str(uuid.uuid5(uuid.NAMESPACE_URL, profile["native_key"]))
@@ -327,7 +289,44 @@ VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,ST_SetSRID(ST_MakePoint(%s,%s),4326),%s,%s,%s,
                 "INSERT INTO profile_source_links(profile_id,artifact_id) VALUES(%s,%s) ON CONFLICT DO NOTHING",
                 (profile_id, raw["artifact_id"]),
             )
+            calculation = calculations[revision]
+            existing = db.execute(
+                "SELECT selected_at,superseded_at FROM profile_revisions WHERE revision_id=%s",
+                (revision_id,),
+            ).fetchone()
+            state = (
+                "current"
+                if existing["selected_at"] is not None
+                and existing["superseded_at"] is None
+                else "stale"
+            )
+            evidence.record(
+                db,
+                calculation,
+                [evidence.input_ref(profile_id, revision, raw["sha256"])],
+                state,
+            )
+            # A method/runtime replay gets new evidence without changing canonical science.
+            db.execute(
+                """UPDATE calculations c SET state='stale',superseded_by=%s
+FROM calculation_inputs i WHERE c.calculation_id=i.calculation_id AND i.profile_id=%s
+AND i.revision_sha256=%s AND c.kind='normalization' AND c.calculation_id<>%s""",
+                (calculation["id"], profile_id, revision, calculation["id"]),
+            )
+            db.execute(
+                "UPDATE calculations SET state=%s WHERE calculation_id=%s",
+                (state, calculation["id"]),
+            )
+            db.execute(
+                "UPDATE profile_revisions SET calculation_id=%s WHERE revision_id=%s",
+                (calculation["id"], revision_id),
+            )
             if not inserted:
+                if (
+                    existing["selected_at"] is not None
+                    and existing["superseded_at"] is None
+                ):
+                    evidence.queue_summary(db, profile_id, revision)
                 continue
             rank = {"R": 0, "A": 1, "D": 2}
             new_rank = (
@@ -352,6 +351,7 @@ VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,ST_SetSRID(ST_MakePoint(%s,%s),4326),%s,%s,%s,
                     "chosen"
                 ]
                 if current:
+                    evidence.invalidate(db, profile_id, current["revision_sha256"])
                     db.execute(
                         "UPDATE profile_revisions SET superseded_at=%s WHERE revision_id=%s",
                         (chosen, current["revision_id"]),
@@ -360,6 +360,11 @@ VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,ST_SetSRID(ST_MakePoint(%s,%s),4326),%s,%s,%s,
                     "UPDATE profile_revisions SET selected_at=%s WHERE revision_id=%s",
                     (chosen, revision_id),
                 )
+                db.execute(
+                    "UPDATE calculations SET state='current' WHERE calculation_id=%s",
+                    (calculation["id"],),
+                )
+                evidence.queue_summary(db, profile_id, revision)
                 event_type = "profile.revised" if current else "profile.ready"
                 ready_id = str(
                     uuid.uuid5(uuid.NAMESPACE_URL, event_type + profile_id + revision)
@@ -374,6 +379,8 @@ VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,ST_SetSRID(ST_MakePoint(%s,%s),4326),%s,%s,%s,
                         Jsonb({"profile_id": profile_id, "revision_sha256": revision}),
                     ),
                 )
+        for rejection in parsed.get("qc_rejections", []) + parsed["rejections"]:
+            evidence.qc_record(db, raw["artifact_id"], raw["source_id"], rejection)
         for rejection in parsed["rejections"]:
             reject_id = str(
                 uuid.uuid5(
@@ -388,7 +395,7 @@ VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,ST_SetSRID(ST_MakePoint(%s,%s),4326),%s,%s,%s,
             "INSERT INTO consumer_inbox(consumer_name,event_id) VALUES(%s,%s) ON CONFLICT DO NOTHING",
             (CONSUMER, event["event_id"]),
         )
-        return "normalized"
+        return "normalized" if prepared else "quarantined"
 
 
 def repair_lake(db, s3):
@@ -448,6 +455,8 @@ WHERE (%s::uuid IS NULL OR r.revision_id>%s::uuid) ORDER BY r.revision_id LIMIT 
                 "UPDATE profile_revisions SET science_ready=true WHERE revision_id=%s",
                 (row["revision_id"],),
             )
+            if row["selected_at"] is not None and row["superseded_at"] is None:
+                evidence.queue_summary(db, row["profile_id"], revision)
             db.execute(
                 "UPDATE ingestion_quarantine SET resolved_at=now() WHERE event_id=%s AND resolved_at IS NULL",
                 (str(uuid.uuid5(uuid.NAMESPACE_URL, "lake-integrity|" + revision)),),
@@ -507,7 +516,7 @@ def repair(raw_prefix="raw/argo_gdac/profile/"):
                 read_object(s3, obj.object_name, sha)
                 run = str(uuid.uuid4())
                 db.execute(
-                    "INSERT INTO ingestion_runs(run_id,source_id,status,completed_at) VALUES(%s,'argo_gdac','reconciled',now())",
+                    "INSERT INTO ingestion_runs(run_id,source_id,status,run_kind,completed_at) VALUES(%s,'argo_gdac','reconciled','reconciled',now())",
                     (run,),
                 )
                 db.execute(
@@ -584,7 +593,7 @@ async def consume():
     while not stopped.is_set():
         if time.monotonic() - last_repair > 60:
             try:
-                await asyncio.to_thread(repair)
+                await asyncio.to_thread(maintenance)
                 last_repair = time.monotonic()
             except Exception:
                 logging.warning("Reconciliation deferred; storage/database unavailable")
@@ -614,6 +623,16 @@ async def consume():
     await nc.drain()
 
 
+def maintenance():
+    from .freshness import monitor
+
+    for task in (repair, monitor, evidence.recompute):
+        try:
+            task()
+        except Exception:
+            logging.warning("Maintenance task deferred: %s", task.__name__)
+
+
 def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     if len(sys.argv) > 1 and sys.argv[1] == "parse":
@@ -623,6 +642,10 @@ def main():
         )
     elif len(sys.argv) > 1 and sys.argv[1] == "repair":
         repair()
+        from .freshness import monitor
+
+        monitor()
+        evidence.recompute()
     else:
         asyncio.run(consume())
 

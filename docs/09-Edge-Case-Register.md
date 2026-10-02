@@ -89,3 +89,18 @@ See [Phase 2 delivery](11-Phase-2-Delivery.md) for code paths, exact verificatio
 | P03, P13 | Explorer shows original observation position/depth, coordinate table and textual QC/missingness. Rendered HTML passed; actual visual/browser accessibility acceptance remains unverified because computer-use access was denied. |
 
 No model, forecast/advisory, trip, auth, export, production restore or scientific-promotion state is changed by this update.
+
+
+## Phase 3 execution update — 2026-10-02
+
+See [Phase 3 delivery](12-Phase-3-Delivery.md) for exact commands and evidence.
+
+| IDs | Correctness/reproducibility status |
+| --- | --- |
+| D08–D14 | Deterministic raw replay, linked duplicate artifacts, R→D precedence, bad-unit/malformed quarantine and grouped variable rejection audit verified. The frozen real GDAC fixture fixes raw hashes, original levels, source flags and numerical depth references. |
+| A04 | Leased original-level summary recomputation uses revision and lease compare-and-set. Supersession while an old result stages was injected; old work became obsolete and could not publish as current. This verifies the implemented summary boundary; model predictions remain future work. |
+| A03, A05 | Snapshot staging followed by forced SQL failure rolls back manifest/calculation publication. Exact digest validation rejects a corrupted frozen artifact; rebuilding never silently overwrites it. Candidate counts and selection use one database read snapshot; SQL/lake disagreement blocks publication. Repaired current artifacts recover obsolete summary jobs, and expired leases are reclaimed. |
+| M01, M04 | One stable profile/revision per snapshot, fixed UTC temporal blocks, independent variable labels, candidate/byte budgets, counts and coverage recorded. Spatial/platform independence and coastal completeness remain unverified scientific release gates. |
+| D19, M15 | Supersession invalidates live calculation evidence while frozen historical snapshots remain unchanged. Original as-of snapshots reproduce after upstream revision. Cadence/coverage stay unverified; live fetch age and delayed observation age are separate. |
+
+No production model, field/advisory/trip capability or release approval is enabled by this update.

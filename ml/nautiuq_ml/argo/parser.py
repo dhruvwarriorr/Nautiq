@@ -66,7 +66,7 @@ def parameter(ds, p, i, mode, n):
 
 
 def parse(path):
-    profiles, rejected = [], []
+    profiles, rejected, qc_rejections = [], [], []
     with netCDF4.Dataset(path) as ds:
         if "N_PROF" not in ds.dimensions or "N_LEVELS" not in ds.dimensions:
             raise InvalidProfile("missing_dimensions")
@@ -159,6 +159,25 @@ def parse(path):
                                 raise InvalidProfile("parameter_mode_invalid")
                             modes[p] = m
                 values = {p: parameter(ds, p, i, modes[p], nlevels) for p in modes}
+                for variable in modes:
+                    reasons = values[variable][2]
+                    for reason in sorted(set(reasons) - {""}):
+                        indices = [j for j, r in enumerate(reasons) if r == reason]
+                        qc_rejections.append(
+                            {
+                                "profile_index": i,
+                                "variable": variable,
+                                "rule_id": "parameter.source_qc_units_range",
+                                "reason_code": reason,
+                                "rejected_count": len(indices),
+                                "context": {
+                                    "source_level_indices": indices[:100],
+                                    "indices_truncated": len(indices) > 100,
+                                    "selected_field": values[variable][3],
+                                    "parameter_mode": modes[variable],
+                                },
+                            }
+                        )
                 levels = []
                 for j, pres in enumerate(values["PRES"][0]):
                     if pres is None:
@@ -224,7 +243,11 @@ def parse(path):
                         else "invalid_metadata",
                     }
                 )
-    return {"profiles": profiles, "rejections": rejected}
+    return {
+        "profiles": profiles,
+        "rejections": rejected,
+        "qc_rejections": qc_rejections,
+    }
 
 
 def revision_digest(profile, raw_sha):

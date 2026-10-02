@@ -14,6 +14,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"nautiuq.local/api/internal/platform"
 	"nautiuq.local/api/internal/profiles"
+	"nautiuq.local/api/internal/science"
 )
 
 func main() {
@@ -38,6 +39,7 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	profiles.New(pool, storage).Register(mux)
+	science.New(pool, storage).Register(mux)
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"status":"ok"}`))

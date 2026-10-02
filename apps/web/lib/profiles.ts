@@ -21,6 +21,7 @@ export type Level = {
 export type Profile = Summary & {
   levels: Level[];
   provenance: {
+    calculation_id: string | null;
     raw_sha256: string;
     source_url: string;
     depth_conversion_version: string;

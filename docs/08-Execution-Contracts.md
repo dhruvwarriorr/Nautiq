@@ -73,3 +73,14 @@ Leased outbox dispatch/inbox processing/reconciliation are implemented for Argo 
 ## 7. Promotion and approval records
 
 Phase 0 gates are explicit booleans with limitations; unexecuted gates are false. Report success means the tool completed, not that all gates passed. `make phase0-gate` exits 2 when any gate is unproven. Model/public-trip release additionally requires prespecified numerical quality gates, subgroup sizes, independent audits, operational source review, licenses, kill switches, auth, restore test and actual service load tests. Unknown entries cannot be filled with assumptions or synthetic fixtures. Record owner and evidence URI for every future approval; no automated promotion is implemented.
+
+
+## Implemented calculation and snapshot contracts
+
+Schema 4 adds `/api/v1/sources`, `/qc-rejections`, `/profiles/{id}/revisions`, `/profiles/{id}/statistics`, `/calculations/{id}`, `/training-snapshots`, `/training-snapshots/{id}` and its `/parquet` download. `packages/schemas/science.openapi.json` defines their bounded contract. List limits are 1–200 (default 50); unknown/repeated/malformed parameters fail. Requests use eight shared slots and eight-second deadlines; snapshot downloads have two slots and a 128 MiB ceiling, and verify full SHA-256 before success headers.
+
+Calculation IDs are content-addressed immutable manifests, not request traces. Manifests pin raw/canonical inputs, code/runtime/method/QC policy, evaluation time and outputs. Normalization and original-level summaries become stale on supersession; a leased summary job checks the expected revision and current lease before publication. Summary endpoints join the current revision so an old aggregate is never labelled current. Historical training calculations remain frozen.
+
+Snapshots require explicit timezone-aware `AS_OF`, preserve one selected revision per stable profile at that time, and freeze split assignments before later fitting. The policy requires profile/parameter D, adjusted fields and QC 1. All variables/native depths of a profile share a temporal split; a missing salinity label does not discard a valid temperature label. No interpolation or synthetic labels are introduced. Bounds apply to candidate profiles/levels before allocation; overflow fails rather than silently downsampling. Hash-verified object publication precedes one SQL manifest commit. See `12-Phase-3-Delivery.md` for real counts and replay evidence.
+
+Local ingestion freshness uses only successful live upstream checks; legacy/backfill/reconciled/import/replay operations cannot refresh that timestamp. Provider freshness stays unverified until both cadence review and an observation-age budget exist. The source monitor reports queue age/count and QC audit-group counts, and expires after three minutes without a successful refresh. QC counts are audit groups, not a measured rejection rate over all source observations.

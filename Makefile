@@ -64,3 +64,21 @@ phase2-reliability:
 .PHONY: phase2-broker
 phase2-broker:
 	.venv/bin/python scripts/verify_phase2_broker.py
+
+.PHONY: phase3-verify phase3-reliability phase3-smoke argo-replay science-maintain training-snapshot verify-snapshot
+phase3-verify:
+	.venv/bin/python scripts/verify_phase3.py
+phase3-reliability:
+	.venv/bin/python scripts/verify_phase3_reliability.py
+phase3-smoke:
+	.venv/bin/python scripts/verify_phase3_smoke.py
+argo-replay:
+	docker compose exec -T normalizer python -m nautiuq_ml.argo.tools replay --limit 1000
+science-maintain:
+	docker compose exec -T normalizer python -m nautiuq_ml.argo.tools maintain
+training-snapshot:
+	@test -n "$(AS_OF)" || (echo 'Supply explicit UTC AS_OF, e.g. make training-snapshot AS_OF=2026-10-02T00:00:00Z'; exit 2)
+	docker compose exec -T normalizer python -m nautiuq_ml.argo.tools snapshot --as-of '$(AS_OF)' --max-profiles 500
+verify-snapshot:
+	@test -n "$(SNAPSHOT_ID)" || (echo 'Supply SNAPSHOT_ID'; exit 2)
+	docker compose exec -T normalizer python -m nautiuq_ml.argo.tools verify-snapshot '$(SNAPSHOT_ID)'

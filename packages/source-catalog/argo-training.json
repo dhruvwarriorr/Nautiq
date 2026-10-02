@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "qc_version": "argo-training-D1-original-v1",
+  "feature_schema": "argo-training-original-levels-v1",
+  "baseline": {"start_year":2005,"end_year":2024},
+  "splits":{"train_end":2016,"tune_end":2019,"calibration_end":2021},
+  "domain":{"west":45,"south":0,"east":100,"north":30},
+  "required_profile_mode":"D",
+  "required_parameter_mode":"D",
+  "required_qc":"1",
+  "representation":"original_levels_no_interpolation",
+  "source_production_approval_required":false,
+  "release_approved":false,
+  "limits":{"max_profiles":2000,"max_levels":100000,"max_parquet_bytes":134217728}
+}

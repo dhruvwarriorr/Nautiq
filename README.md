@@ -68,6 +68,24 @@ Open http://localhost:3000/profiles for real Argo positions and original-level t
 
 The source config is `packages/source-catalog/argo.json`: three workers, at most 20 files per run, six-hour live polling and daily historical reconciliation. `ARGO_OBSERVED_SINCE` fixes a persistent scope start (local default 2025-10-01); these batches do not establish complete source coverage. Raw artifacts remain immutable in MinIO; migrations preserve existing volumes. Display QC accepts source QC 1 with per-variable missingness; Phase 0 training keeps its separate strict D-only policy.
 
+## Phase 3: correctness and reproducibility
+
+Open http://localhost:3000/data to inspect source timing, QC audit groups and frozen training snapshots. Profile pages link to retained revisions and durable calculation evidence. See [delivery and measured verification](docs/12-Phase-3-Delivery.md).
+
+```sh
+make phase3-verify      # Frozen real-source fixture and offline policies
+make phase3-reliability # Disposable DB: revisions, late jobs, frozen snapshots
+make argo-replay        # Reprocess up to 1,000 retained raw files without refetching
+make science-maintain  # Drain up to 500 summary jobs and refresh source monitor
+make training-snapshot AS_OF=2026-10-02T04:45:13.911676Z
+make verify-snapshot SNAPSHOT_ID=3b606239-35ae-53ae-938d-5c0935385a00
+make phase3-smoke       # Evidence APIs, rendered pages and exact Parquet bytes
+```
+
+Snapshot commands require an explicit UTC selection time. Selection uses retained revision history at that time; inputs, method/code/runtime/QC/source policy and output checksums are frozen. The strict policy in `packages/source-catalog/argo-training.json` uses delayed-mode adjusted QC 1 labels and the documented 2005–2024 temporal splits. Temperature and salinity remain independently nullable. This is an original-level dataset; standard-grid interpolation and climatology remain subsequent work. Default selection is at most 500 profiles, hard maximum 2,000 profiles/100,000 candidate levels/128 MiB Parquet; exceeding a budget fails rather than truncating.
+
+A successful backfill/replay never renews live-source freshness. Monitoring separates local fetch age, observation time, expected cadence and verified provider freshness; provider cadence and coverage remain explicitly unverified. Frozen evidence does not approve a scientific release.
+
 ## Local services
 
 | Service | Purpose |
@@ -89,10 +107,10 @@ MinIO Community is source-only; the local Dockerfile builds the pinned server re
 
 ## Database and persistence
 
-The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 3 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. `make down` preserves volumes. Never reset volumes to apply an upgrade.
+The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 4 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. `make down` preserves volumes. Never reset volumes to apply an upgrade.
 
 ## Scope
 
-Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform and Phase 2 Argo observation slice are implemented. Model serving, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow and production operations arrive in their owning phases.
+Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility are implemented. Model serving, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow and production operations arrive in their owning phases.
 
 See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiuq-Implementation-Blueprint.md).

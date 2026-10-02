@@ -371,7 +371,7 @@ func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
 		a.scope += ":live"
 	}
 	run := uuid.NewString()
-	if _, err := a.db.Exec(ctx, "INSERT INTO ingestion_runs(run_id,source_id) VALUES($1,$2)", run, a.cfg.SourceID); err != nil {
+	if _, err := a.db.Exec(ctx, "INSERT INTO ingestion_runs(run_id,source_id,scope,run_kind) VALUES($1,$2,$3,$4)", run, a.cfg.SourceID, a.scope, map[bool]string{false: "live", true: "backfill"}[full]); err != nil {
 		return errors.New("database_unavailable")
 	}
 	defer func() {
@@ -381,7 +381,11 @@ func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
 		if runErr != nil {
 			status = "failed"
 		}
-		a.db.Exec(cleanup, "UPDATE ingestion_runs SET completed_at=now(),status=$2 WHERE run_id=$1", run, status)
+		reason := ""
+		if runErr != nil {
+			reason = runErr.Error()
+		}
+		a.db.Exec(cleanup, "UPDATE ingestion_runs SET completed_at=now(),status=$2,reason_code=NULLIF($3,'') WHERE run_id=$1", run, status, reason)
 	}()
 	// Source-scope lock prevents concurrent scheduled/manual runs from racing the cursor.
 	conn, err := a.db.Acquire(ctx)
@@ -454,6 +458,9 @@ func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
 		if err != nil || int64(len(data)) > a.cfg.MaxBytes || sha(data) != cachedSHA {
 			return errors.New("index_cache_invalid")
 		}
+	}
+	if _, err := a.db.Exec(ctx, "UPDATE ingestion_runs SET upstream_checked_at=now() WHERE run_id=$1", run); err != nil {
+		return errors.New("fetch_registration_failed")
 	}
 	indexSHA := sha(data)
 	if status == 200 {

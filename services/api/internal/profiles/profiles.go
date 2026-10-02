@@ -44,6 +44,7 @@ type Summary struct {
 	Source    string    `json:"source_id"`
 }
 type Provenance struct {
+	CalculationID     *string         `json:"calculation_id"`
 	RawSHA            string          `json:"raw_sha256"`
 	SourceURL         string          `json:"source_url"`
 	DepthVersion      string          `json:"depth_conversion_version"`
@@ -301,7 +302,7 @@ func (s *Server) detail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var p Profile
-	err := s.DB.QueryRow(r.Context(), `SELECT `+summaryColumns+`,r.levels,a.sha256,a.source_url,r.depth_conversion_version,r.normalizer_version,r.parquet_sha256,r.parquet_key,r.source_updated_at,src.metadata->>'attribution',p.cycle_number,p.direction,p.sampling_scheme,r.parameter_modes FROM profiles p JOIN profile_revisions r USING(profile_id) JOIN raw_artifacts a ON a.artifact_id=r.raw_artifact_id JOIN sources src USING(source_id) WHERE p.profile_id=$1 AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL`, id.String()).Scan(&p.ID, &p.Revision, &p.Platform, &p.Observed, &p.Received, &p.Latitude, &p.Longitude, &p.Mode, &p.QC, &p.Source, &p.Levels, &p.Provenance.RawSHA, &p.Provenance.SourceURL, &p.Provenance.DepthVersion, &p.Provenance.NormalizerVersion, &p.Provenance.ParquetSHA, &p.Provenance.ParquetKey, &p.Provenance.SourceUpdated, &p.Provenance.Attribution, &p.Provenance.Cycle, &p.Provenance.Direction, &p.Provenance.Sampling, &p.Provenance.ParameterModes)
+	err := s.DB.QueryRow(r.Context(), `SELECT `+summaryColumns+`,r.levels,a.sha256,a.source_url,r.depth_conversion_version,r.normalizer_version,r.parquet_sha256,r.parquet_key,r.source_updated_at,src.metadata->>'attribution',p.cycle_number,p.direction,p.sampling_scheme,r.parameter_modes,r.calculation_id::text FROM profiles p JOIN profile_revisions r USING(profile_id) JOIN raw_artifacts a ON a.artifact_id=r.raw_artifact_id JOIN sources src USING(source_id) WHERE p.profile_id=$1 AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL`, id.String()).Scan(&p.ID, &p.Revision, &p.Platform, &p.Observed, &p.Received, &p.Latitude, &p.Longitude, &p.Mode, &p.QC, &p.Source, &p.Levels, &p.Provenance.RawSHA, &p.Provenance.SourceURL, &p.Provenance.DepthVersion, &p.Provenance.NormalizerVersion, &p.Provenance.ParquetSHA, &p.Provenance.ParquetKey, &p.Provenance.SourceUpdated, &p.Provenance.Attribution, &p.Provenance.Cycle, &p.Provenance.Direction, &p.Provenance.Sampling, &p.Provenance.ParameterModes, &p.Provenance.CalculationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		problem(w, 404, "profile_not_found")
 		return

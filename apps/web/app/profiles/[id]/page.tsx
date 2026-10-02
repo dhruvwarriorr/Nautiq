@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { evidence, type Revision, type Statistics } from "../../../lib/science";
 import { apiURL, type Profile, type Level } from "../../../lib/profiles";
 export const dynamic = "force-dynamic";
 function Chart({
@@ -104,6 +105,12 @@ export default async function Detail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const revisionRequest = evidence<{ items: Revision[] }>(
+    `/profiles/${encodeURIComponent(id)}/revisions?limit=50`,
+  );
+  const statsRequest = evidence<Statistics>(
+    `/profiles/${encodeURIComponent(id)}/statistics`,
+  );
   let profile: Profile | null = null;
   let absent = false;
   try {
@@ -123,6 +130,7 @@ export default async function Detail({
         <p>The observation service is unavailable. Refresh to retry.</p>
       </main>
     );
+  const [history, stats] = await Promise.all([revisionRequest, statsRequest]);
   const p = profile,
     pr = p.provenance;
   return (
@@ -168,6 +176,16 @@ export default async function Detail({
       <section className="evidence">
         <h2>Source, QC and provenance</h2>
         <dl>
+          <dt>Calculation evidence</dt>
+          <dd>
+            {pr.calculation_id ? (
+              <Link href={`/calculations/${pr.calculation_id}`}>
+                {pr.calculation_id}
+              </Link>
+            ) : (
+              "Pending evidence backfill"
+            )}
+          </dd>
           <dt>Source</dt>
           <dd>
             {p.source_id} · {pr.attribution}
@@ -219,6 +237,72 @@ export default async function Detail({
           establishes current local sea conditions or a trip verdict.
         </p>
       </section>
+      <section>
+        <h2>Descriptive profile summary</h2>
+        {stats?.status === "ready" &&
+        stats.revision_sha256 === p.revision_sha256 &&
+        stats.calculation_id ? (
+          <>
+            <Link href={`/calculations/${stats.calculation_id}`}>
+              Summary calculation evidence
+            </Link>
+            <pre className="audit-json">
+              {JSON.stringify(stats.statistics, null, 2)}
+            </pre>
+          </>
+        ) : (
+          <p>
+            {!stats
+              ? "Summary evidence is unavailable. Refresh to retry."
+              : stats.revision_sha256 !== p.revision_sha256
+                ? "The profile changed while loading. Refresh for matching summary evidence."
+                : "Summary recomputation is pending."}
+          </p>
+        )}
+      </section>
+      {history ? (
+        <details>
+          <summary>Retained revisions ({history.items.length})</summary>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mode / state</th>
+                  <th>Provider update</th>
+                  <th>Evidence</th>
+                  <th>Raw file</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.items.map((r) => (
+                  <tr key={r.revision_sha256}>
+                    <td>
+                      {r.data_mode} / {r.selection_state}
+                    </td>
+                    <td>{r.source_updated_at}</td>
+                    <td>
+                      {r.calculation_id ? (
+                        <Link href={`/calculations/${r.calculation_id}`}>
+                          {r.calculation_id}
+                        </Link>
+                      ) : (
+                        "Pending"
+                      )}
+                    </td>
+                    <td>
+                      <a
+                        href={`/profiles/${p.id}/raw?revision_sha256=${r.revision_sha256}`}
+                      >
+                        Pinned NetCDF
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      ) : null}
       <details>
         <summary>Original levels and QC flags</summary>
         <div className="table-scroll">

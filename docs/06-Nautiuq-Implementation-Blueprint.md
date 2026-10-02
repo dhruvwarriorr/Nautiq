@@ -220,6 +220,8 @@ Local implementation and measured API/rendered-page/raw-byte verification are re
 
 ## 6. Phase 3 — data correctness and reproducibility
 
+Implemented locally; [12-Phase-3-Delivery.md](12-Phase-3-Delivery.md) maps every deliverable to code and measured verification. Training snapshots preserve original levels; the standard depth grid remains in Phase 4.
+
 Before ML:
 
 - revision handling;

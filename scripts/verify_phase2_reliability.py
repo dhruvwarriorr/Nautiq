@@ -119,6 +119,8 @@ try:
 finally:
  # Remove only the objects produced by this isolated verification database.
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
+  for key, in db.execute("SELECT manifest_key FROM calculations").fetchall():
+   s3.remove_object("nautiuq",key)
   for revision,key in db.execute("SELECT revision_sha256,parquet_key FROM profile_revisions").fetchall():
    s3.remove_object("nautiuq",key);s3.remove_object("nautiuq","lake/manifests/"+revision+".json")
  for obj in s3.list_objects("nautiuq",prefix=prefix,recursive=True):s3.remove_object("nautiuq",obj.object_name)
