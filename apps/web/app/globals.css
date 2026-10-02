@@ -19,6 +19,7 @@ nav button{font:inherit;color:inherit;background:none;border:0;text-decoration:u
 .field-map-controls {display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
 .field-map {display:block;width:100%;aspect-ratio:3/2;border:1px solid #cbd3ce;border-radius:6px;cursor:crosshair}
 .field-viewer figure {margin:1rem 0}
+.event-map{margin:1.5rem 0}.event-map svg{display:block;width:100%;border:1px solid #cbd3ce;border-radius:6px}.event-map figcaption{font-size:.9rem;line-height:1.5;color:#52675e;margin-top:.75rem}
 .field-viewer figcaption {font-size:.9rem;color:#52675e;margin:.75rem 0}
 .field-timeline {display:grid;gap:.75rem;margin:1.5rem 0}
 .field-timeline input {width:100%;accent-color:#1c8491}

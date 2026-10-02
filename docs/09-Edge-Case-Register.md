@@ -173,3 +173,20 @@ These controls complete the declared complete-case implementation. Sparse functi
 | P13 | Interactive desktop/mobile field rendering, timeline/variable controls, point/route actions, transparent masks, request cancellation and keyboard-accessible evidence tables checked locally |
 
 [Field delivery](17-Phase-8-Delivery.md) and [real-source evidence](evidence/phase8-summary.json) distinguish encoded test fixtures from real provider acquisition/replay and browser checks. Provisional source-age limits do not establish repeated provider cadence or complete coverage. D20–D22 advisory completeness/rights, scientific coastal validation, regional events, approved trip thresholds and production operations remain pending. Field availability does not grant scientific release approval.
+
+## Event detection execution update — 2026-10-03
+
+| Failure | Delivered behavior | Verification |
+| --- | --- | --- |
+| Four warm days or equality with threshold | No qualified cell event | Independent arithmetic gate |
+| Missing day treated as normal or used to join events | Explicit unknown coverage; no temporal bridge | Encoded archive and gap fixtures |
+| Two short runs joined to manufacture persistence | Only independently five-day-qualified runs can join | Duration/gap fixtures |
+| A single native cell called a regional event | Regional cell/area/day minima; rejected-component count retained | Regional support fixture |
+| Land hole filled by a bounding polygon | Union of exact native cells preserves holes | Geometry/area fixture |
+| A single unusual profile called a heatwave | Explicit isolated diagnostic, MultiPoint geometry, separate regional support rules | Offline, disposable and real profile runs |
+| Calendar-day labels hide more than 48 hours | Use exact timezone-aware observed instants | UTC-gap fixture |
+| New observation/comparison or ancestor changes during publication | Whole-snapshot and exact-lineage checks under shared lock; atomic rollback | Disposable race gate |
+| Report, source, array, parent or calculation disappears | Integrity failure withholds details; exact-byte restoration verified | Disposable recovery gate and bounded API implementation |
+| Older frozen run mistaken for live coverage or event absence | Frozen/current/stale state, explicit windows/coverage/censoring, no approval or live-alert claim | API/schema and desktop/mobile explorer |
+
+[Event delivery](18-Phase-9-Delivery.md) and [measured evidence](evidence/phase9-summary.json) separate real retained NOAA/Argo diagnostics from synthetic fixtures. Expert-event comparison, quiet-period false-alert rates, repeated cadence, coastal validation and operational approval remain unproven.

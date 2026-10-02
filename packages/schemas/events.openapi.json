@@ -1,0 +1,2138 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq retained event evidence API",
+    "version": "1.0.0",
+    "description": "Fixed-reference diagnostic candidates. Sparse profile points remain isolated or regional profile groups, never dense heatwave polygons. No scientific event approval or live alerts. Unknown, repeated and malformed query parameters are refused."
+  },
+  "paths": {
+    "/api/v1/event-datasets": {
+      "get": {
+        "summary": "Read DatasetPage",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "history",
+                "baseline"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event-datasets/{id}": {
+      "get": {
+        "summary": "Read Dataset",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event-runs": {
+      "get": {
+        "summary": "Read RunPage",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "surface_thermal",
+                "profile_groups"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event-runs/{id}": {
+      "get": {
+        "summary": "Read Run",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "summary": "Read EventPage",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "surface_thermal_candidate",
+                "regional_profile_candidate",
+                "isolated_profile_anomalies"
+              ]
+            }
+          },
+          {
+            "name": "run_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "west,south,east,north; finite ordered WGS84 coordinates; no antimeridian crossing. Start/end must be paired and span at most 366 inclusive UTC days."
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{id}": {
+      "get": {
+        "summary": "Read EventDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retained diagnostic evidence; detail reads verify byte pins and refuse unavailable parents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Invalid input, missing evidence, capacity limit or unavailable integrity.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "additionalProperties": false
+      },
+      "Source": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string",
+            "format": "uri"
+          },
+          "endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "attribution": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "product",
+          "documentation",
+          "endpoint",
+          "attribution"
+        ],
+        "additionalProperties": false
+      },
+      "Raw": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16777216
+          },
+          "last_modified": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "etag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "raw_key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "sha256",
+          "bytes",
+          "last_modified",
+          "etag",
+          "content_type",
+          "raw_key"
+        ],
+        "additionalProperties": false
+      },
+      "Runtime": {
+        "type": "object",
+        "properties": {
+          "python": {
+            "type": "string"
+          },
+          "libraries": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "requirements_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "python",
+          "libraries",
+          "requirements_sha256"
+        ],
+        "additionalProperties": false
+      },
+      "DatasetMetadata": {
+        "type": "object",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            },
+            "minItems": 1,
+            "maxItems": 11323
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Raw"
+            },
+            "minItems": 1,
+            "maxItems": 128
+          },
+          "missing_cells": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "baseline_years": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "supported_seasonal_cells": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "source",
+          "shape"
+        ],
+        "additionalProperties": false
+      },
+      "DatasetManifest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "history",
+              "baseline"
+            ]
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/DatasetMetadata"
+          },
+          "arrays_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "policy_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "code_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/Runtime"
+          },
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "arrays_key": {
+            "type": "string"
+          },
+          "arrays_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16777216
+          }
+        },
+        "required": [
+          "kind",
+          "parent_id",
+          "metadata",
+          "arrays_sha256",
+          "policy_sha256",
+          "code_sha256",
+          "runtime",
+          "dataset_id",
+          "dataset_sha256",
+          "arrays_key",
+          "arrays_bytes"
+        ],
+        "additionalProperties": false
+      },
+      "DatasetSummary": {
+        "type": "object",
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "history",
+              "baseline"
+            ]
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/DatasetMetadata"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "kind",
+          "parent_id",
+          "calculation_id",
+          "manifest_sha256",
+          "status",
+          "created_at",
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "Dataset": {
+        "type": "object",
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "history",
+              "baseline"
+            ]
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/DatasetManifest"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "kind",
+          "parent_id",
+          "calculation_id",
+          "manifest_sha256",
+          "status",
+          "created_at",
+          "manifest"
+        ],
+        "additionalProperties": false
+      },
+      "DatasetPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatasetSummary"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileRef": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "manifest_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "calculation_id",
+          "manifest_sha256"
+        ],
+        "additionalProperties": false
+      },
+      "ProfilePoint": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "manifest_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "platform_id": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "variable": {
+            "type": "string",
+            "enum": [
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "negative"
+            ]
+          },
+          "percentile": {
+            "type": "number",
+            "minimum": 95,
+            "maximum": 100
+          },
+          "intensity": {
+            "type": "number",
+            "minimum": 0
+          },
+          "comparison_profiles": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "calculation_id",
+          "manifest_sha256",
+          "platform_id",
+          "latitude",
+          "longitude",
+          "day",
+          "observed_at",
+          "variable",
+          "direction",
+          "percentile",
+          "intensity",
+          "comparison_profiles"
+        ],
+        "additionalProperties": false
+      },
+      "Geometry": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "MultiPoint"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "minItems": 1,
+                "maxItems": 4000
+              }
+            },
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "Polygon"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "minItems": 4
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "MultiPolygon"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "minItems": 4
+                  },
+                  "minItems": 1
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DailySupport": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "cells": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "area_km2": {
+            "type": "number",
+            "minimum": 0
+          },
+          "observed_cells": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mean_intensity": {
+            "type": "number"
+          },
+          "maximum_intensity": {
+            "type": "number"
+          },
+          "supported_regional_day": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "day",
+          "cells",
+          "area_km2",
+          "observed_cells",
+          "mean_intensity",
+          "maximum_intensity",
+          "supported_regional_day"
+        ],
+        "additionalProperties": false
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal_candidate",
+              "regional_profile_candidate",
+              "isolated_profile_anomalies"
+            ]
+          },
+          "variable": {
+            "type": "string",
+            "enum": [
+              "sst_c",
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "units": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "duration_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366
+          },
+          "persistence_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "support_kind": {
+            "type": "string",
+            "enum": [
+              "native_grid_cells",
+              "observed_profile_points"
+            ]
+          },
+          "maximum_intensity": {
+            "type": "number"
+          },
+          "mean_intensity": {
+            "type": "number"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "cell_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cell_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profile_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "platform_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "peak_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "maximum_category": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "left_censored": {
+            "type": "boolean"
+          },
+          "right_censored": {
+            "type": "boolean"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "negative"
+            ]
+          },
+          "coverage_state": {
+            "type": "string"
+          },
+          "daily_support": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailySupport"
+            },
+            "minItems": 1,
+            "maxItems": 366
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                {
+                  "$ref": "#/components/schemas/ProfilePoint"
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 200000
+          }
+        },
+        "required": [
+          "event_id",
+          "kind",
+          "variable",
+          "units",
+          "start",
+          "end",
+          "duration_days",
+          "persistence_days",
+          "geometry",
+          "support_kind",
+          "maximum_intensity",
+          "mean_intensity",
+          "release_approved",
+          "members"
+        ],
+        "additionalProperties": false
+      },
+      "EventSummaryEvidence": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal_candidate",
+              "regional_profile_candidate",
+              "isolated_profile_anomalies"
+            ]
+          },
+          "variable": {
+            "type": "string",
+            "enum": [
+              "sst_c",
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "units": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "duration_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366
+          },
+          "persistence_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "support_kind": {
+            "type": "string",
+            "enum": [
+              "native_grid_cells",
+              "observed_profile_points"
+            ]
+          },
+          "maximum_intensity": {
+            "type": "number"
+          },
+          "mean_intensity": {
+            "type": "number"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "cell_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cell_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profile_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "platform_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "peak_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "maximum_category": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "left_censored": {
+            "type": "boolean"
+          },
+          "right_censored": {
+            "type": "boolean"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "negative"
+            ]
+          },
+          "coverage_state": {
+            "type": "string"
+          },
+          "daily_support": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailySupport"
+            },
+            "minItems": 1,
+            "maxItems": 366
+          }
+        },
+        "required": [
+          "event_id",
+          "kind",
+          "variable",
+          "units",
+          "start",
+          "end",
+          "duration_days",
+          "persistence_days",
+          "geometry",
+          "support_kind",
+          "maximum_intensity",
+          "mean_intensity",
+          "release_approved"
+        ],
+        "additionalProperties": false
+      },
+      "Coverage": {
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "observed_cells": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unknown_cells": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "above_threshold_cells": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "qualified_cells": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "day",
+                "observed_cells",
+                "unknown_cells",
+                "above_threshold_cells",
+                "qualified_cells"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 366
+          },
+          {
+            "type": "object",
+            "properties": {
+              "queried_profiles": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "exceedance_variable_points": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "reasons": {
+                "type": "object",
+                "properties": {
+                  "missing_comparison": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "missing_percentile": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "below_threshold": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "missing_comparison",
+                  "missing_percentile",
+                  "below_threshold"
+                ],
+                "additionalProperties": false
+              },
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "queried_profiles",
+              "exceedance_variable_points",
+              "reasons",
+              "state"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal",
+              "profile_groups"
+            ]
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "status": {
+            "const": "diagnostic"
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "extent": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            },
+            "minItems": 0,
+            "maxItems": 500
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            },
+            "minItems": 1,
+            "maxItems": 366
+          },
+          "baseline_years": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "cell_intervals": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "minItems": 0,
+            "maxItems": 20000
+          },
+          "rejected_small_components": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "qualified_cell_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "baseline_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "history_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "anomaly_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfilePoint"
+            },
+            "minItems": 0,
+            "maxItems": 4000
+          },
+          "regional_groups": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "isolated_groups": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "kind",
+          "method_version",
+          "status",
+          "start",
+          "end",
+          "extent",
+          "events",
+          "coverage",
+          "release_approved",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "RunInputs": {
+        "type": "object",
+        "properties": {
+          "baseline_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseline_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "history_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "history_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "anomaly_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bundle_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "profiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileRef"
+            },
+            "minItems": 0,
+            "maxItems": 2000
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "RunManifest": {
+        "type": "object",
+        "properties": {
+          "inputs": {
+            "$ref": "#/components/schemas/RunInputs"
+          },
+          "policy_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "code_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/Runtime"
+          },
+          "source_git_commit": {
+            "type": "string"
+          },
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "run_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "report_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "inputs",
+          "policy_sha256",
+          "code_sha256",
+          "runtime",
+          "source_git_commit",
+          "run_id",
+          "run_sha256",
+          "report_sha256"
+        ],
+        "additionalProperties": false
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal",
+              "profile_groups"
+            ]
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "report_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "input_state": {
+            "type": "string",
+            "enum": [
+              "frozen_history",
+              "current_snapshot",
+              "stale_snapshot"
+            ]
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/RunManifest"
+          },
+          "report": {
+            "$ref": "#/components/schemas/Report"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "calculation_id",
+          "report_sha256",
+          "status",
+          "created_at",
+          "input_state",
+          "manifest",
+          "report"
+        ],
+        "additionalProperties": false
+      },
+      "EventDetail": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal",
+              "profile_groups"
+            ]
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "report_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "input_state": {
+            "type": "string",
+            "enum": [
+              "frozen_history",
+              "current_snapshot",
+              "stale_snapshot"
+            ]
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/RunManifest"
+          },
+          "event": {
+            "$ref": "#/components/schemas/Event"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "calculation_id",
+          "report_sha256",
+          "status",
+          "created_at",
+          "input_state",
+          "manifest",
+          "event"
+        ],
+        "additionalProperties": false
+      },
+      "RunSummary": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal",
+              "profile_groups"
+            ]
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "report_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "input_state": {
+            "type": "string",
+            "enum": [
+              "frozen_history",
+              "current_snapshot",
+              "stale_snapshot"
+            ]
+          },
+          "baseline_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "anomaly_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "event_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "calculation_id",
+          "report_sha256",
+          "status",
+          "created_at",
+          "input_state",
+          "baseline_id",
+          "history_id",
+          "anomaly_id",
+          "release_approved",
+          "start",
+          "end",
+          "event_count",
+          "coverage"
+        ],
+        "additionalProperties": false
+      },
+      "RunPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "EventSummary": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "surface_thermal_candidate",
+              "regional_profile_candidate",
+              "isolated_profile_anomalies"
+            ]
+          },
+          "variable": {
+            "type": "string",
+            "enum": [
+              "sst_c",
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "start_day": {
+            "type": "string",
+            "format": "date"
+          },
+          "end_day": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/EventSummaryEvidence"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "input_state": {
+            "type": "string",
+            "enum": [
+              "frozen_history",
+              "current_snapshot",
+              "stale_snapshot"
+            ]
+          }
+        },
+        "required": [
+          "event_id",
+          "run_id",
+          "kind",
+          "variable",
+          "start_day",
+          "end_day",
+          "evidence",
+          "status",
+          "release_approved",
+          "input_state"
+        ],
+        "additionalProperties": false
+      },
+      "EventPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventSummary"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

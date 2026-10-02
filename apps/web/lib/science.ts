@@ -68,10 +68,12 @@ export type Manifest = {
   kind: string;
   method_version: string;
   inputs: Input[];
+  input?: Record<string,unknown>;
   evaluation_time: string;
   code_sha256: string;
   policy: Record<string, unknown>;
   environment: Record<string, string>;
+  runtime?: Record<string,unknown>;
   output: Record<string, unknown>;
 };
 export type Calculation = {

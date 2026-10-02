@@ -35,7 +35,9 @@ export default async function CalculationPage({
         <dt>State</dt>
         <dd>{value.state}</dd>
         <dt>Evaluation time (UTC)</dt>
-        <dd>{m.evaluation_time}</dd>
+        <dd>
+          {m.evaluation_time ?? "Frozen input window; no live evaluation clock"}
+        </dd>
         <dt>Calculated (UTC)</dt>
         <dd>{value.created_at}</dd>
         <dt>Manifest SHA-256</dt>
@@ -59,7 +61,7 @@ export default async function CalculationPage({
               </tr>
             </thead>
             <tbody>
-              {m.inputs.map((i) => (
+              {(m.inputs ?? []).map((i) => (
                 <tr key={i.profile_id + i.revision_sha256}>
                   <td>
                     <Link href={`/profiles/${i.profile_id}`}>
@@ -83,6 +85,9 @@ export default async function CalculationPage({
             </tbody>
           </table>
         </div>
+        {m.input ? (
+          <pre className="audit-json">{JSON.stringify(m.input, null, 2)}</pre>
+        ) : null}
       </section>
       <section>
         <h2>Result</h2>
@@ -92,7 +97,7 @@ export default async function CalculationPage({
         <summary>Policy and runtime versions</summary>
         <pre className="audit-json">
           {JSON.stringify(
-            { policy: m.policy, environment: m.environment },
+            { policy: m.policy, environment: m.environment ?? m.runtime },
             null,
             2,
           )}

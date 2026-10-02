@@ -1,0 +1,65 @@
+{
+  "version": "regional-events-v1",
+  "method": "fixed-seasonal-sst-persistence-v1",
+  "baseline_years": [
+    1982,
+    2011
+  ],
+  "pilot_bbox": [
+    71,
+    11,
+    73,
+    13
+  ],
+  "percentile": 90,
+  "pool_half_window_days": 5,
+  "smooth_window_days": 31,
+  "min_baseline_years": 27,
+  "min_baseline_fraction": 0.8,
+  "min_duration_days": 5,
+  "max_observed_gap_days": 2,
+  "regional_min_cells": 4,
+  "regional_min_area_km2": 1000,
+  "profile_lens": "weighted_squared_residual",
+  "profile_percentile": 95,
+  "profile_radius_km": 50,
+  "profile_time_gap_hours": 48,
+  "profile_min_profiles": 3,
+  "profile_min_platforms": 3,
+  "profile_min_dates": 3,
+  "limits": {
+    "cells": 4096,
+    "history_days": 11323,
+    "detection_days": 366,
+    "profiles": 2000,
+    "events": 500,
+    "intervals": 20000,
+    "raw_bytes": 16777216,
+    "download_bytes": 134217728,
+    "array_bytes": 201326592,
+    "report_bytes": 16777216,
+    "profile_points": 4000,
+    "source_concurrency": 3,
+    "source_timeout_seconds": 55,
+    "source_deadline_seconds": 120,
+    "qualified_cell_days": 200000
+  },
+  "source": {
+    "id": "noaa_psl_daily_oisst",
+    "provider": "NOAA PSL / NCEI",
+    "product": "NOAA high-resolution daily OISST archive",
+    "documentation": "https://psl.noaa.gov/data/gridded/data.noaa.oisst.v2.highres.html",
+    "endpoint": "https://www.psl.noaa.gov/thredds/ncss/grid/Datasets/noaa.oisst.v2.highres/",
+    "attribution": "Daily OISST data provided by NOAA PSL, Boulder, Colorado, USA; blended satellite/in-situ analysis, not independent Argo validation. Archive and acquisition hashes are pinned."
+  },
+  "methodology": "https://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf",
+  "reference_implementation": "https://github.com/ecjoliver/marineHeatWaves",
+  "release_approved": false,
+  "limitations": [
+    "Detector thresholds and regional/profile support rules are versioned prototype choices, not scientific or operational approval.",
+    "Missing days remain unknown and cannot join events. Window boundaries disclose censoring; historical evidence is not live monitoring.",
+    "Sparse profiles form point-support diagnostics only, never a dense SST heatwave polygon.",
+    "Connected components can split or merge; retained runs preserve exact source, baseline, policy and calculation identities.",
+    "Independent expert-event, quiet-period false-alert, source cadence, coastal and production audits remain unproven."
+  ]
+}

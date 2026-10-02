@@ -21,6 +21,8 @@ export default function Home() {
         <Link href="/uncertainty">Inspect predictive interval evidence →</Link>
         <br />
         <Link href="/fields">Explore surface fields and forecast timelines →</Link>
+        <br />
+        <Link href="/events">Inspect regional events and isolated profile evidence →</Link>
       </p>
     </main>
   );

@@ -32,6 +32,7 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `15-Phase-6-Delivery.md` | Predictive quantile/CQR intervals, calibration support and fixed-reference coverage evidence |
 | `16-Phase-7-Delivery.md` | Complete-case residual magnitude, correlated distance, weighted PCA and historical ranks |
 | `17-Phase-8-Delivery.md` | Real SST/wave/weather/current adapters, immutable Zarr releases, field sampling and raster explorer |
+| `18-Phase-9-Delivery.md` | Fixed daily SST baseline, persistent regional candidates and separate sparse profile groups |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

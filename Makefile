@@ -202,3 +202,37 @@ field-maintain:
 field-replay:
 	@test -n '$(FIELD_ID)' || (echo 'Set FIELD_ID to an immutable field release'; exit 1)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline replay '$(FIELD_ID)'
+
+.PHONY: phase9-verify phase9-reliability phase9-smoke event-history event-baseline event-thermal event-profiles event-verify event-replay event-maintain event-dataset-verify event-dataset-replay
+phase9-verify:
+	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase9.py
+phase9-reliability:
+	.venv/bin/python scripts/verify_phase9_reliability.py
+phase9-smoke:
+	.venv/bin/python scripts/verify_phase9_smoke.py
+event-history:
+	@test -n '$(START)' -a -n '$(END)' || (echo 'Set explicit START and END UTC dates'; exit 1)
+	docker compose run --rm -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" event-worker python -m nautiq_ml.events.pipeline history --start '$(START)' --end '$(END)' $(if $(BBOX),--bbox $(BBOX)) $(if $(REFRESH),--refresh)
+event-baseline:
+	@test -n '$(DATASET_ID)' || (echo 'Set DATASET_ID to retained 1982-2011 daily history'; exit 1)
+	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline baseline '$(DATASET_ID)'
+event-thermal:
+	@test -n '$(BASELINE_ID)' -a -n '$(HISTORY_ID)' || (echo 'Set exact BASELINE_ID and HISTORY_ID'; exit 1)
+	docker compose run --rm -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" event-worker python -m nautiq_ml.events.pipeline thermal '$(BASELINE_ID)' '$(HISTORY_ID)'
+event-profiles:
+	@test -n '$(ANOMALY_ID)' -a -n '$(START)' -a -n '$(END)' || (echo 'Set exact selected ANOMALY_ID and UTC START/END'; exit 1)
+	docker compose run --rm -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" event-worker python -m nautiq_ml.events.pipeline profiles '$(ANOMALY_ID)' --start '$(START)' --end '$(END)' $(if $(BBOX),--bbox $(BBOX))
+event-verify:
+	@test -n '$(RUN_ID)' || (echo 'Set RUN_ID'; exit 1)
+	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline verify '$(RUN_ID)'
+event-replay:
+	@test -n '$(RUN_ID)' || (echo 'Set RUN_ID'; exit 1)
+	docker compose run --rm -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" event-worker python -m nautiq_ml.events.pipeline replay '$(RUN_ID)'
+event-maintain:
+	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline maintain
+event-dataset-verify:
+	@test -n '$(DATASET_ID)' || (echo 'Set DATASET_ID'; exit 1)
+	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline verify-dataset '$(DATASET_ID)'
+event-dataset-replay:
+	@test -n '$(DATASET_ID)' || (echo 'Set DATASET_ID'; exit 1)
+	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline replay-dataset '$(DATASET_ID)'
