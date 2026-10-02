@@ -18,7 +18,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
-	pb "nautiuq.local/api/gen/nautiuq/platform/v1"
+	pb "nautiq.local/api/gen/nautiq/platform/v1"
 )
 
 type Server struct {
@@ -33,6 +33,11 @@ func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/uncertainty-releases", s.bound(s.uncertaintyReleases))
+	mux.Handle("GET /api/v1/uncertainty-releases/selected", s.bound(s.selectedUncertainty))
+	mux.Handle("GET /api/v1/uncertainty-releases/{id}", s.bound(s.uncertaintyRelease))
+	mux.Handle("GET /api/v1/uncertainty-releases/{id}/coverage", s.bound(s.intervalCoverage))
+	mux.Handle("GET /api/v1/profiles/{id}/uncertainty", s.bound(s.profileUncertainty))
 	mux.Handle("GET /api/v1/expected-state-releases", s.bound(s.expectedReleases))
 	mux.Handle("GET /api/v1/expected-state-releases/selected", s.bound(s.selectedExpected))
 	mux.Handle("GET /api/v1/expected-state-releases/{id}", s.bound(s.expectedRelease))
@@ -259,7 +264,7 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) {
 		problem(w, 503, "evidence_unavailable")
 		return
 	}
-	obj, err := s.Storage.GetObject(r.Context(), "nautiuq", key, minio.GetObjectOptions{})
+	obj, err := s.Storage.GetObject(r.Context(), "nautiq", key, minio.GetObjectOptions{})
 	if err != nil {
 		problem(w, 503, "snapshot_unavailable")
 		return

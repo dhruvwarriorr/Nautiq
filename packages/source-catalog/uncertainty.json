@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "method_version": "profile-mondrian-cqr-v1",
+  "feature_version": "ocean-reference-features-v1",
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "alpha": 0.2,
+  "seed": 42,
+  "leaves": [
+    7,
+    15
+  ],
+  "catboost_depths": [
+    3,
+    4
+  ],
+  "max_rounds": 80,
+  "early_stopping_rounds": 10,
+  "learning_rate": 0.05,
+  "min_samples_leaf": 20,
+  "l2_regularization": 1.0,
+  "min_train_profiles": 20,
+  "min_tune_profiles": 10,
+  "min_calibration_profiles": 20,
+  "min_test_profiles": 20,
+  "min_subgroup_profiles": 10,
+  "calibration_unit": "stable_profile_maximum_within_group",
+  "hierarchy": [
+    "region_depth",
+    "region",
+    "depth",
+    "global"
+  ],
+  "max_profiles": 2000,
+  "max_rows": 32000,
+  "spatial_folds": 2,
+  "platform_folds": 2,
+  "audit_cell_degrees": 5,
+  "spatial_buffer_degrees": 1,
+  "monitor_window_days": 90,
+  "monitor_max_profiles": 500,
+  "monitor_min_profiles": 20,
+  "monitor_suspect_score_multiplier": 3.0,
+  "coverage_gate": {
+    "reviewed_gate_id": null,
+    "untouched_test": false,
+    "exchangeability_approved": false,
+    "independence_audits_approved": false,
+    "source_and_coverage_approved": false,
+    "coverage_tolerance": 0.1,
+    "max_mean_width": {
+      "temperature_c": 10.0,
+      "practical_salinity": 2.0
+    }
+  },
+  "release_approved": false,
+  "family_pinball_tie_tolerance": 0.01,
+  "max_predict_p95_ms": 100
+}

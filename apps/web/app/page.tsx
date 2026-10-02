@@ -2,7 +2,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main>
-      <p className="eyebrow">NAUTIUQ / LOCAL DEVELOPMENT</p>
+      <p className="eyebrow">NAUTIQ / LOCAL DEVELOPMENT</p>
       <h1>
         Ocean intelligence,
         <br />
@@ -17,6 +17,8 @@ export default function Home() {
       </Link>
       <p className="footnote">
         <Link href="/data">Review source quality and frozen datasets →</Link>
+        <br />
+        <Link href="/uncertainty">Inspect predictive interval evidence →</Link>
       </p>
     </main>
   );

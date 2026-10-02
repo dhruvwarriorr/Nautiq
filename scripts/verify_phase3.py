@@ -8,10 +8,10 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from nautiuq_ml.argo.evidence import canonical
-from nautiuq_ml.argo.freshness import evaluate
-from nautiuq_ml.argo.parser import InvalidProfile, parse, revision_digest
-from nautiuq_ml.argo.snapshots import load_policy, split, training_rows, utc
+from nautiq_ml.argo.evidence import canonical
+from nautiq_ml.argo.freshness import evaluate
+from nautiq_ml.argo.parser import InvalidProfile, parse, revision_digest
+from nautiq_ml.argo.snapshots import load_policy, split, training_rows, utc
 from verify_argo_parser import fixture
 
 ROOT = Path(__file__).resolve().parents[1]

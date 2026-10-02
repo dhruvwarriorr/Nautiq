@@ -14,10 +14,10 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	pb "nautiuq.local/api/gen/nautiuq/platform/v1"
-	"nautiuq.local/api/internal/platform"
-	"nautiuq.local/api/internal/profiles"
-	"nautiuq.local/api/internal/science"
+	pb "nautiq.local/api/gen/nautiq/platform/v1"
+	"nautiq.local/api/internal/platform"
+	"nautiq.local/api/internal/profiles"
+	"nautiq.local/api/internal/science"
 )
 
 func main() {

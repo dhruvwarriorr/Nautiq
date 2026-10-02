@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Nautiuq historical climatology API",
+    "title": "Nautiq historical climatology API",
     "version": "1.0.0",
     "description": "Train-only local prototype. Expected values are conditional means; residual spread is uncalibrated natural variability. No scientific production approval."
   },
@@ -577,7 +577,10 @@
               "climatology_fit",
               "climatology_comparison",
               "expected_state_fit",
-              "expected_state_comparison"
+              "expected_state_comparison",
+              "uncertainty_fit",
+              "uncertainty_comparison",
+              "uncertainty_monitor"
             ]
           },
           "method_version": {

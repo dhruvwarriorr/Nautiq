@@ -217,7 +217,7 @@ func (a *App) fetch(ctx context.Context, uri string, headers map[string]string) 
 		case <-a.gate:
 		}
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, uri, nil)
-		req.Header.Set("User-Agent", "Nautiuq-Argo/0.1")
+		req.Header.Set("User-Agent", "Nautiq-Argo/0.1")
 		req.Header.Set("Accept-Encoding", "identity")
 		for k, v := range headers {
 			req.Header.Set(k, v)
@@ -279,7 +279,7 @@ func (a *App) object(ctx context.Context, objectKey string, data []byte, meta ma
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	digest := sha(data)
-	existing, err := a.s3.StatObject(ctx, "nautiuq", objectKey, minio.StatObjectOptions{})
+	existing, err := a.s3.StatObject(ctx, "nautiq", objectKey, minio.StatObjectOptions{})
 	if err == nil {
 		if existing.Size != int64(len(data)) || existing.Metadata.Get("X-Amz-Meta-Sha256") != digest {
 			return errors.New("immutable_object_conflict")
@@ -288,11 +288,11 @@ func (a *App) object(ctx context.Context, objectKey string, data []byte, meta ma
 		return err
 	} else {
 		meta["sha256"] = digest
-		if _, err = a.s3.PutObject(ctx, "nautiuq", objectKey, bytes.NewReader(data), int64(len(data)), minio.PutObjectOptions{ContentType: "application/octet-stream", UserMetadata: meta}); err != nil {
+		if _, err = a.s3.PutObject(ctx, "nautiq", objectKey, bytes.NewReader(data), int64(len(data)), minio.PutObjectOptions{ContentType: "application/octet-stream", UserMetadata: meta}); err != nil {
 			return err
 		}
 	}
-	obj, err := a.s3.GetObject(ctx, "nautiuq", objectKey, minio.GetObjectOptions{})
+	obj, err := a.s3.GetObject(ctx, "nautiq", objectKey, minio.GetObjectOptions{})
 	if err != nil {
 		return err
 	}
@@ -319,12 +319,12 @@ func (a *App) register(ctx context.Context, run string, c Candidate, kind string
 	receipt := map[string]any{"artifact_id": id, "source_id": a.cfg.SourceID, "source_path": c.Path, "source_url": uri, "sha256": digest, "object_key": objectKey, "source_updated_at": c.Updated, "run_id": run, "bytes": len(data), "received_at": time.Now().UTC(), "kind": kind, "etag": headers.Get("ETag"), "last_modified": headers.Get("Last-Modified")}
 	receiptBytes, _ := json.Marshal(receipt)
 	// Receipt is immutable too; retries reconstruct registration using these bytes.
-	if _, err := a.s3.StatObject(ctx, "nautiuq", "receipts/"+id+".json", minio.StatObjectOptions{}); err != nil {
+	if _, err := a.s3.StatObject(ctx, "nautiq", "receipts/"+id+".json", minio.StatObjectOptions{}); err != nil {
 		if err := a.object(ctx, "receipts/"+id+".json", receiptBytes, map[string]string{}); err != nil {
 			return "", err
 		}
 	} else {
-		obj, err := a.s3.GetObject(ctx, "nautiuq", "receipts/"+id+".json", minio.GetObjectOptions{})
+		obj, err := a.s3.GetObject(ctx, "nautiq", "receipts/"+id+".json", minio.GetObjectOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -449,7 +449,7 @@ func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
 		return err
 	}
 	if status == 304 {
-		obj, e := a.s3.GetObject(ctx, "nautiuq", cachedKey, minio.GetObjectOptions{})
+		obj, e := a.s3.GetObject(ctx, "nautiq", cachedKey, minio.GetObjectOptions{})
 		if e != nil {
 			return errors.New("index_cache_unavailable")
 		}

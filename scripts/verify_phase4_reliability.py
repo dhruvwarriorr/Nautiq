@@ -82,9 +82,9 @@ def verify():
     from psycopg import sql
     from psycopg.types.json import Jsonb
 
-    from nautiuq_ml.argo import evidence, snapshots, worker
-    from nautiuq_ml.argo.storage import read_object, store
-    from nautiuq_ml.climatology import pipeline as climate
+    from nautiq_ml.argo import evidence, snapshots, worker
+    from nautiq_ml.argo.storage import read_object, store
+    from nautiq_ml.climatology import pipeline as climate
 
     name = "climate_verify_" + uuid.uuid4().hex[:12]
     original = os.environ["DATABASE_URL"]
@@ -114,7 +114,7 @@ def verify():
         artifact, run = str(uuid.uuid4()), str(uuid.uuid4())
         sha = hashlib.sha256(data).hexdigest()
         key = f"verification/{name}/{index}.nc"
-        s3.put_object("nautiuq", key, io.BytesIO(data), len(data))
+        s3.put_object("nautiq", key, io.BytesIO(data), len(data))
         query(
             "INSERT INTO ingestion_runs(run_id,source_id,run_kind,status) VALUES(%s,'argo_gdac','backfill','complete')",
             (run,),
@@ -209,7 +209,7 @@ def verify():
             == first["release_id"]
         )
         data = read_object(s3, first["bundle_key"], first["bundle_sha256"])
-        s3.put_object("nautiuq", first["bundle_key"], io.BytesIO(b"corrupt"), 7)
+        s3.put_object("nautiq", first["bundle_key"], io.BytesIO(b"corrupt"), 7)
         try:
             climate.select(first["release_id"], s3)
         except ValueError:
@@ -217,7 +217,7 @@ def verify():
         else:
             raise AssertionError("Corrupt reference selected")
         s3.put_object(
-            "nautiuq",
+            "nautiq",
             first["bundle_key"],
             io.BytesIO(data),
             len(data),
@@ -344,7 +344,7 @@ def verify():
             (jid,),
         )[0]
         lake_data = read_object(s3, lake_key, lake_sha)
-        s3.put_object("nautiuq", lake_key, io.BytesIO(b"corrupt"), 7)
+        s3.put_object("nautiq", lake_key, io.BytesIO(b"corrupt"), 7)
         query(
             "UPDATE climatology_jobs SET status='pending',lease_until=NULL WHERE job_id=%s",
             (jid,),
@@ -360,7 +360,7 @@ def verify():
             == "pending"
         )
         s3.put_object(
-            "nautiuq",
+            "nautiq",
             lake_key,
             io.BytesIO(lake_data),
             len(lake_data),
@@ -412,7 +412,7 @@ def verify():
         for path in paths:
             path.unlink(missing_ok=True)
         for key in keys:
-            s3.remove_object("nautiuq", key)
+            s3.remove_object("nautiq", key)
         os.environ["DATABASE_URL"] = original
         admin.execute(
             sql.SQL("DROP DATABASE {} WITH (FORCE)").format(sql.Identifier(name))

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Climatology from "./Climatology";
 import ExpectedState from "./ExpectedState";
+import Uncertainty from "./Uncertainty";
+import type { IntervalProfile } from "../../../lib/uncertainty";
 import type { ExpectedProfile } from "../../../lib/expected";
 import type { ProfileClimatology } from "../../../lib/climatology";
 import { notFound } from "next/navigation";
@@ -121,6 +123,7 @@ export default async function Detail({
   const expectedRequest = evidence<ExpectedProfile>(
     `/profiles/${encodeURIComponent(id)}/expected-state`,
   );
+  const uncertaintyRequest = evidence<IntervalProfile>(`/profiles/${encodeURIComponent(id)}/uncertainty`);
   let profile: Profile | null = null;
   let absent = false;
   try {
@@ -140,11 +143,12 @@ export default async function Detail({
         <p>The observation service is unavailable. Refresh to retry.</p>
       </main>
     );
-  const [history, stats, climatology, expected] = await Promise.all([
+  const [history, stats, climatology, expected, uncertainty] = await Promise.all([
     revisionRequest,
     statsRequest,
     climatologyRequest,
     expectedRequest,
+    uncertaintyRequest,
   ]);
   const p = profile,
     pr = p.provenance;
@@ -254,6 +258,7 @@ export default async function Detail({
       </section>
       <Climatology value={climatology} revision={p.revision_sha256} />
       <ExpectedState value={expected} revision={p.revision_sha256} />
+      <Uncertainty value={uncertainty} revision={p.revision_sha256} />
       <section>
         <h2>Descriptive profile summary</h2>
         {stats?.status === "ready" &&

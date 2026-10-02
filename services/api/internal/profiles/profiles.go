@@ -337,7 +337,7 @@ func (s *Server) raw(w http.ResponseWriter, r *http.Request) {
 		problem(w, 503, "observations_unavailable")
 		return
 	}
-	obj, err := s.Storage.GetObject(r.Context(), "nautiuq", key, minio.GetObjectOptions{})
+	obj, err := s.Storage.GetObject(r.Context(), "nautiq", key, minio.GetObjectOptions{})
 	if err != nil {
 		problem(w, 503, "raw_artifact_unavailable")
 		return

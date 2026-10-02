@@ -25,7 +25,7 @@ import psycopg
 from psycopg import sql
 from psycopg.types.json import Jsonb
 from urllib.parse import urlsplit,urlunsplit
-from nautiuq_ml.argo.worker import process,store,repair,repair_lake,read_object,decode_envelope,InvalidProfile
+from nautiq_ml.argo.worker import process,store,repair,repair_lake,read_object,decode_envelope,InvalidProfile
 name="argo_verify_"+uuid.uuid4().hex[:12]
 original=os.environ["DATABASE_URL"]
 s3=store()
@@ -41,7 +41,7 @@ try:
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:db.execute("INSERT INTO ingestion_runs(run_id,source_id) VALUES(%s,'argo_gdac')",(run,))
  def register(data,ordinal):
   sha=hashlib.sha256(data).hexdigest();artifact=str(uuid.uuid4());event=str(uuid.uuid4());key=prefix+str(ordinal)+".nc"
-  s3.put_object("nautiuq",key,io.BytesIO(data),len(data))
+  s3.put_object("nautiq",key,io.BytesIO(data),len(data))
   with psycopg.connect(os.environ["DATABASE_URL"]) as db:
    db.execute("INSERT INTO raw_artifacts(artifact_id,source_id,source_path,source_url,source_updated_at,sha256,object_key,size_bytes,kind,run_id) VALUES(%s,'argo_gdac',%s,%s,now(),%s,%s,%s,'profile',%s)",(artifact,"aoml/2902768/profiles/R2902768_001.nc","https://data-argo.ifremer.fr/dac/aoml/2902768/profiles/R2902768_001.nc",sha,key,len(data),run))
   return json.dumps({"event_id":event,"event_type":"raw.received","schema_version":1,"aggregate_key":artifact,"revision_sha256":sha,"payload":{"artifact_id":artifact},"created_at":datetime.now(timezone.utc).isoformat()}).encode()
@@ -88,18 +88,18 @@ try:
  # Missing lake files are reproducibly reconstructed; corrupt immutable files are withheld.
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
   revision,key,sha=db.execute("SELECT revision_sha256,parquet_key,parquet_sha256 FROM profile_revisions ORDER BY revision_id LIMIT 1").fetchone()
- s3.remove_object("nautiuq","lake/manifests/"+revision+".json")
+ s3.remove_object("nautiq","lake/manifests/"+revision+".json")
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:repair_lake(db,s3)
- s3.stat_object("nautiuq","lake/manifests/"+revision+".json")
- s3.remove_object("nautiuq",key)
+ s3.stat_object("nautiq","lake/manifests/"+revision+".json")
+ s3.remove_object("nautiq",key)
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:repair_lake(db,s3)
  read_object(s3,key,sha)
- s3.put_object("nautiuq",key,io.BytesIO(b"corrupt"),7,metadata={"sha256":sha})
+ s3.put_object("nautiq",key,io.BytesIO(b"corrupt"),7,metadata={"sha256":sha})
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
   repair_lake(db,s3)
   assert db.execute("SELECT science_ready FROM profile_revisions WHERE revision_sha256=%s",(revision,)).fetchone()[0] is False
- assert s3.stat_object("nautiuq",key).size==7,"Corruption was silently overwritten"
- s3.remove_object("nautiuq",key)
+ assert s3.stat_object("nautiq",key).size==7,"Corruption was silently overwritten"
+ s3.remove_object("nautiq",key)
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
   repair_lake(db,s3)
   assert db.execute("SELECT science_ready FROM profile_revisions WHERE revision_sha256=%s",(revision,)).fetchone()[0] is True
@@ -107,7 +107,7 @@ try:
  orphan=base64.b64decode(RAW);osha=hashlib.sha256(orphan).hexdigest()
  source_path="aoml/2902768/profiles/R2902768_099.nc"
  oid=str(uuid.uuid5(uuid.NAMESPACE_URL,"argo_gdac|"+source_path+"|"+osha))
- s3.put_object("nautiuq",prefix+"orphan.nc",io.BytesIO(orphan),len(orphan),metadata={"sha256":osha,"source_path":source_path,"source_updated_at":"2026-09-30T00:00:00Z"})
+ s3.put_object("nautiq",prefix+"orphan.nc",io.BytesIO(orphan),len(orphan),metadata={"sha256":osha,"source_path":source_path,"source_updated_at":"2026-09-30T00:00:00Z"})
  repair(raw_prefix=prefix)
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
   assert db.execute("SELECT count(*) FROM raw_artifacts WHERE artifact_id=%s",(oid,)).fetchone()[0]==1
@@ -120,10 +120,10 @@ finally:
  # Remove only the objects produced by this isolated verification database.
  with psycopg.connect(os.environ["DATABASE_URL"]) as db:
   for key, in db.execute("SELECT manifest_key FROM calculations").fetchall():
-   s3.remove_object("nautiuq",key)
+   s3.remove_object("nautiq",key)
   for revision,key in db.execute("SELECT revision_sha256,parquet_key FROM profile_revisions").fetchall():
-   s3.remove_object("nautiuq",key);s3.remove_object("nautiuq","lake/manifests/"+revision+".json")
- for obj in s3.list_objects("nautiuq",prefix=prefix,recursive=True):s3.remove_object("nautiuq",obj.object_name)
+   s3.remove_object("nautiq",key);s3.remove_object("nautiq","lake/manifests/"+revision+".json")
+ for obj in s3.list_objects("nautiq",prefix=prefix,recursive=True):s3.remove_object("nautiq",obj.object_name)
  admin.execute(sql.SQL("DROP DATABASE {} WITH (FORCE)").format(sql.Identifier(name)))
  admin.close()
 """

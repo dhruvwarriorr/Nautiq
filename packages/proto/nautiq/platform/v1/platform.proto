@@ -1,0 +1,115 @@
+syntax = "proto3";
+package nautiq.platform.v1;
+option go_package = "nautiq.local/api/gen/nautiq/platform/v1;platformv1";
+// Runtime readiness remains independent of explicitly loaded scientific releases.
+service PlatformService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+message CheckRequest {}
+message CheckResponse {
+  string service = 1;
+  string version = 2;
+  bool ready = 3;
+  // Runtime responsiveness and loaded scientific capabilities are independent.
+  map<string, bool> capabilities = 4;
+  string expected_release_id = 5;
+  string expected_bundle_sha256 = 6;
+  string uncertainty_release_id = 7;
+  string uncertainty_bundle_sha256 = 8;
+}
+
+// A request is bound to an explicit immutable release, never a registry alias.
+service ExpectedStateService {
+  rpc Infer(ExpectedStateRequest) returns (ExpectedStateResponse);
+}
+message ReferencePoint {
+  double latitude = 1;
+  double longitude = 2;
+  double depth_m = 3;
+  string observed_at = 4;
+}
+message ExpectedStateRequest {
+  string release_id = 1;
+  repeated ReferencePoint points = 2;
+  bool explain = 3;
+}
+message FeatureContribution {
+  string feature = 1;
+  double contribution = 2;
+}
+message ExpectedPrediction {
+  optional double climatology_mean = 1;
+  optional double candidate_mean = 2;
+  optional double candidate_residual = 3;
+  optional double expected_mean = 4;
+  optional double ml_residual = 5;
+  string active_method = 6;
+  string reason = 7;
+  string candidate_reason = 8;
+  repeated string promotion_reasons = 9;
+  repeated FeatureContribution feature_contributions = 10;
+  optional double contribution_bias = 11;
+  bytes baseline_support_json = 12;
+}
+message DepthPrediction {
+  double depth_m = 1;
+  ExpectedPrediction temperature_c = 2;
+  ExpectedPrediction practical_salinity = 3;
+}
+message ExpectedStateResponse {
+  string release_id = 1;
+  string bundle_sha256 = 2;
+  string method_version = 3;
+  string feature_version = 4;
+  string estimand = 5;
+  repeated DepthPrediction rows = 6;
+  bool release_approved = 7;
+  string interval_status = 8;
+  string explanation_interpretation = 9;
+}
+
+service UncertaintyService {
+  rpc Infer(UncertaintyRequest) returns (UncertaintyResponse);
+}
+message UncertaintyRequest {
+  string release_id = 1;
+  repeated ReferencePoint points = 2;
+}
+message IntervalPrediction {
+  optional double expected_mean = 1;
+  optional double q10 = 2;
+  optional double q50 = 3;
+  optional double q90 = 4;
+  optional double lower = 5;
+  optional double upper = 6;
+  optional double correction = 7;
+  string status = 8;
+  string reason = 9;
+  string family = 10;
+  string calibration_group = 11;
+  string requested_group = 12;
+  int32 calibration_profiles = 13;
+  int32 calibration_rank = 14;
+  bool fallback = 15;
+  repeated string fallback_reasons = 16;
+  bool quantile_crossing = 17;
+  bool coverage_qualified = 18;
+}
+message IntervalDepth {
+  double depth_m = 1;
+  IntervalPrediction temperature_c = 2;
+  IntervalPrediction practical_salinity = 3;
+}
+message UncertaintyResponse {
+  string release_id = 1;
+  string bundle_sha256 = 2;
+  string expected_id = 3;
+  string reference_id = 4;
+  string method_version = 5;
+  string feature_version = 6;
+  double nominal_coverage = 7;
+  string coverage_unit = 8;
+  string interval_interpretation = 9;
+  bool release_approved = 10;
+  repeated IntervalDepth rows = 11;
+}

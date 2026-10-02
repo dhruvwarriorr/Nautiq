@@ -10,9 +10,10 @@ export default async function Models() {
   return (
     <main className="explorer">
       <nav>
-        <Link href="/">Nautiuq</Link>
+        <Link href="/">Nautiq</Link>
         <Link href="/profiles">Argo profiles</Link>
         <Link href="/climatology">Historical normal</Link>
+        <Link href="/uncertainty">Predictive intervals</Link>
         <Link href="/data">Data quality</Link>
       </nav>
       <p className="eyebrow">EXPECTED STATE / FROZEN MODEL COMPARISONS</p>
@@ -25,7 +26,7 @@ export default async function Models() {
       <p className="notice">
         Local prototype. Candidate performance does not establish scientific
         release approval. Unqualified candidates retain climatology as the
-        serving mean; calibrated intervals and anomaly verdicts are unavailable.
+        serving mean; interval coverage remains diagnostic and anomaly verdicts are unavailable.
       </p>
       {selected ? (
         <p>

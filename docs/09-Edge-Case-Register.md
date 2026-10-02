@@ -141,3 +141,7 @@ These checks establish local implementation/recovery. Spatial/platform independe
 | Model explanations mistaken for causal oceanography or uncertainty | Native TreeSHAP additive residual explanations are labelled model behavior; no calibrated interval, anomaly or scientific production claim |
 
 `verify_phase5.py`, `verify_phase5_reliability.py` and `verify_phase5_smoke.py` own these gates. Local acceptance and real measurements are recorded in `14-Phase-5-Delivery.md`; no production deployment, visual browser acceptance or scientific release approval is implied.
+
+## Implemented predictive interval evidence
+
+The diagnostic quantile/CQR workflow, exact parent pins, profile aggregation unit, hierarchical fallback, revision/selection/lease checks and fixed-reference coverage monitor are delivered in [the uncertainty implementation report](15-Phase-6-Delivery.md). Its current measurements are in [the evidence snapshot](evidence/phase6-summary.json). `predictive_intervals` records supported implementation availability; `calibrated_uncertainty` requires empirical coverage and independent review gates. The already inspected historical test cannot establish untouched-test approval. Mean and median remain separate; no automatic recalibration or anomaly verdict is introduced.

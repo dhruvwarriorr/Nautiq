@@ -7,7 +7,7 @@ from pathlib import Path
 import netCDF4
 import numpy as np
 
-from nautiuq_ml.argo.parser import InvalidProfile, parse, revision_digest
+from nautiq_ml.argo.parser import InvalidProfile, parse, revision_digest
 
 
 def fixture(

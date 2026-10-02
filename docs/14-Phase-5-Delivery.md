@@ -6,7 +6,7 @@ Implemented locally on 2026-10-02. The complete path now builds LightGBM residua
 
 | Blueprint deliverable | Implementation and verification |
 | --- | --- |
-| Shared features | `ml/nautiuq_ml/expected_state/features.py`: one feature builder used by training and inference; fixed names/version and domain/finite/depth checks |
+| Shared features | `ml/nautiq_ml/expected_state/features.py`: one feature builder used by training and inference; fixed names/version and domain/finite/depth checks |
 | Grouped spatial/temporal splits | Stable profile/depth/revision consistency checks; frozen 2005–2016 train, 2017–2019 tune, 2020–2021 calibration, 2022–2024 test; deterministic platform and spatial complement audits |
 | LightGBM residual training | `model.py`: train-only labels and reference, profile weights, two predeclared leaf counts, tuning-only early stopping and selection, deterministic single-thread native trees |
 | HGBR comparison | Same features, train rows, weights, reference and evaluation rows; tuning selection across the same leaf counts; no executable pickle artifacts |
@@ -34,7 +34,7 @@ make phase5-smoke
 Build/select commands require explicit IDs. Fresh installations create their own verified historical snapshot/reference first; these IDs refer to retained local data. An unset `ML_RELEASE_ID` leaves scientific inference unavailable while observations remain available. No latest-version lookup, registry alias or automatic promotion chooses the serving artifact. A selection/runtime mismatch returns a structured failure and defers workers until the exact pinned runtime is restarted.
 
 - Model inventory: http://localhost:3000/models
-- Selected release: http://localhost:3000/models/dad71501-e9bd-57c7-9f40-cc72335b921c
+- Selected release: http://localhost:3000/models/6652e49f-b1a4-578c-a929-7eb5bb05db6a
 - Real profile: http://localhost:3000/profiles/e3e31b44-3347-54e0-be97-0686e0447bcc
 - MLflow: http://localhost:5001 (loopback; `MLFLOW_PORT` is configurable)
 
@@ -52,19 +52,21 @@ Two spatial folds use stable 5° cells and remove a 1° latitude/longitude buffe
 
 ## Measured real-data release
 
+The Nautiq namespace correction rebuilt the expected parent under a new code fingerprint. The earlier release remains immutable; the pins below describe the active renamed parent used by the predictive interval release.
+
 The frozen source snapshot contains 196 delayed-mode historical profiles and 61,281 original levels, with 47/49/50/50 profiles in train/tune/calibration/test. The shared standard grid contains 2,940 rows. The reference remains `dd46a816-fa5b-5d4f-a296-9c2025d10c61`; original levels and its artifact hashes are unchanged.
 
 | Pin | Value |
 | --- | --- |
-| Model release | `dad71501-e9bd-57c7-9f40-cc72335b921c` |
+| Model release | `6652e49f-b1a4-578c-a929-7eb5bb05db6a` |
 | Fit calculation | `50f58c0d-d850-593b-8668-ca9163519418` |
-| Bundle SHA-256 | `868714edf5868157f665fecbd5aa371c8b0854e26e1b357a365c153b21c972af` |
-| Report SHA-256 | `8ff356341c6e49d603a7e89c76bf295f6994111299fe3966b993806391b5b0df` |
-| Implementation fingerprint | `092290176ccc5e4b6b5af6b2ed5637fbf749b09816f45e786b2dd3bf5366692d` |
-| MLflow registry | `nautiuq-expected-mean`, exact version `3` |
-| MLflow run | `7832c1a47bf54e3eb6e5e2035bba0252` |
+| Bundle SHA-256 | `80d90921ad2e0b626538b27d6d6e5b6129b0053ea247d569640578bb239ac0f9` |
+| Report SHA-256 | `375ec6528b9e01d4b8f2e90e04bb31590423c0b0c1716daf955b46efcb649a39` |
+| Implementation fingerprint | `ffcdf9b399fea5759e257723c0540fa51ae02df92226bbc97eba11cf055980a1` |
+| MLflow registry | `nautiq-expected-mean`, exact version `1` |
+| MLflow run | `466000ec092a4d5b82132d7792d4243b` |
 
-The recorded Git base is `047b10c9e079c484b0e569d9d331e0983254cfec`; the pending implementation is identified by its code fingerprint. Two complete builds produced identical release IDs, checksums and registry/run metadata. The live gate also downloaded the MLflow bundle and matched its bytes to the S3 bundle checksum.
+The recorded Git base is `cd5434c59e275ac29f2c6acc0687f741777788af`; the pending implementation is identified by its code fingerprint. Two complete builds produced identical release IDs, checksums and registry/run metadata. The live gate also downloaded the MLflow bundle and matched its bytes to the S3 bundle checksum.
 
 Diagnostic 2022–2024 test results on common supported rows:
 
@@ -85,9 +87,9 @@ Spatial fold 0 has 102 complement profiles, 61 held profiles, and 167 temperatur
 
 ## Profile evidence and failure behavior
 
-All 474 current ready profiles have completed comparison jobs: 292 partial supported comparisons, 182 unavailable comparisons and 7,023 supported variable/depth pairs. Unavailable values keep original observations independently readable. Candidate coverage uses the actual variable-specific ML training envelope and physical output limits in addition to the historical reference's support rules.
+At the refreshed evidence capture, all 525 current ready profiles have completed comparison jobs: 329 partial supported comparisons, 196 unavailable comparisons and 7,884 supported observed variable/depth pairs. Unavailable values keep original observations independently readable. Candidate coverage uses the actual variable-specific ML training envelope and physical output limits in addition to the historical reference's support rules.
 
-At 10 m in profile `e3e31b44-3347-54e0-be97-0686e0447bcc`, observed temperature is 28.813244°C, climatology is 27.435743°C, and the diagnostic candidate is 27.759734°C (residual +0.323991°C). The serving difference remains +1.377501°C, labelled warmer. Salinity is 34.595194 observed, 36.432316 climatology and 36.555809 diagnostic candidate (residual +0.123493); its serving difference remains −1.837121, labelled fresher. Applied ML correction is zero because promotion failed. The pinned comparison calculation is `89fe5025-af12-5347-9d73-f24cbbc1dd5f`.
+At 10 m in profile `e3e31b44-3347-54e0-be97-0686e0447bcc`, observed temperature is 28.813244°C, climatology is 27.435743°C, and the diagnostic candidate is 27.759734°C (residual +0.323991°C). The serving difference remains +1.377501°C, labelled warmer. Salinity is 34.595194 observed, 36.432316 climatology and 36.555809 diagnostic candidate (residual +0.123493); its serving difference remains −1.837121, labelled fresher. Applied ML correction is zero because promotion failed. The pinned comparison calculation is `c2c77faf-bb66-5abc-b581-c9ddcd960d01`.
 
 Native TreeSHAP contributions plus model bias sum to the candidate residual. The UI shows the three largest contributions and explicitly explains that all eight plus bias reconstruct it. Explanations describe model behavior, not oceanographic causation. No anomaly verdict or calibrated confidence is inferred from signed differences.
 
@@ -101,6 +103,6 @@ Bounds: 2,000 profiles / 32,000 grid rows per fit, 32 MiB per model/report artif
 
 Passed locally: lint/vet/TypeScript/Compose validation; production Go/Next.js builds; Go race tests, 21 Python and three frontend tests retained locally; fresh/legacy/checksum/rollback migration checks; regenerated Go/Python protobuf files reproduced byte for byte; offline and disposable reliability gates for the observation, reproducibility, climatology and residual-model slices; live API/raw/Parquet/reference/model gates and platform smoke. Residual-model checks cover leakage, deterministic fits, shared features, registry idempotence, bundle corruption, publication rollback, real typed gRPC validation, fallback/additivity, revision/model/reference publication races, expired/stolen leases and runtime deferral. The live gate validates the new OpenAPI schemas, exact MLflow artifact bytes, matching profile calculations, arithmetic, bounds and HTTP-rendered model/profile pages. This is rendered-HTML verification; interactive visual/browser acceptance and production deployment were not performed.
 
-`expected_state` is true only when the exact selected model/checksum is loaded, matches the selected historical reference and has supported current comparison evidence. `ml_residual` remains false because promotion failed. Observations/climatology remain true; anomaly, field, advisory and trip capabilities remain false. No calibrated intervals, coastal topological support, representative source coverage, licensing/cadence approval or scientific production acceptance is established. Compact dated measurements are in `docs/evidence/phase5-summary.json`.
+`expected_state` is true only when the exact selected model/checksum is loaded, matches the selected historical reference and has supported current comparison evidence. `ml_residual` remains false because promotion failed. Observations/climatology remain true; anomaly, field, advisory and trip capabilities remain false. This expected-mean endpoint does not supply intervals. The separately pinned diagnostic interval workflow is documented in [the uncertainty delivery](15-Phase-6-Delivery.md); qualified coverage, coastal topological support, representative source coverage, licensing/cadence approval and scientific production acceptance remain unestablished. Compact dated measurements are in `docs/evidence/phase5-summary.json`.
 
 Native prediction/contribution behavior follows the [LightGBM Booster API](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.Booster.html); local tracking and registry design follow the [MLflow tracking architecture](https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/) and [registry workflow](https://www.mlflow.org/docs/latest/ml/model-registry/workflow/).

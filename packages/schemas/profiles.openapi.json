@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Nautiuq Argo observation slice",
+    "title": "Nautiq Argo observation slice",
     "version": "1.0.0",
     "description": "Bounded canonical profile API with immutable raw provenance and calculation evidence."
   },

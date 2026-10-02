@@ -5,9 +5,9 @@ import json
 import math
 from pathlib import Path
 
-from nautiuq_ml.argo.evidence import canonical
-from nautiuq_ml.climatology.grid import phase, sample, standardize
-from nautiuq_ml.climatology.model import compare, evaluate, fit, load_policy, predict
+from nautiq_ml.argo.evidence import canonical
+from nautiq_ml.climatology.grid import phase, sample, standardize
+from nautiq_ml.climatology.model import compare, evaluate, fit, load_policy, predict
 
 ROOT = Path(__file__).resolve().parents[1]
 

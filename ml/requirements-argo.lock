@@ -13,29 +13,29 @@ cffi==2.1.1
 cftime==1.6.6
     # via netcdf4
 grpcio==1.78.0
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 gsw==3.6.23
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 minio==7.2.20
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 nats-py==2.16.0
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 netcdf4==1.7.4
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 numpy==2.5.3
     # via
-    #   nautiuq-ml (ml/pyproject.toml)
+    #   nautiq-ml (ml/pyproject.toml)
     #   cftime
     #   gsw
     #   netcdf4
 protobuf==6.33.5
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 psycopg==3.3.6
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 psycopg-binary==3.3.6
     # via psycopg
 pyarrow==23.0.1
-    # via nautiuq-ml (ml/pyproject.toml)
+    # via nautiq-ml (ml/pyproject.toml)
 pycparser==3.0
     # via cffi
 pycryptodome==3.23.0

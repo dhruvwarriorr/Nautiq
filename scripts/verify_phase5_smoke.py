@@ -94,7 +94,7 @@ def main():
         )
     )
     tracking = model["tracking"]
-    assert tracking and tracking["registered_model"] == "nautiuq-expected-mean"
+    assert tracking and tracking["registered_model"] == "nautiq-expected-mean"
     tracking_root = "http://127.0.0.1:" + os.environ.get("MLFLOW_PORT", "5001")
 
     def tracked(path):

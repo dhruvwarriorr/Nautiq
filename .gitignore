@@ -10,3 +10,11 @@ __pycache__/
 .ruff_cache/
 *.tsbuildinfo
 artifacts/
+
+# Test files and fixtures
+**/tests/
+**/*_test.go
+**/*_test.py
+**/test_*.py
+**/*.test.*
+**/*.spec.*

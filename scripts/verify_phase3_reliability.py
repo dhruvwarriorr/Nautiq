@@ -72,11 +72,11 @@ def verify():
     import pyarrow.parquet as pq
     from psycopg import sql
 
-    from nautiuq_ml.argo import evidence
-    from nautiuq_ml.argo.freshness import monitor
-    from nautiuq_ml.argo.snapshots import build, selection_database
-    from nautiuq_ml.argo.storage import read_object, store
-    from nautiuq_ml.argo.worker import process
+    from nautiq_ml.argo import evidence
+    from nautiq_ml.argo.freshness import monitor
+    from nautiq_ml.argo.snapshots import build, selection_database
+    from nautiq_ml.argo.storage import read_object, store
+    from nautiq_ml.argo.worker import process
 
     name = "science_verify_" + uuid.uuid4().hex[:12]
     original = os.environ["DATABASE_URL"]
@@ -96,7 +96,7 @@ def verify():
 
     s3.put_object = track
     # Worker and snapshots receive the same tracked client, including failed staging.
-    import nautiuq_ml.argo.worker as worker
+    import nautiq_ml.argo.worker as worker
 
     worker.store = lambda: s3
     prefix = "verification/" + name + "/"
@@ -110,7 +110,7 @@ def verify():
         sha = hashlib.sha256(data).hexdigest()
         artifact, event, run = (str(uuid.uuid4()) for _ in range(3))
         key = prefix + str(ordinal) + ".nc"
-        s3.put_object("nautiuq", key, io.BytesIO(data), len(data))
+        s3.put_object("nautiq", key, io.BytesIO(data), len(data))
         with psycopg.connect(os.environ["DATABASE_URL"]) as db:
             db.execute(
                 "INSERT INTO ingestion_runs(run_id,source_id,run_kind,status) VALUES(%s,'argo_gdac','backfill','complete')",
@@ -211,13 +211,13 @@ def verify():
         data = read_object(
             s3, frozen["parquet_key"], frozen["output"]["parquet_sha256"]
         )
-        from nautiuq_ml.argo import tools
-        from nautiuq_ml.argo.parser import InvalidProfile
+        from nautiq_ml.argo import tools
+        from nautiq_ml.argo.parser import InvalidProfile
 
         tools.store = lambda: s3
         assert tools.verify_snapshot(frozen["snapshot_id"])["verified"]
         s3.put_object(
-            "nautiuq",
+            "nautiq",
             frozen["parquet_key"],
             io.BytesIO(b"corrupt"),
             7,
@@ -236,7 +236,7 @@ def verify():
         else:
             raise AssertionError("Corrupt immutable snapshot was overwritten")
         s3.put_object(
-            "nautiuq",
+            "nautiq",
             frozen["parquet_key"],
             io.BytesIO(data),
             len(data),
@@ -467,7 +467,7 @@ def verify():
         policy_path.unlink()
     finally:
         for key in keys:
-            s3.remove_object("nautiuq", key)
+            s3.remove_object("nautiq", key)
         os.environ["DATABASE_URL"] = original
         admin.execute(
             sql.SQL("DROP DATABASE {} WITH (FORCE)").format(sql.Identifier(name))

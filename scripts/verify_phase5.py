@@ -7,25 +7,25 @@ from pathlib import Path
 import lightgbm as lgb
 import numpy as np
 
-from nautiuq_ml.argo.evidence import canonical
-from nautiuq_ml.climatology.grid import standardize
-from nautiuq_ml.climatology.model import (
+from nautiq_ml.argo.evidence import canonical
+from nautiq_ml.climatology.grid import standardize
+from nautiq_ml.climatology.model import (
     fit as fit_reference,
     load_policy as climate_policy,
 )
-from nautiuq_ml.expected_state.features import (
+from nautiq_ml.expected_state.features import (
     NAMES,
     audit_partitions,
     validate_profiles,
     vector,
 )
-from nautiuq_ml.expected_state.model import fit, infer, load_policy, promotion
+from nautiq_ml.expected_state.model import fit, infer, load_policy, promotion
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def fixture(p):
-    from nautiuq_ml.climatology.grid import phase
+    from nautiq_ml.climatology.grid import phase
 
     rows = []
     for i in range(96):

@@ -10,8 +10,9 @@ export default async function References() {
   return (
     <main className="explorer">
       <nav>
-        <Link href="/">Nautiuq</Link>
+        <Link href="/">Nautiq</Link>
         <Link href="/profiles">Argo profiles</Link>
+        <Link href="/uncertainty">Predictive intervals</Link>
         <Link href="/data">Data quality</Link>
         <Link href="/models">Expected-state models</Link>
       </nav>

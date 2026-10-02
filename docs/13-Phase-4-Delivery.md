@@ -1,6 +1,6 @@
 # Phase 4 delivery: historical climatology and profile comparisons
 
-Phase 4 is implemented locally. Nautiuq now compares an observed profile with a fixed historical seasonal conditional mean at that profile's own location, observation time and standard depths. It reports signed temperature and salinity differences, training support, explicit pooled fallbacks and missing coverage. Schema 5 preserves existing data and frozen snapshots. Selecting a local reference does **not** grant scientific production approval.
+Phase 4 is implemented locally. Nautiq now compares an observed profile with a fixed historical seasonal conditional mean at that profile's own location, observation time and standard depths. It reports signed temperature and salinity differences, training support, explicit pooled fallbacks and missing coverage. Schema 5 preserves existing data and frozen snapshots. Selecting a local reference does **not** grant scientific production approval.
 
 ## Run and review
 
@@ -33,7 +33,7 @@ Open [historical references](http://localhost:3000/climatology), [the verified r
 | Observed / expected / difference UI | Server-rendered profile overlays and tables show observed standard-depth value, expected mean, signed difference/direction, spread, support, fallback and calculation links. Reference pages expose fitting years, policy and held-out evidence. |
 | Durable evidence and recomputation | Content-addressed fit/grid/evaluation/manifest artifacts; frozen fit calculation and revision/reference-pinned comparison calculations. Atomic publication requires current revision, selected reference and an unexpired owned lease under the canonical selection lock. |
 
-Code: `ml/nautiuq_ml/climatology/{grid,model,pipeline}.py`, `packages/source-catalog/climatology.json`, `migrations/005_climatology.sql`, `services/api/internal/science/climatology.go`, and the reference/profile components under `apps/web/app`. The scientific runtime RPC still serves no ML model; climatology calculations run offline in the normalizer and the Go API serves their durable results.
+Code: `ml/nautiq_ml/climatology/{grid,model,pipeline}.py`, `packages/source-catalog/climatology.json`, `migrations/005_climatology.sql`, `services/api/internal/science/climatology.go`, and the reference/profile components under `apps/web/app`. The scientific runtime RPC still serves no ML model; climatology calculations run offline in the normalizer and the Go API serves their durable results.
 
 ## Fixed scientific policy
 

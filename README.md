@@ -1,6 +1,6 @@
-# Nautiuq
+# Nautiq
 
-Ocean and marine-condition intelligence. Start with the [document index](docs/01-Nautiuq-Project-Overview.md), [execution contracts](docs/08-Execution-Contracts.md) and [failure register](docs/09-Edge-Case-Register.md). Designs, delivered code and measured readiness are distinct.
+Ocean and marine-condition intelligence. Start with the [document index](docs/01-Nautiq-Project-Overview.md), [execution contracts](docs/08-Execution-Contracts.md) and [failure register](docs/09-Edge-Case-Register.md). Designs, delivered code and measured readiness are distinct.
 
 ## Phase 0: source and scientific feasibility
 
@@ -14,7 +14,7 @@ make phase0-gate     # Exit 2 while any readiness gate remains unproven
 
 The catalog pins a historical Argo pilot, NOAA OISST analysis, wave/wind forecast samples and NDMA RSS candidate. The tool preserves immutable raw bytes and receipts under ignored `artifacts/phase0/`, writes a QC-passed Parquet snapshot, and evaluates train-only harmonic climatology, HGBR/LightGBM residual candidates, predictive calibration and profile structure. Reports distinguish access from cadence/licenses/coverage/scientific release. A partial report is an expected truthful outcome, not a fabricated successful release.
 
-`make phase0` reuses verified cached bytes; it does not claim each rerun refreshes live forecasts. For a new acquisition use `.venv/bin/python -m nautiuq_ml.phase0.cli --output artifacts/phase0/new-run-name`. Replay an existing acquisition with `--output` and `--offline`; preserve `catalog.json`, raw objects and receipts. Hash/code/environment changes identify a new scientific snapshot. Full reports are local artifacts; a compact checked-in summary and limits are in [Phase 0 delivery](docs/10-Phase-0-Delivery.md).
+`make phase0` reuses verified cached bytes; it does not claim each rerun refreshes live forecasts. For a new acquisition use `.venv/bin/python -m nautiq_ml.phase0.cli --output artifacts/phase0/new-run-name`. Replay an existing acquisition with `--output` and `--offline`; preserve `catalog.json`, raw objects and receipts. Hash/code/environment changes identify a new scientific snapshot. Full reports are local artifacts; a compact checked-in summary and limits are in [Phase 0 delivery](docs/10-Phase-0-Delivery.md).
 
 ## Phase 1: local platform
 
@@ -119,7 +119,7 @@ make expected-maintain
 make phase5-smoke
 ```
 
-MLflow is available at http://localhost:5001, with persistent local SQLite metadata and proxied artifacts. `MLFLOW_PORT` changes its loopback port. Serving uses the exact `ML_RELEASE_ID` and verified native model bundle, never a latest registry version. An unset or mismatched runtime pin leaves inference unavailable while observations remain readable. `make expected-log MODEL_ID=...` retries experiment/registry logging without changing the scientific release. `expected_state` reports the implemented mean service; `ml_residual` remains false until a candidate qualifies. Static coastal features, calibrated intervals and anomaly verdicts are unavailable.
+MLflow is available at http://localhost:5001, with persistent local SQLite metadata and proxied artifacts. `MLFLOW_PORT` changes its loopback port. Serving uses the exact `ML_RELEASE_ID` and verified native model bundle, never a latest registry version. An unset or mismatched runtime pin leaves inference unavailable while observations remain readable. `make expected-log MODEL_ID=...` retries experiment/registry logging without changing the scientific release. `expected_state` reports the implemented mean service; `ml_residual` remains false until a candidate qualifies. Static coastal features and anomaly verdicts remain unavailable. Diagnostic predictive intervals have a separate release and coverage gate, described below.
 
 ## Local services
 
@@ -133,7 +133,7 @@ MLflow is available at http://localhost:5001, with persistent local SQLite metad
 | MLflow | Persistent experiment metrics, exact native bundles and registry versions |
 | Python field runtime | gRPC field-service boundary; no gridded data loaded yet |
 | PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
-| MinIO | Private `nautiuq` S3 bucket, initialized idempotently |
+| MinIO | Private `nautiq` S3 bucket, initialized idempotently |
 | Redis | Cache runtime |
 | NATS | JetStream enabled with persistent local storage |
 
@@ -149,4 +149,22 @@ The PostgreSQL entrypoint initializes a new volume with migration 001. `make up`
 
 Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Calibrated uncertainty, anomaly detection, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
 
-See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiuq-Implementation-Blueprint.md).
+See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiq-Implementation-Blueprint.md).
+
+### Predictive interval evidence
+
+Nautiq supports native LightGBM/CatBoost quantile comparisons, profile-based Mondrian CQR, explicit hierarchical calibration fallback, pinned typed inference and fixed-reference coverage monitoring. Inspect [delivery and validation](docs/15-Phase-6-Delivery.md), [measured evidence](docs/evidence/phase6-summary.json), the [API contract](packages/schemas/uncertainty.openapi.json), and `/uncertainty` in the local explorer. Mean and median are separate estimates. Diagnostic interval availability does not establish qualified coverage or scientific production approval.
+
+```sh
+make uncertainty-setup
+make phase6-verify phase6-reliability phase6-smoke
+make uncertainty-build MODEL_ID=<selected-expected-release-id>
+make uncertainty-verify INTERVAL_ID=<interval-release-id>
+make uncertainty-log INTERVAL_ID=<interval-release-id>
+make uncertainty-benchmark INTERVAL_ID=<interval-release-id>
+make uncertainty-select INTERVAL_ID=<interval-release-id>
+# Set exact UNCERTAINTY_RELEASE_ID and matching ML_RELEASE_ID in local .env, then restart inference.
+make uncertainty-maintain uncertainty-monitor
+```
+
+The Nautiq rename covers technical namespaces and fresh-stack defaults. Existing local data was preserved in renamed runtime resources; original resources remain backups. Immutable release bytes and historical registry receipts are retained.

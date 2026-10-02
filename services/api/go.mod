@@ -1,4 +1,4 @@
-module nautiuq.local/api
+module nautiq.local/api
 
 go 1.26.0
 

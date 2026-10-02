@@ -1,0 +1,3655 @@
+{
+  "bundle_key": "lake/uncertainty/f8655167-eecc-5132-8980-9487d1cf5852/bundle.json",
+  "bundle_sha256": "2f2487ec7d328675eebee3c8dbee1f1f3cabd8ffb1e0cd7fb8cf45689fa00bbb",
+  "calculation_id": "033daab9-ab43-5c6a-843d-44402c829108",
+  "calibration_period": {
+    "end_year": 2021,
+    "start_year": 2020
+  },
+  "capabilities": {
+    "calibrated_uncertainty": false,
+    "climatology": true,
+    "expected_state": true,
+    "field_sampling": false,
+    "ml_residual": false,
+    "observations": true,
+    "official_advisories": false,
+    "platform_runtime": true,
+    "predictive_intervals": true,
+    "profile_anomaly": false,
+    "trip_assessment": false
+  },
+  "code_sha256": "84eef2dfac442a603822fac219be5b931e4880799b503e0a9b16b2e7d6d065a8",
+  "coverage_monitor": {
+    "calculation_id": "c423fc0d-c8b5-5e64-902b-de9bfcf8463e",
+    "calibration_updated": false,
+    "checked_at": "2026-10-02T09:34:04.475022+00:00",
+    "release_approved": false,
+    "release_id": "f8655167-eecc-5132-8980-9487d1cf5852",
+    "report": {
+      "adaptation_policy": "Monitor all trusted outcomes, including misses and suspects. Suspects are excluded from any future adaptive candidate window; updates require a separate reviewed version. No automatic recalibration or retraining.",
+      "calibration_updated": false,
+      "candidate_profiles": 140,
+      "checked_at": "2026-10-02T09:34:04.475022+00:00",
+      "coverage_unit": "stable_profile_maximum_within_group",
+      "nominal_coverage": 0.8,
+      "pending_profiles": 0,
+      "release_approved": false,
+      "release_id": "f8655167-eecc-5132-8980-9487d1cf5852",
+      "schema_version": 1,
+      "skipped_untrusted_profiles": 140,
+      "trusted_profiles": 0,
+      "variables": {
+        "practical_salinity": {
+          "calibrated_rows": 0,
+          "crossing_rate": null,
+          "fallback_rows": 0,
+          "full_profile_coverage": null,
+          "groups": {
+            "region_depth:arabian:0": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            }
+          },
+          "mean_width": null,
+          "pinball_loss": null,
+          "profile_group_count": 0,
+          "profile_group_coverage": null,
+          "profile_group_coverage_95": null,
+          "profile_weighted_width": null,
+          "profiles": 0,
+          "quantile_pinball": null,
+          "raw_row_coverage": null,
+          "row_coverage": null,
+          "rows": 0,
+          "status": "insufficient_trusted_profiles",
+          "suspect_profile_ids": [],
+          "suspect_profiles_for_adaptation": 0,
+          "unavailable_rows": 0,
+          "unmodeled_label_rows": 0
+        },
+        "temperature_c": {
+          "calibrated_rows": 0,
+          "crossing_rate": null,
+          "fallback_rows": 0,
+          "full_profile_coverage": null,
+          "groups": {
+            "region_depth:arabian:0": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 0,
+              "crossing_rate": null,
+              "fallback_rows": 0,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": null,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 0,
+              "quantile_pinball": null,
+              "raw_row_coverage": null,
+              "row_coverage": null,
+              "rows": 0,
+              "unavailable_rows": 0
+            }
+          },
+          "mean_width": null,
+          "pinball_loss": null,
+          "profile_group_count": 0,
+          "profile_group_coverage": null,
+          "profile_group_coverage_95": null,
+          "profile_weighted_width": null,
+          "profiles": 0,
+          "quantile_pinball": null,
+          "raw_row_coverage": null,
+          "row_coverage": null,
+          "rows": 0,
+          "status": "insufficient_trusted_profiles",
+          "suspect_profile_ids": [],
+          "suspect_profiles_for_adaptation": 0,
+          "unavailable_rows": 0,
+          "unmodeled_label_rows": 0
+        }
+      },
+      "window_end": "2026-10-02T09:34:04.475022+00:00",
+      "window_start": "2026-07-04T09:34:04.475022+00:00"
+    },
+    "status": "monitored"
+  },
+  "coverage_unit": "stable_profile_maximum_within_group",
+  "environment": {
+    "catboost": "1.2.10",
+    "dependency_lock_sha256": "7a7c06437fcf570362a1f78cac2b890e9aa6b32e92b4fc386d710b8d41dc95d2",
+    "gsw": "3.6.23",
+    "lightgbm": "4.7.0",
+    "machine": "aarch64",
+    "netcdf4": "1.7.4",
+    "numpy": "2.5.3",
+    "platform": "linux",
+    "pyarrow": "23.0.1",
+    "python": "3.12.15",
+    "scikit_learn": "1.9.1",
+    "scipy": "1.18.1",
+    "uncertainty_dependency_lock_sha256": "b24c88024b0ef47cf741e3c65c628d1f9151110af74f0e5824b5f39e23427653"
+  },
+  "example": {
+    "calculation_id": "c0b58f8d-c4a3-517f-b857-9a2a4cb4b769",
+    "expected_id": "6652e49f-b1a4-578c-a929-7eb5bb05db6a",
+    "profile_id": "e3e31b44-3347-54e0-be97-0686e0447bcc",
+    "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+    "release_id": "f8655167-eecc-5132-8980-9487d1cf5852",
+    "revision_sha256": "f68b446935518db235ff21dcb77eb607a79c5b8758bf2ed8c7b5887f03c3c9ab",
+    "status": "partial"
+  },
+  "example_depth_10m": {
+    "depth_m": 10.0,
+    "practical_salinity": {
+      "calibration_group": "depth:0",
+      "calibration_profiles": 23,
+      "calibration_rank": 20,
+      "correction": 0.44698499329103925,
+      "coverage_qualified": false,
+      "covered": false,
+      "expected_mean": 36.432315612717915,
+      "fallback": true,
+      "fallback_reasons": [
+        "region_depth:arabian:0",
+        "region:arabian"
+      ],
+      "family": "lightgbm",
+      "lower": 35.845834727324,
+      "observed": 34.59519447571745,
+      "observed_method": "linear_interpolation",
+      "observed_reason": null,
+      "q10": 36.292819720615036,
+      "q50": 36.689223177825106,
+      "q90": 37.0375185594628,
+      "quantile_crossing": false,
+      "reason": null,
+      "requested_group": "region_depth:arabian:0",
+      "status": "diagnostic_calibrated",
+      "upper": 37.484503552753836,
+      "width": 1.6386688254298392
+    },
+    "temperature_c": {
+      "calibration_group": "depth:0",
+      "calibration_profiles": 35,
+      "calibration_rank": 29,
+      "correction": 1.965709336583707,
+      "coverage_qualified": false,
+      "covered": true,
+      "expected_mean": 27.43574349090323,
+      "fallback": true,
+      "fallback_reasons": [
+        "region_depth:arabian:0",
+        "region:arabian"
+      ],
+      "family": "lightgbm",
+      "lower": 24.415658402186835,
+      "observed": 28.813244137659026,
+      "observed_method": "linear_interpolation",
+      "observed_reason": null,
+      "q10": 26.381367738770543,
+      "q50": 27.7464985477245,
+      "q90": 29.3535204261284,
+      "quantile_crossing": false,
+      "reason": null,
+      "requested_group": "region_depth:arabian:0",
+      "status": "diagnostic_calibrated",
+      "upper": 31.31922976271211,
+      "width": 6.903571360525273
+    }
+  },
+  "expected_id": "6652e49f-b1a4-578c-a929-7eb5bb05db6a",
+  "expected_parent": {
+    "bundle_sha256": "80d90921ad2e0b626538b27d6d6e5b6129b0053ea247d569640578bb239ac0f9",
+    "calculation_id": "143e35a2-e0c7-5054-b80d-9ed35fb9670c",
+    "code_sha256": "ffcdf9b399fea5759e257723c0540fa51ae02df92226bbc97eba11cf055980a1",
+    "release_id": "6652e49f-b1a4-578c-a929-7eb5bb05db6a",
+    "tracking": {
+      "logged_at": "2026-10-02T09:22:38.66532+00:00",
+      "model_version": "1",
+      "registered_model": "nautiq-expected-mean",
+      "run_id": "466000ec092a4d5b82132d7792d4243b"
+    }
+  },
+  "feature_schema": {
+    "names": [
+      "latitude",
+      "longitude",
+      "depth_m",
+      "season_sin",
+      "season_cos",
+      "season_sin2",
+      "season_cos2",
+      "basin_id"
+    ],
+    "version": "ocean-reference-features-v1"
+  },
+  "fitting_period": {
+    "end_year": 2016,
+    "start_year": 2005
+  },
+  "frozen_snapshot": {
+    "original_levels": 61281,
+    "profiles": 196,
+    "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00",
+    "standard_grid_rows": 2940,
+    "temporal_profile_counts": {
+      "calibration": 50,
+      "test": 50,
+      "train": 47,
+      "tune": 49
+    }
+  },
+  "independence_audits": [
+    {
+      "complement_profiles": 102,
+      "fold": "spatial-0",
+      "held_profiles": 61,
+      "kind": "spatial",
+      "reference_fit_hash": "bf9a396c614e5e495ff114f3fb11eb85257f47a1e7f7b2ef5e943535b02037e9",
+      "variables": {
+        "practical_salinity": {
+          "families": {
+            "catboost": {
+              "calibrated_rows": 0,
+              "crossing_rate": 0.0,
+              "fallback_rows": 140,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": 0.11424995702250317,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.1017992872162374,
+                "0.5": 0.16329116751240963,
+                "0.9": 0.07765941633886247
+              },
+              "raw_row_coverage": 0.40714285714285714,
+              "row_coverage": null,
+              "rows": 140,
+              "unavailable_rows": 140
+            },
+            "lightgbm": {
+              "calibrated_rows": 0,
+              "crossing_rate": 0.0,
+              "fallback_rows": 140,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": 0.10716331990430956,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.08101382905726816,
+                "0.5": 0.15509703739588454,
+                "0.9": 0.08537909325977602
+              },
+              "raw_row_coverage": 0.39285714285714285,
+              "row_coverage": null,
+              "rows": 140,
+              "unavailable_rows": 140
+            }
+          },
+          "profile_counts": {
+            "calibration": 9,
+            "test": 14,
+            "train": 27,
+            "tune": 18
+          },
+          "status": "trained"
+        },
+        "temperature_c": {
+          "families": {
+            "catboost": {
+              "calibrated_rows": 0,
+              "crossing_rate": 0.0,
+              "fallback_rows": 167,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": 0.7389089065624437,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.37276597452853183,
+                "0.5": 0.9340993093168495,
+                "0.9": 0.9098614358419497
+              },
+              "raw_row_coverage": 0.20359281437125748,
+              "row_coverage": null,
+              "rows": 167,
+              "unavailable_rows": 167
+            },
+            "lightgbm": {
+              "calibrated_rows": 0,
+              "crossing_rate": 0.0,
+              "fallback_rows": 167,
+              "full_profile_coverage": null,
+              "mean_width": null,
+              "pinball_loss": 0.7587353001917583,
+              "profile_group_count": 0,
+              "profile_group_coverage": null,
+              "profile_group_coverage_95": null,
+              "profile_weighted_width": null,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.3722492168215392,
+                "0.5": 0.957913732935809,
+                "0.9": 0.9460429508179264
+              },
+              "raw_row_coverage": 0.3772455089820359,
+              "row_coverage": null,
+              "rows": 167,
+              "unavailable_rows": 167
+            }
+          },
+          "profile_counts": {
+            "calibration": 12,
+            "test": 14,
+            "train": 28,
+            "tune": 20
+          },
+          "status": "trained"
+        }
+      }
+    },
+    {
+      "complement_profiles": 41,
+      "fold": "spatial-1",
+      "held_profiles": 135,
+      "kind": "spatial",
+      "reference_fit_hash": "0e53966c535fb4f1bbd1aa9a04f0a6deca79a4375d85d2d8d942cb49617fdb42",
+      "variables": {
+        "practical_salinity": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    },
+    {
+      "complement_profiles": 98,
+      "fold": "platform-0",
+      "held_profiles": 98,
+      "kind": "platform",
+      "reference_fit_hash": "021330bb300a5b54cff7f6ee9dafcdf425d8c56d182d0578d5ccd9f42c32e157",
+      "variables": {
+        "practical_salinity": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 6,
+            "test": 10,
+            "train": 12,
+            "tune": 15
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    },
+    {
+      "complement_profiles": 98,
+      "fold": "platform-1",
+      "held_profiles": 98,
+      "kind": "platform",
+      "reference_fit_hash": "8da0444819a5d72c581c9da92cd250ef18560d4fbeaa53a8d123d562f70bae56",
+      "variables": {
+        "practical_salinity": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 5,
+            "test": 9,
+            "train": 13,
+            "tune": 7
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "families": {},
+          "profile_counts": {
+            "calibration": 10,
+            "test": 9,
+            "train": 13,
+            "tune": 7
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Previously inspected 2022-2024 test is diagnostic; no new untouched test or reviewer approval.",
+    "Salinity overall profile-group coverage and several adequately sampled subgroups fail frozen gates.",
+    "Hierarchical fallback is global for the current test evidence; sparse fine groups do not establish conditional coverage.",
+    "Current trusted monitoring window has zero eligible profiles; no on-target live coverage assertion.",
+    "Oceanographic exchangeability and spatial/serial independence remain unapproved.",
+    "Static coastal sources and source/licensing/cadence completeness remain unapproved.",
+    "Verification uses HTTP-rendered HTML; no interactive visual acceptance because no browser was available.",
+    "No scientific production approval, automatic recalibration, anomaly verdict, commit or push."
+  ],
+  "nominal_coverage": 0.8,
+  "operational_counts": {
+    "checked_at": [
+      [
+        "2026-10-02 09:32:51.533219+00"
+      ]
+    ],
+    "current_ready_profiles": [
+      [
+        525
+      ]
+    ],
+    "expected_comparisons": [
+      [
+        "partial",
+        329,
+        7884
+      ],
+      [
+        "unavailable",
+        196,
+        0
+      ]
+    ],
+    "interval_comparisons": [
+      [
+        "partial",
+        400,
+        11030
+      ],
+      [
+        "unavailable",
+        125,
+        0
+      ]
+    ],
+    "interval_jobs": [
+      [
+        "complete",
+        525
+      ]
+    ],
+    "migrations": [
+      [
+        8
+      ]
+    ],
+    "profiles": [
+      [
+        525
+      ]
+    ],
+    "raw_receipts": [
+      [
+        395
+      ]
+    ],
+    "schema": [
+      [
+        8
+      ]
+    ],
+    "temporary_databases": []
+  },
+  "policy": {
+    "alpha": 0.2,
+    "audit_cell_degrees": 5,
+    "calibration_unit": "stable_profile_maximum_within_group",
+    "catboost_depths": [
+      3,
+      4
+    ],
+    "coverage_gate": {
+      "coverage_tolerance": 0.1,
+      "exchangeability_approved": false,
+      "independence_audits_approved": false,
+      "max_mean_width": {
+        "practical_salinity": 2.0,
+        "temperature_c": 10.0
+      },
+      "reviewed_gate_id": null,
+      "source_and_coverage_approved": false,
+      "untouched_test": false
+    },
+    "early_stopping_rounds": 10,
+    "family_pinball_tie_tolerance": 0.01,
+    "feature_version": "ocean-reference-features-v1",
+    "hierarchy": [
+      "region_depth",
+      "region",
+      "depth",
+      "global"
+    ],
+    "l2_regularization": 1.0,
+    "learning_rate": 0.05,
+    "leaves": [
+      7,
+      15
+    ],
+    "max_predict_p95_ms": 100,
+    "max_profiles": 2000,
+    "max_rounds": 80,
+    "max_rows": 32000,
+    "method_version": "profile-mondrian-cqr-v1",
+    "min_calibration_profiles": 20,
+    "min_samples_leaf": 20,
+    "min_subgroup_profiles": 10,
+    "min_test_profiles": 20,
+    "min_train_profiles": 20,
+    "min_tune_profiles": 10,
+    "monitor_max_profiles": 500,
+    "monitor_min_profiles": 20,
+    "monitor_suspect_score_multiplier": 3.0,
+    "monitor_window_days": 90,
+    "platform_folds": 2,
+    "quantiles": [
+      0.1,
+      0.5,
+      0.9
+    ],
+    "release_approved": false,
+    "schema_version": 1,
+    "seed": 42,
+    "spatial_buffer_degrees": 1,
+    "spatial_folds": 2
+  },
+  "qualified": {
+    "practical_salinity": false,
+    "temperature_c": false
+  },
+  "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+  "release_approved": false,
+  "release_id": "f8655167-eecc-5132-8980-9487d1cf5852",
+  "release_sha256": "88ebb40b90cff4f579b4d61cc7415669b85b3a5865d882c9683414c918a45736",
+  "rename_preservation": {
+    "backups_retained": true,
+    "copied_byte_verified_bytes": 210517222,
+    "copied_byte_verified_objects": 4527,
+    "immutable_historical_releases_retained": true,
+    "initial_profiles": 474,
+    "initial_raw_receipts": 354
+  },
+  "report_key": "lake/uncertainty/f8655167-eecc-5132-8980-9487d1cf5852/report.json",
+  "report_sha256": "7590520644aeaf1d26fdab495e0a9ab5b425e5be4c6d5312ffe919e3c35dc61a",
+  "scope": "Local diagnostic implementation; empirical qualification fails for salinity and some subgroups; independent production approval false",
+  "selected_families": {
+    "practical_salinity": "lightgbm",
+    "temperature_c": "lightgbm"
+  },
+  "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00",
+  "source_git_commit": "cd5434c59e275ac29f2c6acc0687f741777788af",
+  "status": "ready",
+  "tracking": {
+    "logged_at": "2026-10-02T09:28:00.352916+00:00",
+    "model_version": "2",
+    "performance": {
+      "practical_salinity": {
+        "catboost": {
+          "batch_points": 15,
+          "median_predict_ms": 0.08283349961857311,
+          "model_load_ms": 0.6237080015125684,
+          "native_model_count": 1,
+          "p95_predict_ms": 0.11923980055144054
+        },
+        "lightgbm": {
+          "batch_points": 15,
+          "median_predict_ms": 0.04954150062985718,
+          "model_load_ms": 1.1197919957339764,
+          "native_model_count": 3,
+          "p95_predict_ms": 0.08216409914894024
+        }
+      },
+      "temperature_c": {
+        "catboost": {
+          "batch_points": 15,
+          "median_predict_ms": 0.11337499745422974,
+          "model_load_ms": 0.9683340031187981,
+          "native_model_count": 1,
+          "p95_predict_ms": 0.19532920159690537
+        },
+        "lightgbm": {
+          "batch_points": 15,
+          "median_predict_ms": 0.045000000682193786,
+          "model_load_ms": 1.4772080030525103,
+          "native_model_count": 3,
+          "p95_predict_ms": 0.107197946999804
+        }
+      }
+    },
+    "registered_model": "nautiq-predictive-intervals",
+    "run_id": "d11163e96ebb4b0586c09bb2324ba8e7"
+  },
+  "variables": {
+    "practical_salinity": {
+      "coverage_gate": {
+        "checks": [
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "depth_band:0",
+            "profiles": 37
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "depth_band:1",
+            "profiles": 35
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "depth_band:2",
+            "profiles": 30
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "overall",
+            "profiles": 37
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region:arabian",
+            "profiles": 19
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region:bay_bengal",
+            "profiles": 18
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region_depth:arabian:0",
+            "profiles": 19
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:arabian:1",
+            "profiles": 17
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:arabian:2",
+            "profiles": 13
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:0",
+            "profiles": 18
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:1",
+            "profiles": 18
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:2",
+            "profiles": 17
+          },
+          {
+            "accepted": false,
+            "adequate": false,
+            "group": "season:DJF",
+            "profiles": 9
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "season:JJA",
+            "profiles": 11
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "season:MAM",
+            "profiles": 10
+          },
+          {
+            "accepted": false,
+            "adequate": false,
+            "group": "season:SON",
+            "profiles": 7
+          }
+        ],
+        "qualified": false,
+        "reasons": [
+          "coverage_thresholds_not_reviewed",
+          "untouched_test_not_approved",
+          "exchangeability_approved_not_approved",
+          "independence_audits_approved_not_approved",
+          "source_and_coverage_approved_not_approved",
+          "coverage_or_width_gate_failed:depth_band:1",
+          "coverage_or_width_gate_failed:overall",
+          "coverage_or_width_gate_failed:region:arabian",
+          "coverage_or_width_gate_failed:region_depth:arabian:1",
+          "coverage_or_width_gate_failed:region_depth:arabian:2",
+          "coverage_or_width_gate_failed:region_depth:bay_bengal:0",
+          "coverage_or_width_gate_failed:region_depth:bay_bengal:2",
+          "coverage_or_width_gate_failed:season:MAM"
+        ]
+      },
+      "families": {
+        "catboost": {
+          "calibration": {
+            "alpha": 0.2,
+            "coverage_claim": "Nominal coverage is per profile within the named region/depth group; no conditional or full-profile joint guarantee is asserted.",
+            "fitting_partition": "calibration",
+            "groups": {
+              "depth:0": {
+                "correction": 0.4280329759165369,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "depth:1": {
+                "correction": 0.1417877295518153,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "depth:2": {
+                "correction": 0.0,
+                "profiles": 22,
+                "rank": 19,
+                "reason": null
+              },
+              "global": {
+                "correction": 0.6050960469170974,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "region:arabian": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region:bay_bengal": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:0": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:1": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:2": {
+                "correction": null,
+                "profiles": 10,
+                "rank": 9,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:0": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:1": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:2": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              }
+            },
+            "hierarchy": [
+              "region_depth",
+              "region",
+              "depth",
+              "global"
+            ],
+            "unit": "stable_profile_maximum_within_group"
+          },
+          "native_model_count": 1,
+          "outside_quantile_training_envelope_rows": 0,
+          "partition_metrics": {
+            "calibration": {
+              "calibrated_rows": 312,
+              "crossing_rate": 0.0,
+              "fallback_rows": 312,
+              "full_profile_coverage": 0.6521739130434783,
+              "mean_width": 0.9404675239263213,
+              "pinball_loss": 0.062446856963796114,
+              "profile_group_count": 68,
+              "profile_group_coverage": 0.8823529411764706,
+              "profile_group_coverage_95": [
+                0.784650962802083,
+                0.9391650739766866
+              ],
+              "profile_weighted_width": 0.9428400840510925,
+              "profiles": 23,
+              "quantile_pinball": {
+                "0.1": 0.040638524355493234,
+                "0.5": 0.08955703003494536,
+                "0.9": 0.05714501650094975
+              },
+              "raw_row_coverage": 0.7724358974358975,
+              "row_coverage": 0.9487179487179487,
+              "rows": 312,
+              "unavailable_rows": 0
+            },
+            "test": {
+              "calibrated_rows": 455,
+              "crossing_rate": 0.0,
+              "fallback_rows": 455,
+              "full_profile_coverage": 0.35135135135135137,
+              "mean_width": 0.9514992312836075,
+              "pinball_loss": 0.1534834516452788,
+              "profile_group_count": 102,
+              "profile_group_coverage": 0.696078431372549,
+              "profile_group_coverage_95": [
+                0.6010479530545229,
+                0.7768757872801973
+              ],
+              "profile_weighted_width": 0.9870419701352141,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.19676945499127083,
+                "0.5": 0.1906537672705492,
+                "0.9": 0.07302713267401634
+              },
+              "raw_row_coverage": 0.6571428571428571,
+              "row_coverage": 0.8615384615384616,
+              "rows": 455,
+              "unavailable_rows": 0
+            },
+            "train": {
+              "calibrated_rows": 532,
+              "crossing_rate": 0.0,
+              "fallback_rows": 532,
+              "full_profile_coverage": 0.9285714285714286,
+              "mean_width": 0.9588751329139913,
+              "pinball_loss": 0.04321320896274641,
+              "profile_group_count": 119,
+              "profile_group_coverage": 0.9747899159663865,
+              "profile_group_coverage_95": [
+                0.9284951063536421,
+                0.9913897687107348
+              ],
+              "profile_weighted_width": 0.9744364176126383,
+              "profiles": 42,
+              "quantile_pinball": {
+                "0.1": 0.03274114073081291,
+                "0.5": 0.06514466008254126,
+                "0.9": 0.03175382607488507
+              },
+              "raw_row_coverage": 0.8665413533834586,
+              "row_coverage": 0.9924812030075187,
+              "rows": 532,
+              "unavailable_rows": 0
+            },
+            "tune": {
+              "calibrated_rows": 479,
+              "crossing_rate": 0.0,
+              "fallback_rows": 479,
+              "full_profile_coverage": 0.6111111111111112,
+              "mean_width": 0.9353685347603542,
+              "pinball_loss": 0.08173982902474713,
+              "profile_group_count": 105,
+              "profile_group_coverage": 0.8666666666666667,
+              "profile_group_coverage_95": [
+                0.7885649316986082,
+                0.918886078553378
+              ],
+              "profile_weighted_width": 0.9448737079949132,
+              "profiles": 36,
+              "quantile_pinball": {
+                "0.1": 0.06565698968587229,
+                "0.5": 0.11519120309592257,
+                "0.9": 0.06437129429244655
+              },
+              "raw_row_coverage": 0.6805845511482255,
+              "row_coverage": 0.9352818371607515,
+              "rows": 479,
+              "unavailable_rows": 0
+            }
+          },
+          "test_group_metrics": {
+            "depth_band:0": {
+              "calibrated_rows": 211,
+              "crossing_rate": 0.0,
+              "fallback_rows": 211,
+              "full_profile_coverage": 0.7297297297297297,
+              "mean_width": 1.4632405519871705,
+              "pinball_loss": 0.17785991605047013,
+              "profile_group_count": 37,
+              "profile_group_coverage": 0.7297297297297297,
+              "profile_group_coverage_95": [
+                0.5702183167528573,
+                0.8460253848895091
+              ],
+              "profile_weighted_width": 1.4619872865898582,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.2156627461769312,
+                "0.5": 0.23420283456807747,
+                "0.9": 0.0837141674064017
+              },
+              "raw_row_coverage": 0.5118483412322274,
+              "row_coverage": 0.8625592417061612,
+              "rows": 211,
+              "unavailable_rows": 0
+            },
+            "depth_band:1": {
+              "calibrated_rows": 165,
+              "crossing_rate": 0.0,
+              "fallback_rows": 165,
+              "full_profile_coverage": 0.5714285714285714,
+              "mean_width": 0.6161931573333932,
+              "pinball_loss": 0.14195189173883796,
+              "profile_group_count": 35,
+              "profile_group_coverage": 0.5714285714285714,
+              "profile_group_coverage_95": [
+                0.4085741114397492,
+                0.7201543182281931
+              ],
+              "profile_weighted_width": 0.6213956656912364,
+              "profiles": 35,
+              "quantile_pinball": {
+                "0.1": 0.1727957719558659,
+                "0.5": 0.1632110574208266,
+                "0.9": 0.0898488458398214
+              },
+              "raw_row_coverage": 0.7272727272727273,
+              "row_coverage": 0.8424242424242424,
+              "rows": 165,
+              "unavailable_rows": 0
+            },
+            "depth_band:2": {
+              "calibrated_rows": 79,
+              "crossing_rate": 0.0,
+              "fallback_rows": 79,
+              "full_profile_coverage": 0.8,
+              "mean_width": 0.2850192760093482,
+              "pinball_loss": 0.05154066614006577,
+              "profile_group_count": 30,
+              "profile_group_coverage": 0.8,
+              "profile_group_coverage_95": [
+                0.6269430358685175,
+                0.9049489282271013
+              ],
+              "profile_weighted_width": 0.29238251797436315,
+              "profiles": 30,
+              "quantile_pinball": {
+                "0.1": 0.06858718210326284,
+                "0.5": 0.05670762329427117,
+                "0.9": 0.029327193022663286
+              },
+              "raw_row_coverage": 0.8987341772151899,
+              "row_coverage": 0.8987341772151899,
+              "rows": 79,
+              "unavailable_rows": 0
+            },
+            "overall": {
+              "calibrated_rows": 455,
+              "crossing_rate": 0.0,
+              "fallback_rows": 455,
+              "full_profile_coverage": 0.35135135135135137,
+              "mean_width": 0.9514992312836075,
+              "pinball_loss": 0.1534834516452788,
+              "profile_group_count": 102,
+              "profile_group_coverage": 0.696078431372549,
+              "profile_group_coverage_95": [
+                0.6010479530545229,
+                0.7768757872801973
+              ],
+              "profile_weighted_width": 0.9870419701352141,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.19676945499127083,
+                "0.5": 0.1906537672705492,
+                "0.9": 0.07302713267401634
+              },
+              "raw_row_coverage": 0.6571428571428571,
+              "row_coverage": 0.8615384615384616,
+              "rows": 455,
+              "unavailable_rows": 0
+            },
+            "region:arabian": {
+              "calibrated_rows": 214,
+              "crossing_rate": 0.0,
+              "fallback_rows": 214,
+              "full_profile_coverage": 0.15789473684210525,
+              "mean_width": 0.9755259688168179,
+              "pinball_loss": 0.0973337522295467,
+              "profile_group_count": 49,
+              "profile_group_coverage": 0.5918367346938775,
+              "profile_group_coverage_95": [
+                0.4524731939184714,
+                0.7178476147961312
+              ],
+              "profile_weighted_width": 1.0300744552262164,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.07783113946829372,
+                "0.5": 0.1426875529835461,
+                "0.9": 0.0714825642368003
+              },
+              "raw_row_coverage": 0.5280373831775701,
+              "row_coverage": 0.8504672897196262,
+              "rows": 214,
+              "unavailable_rows": 0
+            },
+            "region:bay_bengal": {
+              "calibrated_rows": 241,
+              "crossing_rate": 0.0,
+              "fallback_rows": 241,
+              "full_profile_coverage": 0.5555555555555556,
+              "mean_width": 0.9301642859221673,
+              "pinball_loss": 0.21275257880632933,
+              "profile_group_count": 53,
+              "profile_group_coverage": 0.7924528301886793,
+              "profile_group_coverage_95": [
+                0.6654225529835207,
+                0.8799540197358604
+              ],
+              "profile_weighted_width": 0.9416187914280447,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.3223154547099689,
+                "0.5": 0.2412847712401635,
+                "0.9": 0.07465751046885548
+              },
+              "raw_row_coverage": 0.7717842323651453,
+              "row_coverage": 0.8713692946058091,
+              "rows": 241,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:0": {
+              "calibrated_rows": 107,
+              "crossing_rate": 0.0,
+              "fallback_rows": 107,
+              "full_profile_coverage": 0.8947368421052632,
+              "mean_width": 1.384225849730581,
+              "pinball_loss": 0.1035060759284685,
+              "profile_group_count": 19,
+              "profile_group_coverage": 0.8947368421052632,
+              "profile_group_coverage_95": [
+                0.6860591728889099,
+                0.9706414397011299
+              ],
+              "profile_weighted_width": 1.3888101850485555,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.09513696173129023,
+                "0.5": 0.158190986034187,
+                "0.9": 0.05719028001992829
+              },
+              "raw_row_coverage": 0.4485981308411215,
+              "row_coverage": 0.9345794392523364,
+              "rows": 107,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 79,
+              "crossing_rate": 0.0,
+              "fallback_rows": 79,
+              "full_profile_coverage": 0.23529411764705882,
+              "mean_width": 0.6509964266377914,
+              "pinball_loss": 0.11081267782244446,
+              "profile_group_count": 17,
+              "profile_group_coverage": 0.23529411764705882,
+              "profile_group_coverage_95": [
+                0.09555044322080117,
+                0.4726179811956498
+              ],
+              "profile_weighted_width": 0.6552236955909505,
+              "profiles": 17,
+              "quantile_pinball": {
+                "0.1": 0.04689568635024329,
+                "0.5": 0.1476292064825816,
+                "0.9": 0.13791314063450846
+              },
+              "raw_row_coverage": 0.5316455696202531,
+              "row_coverage": 0.7468354430379747,
+              "rows": 79,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 28,
+              "crossing_rate": 0.0,
+              "fallback_rows": 28,
+              "full_profile_coverage": 0.6153846153846154,
+              "mean_width": 0.3293454893300472,
+              "pinball_loss": 0.042993056944898134,
+              "profile_group_count": 13,
+              "profile_group_coverage": 0.6153846153846154,
+              "profile_group_coverage_95": [
+                0.355228915126657,
+                0.8229029220223743
+              ],
+              "profile_weighted_width": 0.33383532087680773,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.029729628080116883,
+                "0.5": 0.05696660017228229,
+                "0.9": 0.04228294258229523
+              },
+              "raw_row_coverage": 0.8214285714285714,
+              "row_coverage": 0.8214285714285714,
+              "rows": 28,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 104,
+              "crossing_rate": 0.0,
+              "fallback_rows": 104,
+              "full_profile_coverage": 0.5555555555555556,
+              "mean_width": 1.5445345245011615,
+              "pinball_loss": 0.25634452506813854,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.5555555555555556,
+              "profile_group_coverage_95": [
+                0.33716415642042774,
+                0.7544048187299437
+              ],
+              "profile_weighted_width": 1.5392297826612333,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.34288440753621885,
+                "0.5": 0.31443756357607305,
+                "0.9": 0.11171160409212362
+              },
+              "raw_row_coverage": 0.5769230769230769,
+              "row_coverage": 0.7884615384615384,
+              "rows": 104,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 86,
+              "crossing_rate": 0.0,
+              "fallback_rows": 86,
+              "full_profile_coverage": 0.8888888888888888,
+              "mean_width": 0.5842227122747018,
+              "pinball_loss": 0.17136114932654298,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.8888888888888888,
+              "profile_group_coverage_95": [
+                0.672002348698212,
+                0.9689804773543876
+              ],
+              "profile_weighted_width": 0.5894469707859508,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.2917014083611761,
+                "0.5": 0.17792724997361362,
+                "0.9": 0.04445478964483915
+              },
+              "raw_row_coverage": 0.9069767441860465,
+              "row_coverage": 0.9302325581395349,
+              "rows": 86,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 51,
+              "crossing_rate": 0.0,
+              "fallback_rows": 51,
+              "full_profile_coverage": 0.9411764705882353,
+              "mean_width": 0.26068331575484677,
+              "pinball_loss": 0.05807707317166453,
+              "profile_group_count": 17,
+              "profile_group_coverage": 0.9411764705882353,
+              "profile_group_coverage_95": [
+                0.7301796936242461,
+                0.9895395990150025
+              ],
+              "profile_weighted_width": 0.2606833157548468,
+              "profiles": 17,
+              "quantile_pinball": {
+                "0.1": 0.09830178223860972,
+                "0.5": 0.056509582152262684,
+                "0.9": 0.019419855124121192
+              },
+              "raw_row_coverage": 0.9411764705882353,
+              "row_coverage": 0.9411764705882353,
+              "rows": 51,
+              "unavailable_rows": 0
+            },
+            "season:DJF": {
+              "calibrated_rows": 116,
+              "crossing_rate": 0.0,
+              "fallback_rows": 116,
+              "full_profile_coverage": 0.3333333333333333,
+              "mean_width": 0.9021919873664146,
+              "pinball_loss": 0.12466793439569025,
+              "profile_group_count": 25,
+              "profile_group_coverage": 0.68,
+              "profile_group_coverage_95": [
+                0.48410269273102247,
+                0.8279480969309202
+              ],
+              "profile_weighted_width": 0.901243587846344,
+              "profiles": 9,
+              "quantile_pinball": {
+                "0.1": 0.17053525240696152,
+                "0.5": 0.1518501053825018,
+                "0.9": 0.051618445397607474
+              },
+              "raw_row_coverage": 0.6637931034482759,
+              "row_coverage": 0.853448275862069,
+              "rows": 116,
+              "unavailable_rows": 0
+            },
+            "season:JJA": {
+              "calibrated_rows": 140,
+              "crossing_rate": 0.0,
+              "fallback_rows": 140,
+              "full_profile_coverage": 0.45454545454545453,
+              "mean_width": 0.9244556357885869,
+              "pinball_loss": 0.07591197996181108,
+              "profile_group_count": 31,
+              "profile_group_coverage": 0.7096774193548387,
+              "profile_group_coverage_95": [
+                0.5340767066925007,
+                0.8390419984369939
+              ],
+              "profile_weighted_width": 0.9571164042888989,
+              "profiles": 11,
+              "quantile_pinball": {
+                "0.1": 0.06215795433815777,
+                "0.5": 0.11187233503760927,
+                "0.9": 0.053705650509666226
+              },
+              "raw_row_coverage": 0.6285714285714286,
+              "row_coverage": 0.9,
+              "rows": 140,
+              "unavailable_rows": 0
+            },
+            "season:MAM": {
+              "calibrated_rows": 121,
+              "crossing_rate": 0.0,
+              "fallback_rows": 121,
+              "full_profile_coverage": 0.2,
+              "mean_width": 0.9755516211830966,
+              "pinball_loss": 0.10408376837920495,
+              "profile_group_count": 28,
+              "profile_group_coverage": 0.6785714285714286,
+              "profile_group_coverage_95": [
+                0.49338843180857617,
+                0.8206675307750504
+              ],
+              "profile_weighted_width": 1.023751777921326,
+              "profiles": 10,
+              "quantile_pinball": {
+                "0.1": 0.10328110570953142,
+                "0.5": 0.14705039215193624,
+                "0.9": 0.06191980727614714
+              },
+              "raw_row_coverage": 0.6694214876033058,
+              "row_coverage": 0.8512396694214877,
+              "rows": 121,
+              "unavailable_rows": 0
+            },
+            "season:SON": {
+              "calibrated_rows": 78,
+              "crossing_rate": 0.0,
+              "fallback_rows": 78,
+              "full_profile_coverage": 0.42857142857142855,
+              "mean_width": 1.0360556990510308,
+              "pinball_loss": 0.38300097684887585,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.7222222222222222,
+              "profile_group_coverage_95": [
+                0.4912734343970254,
+                0.8750024662044601
+              ],
+              "profile_weighted_width": 1.0919374825706682,
+              "profiles": 7,
+              "quantile_pinball": {
+                "0.1": 0.575586286885617,
+                "0.5": 0.42663411909067683,
+                "0.9": 0.1467825245703339
+              },
+              "raw_row_coverage": 0.6794871794871795,
+              "row_coverage": 0.8205128205128205,
+              "rows": 78,
+              "unavailable_rows": 0
+            }
+          }
+        },
+        "lightgbm": {
+          "calibration": {
+            "alpha": 0.2,
+            "coverage_claim": "Nominal coverage is per profile within the named region/depth group; no conditional or full-profile joint guarantee is asserted.",
+            "fitting_partition": "calibration",
+            "groups": {
+              "depth:0": {
+                "correction": 0.44698499329103925,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "depth:1": {
+                "correction": 0.14008592226420546,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "depth:2": {
+                "correction": 0.012253342289163527,
+                "profiles": 22,
+                "rank": 19,
+                "reason": null
+              },
+              "global": {
+                "correction": 0.5116217215714229,
+                "profiles": 23,
+                "rank": 20,
+                "reason": null
+              },
+              "region:arabian": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region:bay_bengal": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:0": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:1": {
+                "correction": null,
+                "profiles": 11,
+                "rank": 10,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:2": {
+                "correction": null,
+                "profiles": 10,
+                "rank": 9,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:0": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:1": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:2": {
+                "correction": null,
+                "profiles": 12,
+                "rank": 11,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              }
+            },
+            "hierarchy": [
+              "region_depth",
+              "region",
+              "depth",
+              "global"
+            ],
+            "unit": "stable_profile_maximum_within_group"
+          },
+          "native_model_count": 3,
+          "outside_quantile_training_envelope_rows": 0,
+          "partition_metrics": {
+            "calibration": {
+              "calibrated_rows": 312,
+              "crossing_rate": 0.0,
+              "fallback_rows": 312,
+              "full_profile_coverage": 0.6521739130434783,
+              "mean_width": 0.9368924505203572,
+              "pinball_loss": 0.0593957863351598,
+              "profile_group_count": 68,
+              "profile_group_coverage": 0.8676470588235294,
+              "profile_group_coverage_95": [
+                0.7671994025434227,
+                0.928777555897702
+              ],
+              "profile_weighted_width": 0.9389052435711113,
+              "profiles": 23,
+              "quantile_pinball": {
+                "0.1": 0.03794389927411952,
+                "0.5": 0.08767547720397101,
+                "0.9": 0.0525679825273889
+              },
+              "raw_row_coverage": 0.7564102564102564,
+              "row_coverage": 0.9455128205128205,
+              "rows": 312,
+              "unavailable_rows": 0
+            },
+            "test": {
+              "calibrated_rows": 455,
+              "crossing_rate": 0.002197802197802198,
+              "fallback_rows": 455,
+              "full_profile_coverage": 0.3783783783783784,
+              "mean_width": 0.9461970078268038,
+              "pinball_loss": 0.15431263032334097,
+              "profile_group_count": 102,
+              "profile_group_coverage": 0.696078431372549,
+              "profile_group_coverage_95": [
+                0.6010479530545229,
+                0.7768757872801973
+              ],
+              "profile_weighted_width": 0.9918908369039566,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.19770007244945062,
+                "0.5": 0.19086480123434293,
+                "0.9": 0.07437301728622936
+              },
+              "raw_row_coverage": 0.6285714285714286,
+              "row_coverage": 0.8637362637362638,
+              "rows": 455,
+              "unavailable_rows": 0
+            },
+            "train": {
+              "calibrated_rows": 532,
+              "crossing_rate": 0.0,
+              "fallback_rows": 532,
+              "full_profile_coverage": 0.9285714285714286,
+              "mean_width": 0.9433380096286598,
+              "pinball_loss": 0.037688712159291794,
+              "profile_group_count": 119,
+              "profile_group_coverage": 0.9747899159663865,
+              "profile_group_coverage_95": [
+                0.9284951063536421,
+                0.9913897687107348
+              ],
+              "profile_weighted_width": 0.9606397700573381,
+              "profiles": 42,
+              "quantile_pinball": {
+                "0.1": 0.024936886346992797,
+                "0.5": 0.060491563655660094,
+                "0.9": 0.0276376864752225
+              },
+              "raw_row_coverage": 0.8740601503759399,
+              "row_coverage": 0.9924812030075187,
+              "rows": 532,
+              "unavailable_rows": 0
+            },
+            "tune": {
+              "calibrated_rows": 479,
+              "crossing_rate": 0.006263048016701462,
+              "fallback_rows": 479,
+              "full_profile_coverage": 0.5833333333333334,
+              "mean_width": 0.900078442093541,
+              "pinball_loss": 0.07899593365322868,
+              "profile_group_count": 105,
+              "profile_group_coverage": 0.819047619047619,
+              "profile_group_coverage_95": [
+                0.7345909190245711,
+                0.8809833366492349
+              ],
+              "profile_weighted_width": 0.9116225057356269,
+              "profiles": 36,
+              "quantile_pinball": {
+                "0.1": 0.059865351235670064,
+                "0.5": 0.1141219405650786,
+                "0.9": 0.06300050915893737
+              },
+              "raw_row_coverage": 0.6263048016701461,
+              "row_coverage": 0.918580375782881,
+              "rows": 479,
+              "unavailable_rows": 0
+            }
+          },
+          "test_group_metrics": {
+            "depth_band:0": {
+              "calibrated_rows": 211,
+              "crossing_rate": 0.004739336492890996,
+              "fallback_rows": 211,
+              "full_profile_coverage": 0.7297297297297297,
+              "mean_width": 1.5232201032662136,
+              "pinball_loss": 0.17994928112626893,
+              "profile_group_count": 37,
+              "profile_group_coverage": 0.7297297297297297,
+              "profile_group_coverage_95": [
+                0.5702183167528573,
+                0.8460253848895091
+              ],
+              "profile_weighted_width": 1.5231723585588197,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.2177784265718555,
+                "0.5": 0.2354379390093291,
+                "0.9": 0.08663147779762209
+              },
+              "raw_row_coverage": 0.5118483412322274,
+              "row_coverage": 0.8625592417061612,
+              "rows": 211,
+              "unavailable_rows": 0
+            },
+            "depth_band:1": {
+              "calibrated_rows": 165,
+              "crossing_rate": 0.0,
+              "fallback_rows": 165,
+              "full_profile_coverage": 0.6,
+              "mean_width": 0.5453825946397403,
+              "pinball_loss": 0.14189077381624748,
+              "profile_group_count": 35,
+              "profile_group_coverage": 0.6,
+              "profile_group_coverage_95": [
+                0.435727090128925,
+                0.7444927114061941
+              ],
+              "profile_weighted_width": 0.5499440265094433,
+              "profiles": 35,
+              "quantile_pinball": {
+                "0.1": 0.17618581844503087,
+                "0.5": 0.16127564890845927,
+                "0.9": 0.08821085409525234
+              },
+              "raw_row_coverage": 0.6606060606060606,
+              "row_coverage": 0.8545454545454545,
+              "rows": 165,
+              "unavailable_rows": 0
+            },
+            "depth_band:2": {
+              "calibrated_rows": 79,
+              "crossing_rate": 0.0,
+              "fallback_rows": 79,
+              "full_profile_coverage": 0.7666666666666667,
+              "mean_width": 0.2421780842590827,
+              "pinball_loss": 0.05334026059178388,
+              "profile_group_count": 30,
+              "profile_group_coverage": 0.7666666666666667,
+              "profile_group_coverage_95": [
+                0.5907167384187784,
+                0.8820761185551049
+              ],
+              "profile_weighted_width": 0.25765388479246454,
+              "profiles": 30,
+              "quantile_pinball": {
+                "0.1": 0.06753528877206127,
+                "0.5": 0.0626164464468752,
+                "0.9": 0.029869046556415167
+              },
+              "raw_row_coverage": 0.8734177215189873,
+              "row_coverage": 0.8860759493670886,
+              "rows": 79,
+              "unavailable_rows": 0
+            },
+            "overall": {
+              "calibrated_rows": 455,
+              "crossing_rate": 0.002197802197802198,
+              "fallback_rows": 455,
+              "full_profile_coverage": 0.3783783783783784,
+              "mean_width": 0.9461970078268038,
+              "pinball_loss": 0.15431263032334097,
+              "profile_group_count": 102,
+              "profile_group_coverage": 0.696078431372549,
+              "profile_group_coverage_95": [
+                0.6010479530545229,
+                0.7768757872801973
+              ],
+              "profile_weighted_width": 0.9918908369039566,
+              "profiles": 37,
+              "quantile_pinball": {
+                "0.1": 0.19770007244945062,
+                "0.5": 0.19086480123434293,
+                "0.9": 0.07437301728622936
+              },
+              "raw_row_coverage": 0.6285714285714286,
+              "row_coverage": 0.8637362637362638,
+              "rows": 455,
+              "unavailable_rows": 0
+            },
+            "region:arabian": {
+              "calibrated_rows": 214,
+              "crossing_rate": 0.004672897196261682,
+              "fallback_rows": 214,
+              "full_profile_coverage": 0.21052631578947367,
+              "mean_width": 1.0060396184530571,
+              "pinball_loss": 0.09724340276524175,
+              "profile_group_count": 49,
+              "profile_group_coverage": 0.5918367346938775,
+              "profile_group_coverage_95": [
+                0.4524731939184714,
+                0.7178476147961312
+              ],
+              "profile_weighted_width": 1.073022581872533,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.07941395653503254,
+                "0.5": 0.13602350202173216,
+                "0.9": 0.07629274973896055
+              },
+              "raw_row_coverage": 0.5,
+              "row_coverage": 0.8644859813084113,
+              "rows": 214,
+              "unavailable_rows": 0
+            },
+            "region:bay_bengal": {
+              "calibrated_rows": 241,
+              "crossing_rate": 0.0,
+              "fallback_rows": 241,
+              "full_profile_coverage": 0.5555555555555556,
+              "mean_width": 0.893058756067392,
+              "pinball_loss": 0.2145523705235568,
+              "profile_group_count": 53,
+              "profile_group_coverage": 0.7924528301886793,
+              "profile_group_coverage_95": [
+                0.6654225529835207,
+                0.8799540197358604
+              ],
+              "profile_weighted_width": 0.9062517727704594,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.322557639248003,
+                "0.5": 0.24875283929209868,
+                "0.9": 0.07234663303056861
+              },
+              "raw_row_coverage": 0.7427385892116183,
+              "row_coverage": 0.8630705394190872,
+              "rows": 241,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:0": {
+              "calibrated_rows": 107,
+              "crossing_rate": 0.009345794392523364,
+              "fallback_rows": 107,
+              "full_profile_coverage": 0.8947368421052632,
+              "mean_width": 1.46605399598216,
+              "pinball_loss": 0.10848941061680172,
+              "profile_group_count": 19,
+              "profile_group_coverage": 0.8947368421052632,
+              "profile_group_coverage_95": [
+                0.6860591728889099,
+                0.9706414397011299
+              ],
+              "profile_weighted_width": 1.475151066231119,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.10160686414045457,
+                "0.5": 0.15823598943123718,
+                "0.9": 0.0656253782787134
+              },
+              "raw_row_coverage": 0.4485981308411215,
+              "row_coverage": 0.9532710280373832,
+              "rows": 107,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 79,
+              "crossing_rate": 0.0,
+              "fallback_rows": 79,
+              "full_profile_coverage": 0.29411764705882354,
+              "mean_width": 0.6241380484030831,
+              "pinball_loss": 0.10375882885862686,
+              "profile_group_count": 17,
+              "profile_group_coverage": 0.29411764705882354,
+              "profile_group_coverage_95": [
+                0.1327998961029523,
+                0.5313311006653985
+              ],
+              "profile_weighted_width": 0.6318409587531638,
+              "profiles": 17,
+              "quantile_pinball": {
+                "0.1": 0.0441717079319779,
+                "0.5": 0.13070557703440824,
+                "0.9": 0.13639920160949445
+              },
+              "raw_row_coverage": 0.4810126582278481,
+              "row_coverage": 0.7721518987341772,
+              "rows": 79,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 28,
+              "crossing_rate": 0.0,
+              "fallback_rows": 28,
+              "full_profile_coverage": 0.5384615384615384,
+              "mean_width": 0.32563553410784174,
+              "pinball_loss": 0.045076001286986356,
+              "profile_group_count": 13,
+              "profile_group_coverage": 0.5384615384615384,
+              "profile_group_coverage_95": [
+                0.29143795714506004,
+                0.7679393219046169
+              ],
+              "profile_weighted_width": 0.33780963922753454,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.029840727818137906,
+                "0.5": 0.05837235142152281,
+                "0.9": 0.04701492462129834
+              },
+              "raw_row_coverage": 0.75,
+              "row_coverage": 0.7857142857142857,
+              "rows": 28,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 104,
+              "crossing_rate": 0.0,
+              "fallback_rows": 104,
+              "full_profile_coverage": 0.5555555555555556,
+              "mean_width": 1.5820352328757683,
+              "pinball_loss": 0.2553791444418176,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.5555555555555556,
+              "profile_group_coverage_95": [
+                0.33716415642042774,
+                0.7544048187299437
+              ],
+              "profile_weighted_width": 1.5738615004602816,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.34040396469388984,
+                "0.5": 0.3169288857862039,
+                "0.9": 0.1088045828453591
+              },
+              "raw_row_coverage": 0.5769230769230769,
+              "row_coverage": 0.7692307692307693,
+              "rows": 104,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 86,
+              "crossing_rate": 0.0,
+              "fallback_rows": 86,
+              "full_profile_coverage": 0.8888888888888888,
+              "mean_width": 0.47303746850829753,
+              "pinball_loss": 0.17790427738733364,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.8888888888888888,
+              "profile_group_coverage_95": [
+                0.672002348698212,
+                0.9689804773543876
+              ],
+              "profile_weighted_width": 0.47259692383481855,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.3008658117073587,
+                "0.5": 0.1901473834561741,
+                "0.9": 0.04269963699846814
+              },
+              "raw_row_coverage": 0.8255813953488372,
+              "row_coverage": 0.9302325581395349,
+              "rows": 86,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 51,
+              "crossing_rate": 0.0,
+              "fallback_rows": 51,
+              "full_profile_coverage": 0.9411764705882353,
+              "mean_width": 0.19635830787152866,
+              "pinball_loss": 0.059659988295452576,
+              "profile_group_count": 17,
+              "profile_group_coverage": 0.9411764705882353,
+              "profile_group_coverage_95": [
+                0.7301796936242461,
+                0.9895395990150025
+              ],
+              "profile_weighted_width": 0.19635830787152866,
+              "profiles": 17,
+              "quantile_pinball": {
+                "0.1": 0.09636054126623797,
+                "0.5": 0.06586193087802703,
+                "0.9": 0.016757492742092733
+              },
+              "raw_row_coverage": 0.9411764705882353,
+              "row_coverage": 0.9411764705882353,
+              "rows": 51,
+              "unavailable_rows": 0
+            },
+            "season:DJF": {
+              "calibrated_rows": 116,
+              "crossing_rate": 0.008620689655172414,
+              "fallback_rows": 116,
+              "full_profile_coverage": 0.4444444444444444,
+              "mean_width": 0.8800555735005381,
+              "pinball_loss": 0.12460883803731913,
+              "profile_group_count": 25,
+              "profile_group_coverage": 0.72,
+              "profile_group_coverage_95": [
+                0.5242339480963842,
+                0.8571614614904344
+              ],
+              "profile_weighted_width": 0.875090007998135,
+              "profiles": 9,
+              "quantile_pinball": {
+                "0.1": 0.16859403899304104,
+                "0.5": 0.15264485494282526,
+                "0.9": 0.05258762017609109
+              },
+              "raw_row_coverage": 0.6724137931034483,
+              "row_coverage": 0.8620689655172413,
+              "rows": 116,
+              "unavailable_rows": 0
+            },
+            "season:JJA": {
+              "calibrated_rows": 140,
+              "crossing_rate": 0.0,
+              "fallback_rows": 140,
+              "full_profile_coverage": 0.45454545454545453,
+              "mean_width": 0.8691254089363344,
+              "pinball_loss": 0.07897032829205758,
+              "profile_group_count": 31,
+              "profile_group_coverage": 0.7096774193548387,
+              "profile_group_coverage_95": [
+                0.5340767066925007,
+                0.8390419984369939
+              ],
+              "profile_weighted_width": 0.9037502507633127,
+              "profiles": 11,
+              "quantile_pinball": {
+                "0.1": 0.07474009351314871,
+                "0.5": 0.10979126199820355,
+                "0.9": 0.052379629364820504
+              },
+              "raw_row_coverage": 0.5857142857142857,
+              "row_coverage": 0.8857142857142857,
+              "rows": 140,
+              "unavailable_rows": 0
+            },
+            "season:MAM": {
+              "calibrated_rows": 121,
+              "crossing_rate": 0.0,
+              "fallback_rows": 121,
+              "full_profile_coverage": 0.2,
+              "mean_width": 1.046303077998935,
+              "pinball_loss": 0.10180143593894138,
+              "profile_group_count": 28,
+              "profile_group_coverage": 0.6428571428571429,
+              "profile_group_coverage_95": [
+                0.4583030651442781,
+                0.7929417049226233
+              ],
+              "profile_weighted_width": 1.1213149892583323,
+              "profiles": 10,
+              "quantile_pinball": {
+                "0.1": 0.09430329748026514,
+                "0.5": 0.14208099870895266,
+                "0.9": 0.06902001162760632
+              },
+              "raw_row_coverage": 0.6198347107438017,
+              "row_coverage": 0.8677685950413223,
+              "rows": 121,
+              "unavailable_rows": 0
+            },
+            "season:SON": {
+              "calibrated_rows": 78,
+              "crossing_rate": 0.0,
+              "fallback_rows": 78,
+              "full_profile_coverage": 0.42857142857142855,
+              "mean_width": 1.0276020813612223,
+              "pinball_loss": 0.3859142584322422,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.7222222222222222,
+              "profile_group_coverage_95": [
+                0.4912734343970254,
+                0.8750024662044601
+              ],
+              "profile_weighted_width": 1.0956783203547746,
+              "profiles": 7,
+              "quantile_pinball": {
+                "0.1": 0.5760546180350022,
+                "0.5": 0.43709715458792775,
+                "0.9": 0.14459100267379674
+              },
+              "raw_row_coverage": 0.6538461538461539,
+              "row_coverage": 0.8205128205128205,
+              "rows": 78,
+              "unavailable_rows": 0
+            }
+          }
+        }
+      },
+      "profile_counts": {
+        "calibration": 23,
+        "test": 37,
+        "train": 42,
+        "tune": 36
+      },
+      "selected": {
+        "catboost": {
+          "parameters": [
+            {
+              "allow_writing_files": false,
+              "best_iteration": 29,
+              "depth": 4,
+              "iterations": 80,
+              "l2_leaf_reg": 1.0,
+              "learning_rate": 0.05,
+              "loss_function": "MultiQuantile:alpha=0.1,0.5,0.9",
+              "random_seed": 42,
+              "thread_count": 1,
+              "verbose": false
+            }
+          ],
+          "setting": 4,
+          "tuning_crossing_rate": 0.0,
+          "tuning_profile_pinball": 0.08173982902474715,
+          "tuning_raw_coverage": 0.6805845511482255
+        },
+        "lightgbm": {
+          "parameters": [
+            {
+              "alpha": 0.1,
+              "best_iteration": 58,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            },
+            {
+              "alpha": 0.5,
+              "best_iteration": 65,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            },
+            {
+              "alpha": 0.9,
+              "best_iteration": 43,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            }
+          ],
+          "setting": 7,
+          "tuning_crossing_rate": 0.006263048016701462,
+          "tuning_profile_pinball": 0.07900353561044333,
+          "tuning_raw_coverage": 0.6263048016701461
+        }
+      },
+      "selected_family": "lightgbm",
+      "selection_rule": "tuning pinball within frozen tolerance, then closest raw nominal coverage, crossing rate, existing LightGBM operational path; measured latency must pass selection budget; no test/calibration tuning",
+      "status": "trained"
+    },
+    "temperature_c": {
+      "coverage_gate": {
+        "checks": [
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "depth_band:0",
+            "profiles": 41
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "depth_band:1",
+            "profiles": 38
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "depth_band:2",
+            "profiles": 33
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "overall",
+            "profiles": 41
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region:arabian",
+            "profiles": 20
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region:bay_bengal",
+            "profiles": 21
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region_depth:arabian:0",
+            "profiles": 20
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "region_depth:arabian:1",
+            "profiles": 18
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:arabian:2",
+            "profiles": 14
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:0",
+            "profiles": 21
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:1",
+            "profiles": 20
+          },
+          {
+            "accepted": false,
+            "adequate": true,
+            "group": "region_depth:bay_bengal:2",
+            "profiles": 19
+          },
+          {
+            "accepted": false,
+            "adequate": false,
+            "group": "season:DJF",
+            "profiles": 9
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "season:JJA",
+            "profiles": 12
+          },
+          {
+            "accepted": true,
+            "adequate": true,
+            "group": "season:MAM",
+            "profiles": 13
+          },
+          {
+            "accepted": false,
+            "adequate": false,
+            "group": "season:SON",
+            "profiles": 7
+          }
+        ],
+        "qualified": false,
+        "reasons": [
+          "coverage_thresholds_not_reviewed",
+          "untouched_test_not_approved",
+          "exchangeability_approved_not_approved",
+          "independence_audits_approved_not_approved",
+          "source_and_coverage_approved_not_approved",
+          "coverage_or_width_gate_failed:depth_band:1",
+          "coverage_or_width_gate_failed:region_depth:arabian:2",
+          "coverage_or_width_gate_failed:region_depth:bay_bengal:0",
+          "coverage_or_width_gate_failed:region_depth:bay_bengal:1",
+          "coverage_or_width_gate_failed:region_depth:bay_bengal:2"
+        ]
+      },
+      "families": {
+        "catboost": {
+          "calibration": {
+            "alpha": 0.2,
+            "coverage_claim": "Nominal coverage is per profile within the named region/depth group; no conditional or full-profile joint guarantee is asserted.",
+            "fitting_partition": "calibration",
+            "groups": {
+              "depth:0": {
+                "correction": 1.9979149254056736,
+                "profiles": 35,
+                "rank": 29,
+                "reason": null
+              },
+              "depth:1": {
+                "correction": 1.8690603416143219,
+                "profiles": 32,
+                "rank": 27,
+                "reason": null
+              },
+              "depth:2": {
+                "correction": 0.20874412488264582,
+                "profiles": 30,
+                "rank": 25,
+                "reason": null
+              },
+              "global": {
+                "correction": 2.0501724613801287,
+                "profiles": 35,
+                "rank": 29,
+                "reason": null
+              },
+              "region:arabian": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region:bay_bengal": {
+                "correction": null,
+                "profiles": 18,
+                "rank": 16,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:0": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:1": {
+                "correction": null,
+                "profiles": 15,
+                "rank": 13,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:2": {
+                "correction": null,
+                "profiles": 13,
+                "rank": 12,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:0": {
+                "correction": null,
+                "profiles": 18,
+                "rank": 16,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:1": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:2": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              }
+            },
+            "hierarchy": [
+              "region_depth",
+              "region",
+              "depth",
+              "global"
+            ],
+            "unit": "stable_profile_maximum_within_group"
+          },
+          "native_model_count": 1,
+          "outside_quantile_training_envelope_rows": 0,
+          "partition_metrics": {
+            "calibration": {
+              "calibrated_rows": 433,
+              "crossing_rate": 0.0,
+              "fallback_rows": 433,
+              "full_profile_coverage": 0.6571428571428571,
+              "mean_width": 5.110074457745638,
+              "pinball_loss": 0.28546464411732275,
+              "profile_group_count": 97,
+              "profile_group_coverage": 0.8350515463917526,
+              "profile_group_coverage_95": [
+                0.7487353960515549,
+                0.8958407610186864
+              ],
+              "profile_weighted_width": 5.242156140432279,
+              "profiles": 35,
+              "quantile_pinball": {
+                "0.1": 0.20746430663208634,
+                "0.5": 0.4052778867177487,
+                "0.9": 0.24365173900213324
+              },
+              "raw_row_coverage": 0.6859122401847575,
+              "row_coverage": 0.9561200923787528,
+              "rows": 433,
+              "unavailable_rows": 0
+            },
+            "test": {
+              "calibrated_rows": 499,
+              "crossing_rate": 0.0,
+              "fallback_rows": 499,
+              "full_profile_coverage": 0.5365853658536586,
+              "mean_width": 5.205848256882646,
+              "pinball_loss": 0.40170542144179616,
+              "profile_group_count": 112,
+              "profile_group_coverage": 0.8125,
+              "profile_group_coverage_95": [
+                0.7303087134885466,
+                0.8739654445946134
+              ],
+              "profile_weighted_width": 5.347748009650347,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.36128386718513955,
+                "0.5": 0.5621495143874676,
+                "0.9": 0.2816828827527812
+              },
+              "raw_row_coverage": 0.5571142284569138,
+              "row_coverage": 0.9318637274549099,
+              "rows": 499,
+              "unavailable_rows": 0
+            },
+            "train": {
+              "calibrated_rows": 570,
+              "crossing_rate": 0.0,
+              "fallback_rows": 570,
+              "full_profile_coverage": 0.9777777777777777,
+              "mean_width": 5.252657863031877,
+              "pinball_loss": 0.18574888738373072,
+              "profile_group_count": 128,
+              "profile_group_coverage": 0.9921875,
+              "profile_group_coverage_95": [
+                0.9570737405611394,
+                0.9986195681071257
+              ],
+              "profile_weighted_width": 5.308021582567933,
+              "profiles": 45,
+              "quantile_pinball": {
+                "0.1": 0.13324989987893548,
+                "0.5": 0.2916754703148281,
+                "0.9": 0.13232129195742856
+              },
+              "raw_row_coverage": 0.8350877192982457,
+              "row_coverage": 0.9964912280701754,
+              "rows": 570,
+              "unavailable_rows": 0
+            },
+            "tune": {
+              "calibrated_rows": 519,
+              "crossing_rate": 0.0,
+              "fallback_rows": 519,
+              "full_profile_coverage": 0.6410256410256411,
+              "mean_width": 5.04984601896494,
+              "pinball_loss": 0.2656802432173547,
+              "profile_group_count": 114,
+              "profile_group_coverage": 0.8070175438596491,
+              "profile_group_coverage_95": [
+                0.7250573655529112,
+                0.8689610783846421
+              ],
+              "profile_weighted_width": 5.097300610636099,
+              "profiles": 39,
+              "quantile_pinball": {
+                "0.1": 0.17757411853302316,
+                "0.5": 0.40091647298091493,
+                "0.9": 0.21855013813812582
+              },
+              "raw_row_coverage": 0.7052023121387283,
+              "row_coverage": 0.9460500963391136,
+              "rows": 519,
+              "unavailable_rows": 0
+            }
+          },
+          "test_group_metrics": {
+            "depth_band:0": {
+              "calibrated_rows": 232,
+              "crossing_rate": 0.0,
+              "fallback_rows": 232,
+              "full_profile_coverage": 0.7317073170731707,
+              "mean_width": 6.643911015139708,
+              "pinball_loss": 0.5302840715191235,
+              "profile_group_count": 41,
+              "profile_group_coverage": 0.7317073170731707,
+              "profile_group_coverage_95": [
+                0.5806646689292336,
+                0.8430503595218832
+              ],
+              "profile_weighted_width": 6.641412740508056,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.5020005160165901,
+                "0.5": 0.7482615700381287,
+                "0.9": 0.3405901285026519
+              },
+              "raw_row_coverage": 0.521551724137931,
+              "row_coverage": 0.9094827586206896,
+              "rows": 232,
+              "unavailable_rows": 0
+            },
+            "depth_band:1": {
+              "calibrated_rows": 180,
+              "crossing_rate": 0.0,
+              "fallback_rows": 180,
+              "full_profile_coverage": 0.9473684210526315,
+              "mean_width": 5.295713337076232,
+              "pinball_loss": 0.32311158970324333,
+              "profile_group_count": 38,
+              "profile_group_coverage": 0.9473684210526315,
+              "profile_group_coverage_95": [
+                0.8271453786822962,
+                0.9854457918527075
+              ],
+              "profile_weighted_width": 5.3502985739908056,
+              "profiles": 38,
+              "quantile_pinball": {
+                "0.1": 0.18945470678995696,
+                "0.5": 0.46447540414363236,
+                "0.9": 0.3154046581761407
+              },
+              "raw_row_coverage": 0.5222222222222223,
+              "row_coverage": 0.9777777777777777,
+              "rows": 180,
+              "unavailable_rows": 0
+            },
+            "depth_band:2": {
+              "calibrated_rows": 87,
+              "crossing_rate": 0.0,
+              "fallback_rows": 87,
+              "full_profile_coverage": 0.7575757575757576,
+              "mean_width": 1.185086482739155,
+              "pinball_loss": 0.14215743613977597,
+              "profile_group_count": 33,
+              "profile_group_coverage": 0.7575757575757576,
+              "profile_group_coverage_95": [
+                0.5897538017044264,
+                0.8716828662282499
+              ],
+              "profile_weighted_width": 1.2068591963993862,
+              "profiles": 33,
+              "quantile_pinball": {
+                "0.1": 0.12075440141627462,
+                "0.5": 0.18737271646458611,
+                "0.9": 0.11834519053846715
+              },
+              "raw_row_coverage": 0.7241379310344828,
+              "row_coverage": 0.896551724137931,
+              "rows": 87,
+              "unavailable_rows": 0
+            },
+            "overall": {
+              "calibrated_rows": 499,
+              "crossing_rate": 0.0,
+              "fallback_rows": 499,
+              "full_profile_coverage": 0.5365853658536586,
+              "mean_width": 5.205848256882646,
+              "pinball_loss": 0.40170542144179616,
+              "profile_group_count": 112,
+              "profile_group_coverage": 0.8125,
+              "profile_group_coverage_95": [
+                0.7303087134885466,
+                0.8739654445946134
+              ],
+              "profile_weighted_width": 5.347748009650347,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.36128386718513955,
+                "0.5": 0.5621495143874676,
+                "0.9": 0.2816828827527812
+              },
+              "raw_row_coverage": 0.5571142284569138,
+              "row_coverage": 0.9318637274549099,
+              "rows": 499,
+              "unavailable_rows": 0
+            },
+            "region:arabian": {
+              "calibrated_rows": 228,
+              "crossing_rate": 0.0,
+              "fallback_rows": 228,
+              "full_profile_coverage": 0.4,
+              "mean_width": 5.550743865464573,
+              "pinball_loss": 0.5215132576544771,
+              "profile_group_count": 52,
+              "profile_group_coverage": 0.75,
+              "profile_group_coverage_95": [
+                0.6179354205740265,
+                0.8476684613640423
+              ],
+              "profile_weighted_width": 5.708832194886862,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.4955699406526214,
+                "0.5": 0.715263320682315,
+                "0.9": 0.35370651162849487
+              },
+              "raw_row_coverage": 0.4692982456140351,
+              "row_coverage": 0.8947368421052632,
+              "rows": 228,
+              "unavailable_rows": 0
+            },
+            "region:bay_bengal": {
+              "calibrated_rows": 271,
+              "crossing_rate": 0.0,
+              "fallback_rows": 271,
+              "full_profile_coverage": 0.6666666666666666,
+              "mean_width": 4.915677781765749,
+              "pinball_loss": 0.28760272028686185,
+              "profile_group_count": 60,
+              "profile_group_coverage": 0.8666666666666667,
+              "profile_group_coverage_95": [
+                0.7583484032350039,
+                0.9308589051941303
+              ],
+              "profile_weighted_width": 5.003858309425095,
+              "profiles": 21,
+              "quantile_pinball": {
+                "0.1": 0.23339236864468038,
+                "0.5": 0.41632684172570816,
+                "0.9": 0.21308895049019694
+              },
+              "raw_row_coverage": 0.6309963099630996,
+              "row_coverage": 0.9630996309963099,
+              "rows": 271,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:0": {
+              "calibrated_rows": 113,
+              "crossing_rate": 0.0,
+              "fallback_rows": 113,
+              "full_profile_coverage": 0.75,
+              "mean_width": 6.765119048216154,
+              "pinball_loss": 0.6218136696727067,
+              "profile_group_count": 20,
+              "profile_group_coverage": 0.75,
+              "profile_group_coverage_95": [
+                0.531299122381256,
+                0.8881382985923343
+              ],
+              "profile_weighted_width": 6.753526459076163,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.6408674270213475,
+                "0.5": 0.8689247727492214,
+                "0.9": 0.35564880924755127
+              },
+              "raw_row_coverage": 0.4424778761061947,
+              "row_coverage": 0.8849557522123894,
+              "rows": 113,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 84,
+              "crossing_rate": 0.0,
+              "fallback_rows": 84,
+              "full_profile_coverage": 0.8888888888888888,
+              "mean_width": 5.460060766363485,
+              "pinball_loss": 0.4230398425330435,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.8888888888888888,
+              "profile_group_coverage_95": [
+                0.672002348698212,
+                0.9689804773543876
+              ],
+              "profile_weighted_width": 5.521768829444832,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.21558650624692427,
+                "0.5": 0.5868340617328196,
+                "0.9": 0.4666989596193867
+              },
+              "raw_row_coverage": 0.47619047619047616,
+              "row_coverage": 0.9523809523809523,
+              "rows": 84,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 31,
+              "crossing_rate": 0.0,
+              "fallback_rows": 31,
+              "full_profile_coverage": 0.5714285714285714,
+              "mean_width": 1.3698724033214364,
+              "pinball_loss": 0.24718106917880014,
+              "profile_group_count": 14,
+              "profile_group_coverage": 0.5714285714285714,
+              "profile_group_coverage_95": [
+                0.3259064457965074,
+                0.7861920109552588
+              ],
+              "profile_weighted_width": 1.3732594095336605,
+              "profiles": 14,
+              "quantile_pinball": {
+                "0.1": 0.2155094878211233,
+                "0.5": 0.3093568919496394,
+                "0.9": 0.21667682776563776
+              },
+              "raw_row_coverage": 0.5483870967741935,
+              "row_coverage": 0.7741935483870968,
+              "rows": 31,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 119,
+              "crossing_rate": 0.0,
+              "fallback_rows": 119,
+              "full_profile_coverage": 0.7142857142857143,
+              "mean_width": 6.528814311462074,
+              "pinball_loss": 0.4431130256585681,
+              "profile_group_count": 21,
+              "profile_group_coverage": 0.7142857142857143,
+              "profile_group_coverage_95": [
+                0.5004361928391441,
+                0.8618613704787788
+              ],
+              "profile_weighted_width": 6.534637770443192,
+              "profiles": 21,
+              "quantile_pinball": {
+                "0.1": 0.3697463150596784,
+                "0.5": 0.633344234122802,
+                "0.9": 0.3262485277932239
+              },
+              "raw_row_coverage": 0.5966386554621849,
+              "row_coverage": 0.9327731092436975,
+              "rows": 119,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 96,
+              "crossing_rate": 0.0,
+              "fallback_rows": 96,
+              "full_profile_coverage": 1.0,
+              "mean_width": 5.151909336449887,
+              "pinball_loss": 0.23317616215642323,
+              "profile_group_count": 20,
+              "profile_group_coverage": 1.0,
+              "profile_group_coverage_95": [
+                0.8388748419471806,
+                1.0
+              ],
+              "profile_weighted_width": 5.195975344082183,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.16593608727868642,
+                "0.5": 0.3543526123133638,
+                "0.9": 0.17923978687721953
+              },
+              "raw_row_coverage": 0.5625,
+              "row_coverage": 1.0,
+              "rows": 96,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 56,
+              "crossing_rate": 0.0,
+              "fallback_rows": 56,
+              "full_profile_coverage": 0.8947368421052632,
+              "mean_width": 1.0827942767025343,
+              "pinball_loss": 0.06477160126891603,
+              "profile_group_count": 19,
+              "profile_group_coverage": 0.8947368421052632,
+              "profile_group_coverage_95": [
+                0.6860591728889099,
+                0.9706414397011299
+              ],
+              "profile_weighted_width": 1.0842485130372894,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.05093486406533346,
+                "0.5": 0.09748963979138897,
+                "0.9": 0.045890299950025665
+              },
+              "raw_row_coverage": 0.8214285714285714,
+              "row_coverage": 0.9642857142857143,
+              "rows": 56,
+              "unavailable_rows": 0
+            },
+            "season:DJF": {
+              "calibrated_rows": 116,
+              "crossing_rate": 0.0,
+              "fallback_rows": 116,
+              "full_profile_coverage": 0.7777777777777778,
+              "mean_width": 5.095102490258852,
+              "pinball_loss": 0.2413275572463747,
+              "profile_group_count": 25,
+              "profile_group_coverage": 0.92,
+              "profile_group_coverage_95": [
+                0.7503389104960468,
+                0.9777795987151524
+              ],
+              "profile_weighted_width": 5.131724167903317,
+              "profiles": 9,
+              "quantile_pinball": {
+                "0.1": 0.2206836582257778,
+                "0.5": 0.35552343535869135,
+                "0.9": 0.14777557815465495
+              },
+              "raw_row_coverage": 0.7241379310344828,
+              "row_coverage": 0.9741379310344828,
+              "rows": 116,
+              "unavailable_rows": 0
+            },
+            "season:JJA": {
+              "calibrated_rows": 154,
+              "crossing_rate": 0.0,
+              "fallback_rows": 154,
+              "full_profile_coverage": 0.4166666666666667,
+              "mean_width": 5.1183669332209565,
+              "pinball_loss": 0.5348633943905589,
+              "profile_group_count": 34,
+              "profile_group_coverage": 0.7941176470588235,
+              "profile_group_coverage_95": [
+                0.632016119488364,
+                0.8965047310096808
+              ],
+              "profile_weighted_width": 5.206623391638289,
+              "profiles": 12,
+              "quantile_pinball": {
+                "0.1": 0.5999306819337261,
+                "0.5": 0.6973052730037397,
+                "0.9": 0.30735422823421077
+              },
+              "raw_row_coverage": 0.538961038961039,
+              "row_coverage": 0.9025974025974026,
+              "rows": 154,
+              "unavailable_rows": 0
+            },
+            "season:MAM": {
+              "calibrated_rows": 151,
+              "crossing_rate": 0.0,
+              "fallback_rows": 151,
+              "full_profile_coverage": 0.5384615384615384,
+              "mean_width": 5.301654648401668,
+              "pinball_loss": 0.39707377463710203,
+              "profile_group_count": 35,
+              "profile_group_coverage": 0.8,
+              "profile_group_coverage_95": [
+                0.6410838693433439,
+                0.8995755352620137
+              ],
+              "profile_weighted_width": 5.480554234876839,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.265882327816208,
+                "0.5": 0.5852156670613029,
+                "0.9": 0.3401233290337951
+              },
+              "raw_row_coverage": 0.39072847682119205,
+              "row_coverage": 0.9337748344370861,
+              "rows": 151,
+              "unavailable_rows": 0
+            },
+            "season:SON": {
+              "calibrated_rows": 78,
+              "crossing_rate": 0.0,
+              "fallback_rows": 78,
+              "full_profile_coverage": 0.42857142857142855,
+              "mean_width": 5.357795278073523,
+              "pinball_loss": 0.38823635156103387,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.7222222222222222,
+              "profile_group_coverage_95": [
+                0.4912734343970254,
+                0.8750024662044601
+              ],
+              "profile_weighted_width": 5.6207807330680035,
+              "profiles": 7,
+              "quantile_pinball": {
+                "0.1": 0.31012102653475715,
+                "0.5": 0.5532788891165915,
+                "0.9": 0.30130913903175294
+              },
+              "raw_row_coverage": 0.6666666666666666,
+              "row_coverage": 0.9230769230769231,
+              "rows": 78,
+              "unavailable_rows": 0
+            }
+          }
+        },
+        "lightgbm": {
+          "calibration": {
+            "alpha": 0.2,
+            "coverage_claim": "Nominal coverage is per profile within the named region/depth group; no conditional or full-profile joint guarantee is asserted.",
+            "fitting_partition": "calibration",
+            "groups": {
+              "depth:0": {
+                "correction": 1.965709336583707,
+                "profiles": 35,
+                "rank": 29,
+                "reason": null
+              },
+              "depth:1": {
+                "correction": 1.5969586777877858,
+                "profiles": 32,
+                "rank": 27,
+                "reason": null
+              },
+              "depth:2": {
+                "correction": 0.1500772367754708,
+                "profiles": 30,
+                "rank": 25,
+                "reason": null
+              },
+              "global": {
+                "correction": 2.2622580905227423,
+                "profiles": 35,
+                "rank": 29,
+                "reason": null
+              },
+              "region:arabian": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region:bay_bengal": {
+                "correction": null,
+                "profiles": 18,
+                "rank": 16,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:0": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:1": {
+                "correction": null,
+                "profiles": 15,
+                "rank": 13,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:arabian:2": {
+                "correction": null,
+                "profiles": 13,
+                "rank": 12,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:0": {
+                "correction": null,
+                "profiles": 18,
+                "rank": 16,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:1": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              },
+              "region_depth:bay_bengal:2": {
+                "correction": null,
+                "profiles": 17,
+                "rank": 15,
+                "reason": "insufficient_calibration_profiles_or_rank"
+              }
+            },
+            "hierarchy": [
+              "region_depth",
+              "region",
+              "depth",
+              "global"
+            ],
+            "unit": "stable_profile_maximum_within_group"
+          },
+          "native_model_count": 3,
+          "outside_quantile_training_envelope_rows": 0,
+          "partition_metrics": {
+            "calibration": {
+              "calibrated_rows": 433,
+              "crossing_rate": 0.0,
+              "fallback_rows": 433,
+              "full_profile_coverage": 0.6571428571428571,
+              "mean_width": 5.13861630990946,
+              "pinball_loss": 0.291554611708363,
+              "profile_group_count": 97,
+              "profile_group_coverage": 0.8350515463917526,
+              "profile_group_coverage_95": [
+                0.7487353960515549,
+                0.8958407610186864
+              ],
+              "profile_weighted_width": 5.262286842532297,
+              "profiles": 35,
+              "quantile_pinball": {
+                "0.1": 0.21365884545217603,
+                "0.5": 0.42273905356993086,
+                "0.9": 0.2382659361029821
+              },
+              "raw_row_coverage": 0.7367205542725174,
+              "row_coverage": 0.953810623556582,
+              "rows": 433,
+              "unavailable_rows": 0
+            },
+            "test": {
+              "calibrated_rows": 499,
+              "crossing_rate": 0.0,
+              "fallback_rows": 499,
+              "full_profile_coverage": 0.5609756097560976,
+              "mean_width": 5.319649861489982,
+              "pinball_loss": 0.3986662270469343,
+              "profile_group_count": 112,
+              "profile_group_coverage": 0.8303571428571429,
+              "profile_group_coverage_95": [
+                0.7501831328022577,
+                0.8886209771713689
+              ],
+              "profile_weighted_width": 5.500241800637726,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.3376888209357487,
+                "0.5": 0.5743936021900107,
+                "0.9": 0.28391625801504344
+              },
+              "raw_row_coverage": 0.6152304609218436,
+              "row_coverage": 0.935871743486974,
+              "rows": 499,
+              "unavailable_rows": 0
+            },
+            "train": {
+              "calibrated_rows": 570,
+              "crossing_rate": 0.0,
+              "fallback_rows": 570,
+              "full_profile_coverage": 0.9111111111111111,
+              "mean_width": 5.259512934570345,
+              "pinball_loss": 0.203262314083569,
+              "profile_group_count": 128,
+              "profile_group_coverage": 0.96875,
+              "profile_group_coverage_95": [
+                0.9224023687386392,
+                0.9877817347549466
+              ],
+              "profile_weighted_width": 5.299010973099727,
+              "profiles": 45,
+              "quantile_pinball": {
+                "0.1": 0.14726350624624343,
+                "0.5": 0.32585244982455724,
+                "0.9": 0.13667098617990636
+              },
+              "raw_row_coverage": 0.8491228070175438,
+              "row_coverage": 0.9894736842105263,
+              "rows": 570,
+              "unavailable_rows": 0
+            },
+            "tune": {
+              "calibrated_rows": 519,
+              "crossing_rate": 0.0,
+              "fallback_rows": 519,
+              "full_profile_coverage": 0.6153846153846154,
+              "mean_width": 5.059949719179328,
+              "pinball_loss": 0.2681547040811911,
+              "profile_group_count": 114,
+              "profile_group_coverage": 0.8070175438596491,
+              "profile_group_coverage_95": [
+                0.7250573655529112,
+                0.8689610783846421
+              ],
+              "profile_weighted_width": 5.111653793115917,
+              "profiles": 39,
+              "quantile_pinball": {
+                "0.1": 0.1868637465761234,
+                "0.5": 0.41256673048013287,
+                "0.9": 0.205033635187317
+              },
+              "raw_row_coverage": 0.7225433526011561,
+              "row_coverage": 0.9518304431599229,
+              "rows": 519,
+              "unavailable_rows": 0
+            }
+          },
+          "test_group_metrics": {
+            "depth_band:0": {
+              "calibrated_rows": 232,
+              "crossing_rate": 0.0,
+              "fallback_rows": 232,
+              "full_profile_coverage": 0.7317073170731707,
+              "mean_width": 6.828028278873774,
+              "pinball_loss": 0.5447751178290976,
+              "profile_group_count": 41,
+              "profile_group_coverage": 0.7317073170731707,
+              "profile_group_coverage_95": [
+                0.5806646689292336,
+                0.8430503595218832
+              ],
+              "profile_weighted_width": 6.84927027176015,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.4636681703510848,
+                "0.5": 0.7814588980272044,
+                "0.9": 0.38919828510900356
+              },
+              "raw_row_coverage": 0.4827586206896552,
+              "row_coverage": 0.9051724137931034,
+              "rows": 232,
+              "unavailable_rows": 0
+            },
+            "depth_band:1": {
+              "calibrated_rows": 180,
+              "crossing_rate": 0.0,
+              "fallback_rows": 180,
+              "full_profile_coverage": 0.9210526315789473,
+              "mean_width": 5.152011201179193,
+              "pinball_loss": 0.2949346234837749,
+              "profile_group_count": 38,
+              "profile_group_coverage": 0.9210526315789473,
+              "profile_group_coverage_95": [
+                0.7920062854222853,
+                0.9727854044930122
+              ],
+              "profile_weighted_width": 5.19289494459254,
+              "profiles": 38,
+              "quantile_pinball": {
+                "0.1": 0.185966352362594,
+                "0.5": 0.4423077085839201,
+                "0.9": 0.2565298095048108
+              },
+              "raw_row_coverage": 0.6388888888888888,
+              "row_coverage": 0.9722222222222222,
+              "rows": 180,
+              "unavailable_rows": 0
+            },
+            "depth_band:2": {
+              "calibrated_rows": 87,
+              "crossing_rate": 0.0,
+              "fallback_rows": 87,
+              "full_profile_coverage": 0.8484848484848485,
+              "mean_width": 1.6441460226727684,
+              "pinball_loss": 0.14003309750893564,
+              "profile_group_count": 33,
+              "profile_group_coverage": 0.8484848484848485,
+              "profile_group_coverage_95": [
+                0.6908012411955788,
+                0.9334954271839244
+              ],
+              "profile_weighted_width": 1.6768676092289339,
+              "profiles": 33,
+              "quantile_pinball": {
+                "0.1": 0.12958446182013272,
+                "0.5": 0.1892682192485186,
+                "0.9": 0.1012466114581556
+              },
+              "raw_row_coverage": 0.9195402298850575,
+              "row_coverage": 0.9425287356321839,
+              "rows": 87,
+              "unavailable_rows": 0
+            },
+            "overall": {
+              "calibrated_rows": 499,
+              "crossing_rate": 0.0,
+              "fallback_rows": 499,
+              "full_profile_coverage": 0.5609756097560976,
+              "mean_width": 5.319649861489982,
+              "pinball_loss": 0.3986662270469343,
+              "profile_group_count": 112,
+              "profile_group_coverage": 0.8303571428571429,
+              "profile_group_coverage_95": [
+                0.7501831328022577,
+                0.8886209771713689
+              ],
+              "profile_weighted_width": 5.500241800637726,
+              "profiles": 41,
+              "quantile_pinball": {
+                "0.1": 0.3376888209357487,
+                "0.5": 0.5743936021900107,
+                "0.9": 0.28391625801504344
+              },
+              "raw_row_coverage": 0.6152304609218436,
+              "row_coverage": 0.935871743486974,
+              "rows": 499,
+              "unavailable_rows": 0
+            },
+            "region:arabian": {
+              "calibrated_rows": 228,
+              "crossing_rate": 0.0,
+              "fallback_rows": 228,
+              "full_profile_coverage": 0.45,
+              "mean_width": 5.75934337766149,
+              "pinball_loss": 0.49841626535006545,
+              "profile_group_count": 52,
+              "profile_group_coverage": 0.7884615384615384,
+              "profile_group_coverage_95": [
+                0.6596789537149542,
+                0.8775562946751251
+              ],
+              "profile_weighted_width": 5.9569010686935915,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.4459769587141974,
+                "0.5": 0.7349506596350082,
+                "0.9": 0.3143211777009907
+              },
+              "raw_row_coverage": 0.5482456140350878,
+              "row_coverage": 0.9122807017543859,
+              "rows": 228,
+              "unavailable_rows": 0
+            },
+            "region:bay_bengal": {
+              "calibrated_rows": 271,
+              "crossing_rate": 0.0,
+              "fallback_rows": 271,
+              "full_profile_coverage": 0.6666666666666666,
+              "mean_width": 4.9497232131980855,
+              "pinball_loss": 0.3036661905677616,
+              "profile_group_count": 60,
+              "profile_group_coverage": 0.8666666666666667,
+              "profile_group_coverage_95": [
+                0.7583484032350039,
+                0.9308589051941303
+              ],
+              "profile_weighted_width": 5.06532821201309,
+              "profiles": 21,
+              "quantile_pinball": {
+                "0.1": 0.2345572611467499,
+                "0.5": 0.4214821189090606,
+                "0.9": 0.2549591916474743
+              },
+              "raw_row_coverage": 0.6715867158671587,
+              "row_coverage": 0.955719557195572,
+              "rows": 271,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:0": {
+              "calibrated_rows": 113,
+              "crossing_rate": 0.0,
+              "fallback_rows": 113,
+              "full_profile_coverage": 0.8,
+              "mean_width": 7.1112060475647,
+              "pinball_loss": 0.6144422943570035,
+              "profile_group_count": 20,
+              "profile_group_coverage": 0.8,
+              "profile_group_coverage_95": [
+                0.5839825677481064,
+                0.919342337420202
+              ],
+              "profile_weighted_width": 7.112973198454037,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.5780866513252257,
+                "0.5": 0.9211342219124548,
+                "0.9": 0.3441060098333296
+              },
+              "raw_row_coverage": 0.4424778761061947,
+              "row_coverage": 0.9026548672566371,
+              "rows": 113,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:1": {
+              "calibrated_rows": 84,
+              "crossing_rate": 0.0,
+              "fallback_rows": 84,
+              "full_profile_coverage": 0.8888888888888888,
+              "mean_width": 5.395443545820631,
+              "pinball_loss": 0.3703091262075155,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.8888888888888888,
+              "profile_group_coverage_95": [
+                0.672002348698212,
+                0.9689804773543876
+              ],
+              "profile_weighted_width": 5.439459255709985,
+              "profiles": 18,
+              "quantile_pinball": {
+                "0.1": 0.20811179074159075,
+                "0.5": 0.5496945798409562,
+                "0.9": 0.35312100803999963
+              },
+              "raw_row_coverage": 0.5833333333333334,
+              "row_coverage": 0.9523809523809523,
+              "rows": 84,
+              "unavailable_rows": 0
+            },
+            "region_depth:arabian:2": {
+              "calibrated_rows": 31,
+              "crossing_rate": 0.0,
+              "fallback_rows": 31,
+              "full_profile_coverage": 0.6428571428571429,
+              "mean_width": 1.817637060744383,
+              "pinball_loss": 0.22676470268198048,
+              "profile_group_count": 14,
+              "profile_group_coverage": 0.6428571428571429,
+              "profile_group_coverage_95": [
+                0.38764423103907397,
+                0.8365526824644587
+              ],
+              "profile_weighted_width": 1.851216119270579,
+              "profiles": 14,
+              "quantile_pinball": {
+                "0.1": 0.19007643179463707,
+                "0.5": 0.30943742355035725,
+                "0.9": 0.1807802527009472
+              },
+              "raw_row_coverage": 0.8387096774193549,
+              "row_coverage": 0.8387096774193549,
+              "rows": 31,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:0": {
+              "calibrated_rows": 119,
+              "crossing_rate": 0.0,
+              "fallback_rows": 119,
+              "full_profile_coverage": 0.6666666666666666,
+              "mean_width": 6.559128380873147,
+              "pinball_loss": 0.47842542589775866,
+              "profile_group_count": 21,
+              "profile_group_coverage": 0.6666666666666666,
+              "profile_group_coverage_95": [
+                0.4537345197425524,
+                0.8280524739491653
+              ],
+              "profile_weighted_width": 6.598124627289781,
+              "profiles": 21,
+              "quantile_pinball": {
+                "0.1": 0.3546981884709505,
+                "0.5": 0.6484347800412513,
+                "0.9": 0.4321433091810739
+              },
+              "raw_row_coverage": 0.5210084033613446,
+              "row_coverage": 0.907563025210084,
+              "rows": 119,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:1": {
+              "calibrated_rows": 96,
+              "crossing_rate": 0.0,
+              "fallback_rows": 96,
+              "full_profile_coverage": 0.95,
+              "mean_width": 4.939007899617935,
+              "pinball_loss": 0.22709757103240857,
+              "profile_group_count": 20,
+              "profile_group_coverage": 0.95,
+              "profile_group_coverage_95": [
+                0.763868806553258,
+                0.9911185511992047
+              ],
+              "profile_weighted_width": 4.970987064586839,
+              "profiles": 20,
+              "quantile_pinball": {
+                "0.1": 0.16603545782149703,
+                "0.5": 0.34565952445258774,
+                "0.9": 0.16959773082314092
+              },
+              "raw_row_coverage": 0.6875,
+              "row_coverage": 0.9895833333333334,
+              "rows": 96,
+              "unavailable_rows": 0
+            },
+            "region_depth:bay_bengal:2": {
+              "calibrated_rows": 56,
+              "crossing_rate": 0.0,
+              "fallback_rows": 56,
+              "full_profile_coverage": 1.0,
+              "mean_width": 1.5481063408831257,
+              "pinball_loss": 0.07612559896037627,
+              "profile_group_count": 19,
+              "profile_group_coverage": 1.0,
+              "profile_group_coverage_95": [
+                0.8318207759473837,
+                1.0
+              ],
+              "profile_weighted_width": 1.5484002860403532,
+              "profiles": 19,
+              "quantile_pinball": {
+                "0.1": 0.08501143131260308,
+                "0.5": 0.10072248976295338,
+                "0.9": 0.042642875805572335
+              },
+              "raw_row_coverage": 0.9642857142857143,
+              "row_coverage": 1.0,
+              "rows": 56,
+              "unavailable_rows": 0
+            },
+            "season:DJF": {
+              "calibrated_rows": 116,
+              "crossing_rate": 0.0,
+              "fallback_rows": 116,
+              "full_profile_coverage": 0.7777777777777778,
+              "mean_width": 5.081076914488479,
+              "pinball_loss": 0.24216928497111126,
+              "profile_group_count": 25,
+              "profile_group_coverage": 0.92,
+              "profile_group_coverage_95": [
+                0.7503389104960468,
+                0.9777795987151524
+              ],
+              "profile_weighted_width": 5.13826832255765,
+              "profiles": 9,
+              "quantile_pinball": {
+                "0.1": 0.21612582643468295,
+                "0.5": 0.3566178629805558,
+                "0.9": 0.15376416549809505
+              },
+              "raw_row_coverage": 0.7327586206896551,
+              "row_coverage": 0.9741379310344828,
+              "rows": 116,
+              "unavailable_rows": 0
+            },
+            "season:JJA": {
+              "calibrated_rows": 154,
+              "crossing_rate": 0.0,
+              "fallback_rows": 154,
+              "full_profile_coverage": 0.5,
+              "mean_width": 5.229074585299747,
+              "pinball_loss": 0.5149440721061271,
+              "profile_group_count": 34,
+              "profile_group_coverage": 0.8235294117647058,
+              "profile_group_coverage_95": [
+                0.6648626260015724,
+                0.9165103095462768
+              ],
+              "profile_weighted_width": 5.356510372816273,
+              "profiles": 12,
+              "quantile_pinball": {
+                "0.1": 0.5431741807714666,
+                "0.5": 0.7032243686325534,
+                "0.9": 0.29843366691436135
+              },
+              "raw_row_coverage": 0.6298701298701299,
+              "row_coverage": 0.9155844155844156,
+              "rows": 154,
+              "unavailable_rows": 0
+            },
+            "season:MAM": {
+              "calibrated_rows": 151,
+              "crossing_rate": 0.0,
+              "fallback_rows": 151,
+              "full_profile_coverage": 0.5384615384615384,
+              "mean_width": 5.6238372856674665,
+              "pinball_loss": 0.4093044787664328,
+              "profile_group_count": 35,
+              "profile_group_coverage": 0.8,
+              "profile_group_coverage_95": [
+                0.6410838693433439,
+                0.8995755352620137
+              ],
+              "profile_weighted_width": 5.854190035131122,
+              "profiles": 13,
+              "quantile_pinball": {
+                "0.1": 0.2614938808426934,
+                "0.5": 0.6180828157432494,
+                "0.9": 0.3483367397133555
+              },
+              "raw_row_coverage": 0.4768211920529801,
+              "row_coverage": 0.9271523178807947,
+              "rows": 151,
+              "unavailable_rows": 0
+            },
+            "season:SON": {
+              "calibrated_rows": 78,
+              "crossing_rate": 0.0,
+              "fallback_rows": 78,
+              "full_profile_coverage": 0.42857142857142855,
+              "mean_width": 5.264403109370371,
+              "pinball_loss": 0.38078637927816406,
+              "profile_group_count": 18,
+              "profile_group_coverage": 0.7777777777777778,
+              "profile_group_coverage_95": [
+                0.5478541568378739,
+                0.9099907189139831
+              ],
+              "profile_weighted_width": 5.55470057037543,
+              "profiles": 7,
+              "quantile_pinball": {
+                "0.1": 0.2832283714629907,
+                "0.5": 0.5524011278160785,
+                "0.9": 0.30672963855542296
+              },
+              "raw_row_coverage": 0.6794871794871795,
+              "row_coverage": 0.9358974358974359,
+              "rows": 78,
+              "unavailable_rows": 0
+            }
+          }
+        }
+      },
+      "profile_counts": {
+        "calibration": 35,
+        "test": 41,
+        "train": 45,
+        "tune": 39
+      },
+      "selected": {
+        "catboost": {
+          "parameters": [
+            {
+              "allow_writing_files": false,
+              "best_iteration": 53,
+              "depth": 4,
+              "iterations": 80,
+              "l2_leaf_reg": 1.0,
+              "learning_rate": 0.05,
+              "loss_function": "MultiQuantile:alpha=0.1,0.5,0.9",
+              "random_seed": 42,
+              "thread_count": 1,
+              "verbose": false
+            }
+          ],
+          "setting": 4,
+          "tuning_crossing_rate": 0.0,
+          "tuning_profile_pinball": 0.2656802432173547,
+          "tuning_raw_coverage": 0.7052023121387283
+        },
+        "lightgbm": {
+          "parameters": [
+            {
+              "alpha": 0.1,
+              "best_iteration": 31,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            },
+            {
+              "alpha": 0.5,
+              "best_iteration": 48,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            },
+            {
+              "alpha": 0.9,
+              "best_iteration": 40,
+              "deterministic": true,
+              "force_col_wise": true,
+              "lambda_l2": 1.0,
+              "learning_rate": 0.05,
+              "metric": "None",
+              "min_data_in_leaf": 20,
+              "num_leaves": 7,
+              "num_threads": 1,
+              "objective": "quantile",
+              "seed": 42,
+              "verbosity": -1
+            }
+          ],
+          "setting": 7,
+          "tuning_crossing_rate": 0.0,
+          "tuning_profile_pinball": 0.26815470408119113,
+          "tuning_raw_coverage": 0.7225433526011561
+        }
+      },
+      "selected_family": "lightgbm",
+      "selection_rule": "tuning pinball within frozen tolerance, then closest raw nominal coverage, crossing rate, existing LightGBM operational path; measured latency must pass selection budget; no test/calibration tuning",
+      "status": "trained"
+    }
+  },
+  "verification": [
+    "Python tests: 21 passed",
+    "Frontend tests: 3 passed",
+    "Go API and ingestion race checks passed",
+    "lint, Go vet, TypeScript and Compose validation",
+    "production Docker builds for Nautiq services and web",
+    "fresh, legacy, repeat, checksum refusal and rollback migrations; schema 8",
+    "offline observation, snapshot, climatology, residual model and uncertainty gates",
+    "disposable observation, snapshot, climatology, residual model and uncertainty integration gates",
+    "real expected/uncertainty repeated release builds identical",
+    "typed gRPC budgets, exact pins and native-model inference",
+    "uncertainty revision/model/parent races, stale restoration, lost leases, outage deferral and immutable monitoring",
+    "MLflow run/version and downloaded bundle SHA-256",
+    "live platform, observation, snapshot, climatology, mean and uncertainty API/HTML gates",
+    "byte-identical regenerated Nautiq Go/Python protobuf files"
+  ],
+  "verified_at": "2026-10-02T09:34:20.438271+00:00"
+}

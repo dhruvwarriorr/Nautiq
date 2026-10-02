@@ -1,0 +1,1790 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq predictive interval evidence API",
+    "version": "1.0.0",
+    "description": "Native LightGBM and CatBoost quantiles, profile maximum Mondrian CQR, frozen count/rank fallback, exact mean/reference pins and trusted fixed-reference coverage monitoring. Diagnostic implementation is independent from qualified empirical coverage. No automatic adaptation or scientific production approval."
+  },
+  "paths": {
+    "/api/v1/uncertainty-releases": {
+      "get": {
+        "summary": "IntervalPage",
+        "responses": {
+          "200": {
+            "description": "Hash-pinned frozen evidence or current revision-matched evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/uncertainty-releases/selected": {
+      "get": {
+        "summary": "IntervalSelection",
+        "responses": {
+          "200": {
+            "description": "Hash-pinned frozen evidence or current revision-matched evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalSelection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uncertainty-releases/{id}": {
+      "get": {
+        "summary": "IntervalRelease",
+        "responses": {
+          "200": {
+            "description": "Hash-pinned frozen evidence or current revision-matched evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalRelease"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/uncertainty-releases/{id}/coverage": {
+      "get": {
+        "summary": "IntervalCoverage",
+        "responses": {
+          "200": {
+            "description": "Hash-pinned frozen evidence or current revision-matched evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalCoverage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/uncertainty": {
+      "get": {
+        "summary": "IntervalProfile",
+        "responses": {
+          "200": {
+            "description": "Hash-pinned frozen evidence or current revision-matched evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "additionalProperties": false
+      },
+      "IntervalSummary": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expected_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "selected_families": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "qualified": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "nominal_coverage": {
+            "const": 0.8
+          },
+          "coverage_unit": {
+            "const": "stable_profile_maximum_within_group"
+          },
+          "fitting_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          },
+          "calibration_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          }
+        },
+        "required": [
+          "release_id",
+          "expected_id",
+          "reference_id",
+          "snapshot_id",
+          "calculation_id",
+          "status",
+          "selected",
+          "release_approved",
+          "selected_families",
+          "qualified",
+          "nominal_coverage",
+          "coverage_unit",
+          "fitting_period",
+          "calibration_period"
+        ]
+      },
+      "IntervalPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "$ref": "#/components/schemas/IntervalSummary"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "IntervalSelection": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expected_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "selected_families": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "qualified": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "nominal_coverage": {
+            "const": 0.8
+          },
+          "coverage_unit": {
+            "const": "stable_profile_maximum_within_group"
+          },
+          "fitting_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          },
+          "calibration_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          }
+        },
+        "required": [
+          "release_id",
+          "expected_id",
+          "reference_id",
+          "status",
+          "nominal_coverage",
+          "coverage_unit",
+          "qualified",
+          "release_approved"
+        ]
+      },
+      "IntervalMetric": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profiles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "calibrated_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profile_group_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "fallback_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unavailable_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pinball_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crossing_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "raw_row_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "row_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_group_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "full_profile_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mean_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_weighted_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quantile_pinball": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_group_coverage_95": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "rows",
+          "profiles",
+          "calibrated_rows",
+          "profile_group_count",
+          "fallback_rows",
+          "unavailable_rows",
+          "pinball_loss",
+          "crossing_rate",
+          "raw_row_coverage",
+          "row_coverage",
+          "profile_group_coverage",
+          "full_profile_coverage",
+          "mean_width",
+          "profile_weighted_width",
+          "quantile_pinball",
+          "profile_group_coverage_95"
+        ]
+      },
+      "IntervalRelease": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expected_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "selected_families": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "qualified": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "nominal_coverage": {
+            "const": 0.8
+          },
+          "coverage_unit": {
+            "const": "stable_profile_maximum_within_group"
+          },
+          "fitting_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          },
+          "calibration_period": {
+            "type": "object",
+            "properties": {
+              "start_year": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_year": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "start_year",
+              "end_year"
+            ]
+          },
+          "manifest": {
+            "type": "object",
+            "properties": {
+              "output": {
+                "type": "object",
+                "properties": {
+                  "bundle_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "report_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "bundle_sha256",
+                  "report_sha256"
+                ]
+              }
+            },
+            "required": [
+              "output"
+            ]
+          },
+          "report": {
+            "type": "object",
+            "properties": {
+              "variables": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "profile_counts": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "selected_family": {
+                      "type": "string"
+                    },
+                    "selection_rule": {
+                      "type": "string"
+                    },
+                    "selected": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 3,
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "tuning_profile_pinball": {
+                            "type": "number"
+                          },
+                          "tuning_raw_coverage": {
+                            "type": "number"
+                          },
+                          "tuning_crossing_rate": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "parameters",
+                          "tuning_profile_pinball",
+                          "tuning_raw_coverage",
+                          "tuning_crossing_rate"
+                        ]
+                      }
+                    },
+                    "families": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "calibration": {
+                            "type": "object",
+                            "properties": {
+                              "unit": {
+                                "type": "string"
+                              },
+                              "alpha": {
+                                "type": "number"
+                              },
+                              "fitting_partition": {
+                                "const": "calibration"
+                              },
+                              "hierarchy": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "groups": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "object",
+                                  "properties": {
+                                    "profiles": {
+                                      "type": "integer",
+                                      "minimum": 0
+                                    },
+                                    "rank": {
+                                      "type": "integer",
+                                      "minimum": 0
+                                    },
+                                    "correction": {
+                                      "anyOf": [
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "reason": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "profiles",
+                                    "rank",
+                                    "correction",
+                                    "reason"
+                                  ]
+                                }
+                              },
+                              "coverage_claim": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "unit",
+                              "alpha",
+                              "fitting_partition",
+                              "hierarchy",
+                              "groups",
+                              "coverage_claim"
+                            ]
+                          },
+                          "evaluation": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "$ref": "#/components/schemas/IntervalMetric"
+                              }
+                            }
+                          },
+                          "native_model_count": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "outside_quantile_training_envelope_rows": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "calibration",
+                          "evaluation",
+                          "native_model_count",
+                          "outside_quantile_training_envelope_rows"
+                        ]
+                      }
+                    },
+                    "coverage_gate": {
+                      "type": "object",
+                      "properties": {
+                        "qualified": {
+                          "type": "boolean"
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "qualified",
+                        "reasons"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "profile_counts",
+                    "coverage_gate"
+                  ]
+                }
+              },
+              "code_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "source_git_commit": {
+                "type": "string"
+              },
+              "policy": {
+                "type": "object"
+              },
+              "feature_schema": {
+                "type": "object"
+              },
+              "independence_audits": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "interval_interpretation": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "variables",
+              "code_sha256",
+              "source_git_commit",
+              "policy",
+              "feature_schema",
+              "independence_audits",
+              "interval_interpretation"
+            ]
+          },
+          "tracking": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "run_id": {
+                    "type": "string"
+                  },
+                  "registered_model": {
+                    "type": "string"
+                  },
+                  "model_version": {
+                    "type": "string"
+                  },
+                  "performance": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "native_model_count": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "batch_points": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "model_load_ms": {
+                            "type": "number"
+                          },
+                          "median_predict_ms": {
+                            "type": "number"
+                          },
+                          "p95_predict_ms": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "native_model_count",
+                          "batch_points",
+                          "model_load_ms",
+                          "median_predict_ms",
+                          "p95_predict_ms"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "run_id",
+                  "registered_model",
+                  "model_version",
+                  "performance"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "release_id",
+          "expected_id",
+          "reference_id",
+          "snapshot_id",
+          "calculation_id",
+          "status",
+          "selected",
+          "release_approved",
+          "manifest",
+          "report",
+          "tracking"
+        ]
+      },
+      "IntervalPoint": {
+        "type": "object",
+        "properties": {
+          "expected_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "q10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "q50": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "q90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lower": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "upper": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "correction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "covered": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "family": {
+            "type": "string"
+          },
+          "calibration_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requested_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibration_profiles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "calibration_rank": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fallback": {
+            "type": "boolean"
+          },
+          "fallback_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "quantile_crossing": {
+            "type": "boolean"
+          },
+          "coverage_qualified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "expected_mean",
+          "observed",
+          "q10",
+          "q50",
+          "q90",
+          "lower",
+          "upper",
+          "width",
+          "correction",
+          "covered",
+          "status",
+          "reason",
+          "family",
+          "calibration_group",
+          "requested_group",
+          "calibration_profiles",
+          "calibration_rank",
+          "fallback",
+          "fallback_reasons",
+          "quantile_crossing",
+          "coverage_qualified"
+        ]
+      },
+      "IntervalProfile": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "release_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reference_calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "pending_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nominal_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "coverage_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "supported_intervals": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "rows": {
+                    "type": "array",
+                    "maxItems": 32,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "depth_m": {
+                          "type": "number"
+                        },
+                        "temperature_c": {
+                          "$ref": "#/components/schemas/IntervalPoint"
+                        },
+                        "practical_salinity": {
+                          "$ref": "#/components/schemas/IntervalPoint"
+                        }
+                      },
+                      "required": [
+                        "depth_m",
+                        "temperature_c",
+                        "practical_salinity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "supported_intervals",
+                  "rows"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "release_id",
+          "expected_id",
+          "reference_id",
+          "calculation_id",
+          "reference_calculation_id",
+          "status",
+          "pending_reason",
+          "nominal_coverage",
+          "coverage_unit",
+          "release_approved",
+          "result"
+        ]
+      },
+      "IntervalCoverage": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "enum": [
+              "reference_mismatch",
+              "pending",
+              "stale_monitor",
+              "monitored"
+            ]
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "report": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "release_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "trusted_profiles": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "pending_profiles": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "skipped_untrusted_profiles": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "variables": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "rows": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "profiles": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "calibrated_rows": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "profile_group_count": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "fallback_rows": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "unavailable_rows": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "pinball_loss": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "crossing_rate": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "raw_row_coverage": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "row_coverage": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_group_coverage": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "full_profile_coverage": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "mean_width": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_weighted_width": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "quantile_pinball": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_group_coverage_95": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 2,
+                              "maxItems": 2
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "suspect_profiles_for_adaptation": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "unmodeled_label_rows": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "suspect_profiles_for_adaptation",
+                        "unmodeled_label_rows",
+                        "rows",
+                        "profiles",
+                        "calibrated_rows",
+                        "profile_group_count",
+                        "fallback_rows",
+                        "unavailable_rows",
+                        "pinball_loss",
+                        "crossing_rate",
+                        "raw_row_coverage",
+                        "row_coverage",
+                        "profile_group_coverage",
+                        "full_profile_coverage",
+                        "mean_width",
+                        "profile_weighted_width",
+                        "quantile_pinball",
+                        "profile_group_coverage_95"
+                      ]
+                    }
+                  },
+                  "calibration_updated": {
+                    "const": false
+                  },
+                  "release_approved": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "release_id",
+                  "trusted_profiles",
+                  "pending_profiles",
+                  "skipped_untrusted_profiles",
+                  "variables",
+                  "calibration_updated",
+                  "release_approved"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calibration_updated": {
+            "const": false
+          },
+          "release_approved": {
+            "const": false
+          }
+        },
+        "required": [
+          "release_id",
+          "status",
+          "calculation_id",
+          "checked_at",
+          "report",
+          "calibration_updated",
+          "release_approved"
+        ]
+      }
+    }
+  }
+}

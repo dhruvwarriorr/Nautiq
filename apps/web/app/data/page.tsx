@@ -15,7 +15,7 @@ export default async function Data() {
   return (
     <main className="explorer">
       <nav>
-        <Link href="/">Nautiuq</Link>
+        <Link href="/">Nautiq</Link>
         <Link href="/profiles">Argo profiles</Link>
         <Link href="/climatology">Historical normal</Link>
         <Link href="/models">Expected-state models</Link>

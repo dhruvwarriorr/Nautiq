@@ -3,10 +3,11 @@
     "practical_salinity": "climatology",
     "temperature_c": "climatology"
   },
-  "bundle_key": "lake/expected-state/dad71501-e9bd-57c7-9f40-cc72335b921c/bundle.json",
-  "bundle_sha256": "868714edf5868157f665fecbd5aa371c8b0854e26e1b357a365c153b21c972af",
+  "bundle_key": "lake/expected-state/6652e49f-b1a4-578c-a929-7eb5bb05db6a/bundle.json",
+  "bundle_sha256": "80d90921ad2e0b626538b27d6d6e5b6129b0053ea247d569640578bb239ac0f9",
   "calculation_id": "50f58c0d-d850-593b-8668-ca9163519418",
   "capabilities": {
+    "calibrated_uncertainty": false,
     "climatology": true,
     "expected_state": true,
     "field_sampling": false,
@@ -14,16 +15,17 @@
     "observations": true,
     "official_advisories": false,
     "platform_runtime": true,
+    "predictive_intervals": true,
     "profile_anomaly": false,
     "trip_assessment": false
   },
-  "code_sha256": "092290176ccc5e4b6b5af6b2ed5637fbf749b09816f45e786b2dd3bf5366692d",
+  "code_sha256": "ffcdf9b399fea5759e257723c0540fa51ae02df92226bbc97eba11cf055980a1",
   "dataset_baseline": {
     "end_year": 2024,
     "start_year": 2005
   },
   "environment": {
-    "dependency_lock_sha256": "ce06cb895fd4d368ba792c5be2f6d5f0f3fc524541856954fa1ed8e0e3f8db87",
+    "dependency_lock_sha256": "7a7c06437fcf570362a1f78cac2b890e9aa6b32e92b4fc386d710b8d41dc95d2",
     "gsw": "3.6.23",
     "lightgbm": "4.7.0",
     "machine": "aarch64",
@@ -36,35 +38,190 @@
     "scipy": "1.18.1"
   },
   "example": {
-    "calculation_id": "89fe5025-af12-5347-9d73-f24cbbc1dd5f",
+    "calculation_id": "c2c77faf-bb66-5abc-b581-c9ddcd960d01",
     "profile_id": "e3e31b44-3347-54e0-be97-0686e0447bcc",
     "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
-    "release_id": "dad71501-e9bd-57c7-9f40-cc72335b921c",
+    "release_id": "6652e49f-b1a4-578c-a929-7eb5bb05db6a",
     "revision_sha256": "f68b446935518db235ff21dcb77eb607a79c5b8758bf2ed8c7b5887f03c3c9ab",
     "status": "partial"
   },
   "example_depth_10m": {
+    "depth_m": 10.0,
     "practical_salinity": {
       "active_method": "climatology",
+      "baseline_support": {
+        "expected_mean": 36.432315612717915,
+        "fallback": true,
+        "fallback_reasons": [
+          "insufficient_training_support"
+        ],
+        "method_group": "basin_depth",
+        "model_key": "practical_salinity|basin_depth|arabian|10.0",
+        "reason": null,
+        "spread": 0.3828650155999853,
+        "spread_estimator": "training_residual_rms_profile_weighted",
+        "training_months": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "training_platforms": 19,
+        "training_profiles": 21
+      },
       "candidate_mean": 36.55580885741232,
+      "candidate_reason": null,
       "candidate_residual": 0.12349324469440724,
       "climatology_mean": 36.432315612717915,
+      "contribution_bias": -0.003811248044211689,
       "difference": -1.8371211370004659,
       "direction": "fresher",
       "expected_mean": 36.432315612717915,
+      "feature_contributions": [
+        {
+          "contribution": 0.08138494371698986,
+          "feature": "latitude"
+        },
+        {
+          "contribution": 0.021906144780468487,
+          "feature": "longitude"
+        },
+        {
+          "contribution": 0.01292730950859376,
+          "feature": "depth_m"
+        },
+        {
+          "contribution": 0.008210749865155305,
+          "feature": "season_sin"
+        },
+        {
+          "contribution": 0.000548305734222652,
+          "feature": "season_cos"
+        },
+        {
+          "contribution": 0.0022376688973880106,
+          "feature": "season_sin2"
+        },
+        {
+          "contribution": 8.937023580086857e-05,
+          "feature": "season_cos2"
+        },
+        {
+          "contribution": 0.0,
+          "feature": "basin_id"
+        }
+      ],
       "ml_residual": 0.0,
-      "observed": 34.59519447571745
+      "observed": 34.59519447571745,
+      "observed_method": "linear_interpolation",
+      "observed_reason": null,
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "bias_gate_failed",
+        "subgroup_regression:depth:1000m",
+        "subgroup_regression:depth:1500m"
+      ],
+      "reason": null
     },
     "temperature_c": {
       "active_method": "climatology",
+      "baseline_support": {
+        "expected_mean": 27.43574349090323,
+        "fallback": true,
+        "fallback_reasons": [
+          "insufficient_training_support"
+        ],
+        "method_group": "basin_depth",
+        "model_key": "temperature_c|basin_depth|arabian|10.0",
+        "reason": null,
+        "spread": 1.103090076023041,
+        "spread_estimator": "training_residual_rms_profile_weighted",
+        "training_months": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "training_platforms": 21,
+        "training_profiles": 23
+      },
       "candidate_mean": 27.759734138029998,
+      "candidate_reason": null,
       "candidate_residual": 0.323990647126765,
       "climatology_mean": 27.43574349090323,
+      "contribution_bias": -0.008851810038754284,
       "difference": 1.377500646755795,
       "direction": "warmer",
       "expected_mean": 27.43574349090323,
+      "feature_contributions": [
+        {
+          "contribution": -0.03347968247189661,
+          "feature": "latitude"
+        },
+        {
+          "contribution": 0.46019102264286815,
+          "feature": "longitude"
+        },
+        {
+          "contribution": -0.1005763760887082,
+          "feature": "depth_m"
+        },
+        {
+          "contribution": -0.0051498496573363405,
+          "feature": "season_sin"
+        },
+        {
+          "contribution": -0.026527911971379936,
+          "feature": "season_cos"
+        },
+        {
+          "contribution": -0.01196783361042293,
+          "feature": "season_sin2"
+        },
+        {
+          "contribution": 0.05035308832239517,
+          "feature": "season_cos2"
+        },
+        {
+          "contribution": 0.0,
+          "feature": "basin_id"
+        }
+      ],
       "ml_residual": 0.0,
-      "observed": 28.813244137659026
+      "observed": 28.813244137659026,
+      "observed_method": "linear_interpolation",
+      "observed_reason": null,
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "subgroup_regression:depth:100m",
+        "subgroup_regression:depth:1500m",
+        "subgroup_regression:depth:500m"
+      ],
+      "reason": null
     }
   },
   "feature_schema": {
@@ -305,16 +462,67 @@
   ],
   "model_count": 2,
   "operational_counts": {
-    "comparison_states": {
-      "partial": 292,
-      "unavailable": 182
-    },
-    "current_profiles": 474,
-    "jobs": {
-      "complete": 474
-    },
-    "schema_version": 7,
-    "supported_pairs": 7023
+    "checked_at": [
+      [
+        "2026-10-02 09:32:51.533219+00"
+      ]
+    ],
+    "current_ready_profiles": [
+      [
+        525
+      ]
+    ],
+    "expected_comparisons": [
+      [
+        "partial",
+        329,
+        7884
+      ],
+      [
+        "unavailable",
+        196,
+        0
+      ]
+    ],
+    "interval_comparisons": [
+      [
+        "partial",
+        400,
+        11030
+      ],
+      [
+        "unavailable",
+        125,
+        0
+      ]
+    ],
+    "interval_jobs": [
+      [
+        "complete",
+        525
+      ]
+    ],
+    "migrations": [
+      [
+        8
+      ]
+    ],
+    "profiles": [
+      [
+        525
+      ]
+    ],
+    "raw_receipts": [
+      [
+        395
+      ]
+    ],
+    "schema": [
+      [
+        8
+      ]
+    ],
+    "temporary_databases": []
   },
   "original_levels": 61281,
   "profile_count": 196,
@@ -332,13 +540,14 @@
   },
   "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
   "release_approved": false,
-  "release_id": "dad71501-e9bd-57c7-9f40-cc72335b921c",
-  "release_sha256": "bdac5bc2ebe88db222213d52d7d7c40f2bbe2b9b6ce9b147c7eac3e243d14efc",
-  "report_key": "lake/expected-state/dad71501-e9bd-57c7-9f40-cc72335b921c/report.json",
-  "report_sha256": "8ff356341c6e49d603a7e89c76bf295f6994111299fe3966b993806391b5b0df",
+  "release_id": "6652e49f-b1a4-578c-a929-7eb5bb05db6a",
+  "release_sha256": "dcdec00fb70dd2e8e1cf41cfb129f40ee5ba04cca23ac1be059144f3ebb22a1b",
+  "rename_note": "Refreshed to the Nautiq expected parent; previous release retained immutably in the local registry/storage.",
+  "report_key": "lake/expected-state/6652e49f-b1a4-578c-a929-7eb5bb05db6a/report.json",
+  "report_sha256": "375ec6528b9e01d4b8f2e90e04bb31590423c0b0c1716daf955b46efcb649a39",
   "scope": "local implementation and diagnostic real-data evaluation; no scientific production approval",
   "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00",
-  "source_git_commit": "047b10c9e079c484b0e569d9d331e0983254cfec",
+  "source_git_commit": "cd5434c59e275ac29f2c6acc0687f741777788af",
   "standard_grid_rows": 2940,
   "status": "ready",
   "temporal_profile_counts": {
@@ -348,9 +557,9 @@
     "tune": 49
   },
   "tracking": {
-    "model_version": "3",
-    "registered_model": "nautiuq-expected-mean",
-    "run_id": "7832c1a47bf54e3eb6e5e2035bba0252"
+    "model_version": "1",
+    "registered_model": "nautiq-expected-mean",
+    "run_id": "466000ec092a4d5b82132d7792d4243b"
   },
   "variables": {
     "practical_salinity": {
@@ -1126,5 +1335,5 @@
     "byte-identical regenerated Go/Python protobuf contracts",
     "two identical final real-data builds and MLflow bundle download checksum"
   ],
-  "verified_at": "2026-10-02T07:19:22.586112+00:00"
+  "verified_at": "2026-10-02T09:34:20.438271+00:00"
 }

@@ -1,4 +1,4 @@
-module nautiuq.local/ingestion
+module nautiq.local/ingestion
 
 go 1.26.0
 

@@ -87,16 +87,16 @@ def verify():
     import grpc
     import psycopg
     from psycopg import sql
-    from nautiuq_ml.argo import evidence, snapshots, worker
-    from nautiuq_ml.argo.storage import read_object, store
-    from nautiuq_ml.climatology import pipeline as climate
-    from nautiuq_ml.expected_state import jobs, pipeline
-    from nautiuq_ml.expected_state.serving import ExpectedService, PinnedRuntime
-    from nautiuq_ml.gen.nautiuq.platform.v1 import (
+    from nautiq_ml.argo import evidence, snapshots, worker
+    from nautiq_ml.argo.storage import read_object, store
+    from nautiq_ml.climatology import pipeline as climate
+    from nautiq_ml.expected_state import jobs, pipeline
+    from nautiq_ml.expected_state.serving import ExpectedService, PinnedRuntime
+    from nautiq_ml.gen.nautiq.platform.v1 import (
         platform_pb2 as pb,
         platform_pb2_grpc as rpc,
     )
-    from nautiuq_ml.server import PlatformService
+    from nautiq_ml.server import PlatformService
 
     name = "expected_verify_" + uuid.uuid4().hex[:12]
     original = os.environ["DATABASE_URL"]
@@ -126,7 +126,7 @@ def verify():
         artifact, run = str(uuid.uuid4()), str(uuid.uuid4())
         sha = hashlib.sha256(data).hexdigest()
         key = f"verification/{name}/{index}.nc"
-        s3.put_object("nautiuq", key, io.BytesIO(data), len(data))
+        s3.put_object("nautiq", key, io.BytesIO(data), len(data))
         query(
             "INSERT INTO ingestion_runs(run_id,source_id,run_kind,status) VALUES(%s,'argo_gdac','backfill','complete')",
             (run,),
@@ -204,7 +204,7 @@ def verify():
                 raise AssertionError("Changed climatology implementation was accepted")
             finally:
                 climate.code_hash = climate_hash
-            from nautiuq_ml.expected_state.tracking import log_release
+            from nautiq_ml.expected_state.tracking import log_release
 
             logged = log_release(release, bundle)
             assert logged == log_release(release, bundle)
@@ -223,7 +223,7 @@ def verify():
             query("ALTER TABLE expected_state_releases DROP CONSTRAINT forced_failure")
             second = pipeline.build(reference["release_id"], paths[3], s3, track=False)
             data = read_object(s3, first["bundle_key"], first["bundle_sha256"])
-            s3.put_object("nautiuq", first["bundle_key"], io.BytesIO(b"corrupt"), 7)
+            s3.put_object("nautiq", first["bundle_key"], io.BytesIO(b"corrupt"), 7)
             try:
                 pipeline.select(first["release_id"], s3)
             except ValueError:
@@ -231,7 +231,7 @@ def verify():
             else:
                 raise AssertionError("Corrupt model selected")
             s3.put_object(
-                "nautiuq",
+                "nautiq",
                 first["bundle_key"],
                 io.BytesIO(data),
                 len(data),
@@ -471,7 +471,7 @@ def verify():
             if channel:
                 channel.close()
             for key in keys:
-                s3.remove_object("nautiuq", key)
+                s3.remove_object("nautiq", key)
             os.environ["DATABASE_URL"] = original
             if tracking_uri:
                 os.environ["MLFLOW_TRACKING_URI"] = tracking_uri

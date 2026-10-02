@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Nautiuq scientific evidence API",
+    "title": "Nautiq scientific evidence API",
     "version": "1.0.0",
     "description": "Frozen evidence and bounded audit endpoints. Science readiness and source production approval remain separate."
   },
@@ -664,7 +664,10 @@
               "climatology_fit",
               "climatology_comparison",
               "expected_state_fit",
-              "expected_state_comparison"
+              "expected_state_comparison",
+              "uncertainty_fit",
+              "uncertainty_comparison",
+              "uncertainty_monitor"
             ]
           },
           "method_version": {
@@ -1216,7 +1219,10 @@
               "climatology_fit",
               "climatology_comparison",
               "expected_state_fit",
-              "expected_state_comparison"
+              "expected_state_comparison",
+              "uncertainty_fit",
+              "uncertainty_comparison",
+              "uncertainty_monitor"
             ]
           },
           "state": {

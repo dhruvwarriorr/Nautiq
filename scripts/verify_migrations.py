@@ -35,7 +35,7 @@ def sql(database, text, expected_success=True):
 def main():
     version = len(list((ROOT / "migrations").glob("*.sql")))
     failure_name = f"{version + 1:03}_failure.sql"
-    database = "nautiuq_migration_test_" + uuid.uuid4().hex[:12]
+    database = "nautiq_migration_test_" + uuid.uuid4().hex[:12]
     sql(None, f"CREATE DATABASE {database};")
     try:
         with tempfile.TemporaryDirectory() as folder:

@@ -1,6 +1,6 @@
 # Phase 1 delivery
 
-The scope follows Section 4 of `06-Nautiuq-Implementation-Blueprint.md`.
+The scope follows Section 4 of `06-Nautiq-Implementation-Blueprint.md`.
 
 ## Implemented
 

@@ -51,8 +51,8 @@ export default function ExpectedState({
         {fallback
           ? "Climatology remains the serving mean. Candidate values are diagnostic because promotion gates have not passed."
           : "The serving mean combines historical climatology with a qualified residual candidate where coverage supports it."}{" "}
-        These are conditional means. Calibrated intervals and profile anomaly
-        verdicts are unavailable.
+        These are conditional means. Review the separate predictive interval
+        evidence below. Profile anomaly verdicts remain unavailable.
       </p>
       <div className="evidence-links">
         <Link href={`/models/${value.release_id}`}>

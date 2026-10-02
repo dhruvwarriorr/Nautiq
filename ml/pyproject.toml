@@ -3,9 +3,9 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nautiuq-ml"
+name = "nautiq-ml"
 version = "0.1.0"
-description = "Nautiuq scientific runtime and shared scientific package"
+description = "Nautiq scientific runtime and shared scientific package"
 requires-python = ">=3.12"
 dependencies = ["grpcio==1.78.0", "protobuf==6.33.5"]
 
@@ -13,17 +13,18 @@ dependencies = ["grpcio==1.78.0", "protobuf==6.33.5"]
 dev = ["grpcio-tools==1.78.0", "pytest==9.0.2", "ruff==0.15.7", "jsonschema>=4.23,<5"]
 argo = ["numpy>=2.2,<3", "netCDF4>=1.7,<2", "pyarrow>=19,<24", "gsw>=3.6,<4", "psycopg[binary]>=3.2,<4", "minio>=7.2,<8", "nats-py>=2.9,<3"]
 expected = ["scipy>=1.15,<2", "scikit-learn>=1.6,<2", "lightgbm>=4.6,<5", "mlflow>=3.7,<4"]
+uncertainty = ["catboost>=1.2.8,<2"]
 phase0 = ["numpy>=2.2,<3", "scipy>=1.15,<2", "scikit-learn>=1.6,<2", "lightgbm>=4.6,<5", "xarray>=2025.1", "netCDF4>=1.7,<2", "pyarrow>=19,<24", "gsw>=3.6,<4"]
 
 [project.scripts]
-nautiuq-phase0 = "nautiuq_ml.phase0.cli:main"
+nautiq-phase0 = "nautiq_ml.phase0.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["nautiuq_ml*"]
+include = ["nautiq_ml*"]
 
 [tool.ruff]
-exclude = ["nautiuq_ml/gen"]
+exclude = ["nautiq_ml/gen"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

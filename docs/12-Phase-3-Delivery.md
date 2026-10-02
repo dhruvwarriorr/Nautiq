@@ -22,7 +22,7 @@ For the existing Phase 0 cached acquisition, this bounded offline import verifie
 
 ```sh
 docker compose run --rm --no-deps -v "$PWD/artifacts/phase0:/pilot:ro" normalizer \
-  python -m nautiuq_ml.argo.tools import-cache /pilot --limit 192
+  python -m nautiq_ml.argo.tools import-cache /pilot --limit 192
 ```
 
 The normalizer consumes the durable raw outbox. Wait for `pending_event_count=0`, then maintain and build. Import again to continue a larger cache; registered artifacts are skipped. For more than 1,000 retained files, run the replay CLI with the returned `--after` UUID and a limit of 1–5,000. Replay reuses stable inbox/event identities and canonical hashes; it does not delete delivery history.
@@ -41,7 +41,7 @@ The normalizer consumes the durable raw outbox. Wait for `pending_event_count=0`
 | Frozen fixtures | Checked-in real delayed-mode GDAC NetCDF, numerical/native/QC/hash manifest and malformed input under `packages/scientific-fixtures/argo`; offline gate runs in CI, alongside disposable revision/snapshot checks. Synthetic faults remain verification-only. |
 | Parquet training snapshot | Explicit UTC as-of selection, one historical revision per stable profile, immutable raw/Parquet integrity checks, strict per-variable D/adjusted/QC1 labels, fixed temporal split, explicit nullable schema, ZSTD, content IDs/checksums, object staging before atomic SQL publication. |
 
-Main code paths: `migrations/004_reproducibility.sql`, `ml/nautiuq_ml/argo/{evidence,freshness,snapshots,tools,storage}.py`, the normalizer/parser, `services/api/internal/science/science.go`, and the `/data`, `/calculations/[id]`, `/training-snapshots/[id]` pages. `packages/schemas/science.openapi.json` defines the eight evidence routes; profile provenance additionally includes `calculation_id`.
+Main code paths: `migrations/004_reproducibility.sql`, `ml/nautiq_ml/argo/{evidence,freshness,snapshots,tools,storage}.py`, the normalizer/parser, `services/api/internal/science/science.go`, and the `/data`, `/calculations/[id]`, `/training-snapshots/[id]` pages. `packages/schemas/science.openapi.json` defines the eight evidence routes; profile provenance additionally includes `calculation_id`.
 
 ## Frozen scientific policy
 
