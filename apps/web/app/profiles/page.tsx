@@ -54,7 +54,7 @@ export default async function Profiles({
         <Link href="/">Nautiq</Link>
         <Link href="/climatology">Historical normal</Link>
         <Link href="/models">Expected-state models</Link>
-        <Link href="/uncertainty">Predictive intervals</Link>
+        <Link href="/anomalies">Profile magnitude and shape</Link> <Link href="/uncertainty">Predictive intervals</Link>
         <Link href="/data">Data quality</Link>
         <Link href="/models">Expected-state models</Link>
         <Link href="/status">Platform health</Link>

@@ -245,3 +245,78 @@ class UncertaintyService(object):
             timeout,
             metadata,
             _registered_method=True)
+
+
+class AnomalyServiceStub(object):
+    """Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.Infer = channel.unary_unary(
+                '/nautiq.platform.v1.AnomalyService/Infer',
+                request_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyRequest.SerializeToString,
+                response_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyResponse.FromString,
+                _registered_method=True)
+
+
+class AnomalyServiceServicer(object):
+    """Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+    """
+
+    def Infer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_AnomalyServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Infer': grpc.unary_unary_rpc_method_handler(
+                    servicer.Infer,
+                    request_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyRequest.FromString,
+                    response_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'nautiq.platform.v1.AnomalyService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('nautiq.platform.v1.AnomalyService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class AnomalyService(object):
+    """Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+    """
+
+    @staticmethod
+    def Infer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiq.platform.v1.AnomalyService/Infer',
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyRequest.SerializeToString,
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.AnomalyResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

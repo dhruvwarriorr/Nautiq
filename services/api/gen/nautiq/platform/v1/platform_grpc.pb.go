@@ -331,3 +331,109 @@ var UncertaintyService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "nautiq/platform/v1/platform.proto",
 }
+
+const (
+	AnomalyService_Infer_FullMethodName = "/nautiq.platform.v1.AnomalyService/Infer"
+)
+
+// AnomalyServiceClient is the client API for AnomalyService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+type AnomalyServiceClient interface {
+	Infer(ctx context.Context, in *AnomalyRequest, opts ...grpc.CallOption) (*AnomalyResponse, error)
+}
+
+type anomalyServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAnomalyServiceClient(cc grpc.ClientConnInterface) AnomalyServiceClient {
+	return &anomalyServiceClient{cc}
+}
+
+func (c *anomalyServiceClient) Infer(ctx context.Context, in *AnomalyRequest, opts ...grpc.CallOption) (*AnomalyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnomalyResponse)
+	err := c.cc.Invoke(ctx, AnomalyService_Infer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AnomalyServiceServer is the server API for AnomalyService service.
+// All implementations must embed UnimplementedAnomalyServiceServer
+// for forward compatibility.
+//
+// Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+type AnomalyServiceServer interface {
+	Infer(context.Context, *AnomalyRequest) (*AnomalyResponse, error)
+	mustEmbedUnimplementedAnomalyServiceServer()
+}
+
+// UnimplementedAnomalyServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAnomalyServiceServer struct{}
+
+func (UnimplementedAnomalyServiceServer) Infer(context.Context, *AnomalyRequest) (*AnomalyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Infer not implemented")
+}
+func (UnimplementedAnomalyServiceServer) mustEmbedUnimplementedAnomalyServiceServer() {}
+func (UnimplementedAnomalyServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeAnomalyServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AnomalyServiceServer will
+// result in compilation errors.
+type UnsafeAnomalyServiceServer interface {
+	mustEmbedUnimplementedAnomalyServiceServer()
+}
+
+func RegisterAnomalyServiceServer(s grpc.ServiceRegistrar, srv AnomalyServiceServer) {
+	// If the following call panics, it indicates UnimplementedAnomalyServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AnomalyService_ServiceDesc, srv)
+}
+
+func _AnomalyService_Infer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnomalyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AnomalyServiceServer).Infer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AnomalyService_Infer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AnomalyServiceServer).Infer(ctx, req.(*AnomalyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AnomalyService_ServiceDesc is the grpc.ServiceDesc for AnomalyService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AnomalyService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "nautiq.platform.v1.AnomalyService",
+	HandlerType: (*AnomalyServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Infer",
+			Handler:    _AnomalyService_Infer_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "nautiq/platform/v1/platform.proto",
+}

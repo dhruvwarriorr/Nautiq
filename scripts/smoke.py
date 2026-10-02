@@ -33,5 +33,5 @@ assert set(ready["dependencies"]) == {"postgresql", "postgis", "timescaledb", "s
 with urllib.request.urlopen(f"{api}/api/v1/capabilities", timeout=5) as response:
     capabilities = json.load(response)["capabilities"]
 assert capabilities["platform_runtime"]
-assert not any(value for name, value in capabilities.items() if name not in {"platform_runtime", "observations", "climatology", "expected_state", "ml_residual", "predictive_intervals", "calibrated_uncertainty"})
+assert not any(value for name, value in capabilities.items() if name not in {"platform_runtime", "observations", "climatology", "expected_state", "ml_residual", "predictive_intervals", "calibrated_uncertainty", "profile_anomaly_diagnostics"})
 print(f"All {len(names)} dependency checks passed. Health page: {web}/status")

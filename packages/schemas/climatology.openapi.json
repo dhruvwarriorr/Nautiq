@@ -580,7 +580,9 @@
               "expected_state_comparison",
               "uncertainty_fit",
               "uncertainty_comparison",
-              "uncertainty_monitor"
+              "uncertainty_monitor",
+              "anomaly_fit",
+              "anomaly_comparison"
             ]
           },
           "method_version": {

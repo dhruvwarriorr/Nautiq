@@ -18,11 +18,12 @@ def fixture(
     duplicate=False,
     unit="decibar",
     per_parameter=False,
+    levels=3,
 ):
     with netCDF4.Dataset(path, "w") as ds:
         for name, size in [
             ("N_PROF", 2),
-            ("N_LEVELS", 3),
+            ("N_LEVELS", levels),
             ("N_PARAM", 3),
             ("STRING8", 8),
             ("STRING32", 32),
@@ -71,13 +72,16 @@ def fixture(
         ]:
             if duplicate and parameter == "PRES":
                 raw = adjusted = [0, 10, 10]
+            if levels != 3:
+                raw = np.linspace(raw[0], raw[-1], levels).tolist()
+                adjusted = np.linspace(adjusted[0], adjusted[-1], levels).tolist()
             for suffix, values in [("", raw), ("_ADJUSTED", adjusted)]:
                 v = ds.createVariable(
                     parameter + suffix, "f8", ("N_PROF", "N_LEVELS"), fill_value=99999
                 )
                 v.units = units
                 v[:] = [values, values]
-                flags = [["1"] * 3, ["1"] * 3]
+                flags = [["1"] * levels, ["1"] * levels]
                 if bad_salinity and parameter == "PSAL":
                     flags[0][1] = "4"
                 ds.createVariable(

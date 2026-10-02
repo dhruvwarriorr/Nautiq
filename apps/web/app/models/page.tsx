@@ -13,7 +13,7 @@ export default async function Models() {
         <Link href="/">Nautiq</Link>
         <Link href="/profiles">Argo profiles</Link>
         <Link href="/climatology">Historical normal</Link>
-        <Link href="/uncertainty">Predictive intervals</Link>
+        <Link href="/anomalies">Profile magnitude and shape</Link> <Link href="/uncertainty">Predictive intervals</Link>
         <Link href="/data">Data quality</Link>
       </nav>
       <p className="eyebrow">EXPECTED STATE / FROZEN MODEL COMPARISONS</p>

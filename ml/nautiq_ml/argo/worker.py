@@ -631,6 +631,8 @@ def maintenance():
     from ..uncertainty.jobs import recompute as interval_profiles
     from ..uncertainty.monitoring import monitor as interval_monitor
 
+    from ..anomaly.jobs import recompute as anomaly_profiles
+
     for task in (
         repair,
         monitor,
@@ -639,6 +641,7 @@ def maintenance():
         expected_profiles,
         interval_profiles,
         interval_monitor,
+        anomaly_profiles,
     ):
         try:
             task()

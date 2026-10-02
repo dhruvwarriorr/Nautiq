@@ -147,7 +147,7 @@ The PostgreSQL entrypoint initializes a new volume with migration 001. `make up`
 
 ## Scope
 
-Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Calibrated uncertainty, anomaly detection, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
+Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Predictive quantile/CQR intervals and residual/PCA profile diagnostics are implemented with their own frozen releases. Qualified uncertainty/anomaly verdicts, field sampling, advisory ingestion and trip assessments remain unavailable. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
 
 See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiq-Implementation-Blueprint.md).
 
@@ -168,3 +168,21 @@ make uncertainty-maintain uncertainty-monitor
 ```
 
 The Nautiq rename covers technical namespaces and fresh-stack defaults. Existing local data was preserved in renamed runtime resources; original resources remain backups. Immutable release bytes and historical registry receipts are retained.
+
+
+## Profile magnitude and structure
+
+The complete-case 10–500 m profile system is implemented: local uncertainty-normalized signed residuals, depth-weighted magnitude, Ledoit–Wolf correlated distance and a weighted discrete FPCA prototype. Separate historical ranks disclose comparison support; Z-scores and safely exported Isolation Forest remain comparison baselines. Review [delivery and validation](docs/16-Phase-7-Delivery.md), [measured evidence](docs/evidence/phase7-summary.json), [the API contract](packages/schemas/anomaly.openapi.json), and [/anomalies](http://localhost:3000/anomalies). Every supported profile shows its depth contributions and reconstruction. Missing layers retain explicit unavailable aggregate scores.
+
+```sh
+make anomaly-build INTERVAL_ID=<selected-uncertainty-release-id>
+make anomaly-verify ANOMALY_ID=<profile-release-id>
+make anomaly-log ANOMALY_ID=<profile-release-id>
+make anomaly-benchmark ANOMALY_ID=<profile-release-id>
+make anomaly-select ANOMALY_ID=<profile-release-id>
+# Set ANOMALY_RELEASE_ID, retain its exact uncertainty/mean pins and restart ml-inference.
+make anomaly-maintain
+make phase7-verify phase7-reliability phase7-smoke
+```
+
+`profile_anomaly_diagnostics` means supported local implementation with exact selected/runtime pins and current revision evidence. Scientific `profile_anomaly` remains false: interval qualification, expert-reviewed events, quiet-period false-alert rates, independent audits and a new untouched test have not established a qualified anomaly verdict. Historical ranks are descriptive, not event probabilities. Fixed references never adapt automatically during an event.

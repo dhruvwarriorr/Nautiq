@@ -65,7 +65,7 @@ func (s *Server) capabilities(w http.ResponseWriter, r *http.Request) {
 	if _, ok := query(w, r); !ok {
 		return
 	}
-	rid, sha, uid, usha := "", "", "", ""
+	rid, sha, uid, usha, aid, asha := "", "", "", "", "", ""
 	if s.Runtime != nil {
 		ctx, cancel := context.WithTimeout(r.Context(), time.Second)
 		response, err := s.Runtime.Check(ctx, &pb.CheckRequest{})
@@ -74,6 +74,9 @@ func (s *Server) capabilities(w http.ResponseWriter, r *http.Request) {
 			rid, sha = response.ExpectedReleaseId, response.ExpectedBundleSha256
 			if response.Capabilities["predictive_intervals"] {
 				uid, usha = response.UncertaintyReleaseId, response.UncertaintyBundleSha256
+				if response.Capabilities["profile_anomaly_diagnostics"] {
+					aid, asha = response.AnomalyReleaseId, response.AnomalyBundleSha256
+				}
 			}
 		}
 	}
@@ -91,6 +94,11 @@ func (s *Server) capabilities(w http.ResponseWriter, r *http.Request) {
  WHERE u.release_id::text=$3 AND u.bundle_sha256=$4 AND u.expected_id::text=$1 AND u.status='ready' AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL AND (v.result->>'supported_intervals')::integer>0),
  'calibrated_uncertainty',EXISTS(SELECT 1 FROM uncertainty_selection s JOIN uncertainty_releases u USING(release_id) JOIN expected_state_selection e ON e.release_id=u.expected_id JOIN climatology_selection b ON b.release_id=u.reference_id
  WHERE u.release_id::text=$3 AND u.bundle_sha256=$4 AND u.expected_id::text=$1 AND (u.manifest->'output'->'qualified'->>'temperature_c'='true' OR u.manifest->'output'->'qualified'->>'practical_salinity'='true')),
+ 'profile_anomaly_diagnostics',EXISTS(SELECT 1 FROM anomaly_selection s JOIN anomaly_releases a USING(release_id)
+ JOIN uncertainty_selection u ON u.release_id=a.uncertainty_id JOIN expected_state_selection e ON e.release_id=a.expected_id JOIN climatology_selection b ON b.release_id=a.reference_id
+ JOIN anomaly_comparisons v ON v.release_id=a.release_id JOIN profile_revisions r USING(profile_id,revision_sha256)
+ WHERE a.release_id::text=$5 AND a.bundle_sha256=$6 AND a.uncertainty_id::text=$3 AND a.expected_id::text=$1 AND a.status='ready'
+ AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL AND (v.result->>'supported_variables')::integer>0),
  'profile_anomaly',false,'field_sampling',false,'official_advisories',false,'trip_assessment',false),
- 'limitations',json_build_array('Local train-only climatology is a prototype; source coverage and scientific production approval remain unverified. Point means may use fixed climatology fallback; Diagnostic predictive intervals require separate coverage approval; scientific production approval, anomaly, field, advisory and trip verdicts remain unavailable.'))`, rid, sha, uid, usha)
+ 'limitations',json_build_array('Local train-only climatology is a prototype; source coverage and scientific production approval remain unverified. Point means may use fixed climatology fallback; Diagnostic predictive intervals require separate coverage approval; Profile scores and historical ranks are diagnostic; scientific production approval, anomaly verdicts, field, advisory and trip verdicts remain unavailable.'))`, rid, sha, uid, usha, aid, asha)
 }

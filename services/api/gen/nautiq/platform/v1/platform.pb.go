@@ -68,6 +68,8 @@ type CheckResponse struct {
 	ExpectedBundleSha256    string          `protobuf:"bytes,6,opt,name=expected_bundle_sha256,json=expectedBundleSha256,proto3" json:"expected_bundle_sha256,omitempty"`
 	UncertaintyReleaseId    string          `protobuf:"bytes,7,opt,name=uncertainty_release_id,json=uncertaintyReleaseId,proto3" json:"uncertainty_release_id,omitempty"`
 	UncertaintyBundleSha256 string          `protobuf:"bytes,8,opt,name=uncertainty_bundle_sha256,json=uncertaintyBundleSha256,proto3" json:"uncertainty_bundle_sha256,omitempty"`
+	AnomalyReleaseId        string          `protobuf:"bytes,9,opt,name=anomaly_release_id,json=anomalyReleaseId,proto3" json:"anomaly_release_id,omitempty"`
+	AnomalyBundleSha256     string          `protobuf:"bytes,10,opt,name=anomaly_bundle_sha256,json=anomalyBundleSha256,proto3" json:"anomaly_bundle_sha256,omitempty"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache
 }
@@ -154,6 +156,20 @@ func (x *CheckResponse) GetUncertaintyReleaseId() string {
 func (x *CheckResponse) GetUncertaintyBundleSha256() string {
 	if x != nil {
 		return x.UncertaintyBundleSha256
+	}
+	return ""
+}
+
+func (x *CheckResponse) GetAnomalyReleaseId() string {
+	if x != nil {
+		return x.AnomalyReleaseId
+	}
+	return ""
+}
+
+func (x *CheckResponse) GetAnomalyBundleSha256() string {
+	if x != nil {
+		return x.AnomalyBundleSha256
 	}
 	return ""
 }
@@ -1054,12 +1070,225 @@ func (x *UncertaintyResponse) GetRows() []*IntervalDepth {
 	return nil
 }
 
+type AnomalyPoint struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Location          *ReferencePoint        `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	TemperatureC      *float64               `protobuf:"fixed64,2,opt,name=temperature_c,json=temperatureC,proto3,oneof" json:"temperature_c,omitempty"`
+	PracticalSalinity *float64               `protobuf:"fixed64,3,opt,name=practical_salinity,json=practicalSalinity,proto3,oneof" json:"practical_salinity,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *AnomalyPoint) Reset() {
+	*x = AnomalyPoint{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnomalyPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnomalyPoint) ProtoMessage() {}
+
+func (x *AnomalyPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnomalyPoint.ProtoReflect.Descriptor instead.
+func (*AnomalyPoint) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *AnomalyPoint) GetLocation() *ReferencePoint {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *AnomalyPoint) GetTemperatureC() float64 {
+	if x != nil && x.TemperatureC != nil {
+		return *x.TemperatureC
+	}
+	return 0
+}
+
+func (x *AnomalyPoint) GetPracticalSalinity() float64 {
+	if x != nil && x.PracticalSalinity != nil {
+		return *x.PracticalSalinity
+	}
+	return 0
+}
+
+type AnomalyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Points        []*AnomalyPoint        `protobuf:"bytes,2,rep,name=points,proto3" json:"points,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnomalyRequest) Reset() {
+	*x = AnomalyRequest{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnomalyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnomalyRequest) ProtoMessage() {}
+
+func (x *AnomalyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnomalyRequest.ProtoReflect.Descriptor instead.
+func (*AnomalyRequest) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AnomalyRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *AnomalyRequest) GetPoints() []*AnomalyPoint {
+	if x != nil {
+		return x.Points
+	}
+	return nil
+}
+
+type AnomalyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	BundleSha256  string                 `protobuf:"bytes,2,opt,name=bundle_sha256,json=bundleSha256,proto3" json:"bundle_sha256,omitempty"`
+	UncertaintyId string                 `protobuf:"bytes,3,opt,name=uncertainty_id,json=uncertaintyId,proto3" json:"uncertainty_id,omitempty"`
+	ExpectedId    string                 `protobuf:"bytes,4,opt,name=expected_id,json=expectedId,proto3" json:"expected_id,omitempty"`
+	ReferenceId   string                 `protobuf:"bytes,5,opt,name=reference_id,json=referenceId,proto3" json:"reference_id,omitempty"`
+	MethodVersion string                 `protobuf:"bytes,6,opt,name=method_version,json=methodVersion,proto3" json:"method_version,omitempty"`
+	// Canonical bounded scientific primitives defined by anomaly.openapi.json.
+	ResultJson      []byte `protobuf:"bytes,7,opt,name=result_json,json=resultJson,proto3" json:"result_json,omitempty"`
+	ReleaseApproved bool   `protobuf:"varint,8,opt,name=release_approved,json=releaseApproved,proto3" json:"release_approved,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *AnomalyResponse) Reset() {
+	*x = AnomalyResponse{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnomalyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnomalyResponse) ProtoMessage() {}
+
+func (x *AnomalyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnomalyResponse.ProtoReflect.Descriptor instead.
+func (*AnomalyResponse) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *AnomalyResponse) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetBundleSha256() string {
+	if x != nil {
+		return x.BundleSha256
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetUncertaintyId() string {
+	if x != nil {
+		return x.UncertaintyId
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetExpectedId() string {
+	if x != nil {
+		return x.ExpectedId
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetReferenceId() string {
+	if x != nil {
+		return x.ReferenceId
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetMethodVersion() string {
+	if x != nil {
+		return x.MethodVersion
+	}
+	return ""
+}
+
+func (x *AnomalyResponse) GetResultJson() []byte {
+	if x != nil {
+		return x.ResultJson
+	}
+	return nil
+}
+
+func (x *AnomalyResponse) GetReleaseApproved() bool {
+	if x != nil {
+		return x.ReleaseApproved
+	}
+	return false
+}
+
 var File_nautiq_platform_v1_platform_proto protoreflect.FileDescriptor
 
 const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
 	"\n" +
 	"!nautiq/platform/v1/platform.proto\x12\x12nautiq.platform.v1\"\x0e\n" +
-	"\fCheckRequest\"\xcb\x03\n" +
+	"\fCheckRequest\"\xad\x04\n" +
 	"\rCheckResponse\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x14\n" +
@@ -1068,7 +1297,10 @@ const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
 	"\x13expected_release_id\x18\x05 \x01(\tR\x11expectedReleaseId\x124\n" +
 	"\x16expected_bundle_sha256\x18\x06 \x01(\tR\x14expectedBundleSha256\x124\n" +
 	"\x16uncertainty_release_id\x18\a \x01(\tR\x14uncertaintyReleaseId\x12:\n" +
-	"\x19uncertainty_bundle_sha256\x18\b \x01(\tR\x17uncertaintyBundleSha256\x1a?\n" +
+	"\x19uncertainty_bundle_sha256\x18\b \x01(\tR\x17uncertaintyBundleSha256\x12,\n" +
+	"\x12anomaly_release_id\x18\t \x01(\tR\x10anomalyReleaseId\x122\n" +
+	"\x15anomaly_bundle_sha256\x18\n" +
+	" \x01(\tR\x13anomalyBundleSha256\x1a?\n" +
 	"\x11CapabilitiesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\bR\x05value:\x028\x01\"\x84\x01\n" +
@@ -1173,13 +1405,37 @@ const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
 	"\x17interval_interpretation\x18\t \x01(\tR\x16intervalInterpretation\x12)\n" +
 	"\x10release_approved\x18\n" +
 	" \x01(\bR\x0freleaseApproved\x125\n" +
-	"\x04rows\x18\v \x03(\v2!.nautiq.platform.v1.IntervalDepthR\x04rows2_\n" +
+	"\x04rows\x18\v \x03(\v2!.nautiq.platform.v1.IntervalDepthR\x04rows\"\xd5\x01\n" +
+	"\fAnomalyPoint\x12>\n" +
+	"\blocation\x18\x01 \x01(\v2\".nautiq.platform.v1.ReferencePointR\blocation\x12(\n" +
+	"\rtemperature_c\x18\x02 \x01(\x01H\x00R\ftemperatureC\x88\x01\x01\x122\n" +
+	"\x12practical_salinity\x18\x03 \x01(\x01H\x01R\x11practicalSalinity\x88\x01\x01B\x10\n" +
+	"\x0e_temperature_cB\x15\n" +
+	"\x13_practical_salinity\"i\n" +
+	"\x0eAnomalyRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x128\n" +
+	"\x06points\x18\x02 \x03(\v2 .nautiq.platform.v1.AnomalyPointR\x06points\"\xb3\x02\n" +
+	"\x0fAnomalyResponse\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12#\n" +
+	"\rbundle_sha256\x18\x02 \x01(\tR\fbundleSha256\x12%\n" +
+	"\x0euncertainty_id\x18\x03 \x01(\tR\runcertaintyId\x12\x1f\n" +
+	"\vexpected_id\x18\x04 \x01(\tR\n" +
+	"expectedId\x12!\n" +
+	"\freference_id\x18\x05 \x01(\tR\vreferenceId\x12%\n" +
+	"\x0emethod_version\x18\x06 \x01(\tR\rmethodVersion\x12\x1f\n" +
+	"\vresult_json\x18\a \x01(\fR\n" +
+	"resultJson\x12)\n" +
+	"\x10release_approved\x18\b \x01(\bR\x0freleaseApproved2_\n" +
 	"\x0fPlatformService\x12L\n" +
 	"\x05Check\x12 .nautiq.platform.v1.CheckRequest\x1a!.nautiq.platform.v1.CheckResponse2t\n" +
 	"\x14ExpectedStateService\x12\\\n" +
 	"\x05Infer\x12(.nautiq.platform.v1.ExpectedStateRequest\x1a).nautiq.platform.v1.ExpectedStateResponse2n\n" +
 	"\x12UncertaintyService\x12X\n" +
-	"\x05Infer\x12&.nautiq.platform.v1.UncertaintyRequest\x1a'.nautiq.platform.v1.UncertaintyResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3"
+	"\x05Infer\x12&.nautiq.platform.v1.UncertaintyRequest\x1a'.nautiq.platform.v1.UncertaintyResponse2b\n" +
+	"\x0eAnomalyService\x12P\n" +
+	"\x05Infer\x12\".nautiq.platform.v1.AnomalyRequest\x1a#.nautiq.platform.v1.AnomalyResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3"
 
 var (
 	file_nautiq_platform_v1_platform_proto_rawDescOnce sync.Once
@@ -1193,7 +1449,7 @@ func file_nautiq_platform_v1_platform_proto_rawDescGZIP() []byte {
 	return file_nautiq_platform_v1_platform_proto_rawDescData
 }
 
-var file_nautiq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_nautiq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_nautiq_platform_v1_platform_proto_goTypes = []any{
 	(*CheckRequest)(nil),          // 0: nautiq.platform.v1.CheckRequest
 	(*CheckResponse)(nil),         // 1: nautiq.platform.v1.CheckResponse
@@ -1207,10 +1463,13 @@ var file_nautiq_platform_v1_platform_proto_goTypes = []any{
 	(*IntervalPrediction)(nil),    // 9: nautiq.platform.v1.IntervalPrediction
 	(*IntervalDepth)(nil),         // 10: nautiq.platform.v1.IntervalDepth
 	(*UncertaintyResponse)(nil),   // 11: nautiq.platform.v1.UncertaintyResponse
-	nil,                           // 12: nautiq.platform.v1.CheckResponse.CapabilitiesEntry
+	(*AnomalyPoint)(nil),          // 12: nautiq.platform.v1.AnomalyPoint
+	(*AnomalyRequest)(nil),        // 13: nautiq.platform.v1.AnomalyRequest
+	(*AnomalyResponse)(nil),       // 14: nautiq.platform.v1.AnomalyResponse
+	nil,                           // 15: nautiq.platform.v1.CheckResponse.CapabilitiesEntry
 }
 var file_nautiq_platform_v1_platform_proto_depIdxs = []int32{
-	12, // 0: nautiq.platform.v1.CheckResponse.capabilities:type_name -> nautiq.platform.v1.CheckResponse.CapabilitiesEntry
+	15, // 0: nautiq.platform.v1.CheckResponse.capabilities:type_name -> nautiq.platform.v1.CheckResponse.CapabilitiesEntry
 	2,  // 1: nautiq.platform.v1.ExpectedStateRequest.points:type_name -> nautiq.platform.v1.ReferencePoint
 	4,  // 2: nautiq.platform.v1.ExpectedPrediction.feature_contributions:type_name -> nautiq.platform.v1.FeatureContribution
 	5,  // 3: nautiq.platform.v1.DepthPrediction.temperature_c:type_name -> nautiq.platform.v1.ExpectedPrediction
@@ -1220,17 +1479,21 @@ var file_nautiq_platform_v1_platform_proto_depIdxs = []int32{
 	9,  // 7: nautiq.platform.v1.IntervalDepth.temperature_c:type_name -> nautiq.platform.v1.IntervalPrediction
 	9,  // 8: nautiq.platform.v1.IntervalDepth.practical_salinity:type_name -> nautiq.platform.v1.IntervalPrediction
 	10, // 9: nautiq.platform.v1.UncertaintyResponse.rows:type_name -> nautiq.platform.v1.IntervalDepth
-	0,  // 10: nautiq.platform.v1.PlatformService.Check:input_type -> nautiq.platform.v1.CheckRequest
-	3,  // 11: nautiq.platform.v1.ExpectedStateService.Infer:input_type -> nautiq.platform.v1.ExpectedStateRequest
-	8,  // 12: nautiq.platform.v1.UncertaintyService.Infer:input_type -> nautiq.platform.v1.UncertaintyRequest
-	1,  // 13: nautiq.platform.v1.PlatformService.Check:output_type -> nautiq.platform.v1.CheckResponse
-	7,  // 14: nautiq.platform.v1.ExpectedStateService.Infer:output_type -> nautiq.platform.v1.ExpectedStateResponse
-	11, // 15: nautiq.platform.v1.UncertaintyService.Infer:output_type -> nautiq.platform.v1.UncertaintyResponse
-	13, // [13:16] is the sub-list for method output_type
-	10, // [10:13] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	2,  // 10: nautiq.platform.v1.AnomalyPoint.location:type_name -> nautiq.platform.v1.ReferencePoint
+	12, // 11: nautiq.platform.v1.AnomalyRequest.points:type_name -> nautiq.platform.v1.AnomalyPoint
+	0,  // 12: nautiq.platform.v1.PlatformService.Check:input_type -> nautiq.platform.v1.CheckRequest
+	3,  // 13: nautiq.platform.v1.ExpectedStateService.Infer:input_type -> nautiq.platform.v1.ExpectedStateRequest
+	8,  // 14: nautiq.platform.v1.UncertaintyService.Infer:input_type -> nautiq.platform.v1.UncertaintyRequest
+	13, // 15: nautiq.platform.v1.AnomalyService.Infer:input_type -> nautiq.platform.v1.AnomalyRequest
+	1,  // 16: nautiq.platform.v1.PlatformService.Check:output_type -> nautiq.platform.v1.CheckResponse
+	7,  // 17: nautiq.platform.v1.ExpectedStateService.Infer:output_type -> nautiq.platform.v1.ExpectedStateResponse
+	11, // 18: nautiq.platform.v1.UncertaintyService.Infer:output_type -> nautiq.platform.v1.UncertaintyResponse
+	14, // 19: nautiq.platform.v1.AnomalyService.Infer:output_type -> nautiq.platform.v1.AnomalyResponse
+	16, // [16:20] is the sub-list for method output_type
+	12, // [12:16] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_nautiq_platform_v1_platform_proto_init() }
@@ -1240,15 +1503,16 @@ func file_nautiq_platform_v1_platform_proto_init() {
 	}
 	file_nautiq_platform_v1_platform_proto_msgTypes[5].OneofWrappers = []any{}
 	file_nautiq_platform_v1_platform_proto_msgTypes[9].OneofWrappers = []any{}
+	file_nautiq_platform_v1_platform_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nautiq_platform_v1_platform_proto_rawDesc), len(file_nautiq_platform_v1_platform_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   16,
 			NumExtensions: 0,
-			NumServices:   3,
+			NumServices:   4,
 		},
 		GoTypes:           file_nautiq_platform_v1_platform_proto_goTypes,
 		DependencyIndexes: file_nautiq_platform_v1_platform_proto_depIdxs,

@@ -145,3 +145,18 @@ These checks establish local implementation/recovery. Spatial/platform independe
 ## Implemented predictive interval evidence
 
 The diagnostic quantile/CQR workflow, exact parent pins, profile aggregation unit, hierarchical fallback, revision/selection/lease checks and fixed-reference coverage monitor are delivered in [the uncertainty implementation report](15-Phase-6-Delivery.md). Its current measurements are in [the evidence snapshot](evidence/phase6-summary.json). `predictive_intervals` records supported implementation availability; `calibrated_uncertainty` requires empirical coverage and independent review gates. The already inspected historical test cannot establish untouched-test approval. Mean and median remain separate; no automatic recalibration or anomaly verdict is introduced.
+
+## Profile anomaly controls delivered — 2026-10-02
+
+| Failure | Implemented response | Evidence |
+|---|---|---|
+| Different depth coverage distorts score ranking | Require complete eleven-depth vectors per variable; retain null masks and reject incomplete aggregates | `phase7-verify`, `phase7-smoke` |
+| Calibration/test labels fit covariance or PCA | Train-only fit; raw train-fitted quantile scale; separate frozen percentile reference; explicit leakage checks | `phase7-verify` |
+| Singular covariance or degenerate basis | Shrinkage, frozen condition/rank guards and unsupported variable state | model fitting and offline checks |
+| Arbitrary PCA component treated as oceanographic fact | Deterministic orientation plus numeric loadings, scores and reconstruction; no automatic physical labels | release/profile explorer |
+| Sparse percentile group gives false precision | Region/global count-only hierarchy, minimum complete profile support, null ranks and published resolution | `phase7-verify`, `phase7-smoke` |
+| Black-box baseline controls primary verdict | Z-score/Isolation Forest remain separate comparison lenses; safe JSON export parity | `phase7-verify` |
+| Old revision or ancestor publishes late evidence | Source/canonical verification, shared selection lock, exact parents, final lease checks, staleness/restoration | `phase7-reliability` |
+| Diagnostic percentile becomes a scientific alert | Approval false in policy/SQL/RPC/API; separate diagnostic capability; expert/quiet-period/untouched audits explicitly unavailable | capabilities and delivery evidence |
+
+These controls complete the declared complete-case implementation. Sparse functional inference and scientifically validated event/false-alert behavior remain outstanding review requirements; see [delivery](16-Phase-7-Delivery.md).

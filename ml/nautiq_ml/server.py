@@ -11,10 +11,11 @@ from nautiq_ml.gen.nautiq.platform.v1 import platform_pb2, platform_pb2_grpc
 
 
 class PlatformService(platform_pb2_grpc.PlatformServiceServicer):
-    def __init__(self, service: str, runtime=None, uncertainty=None):
+    def __init__(self, service: str, runtime=None, uncertainty=None, anomaly=None):
         self.service = service
         self.runtime = runtime
         self.uncertainty = uncertainty
+        self.anomaly = anomaly
 
     def Check(self, request, context):
         caps, rid, sha = (
@@ -40,6 +41,16 @@ class PlatformService(platform_pb2_grpc.PlatformServiceServicer):
             )
         )
         caps.update(interval_caps)
+        anomaly_caps, anomaly_id, anomaly_sha = (
+            self.anomaly.capabilities()
+            if self.anomaly
+            else (
+                {"profile_anomaly_diagnostics": False, "profile_anomaly": False},
+                "",
+                "",
+            )
+        )
+        caps.update(anomaly_caps)
         return platform_pb2.CheckResponse(
             service=self.service,
             version=__version__,
@@ -49,6 +60,8 @@ class PlatformService(platform_pb2_grpc.PlatformServiceServicer):
             expected_bundle_sha256=sha,
             uncertainty_release_id=interval_id,
             uncertainty_bundle_sha256=interval_sha,
+            anomaly_release_id=anomaly_id,
+            anomaly_bundle_sha256=anomaly_sha,
         )
 
 
@@ -66,6 +79,7 @@ def main():
     )
     runtime = None
     uncertainty = None
+    anomaly = None
     if service == "ml-inference":
         from .expected_state.serving import PinnedRuntime, ExpectedService
 
@@ -82,8 +96,14 @@ def main():
         platform_pb2_grpc.add_UncertaintyServiceServicer_to_server(
             UncertaintyService(uncertainty), server
         )
+        from .anomaly.serving import PinnedRuntime as AnomalyRuntime, AnomalyService
+
+        anomaly = AnomalyRuntime()
+        platform_pb2_grpc.add_AnomalyServiceServicer_to_server(
+            AnomalyService(anomaly), server
+        )
     platform_pb2_grpc.add_PlatformServiceServicer_to_server(
-        PlatformService(service, runtime, uncertainty), server
+        PlatformService(service, runtime, uncertainty, anomaly), server
     )
     if not server.add_insecure_port("[::]:50051"):
         raise RuntimeError("Cannot bind gRPC listener")

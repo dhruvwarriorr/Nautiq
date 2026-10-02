@@ -8,7 +8,7 @@ export default async function Intervals() {
     evidence<{items: IntervalSummary[]}>("/uncertainty-releases?limit=50"),
   ]);
   return <main className="explorer">
-    <nav><Link href="/">Nautiq</Link><Link href="/profiles">Argo profiles</Link><Link href="/models">Expected mean</Link><Link href="/data">Data quality</Link></nav>
+    <nav><Link href="/anomalies">Profile magnitude and shape</Link><Link href="/">Nautiq</Link><Link href="/profiles">Argo profiles</Link><Link href="/models">Expected mean</Link><Link href="/data">Data quality</Link></nav>
     <p className="eyebrow">PREDICTIVE VARIABILITY / FROZEN CALIBRATION</p>
     <h1>A range, with its coverage evidence.</h1>
     <p className="intro">Compare LightGBM quantile models with CatBoost MultiQuantile. Separate the expected mean from the median and inspect profile-based calibration, subgroup coverage and fallback support.</p>

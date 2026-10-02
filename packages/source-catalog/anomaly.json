@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "method_version": "weighted-residual-profile-v1",
+  "depths_m": [10,20,30,50,75,100,150,200,300,400,500],
+  "coverage_policy": "complete_10_500m_per_variable",
+  "scale_estimator": "train_fitted_rearranged_quantile_half_interdecile_width",
+  "scale_floor": {"temperature_c": 0.05, "practical_salinity": 0.01},
+  "min_train_profiles": 20,
+  "min_calibration_profiles": 20,
+  "components": 3,
+  "max_covariance_condition": 100000000,
+  "hierarchy": ["region", "global"],
+  "seed": 42,
+  "isolation_trees": 64,
+  "isolation_max_samples": 256,
+  "stability_seeds": [43,44,45,46,47],
+  "max_profiles": 2000,
+  "max_rows": 32000,
+  "max_predict_p95_ms": 100,
+  "scientific_review": {"expert_events": false, "quiet_period_false_alerts": false, "untouched_audit": false, "independence": false, "source_coverage": false},
+  "release_approved": false
+}

@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!nautiq/platform/v1/platform.proto\x12\x12nautiq.platform.v1\"\x0e\n\x0c\x43heckRequest\"\xc0\x02\n\rCheckResponse\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05ready\x18\x03 \x01(\x08\x12I\n\x0c\x63\x61pabilities\x18\x04 \x03(\x0b\x32\x33.nautiq.platform.v1.CheckResponse.CapabilitiesEntry\x12\x1b\n\x13\x65xpected_release_id\x18\x05 \x01(\t\x12\x1e\n\x16\x65xpected_bundle_sha256\x18\x06 \x01(\t\x12\x1e\n\x16uncertainty_release_id\x18\x07 \x01(\t\x12!\n\x19uncertainty_bundle_sha256\x18\x08 \x01(\t\x1a\x33\n\x11\x43\x61pabilitiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"[\n\x0eReferencePoint\x12\x10\n\x08latitude\x18\x01 \x01(\x01\x12\x11\n\tlongitude\x18\x02 \x01(\x01\x12\x0f\n\x07\x64\x65pth_m\x18\x03 \x01(\x01\x12\x13\n\x0bobserved_at\x18\x04 \x01(\t\"o\n\x14\x45xpectedStateRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x32\n\x06points\x18\x02 \x03(\x0b\x32\".nautiq.platform.v1.ReferencePoint\x12\x0f\n\x07\x65xplain\x18\x03 \x01(\x08\"<\n\x13\x46\x65\x61tureContribution\x12\x0f\n\x07\x66\x65\x61ture\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontribution\x18\x02 \x01(\x01\"\x81\x04\n\x12\x45xpectedPrediction\x12\x1d\n\x10\x63limatology_mean\x18\x01 \x01(\x01H\x00\x88\x01\x01\x12\x1b\n\x0e\x63\x61ndidate_mean\x18\x02 \x01(\x01H\x01\x88\x01\x01\x12\x1f\n\x12\x63\x61ndidate_residual\x18\x03 \x01(\x01H\x02\x88\x01\x01\x12\x1a\n\rexpected_mean\x18\x04 \x01(\x01H\x03\x88\x01\x01\x12\x18\n\x0bml_residual\x18\x05 \x01(\x01H\x04\x88\x01\x01\x12\x15\n\ractive_method\x18\x06 \x01(\t\x12\x0e\n\x06reason\x18\x07 \x01(\t\x12\x18\n\x10\x63\x61ndidate_reason\x18\x08 \x01(\t\x12\x19\n\x11promotion_reasons\x18\t \x03(\t\x12\x46\n\x15\x66\x65\x61ture_contributions\x18\n \x03(\x0b\x32\'.nautiq.platform.v1.FeatureContribution\x12\x1e\n\x11\x63ontribution_bias\x18\x0b \x01(\x01H\x05\x88\x01\x01\x12\x1d\n\x15\x62\x61seline_support_json\x18\x0c \x01(\x0c\x42\x13\n\x11_climatology_meanB\x11\n\x0f_candidate_meanB\x15\n\x13_candidate_residualB\x10\n\x0e_expected_meanB\x0e\n\x0c_ml_residualB\x14\n\x12_contribution_bias\"\xa5\x01\n\x0f\x44\x65pthPrediction\x12\x0f\n\x07\x64\x65pth_m\x18\x01 \x01(\x01\x12=\n\rtemperature_c\x18\x02 \x01(\x0b\x32&.nautiq.platform.v1.ExpectedPrediction\x12\x42\n\x12practical_salinity\x18\x03 \x01(\x0b\x32&.nautiq.platform.v1.ExpectedPrediction\"\x8f\x02\n\x15\x45xpectedStateResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x16\n\x0emethod_version\x18\x03 \x01(\t\x12\x17\n\x0f\x66\x65\x61ture_version\x18\x04 \x01(\t\x12\x10\n\x08\x65stimand\x18\x05 \x01(\t\x12\x31\n\x04rows\x18\x06 \x03(\x0b\x32#.nautiq.platform.v1.DepthPrediction\x12\x18\n\x10release_approved\x18\x07 \x01(\x08\x12\x17\n\x0finterval_status\x18\x08 \x01(\t\x12\"\n\x1a\x65xplanation_interpretation\x18\t \x01(\t\"\\\n\x12UncertaintyRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x32\n\x06points\x18\x02 \x03(\x0b\x32\".nautiq.platform.v1.ReferencePoint\"\xf3\x03\n\x12IntervalPrediction\x12\x1a\n\rexpected_mean\x18\x01 \x01(\x01H\x00\x88\x01\x01\x12\x10\n\x03q10\x18\x02 \x01(\x01H\x01\x88\x01\x01\x12\x10\n\x03q50\x18\x03 \x01(\x01H\x02\x88\x01\x01\x12\x10\n\x03q90\x18\x04 \x01(\x01H\x03\x88\x01\x01\x12\x12\n\x05lower\x18\x05 \x01(\x01H\x04\x88\x01\x01\x12\x12\n\x05upper\x18\x06 \x01(\x01H\x05\x88\x01\x01\x12\x17\n\ncorrection\x18\x07 \x01(\x01H\x06\x88\x01\x01\x12\x0e\n\x06status\x18\x08 \x01(\t\x12\x0e\n\x06reason\x18\t \x01(\t\x12\x0e\n\x06\x66\x61mily\x18\n \x01(\t\x12\x19\n\x11\x63\x61libration_group\x18\x0b \x01(\t\x12\x17\n\x0frequested_group\x18\x0c \x01(\t\x12\x1c\n\x14\x63\x61libration_profiles\x18\r \x01(\x05\x12\x18\n\x10\x63\x61libration_rank\x18\x0e \x01(\x05\x12\x10\n\x08\x66\x61llback\x18\x0f \x01(\x08\x12\x18\n\x10\x66\x61llback_reasons\x18\x10 \x03(\t\x12\x19\n\x11quantile_crossing\x18\x11 \x01(\x08\x12\x1a\n\x12\x63overage_qualified\x18\x12 \x01(\x08\x42\x10\n\x0e_expected_meanB\x06\n\x04_q10B\x06\n\x04_q50B\x06\n\x04_q90B\x08\n\x06_lowerB\x08\n\x06_upperB\r\n\x0b_correction\"\xa3\x01\n\rIntervalDepth\x12\x0f\n\x07\x64\x65pth_m\x18\x01 \x01(\x01\x12=\n\rtemperature_c\x18\x02 \x01(\x0b\x32&.nautiq.platform.v1.IntervalPrediction\x12\x42\n\x12practical_salinity\x18\x03 \x01(\x0b\x32&.nautiq.platform.v1.IntervalPrediction\"\xb9\x02\n\x13UncertaintyResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x13\n\x0b\x65xpected_id\x18\x03 \x01(\t\x12\x14\n\x0creference_id\x18\x04 \x01(\t\x12\x16\n\x0emethod_version\x18\x05 \x01(\t\x12\x17\n\x0f\x66\x65\x61ture_version\x18\x06 \x01(\t\x12\x18\n\x10nominal_coverage\x18\x07 \x01(\x01\x12\x15\n\rcoverage_unit\x18\x08 \x01(\t\x12\x1f\n\x17interval_interpretation\x18\t \x01(\t\x12\x18\n\x10release_approved\x18\n \x01(\x08\x12/\n\x04rows\x18\x0b \x03(\x0b\x32!.nautiq.platform.v1.IntervalDepth2_\n\x0fPlatformService\x12L\n\x05\x43heck\x12 .nautiq.platform.v1.CheckRequest\x1a!.nautiq.platform.v1.CheckResponse2t\n\x14\x45xpectedStateService\x12\\\n\x05Infer\x12(.nautiq.platform.v1.ExpectedStateRequest\x1a).nautiq.platform.v1.ExpectedStateResponse2n\n\x12UncertaintyService\x12X\n\x05Infer\x12&.nautiq.platform.v1.UncertaintyRequest\x1a\'.nautiq.platform.v1.UncertaintyResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!nautiq/platform/v1/platform.proto\x12\x12nautiq.platform.v1\"\x0e\n\x0c\x43heckRequest\"\xfb\x02\n\rCheckResponse\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05ready\x18\x03 \x01(\x08\x12I\n\x0c\x63\x61pabilities\x18\x04 \x03(\x0b\x32\x33.nautiq.platform.v1.CheckResponse.CapabilitiesEntry\x12\x1b\n\x13\x65xpected_release_id\x18\x05 \x01(\t\x12\x1e\n\x16\x65xpected_bundle_sha256\x18\x06 \x01(\t\x12\x1e\n\x16uncertainty_release_id\x18\x07 \x01(\t\x12!\n\x19uncertainty_bundle_sha256\x18\x08 \x01(\t\x12\x1a\n\x12\x61nomaly_release_id\x18\t \x01(\t\x12\x1d\n\x15\x61nomaly_bundle_sha256\x18\n \x01(\t\x1a\x33\n\x11\x43\x61pabilitiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"[\n\x0eReferencePoint\x12\x10\n\x08latitude\x18\x01 \x01(\x01\x12\x11\n\tlongitude\x18\x02 \x01(\x01\x12\x0f\n\x07\x64\x65pth_m\x18\x03 \x01(\x01\x12\x13\n\x0bobserved_at\x18\x04 \x01(\t\"o\n\x14\x45xpectedStateRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x32\n\x06points\x18\x02 \x03(\x0b\x32\".nautiq.platform.v1.ReferencePoint\x12\x0f\n\x07\x65xplain\x18\x03 \x01(\x08\"<\n\x13\x46\x65\x61tureContribution\x12\x0f\n\x07\x66\x65\x61ture\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontribution\x18\x02 \x01(\x01\"\x81\x04\n\x12\x45xpectedPrediction\x12\x1d\n\x10\x63limatology_mean\x18\x01 \x01(\x01H\x00\x88\x01\x01\x12\x1b\n\x0e\x63\x61ndidate_mean\x18\x02 \x01(\x01H\x01\x88\x01\x01\x12\x1f\n\x12\x63\x61ndidate_residual\x18\x03 \x01(\x01H\x02\x88\x01\x01\x12\x1a\n\rexpected_mean\x18\x04 \x01(\x01H\x03\x88\x01\x01\x12\x18\n\x0bml_residual\x18\x05 \x01(\x01H\x04\x88\x01\x01\x12\x15\n\ractive_method\x18\x06 \x01(\t\x12\x0e\n\x06reason\x18\x07 \x01(\t\x12\x18\n\x10\x63\x61ndidate_reason\x18\x08 \x01(\t\x12\x19\n\x11promotion_reasons\x18\t \x03(\t\x12\x46\n\x15\x66\x65\x61ture_contributions\x18\n \x03(\x0b\x32\'.nautiq.platform.v1.FeatureContribution\x12\x1e\n\x11\x63ontribution_bias\x18\x0b \x01(\x01H\x05\x88\x01\x01\x12\x1d\n\x15\x62\x61seline_support_json\x18\x0c \x01(\x0c\x42\x13\n\x11_climatology_meanB\x11\n\x0f_candidate_meanB\x15\n\x13_candidate_residualB\x10\n\x0e_expected_meanB\x0e\n\x0c_ml_residualB\x14\n\x12_contribution_bias\"\xa5\x01\n\x0f\x44\x65pthPrediction\x12\x0f\n\x07\x64\x65pth_m\x18\x01 \x01(\x01\x12=\n\rtemperature_c\x18\x02 \x01(\x0b\x32&.nautiq.platform.v1.ExpectedPrediction\x12\x42\n\x12practical_salinity\x18\x03 \x01(\x0b\x32&.nautiq.platform.v1.ExpectedPrediction\"\x8f\x02\n\x15\x45xpectedStateResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x16\n\x0emethod_version\x18\x03 \x01(\t\x12\x17\n\x0f\x66\x65\x61ture_version\x18\x04 \x01(\t\x12\x10\n\x08\x65stimand\x18\x05 \x01(\t\x12\x31\n\x04rows\x18\x06 \x03(\x0b\x32#.nautiq.platform.v1.DepthPrediction\x12\x18\n\x10release_approved\x18\x07 \x01(\x08\x12\x17\n\x0finterval_status\x18\x08 \x01(\t\x12\"\n\x1a\x65xplanation_interpretation\x18\t \x01(\t\"\\\n\x12UncertaintyRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x32\n\x06points\x18\x02 \x03(\x0b\x32\".nautiq.platform.v1.ReferencePoint\"\xf3\x03\n\x12IntervalPrediction\x12\x1a\n\rexpected_mean\x18\x01 \x01(\x01H\x00\x88\x01\x01\x12\x10\n\x03q10\x18\x02 \x01(\x01H\x01\x88\x01\x01\x12\x10\n\x03q50\x18\x03 \x01(\x01H\x02\x88\x01\x01\x12\x10\n\x03q90\x18\x04 \x01(\x01H\x03\x88\x01\x01\x12\x12\n\x05lower\x18\x05 \x01(\x01H\x04\x88\x01\x01\x12\x12\n\x05upper\x18\x06 \x01(\x01H\x05\x88\x01\x01\x12\x17\n\ncorrection\x18\x07 \x01(\x01H\x06\x88\x01\x01\x12\x0e\n\x06status\x18\x08 \x01(\t\x12\x0e\n\x06reason\x18\t \x01(\t\x12\x0e\n\x06\x66\x61mily\x18\n \x01(\t\x12\x19\n\x11\x63\x61libration_group\x18\x0b \x01(\t\x12\x17\n\x0frequested_group\x18\x0c \x01(\t\x12\x1c\n\x14\x63\x61libration_profiles\x18\r \x01(\x05\x12\x18\n\x10\x63\x61libration_rank\x18\x0e \x01(\x05\x12\x10\n\x08\x66\x61llback\x18\x0f \x01(\x08\x12\x18\n\x10\x66\x61llback_reasons\x18\x10 \x03(\t\x12\x19\n\x11quantile_crossing\x18\x11 \x01(\x08\x12\x1a\n\x12\x63overage_qualified\x18\x12 \x01(\x08\x42\x10\n\x0e_expected_meanB\x06\n\x04_q10B\x06\n\x04_q50B\x06\n\x04_q90B\x08\n\x06_lowerB\x08\n\x06_upperB\r\n\x0b_correction\"\xa3\x01\n\rIntervalDepth\x12\x0f\n\x07\x64\x65pth_m\x18\x01 \x01(\x01\x12=\n\rtemperature_c\x18\x02 \x01(\x0b\x32&.nautiq.platform.v1.IntervalPrediction\x12\x42\n\x12practical_salinity\x18\x03 \x01(\x0b\x32&.nautiq.platform.v1.IntervalPrediction\"\xb9\x02\n\x13UncertaintyResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x13\n\x0b\x65xpected_id\x18\x03 \x01(\t\x12\x14\n\x0creference_id\x18\x04 \x01(\t\x12\x16\n\x0emethod_version\x18\x05 \x01(\t\x12\x17\n\x0f\x66\x65\x61ture_version\x18\x06 \x01(\t\x12\x18\n\x10nominal_coverage\x18\x07 \x01(\x01\x12\x15\n\rcoverage_unit\x18\x08 \x01(\t\x12\x1f\n\x17interval_interpretation\x18\t \x01(\t\x12\x18\n\x10release_approved\x18\n \x01(\x08\x12/\n\x04rows\x18\x0b \x03(\x0b\x32!.nautiq.platform.v1.IntervalDepth\"\xaa\x01\n\x0c\x41nomalyPoint\x12\x34\n\x08location\x18\x01 \x01(\x0b\x32\".nautiq.platform.v1.ReferencePoint\x12\x1a\n\rtemperature_c\x18\x02 \x01(\x01H\x00\x88\x01\x01\x12\x1f\n\x12practical_salinity\x18\x03 \x01(\x01H\x01\x88\x01\x01\x42\x10\n\x0e_temperature_cB\x15\n\x13_practical_salinity\"V\n\x0e\x41nomalyRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x30\n\x06points\x18\x02 \x03(\x0b\x32 .nautiq.platform.v1.AnomalyPoint\"\xc6\x01\n\x0f\x41nomalyResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x16\n\x0euncertainty_id\x18\x03 \x01(\t\x12\x13\n\x0b\x65xpected_id\x18\x04 \x01(\t\x12\x14\n\x0creference_id\x18\x05 \x01(\t\x12\x16\n\x0emethod_version\x18\x06 \x01(\t\x12\x13\n\x0bresult_json\x18\x07 \x01(\x0c\x12\x18\n\x10release_approved\x18\x08 \x01(\x08\x32_\n\x0fPlatformService\x12L\n\x05\x43heck\x12 .nautiq.platform.v1.CheckRequest\x1a!.nautiq.platform.v1.CheckResponse2t\n\x14\x45xpectedStateService\x12\\\n\x05Infer\x12(.nautiq.platform.v1.ExpectedStateRequest\x1a).nautiq.platform.v1.ExpectedStateResponse2n\n\x12UncertaintyService\x12X\n\x05Infer\x12&.nautiq.platform.v1.UncertaintyRequest\x1a\'.nautiq.platform.v1.UncertaintyResponse2b\n\x0e\x41nomalyService\x12P\n\x05Infer\x12\".nautiq.platform.v1.AnomalyRequest\x1a#.nautiq.platform.v1.AnomalyResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,33 +37,41 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_CHECKREQUEST']._serialized_start=57
   _globals['_CHECKREQUEST']._serialized_end=71
   _globals['_CHECKRESPONSE']._serialized_start=74
-  _globals['_CHECKRESPONSE']._serialized_end=394
-  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_start=343
-  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_end=394
-  _globals['_REFERENCEPOINT']._serialized_start=396
-  _globals['_REFERENCEPOINT']._serialized_end=487
-  _globals['_EXPECTEDSTATEREQUEST']._serialized_start=489
-  _globals['_EXPECTEDSTATEREQUEST']._serialized_end=600
-  _globals['_FEATURECONTRIBUTION']._serialized_start=602
-  _globals['_FEATURECONTRIBUTION']._serialized_end=662
-  _globals['_EXPECTEDPREDICTION']._serialized_start=665
-  _globals['_EXPECTEDPREDICTION']._serialized_end=1178
-  _globals['_DEPTHPREDICTION']._serialized_start=1181
-  _globals['_DEPTHPREDICTION']._serialized_end=1346
-  _globals['_EXPECTEDSTATERESPONSE']._serialized_start=1349
-  _globals['_EXPECTEDSTATERESPONSE']._serialized_end=1620
-  _globals['_UNCERTAINTYREQUEST']._serialized_start=1622
-  _globals['_UNCERTAINTYREQUEST']._serialized_end=1714
-  _globals['_INTERVALPREDICTION']._serialized_start=1717
-  _globals['_INTERVALPREDICTION']._serialized_end=2216
-  _globals['_INTERVALDEPTH']._serialized_start=2219
-  _globals['_INTERVALDEPTH']._serialized_end=2382
-  _globals['_UNCERTAINTYRESPONSE']._serialized_start=2385
-  _globals['_UNCERTAINTYRESPONSE']._serialized_end=2698
-  _globals['_PLATFORMSERVICE']._serialized_start=2700
-  _globals['_PLATFORMSERVICE']._serialized_end=2795
-  _globals['_EXPECTEDSTATESERVICE']._serialized_start=2797
-  _globals['_EXPECTEDSTATESERVICE']._serialized_end=2913
-  _globals['_UNCERTAINTYSERVICE']._serialized_start=2915
-  _globals['_UNCERTAINTYSERVICE']._serialized_end=3025
+  _globals['_CHECKRESPONSE']._serialized_end=453
+  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_start=402
+  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_end=453
+  _globals['_REFERENCEPOINT']._serialized_start=455
+  _globals['_REFERENCEPOINT']._serialized_end=546
+  _globals['_EXPECTEDSTATEREQUEST']._serialized_start=548
+  _globals['_EXPECTEDSTATEREQUEST']._serialized_end=659
+  _globals['_FEATURECONTRIBUTION']._serialized_start=661
+  _globals['_FEATURECONTRIBUTION']._serialized_end=721
+  _globals['_EXPECTEDPREDICTION']._serialized_start=724
+  _globals['_EXPECTEDPREDICTION']._serialized_end=1237
+  _globals['_DEPTHPREDICTION']._serialized_start=1240
+  _globals['_DEPTHPREDICTION']._serialized_end=1405
+  _globals['_EXPECTEDSTATERESPONSE']._serialized_start=1408
+  _globals['_EXPECTEDSTATERESPONSE']._serialized_end=1679
+  _globals['_UNCERTAINTYREQUEST']._serialized_start=1681
+  _globals['_UNCERTAINTYREQUEST']._serialized_end=1773
+  _globals['_INTERVALPREDICTION']._serialized_start=1776
+  _globals['_INTERVALPREDICTION']._serialized_end=2275
+  _globals['_INTERVALDEPTH']._serialized_start=2278
+  _globals['_INTERVALDEPTH']._serialized_end=2441
+  _globals['_UNCERTAINTYRESPONSE']._serialized_start=2444
+  _globals['_UNCERTAINTYRESPONSE']._serialized_end=2757
+  _globals['_ANOMALYPOINT']._serialized_start=2760
+  _globals['_ANOMALYPOINT']._serialized_end=2930
+  _globals['_ANOMALYREQUEST']._serialized_start=2932
+  _globals['_ANOMALYREQUEST']._serialized_end=3018
+  _globals['_ANOMALYRESPONSE']._serialized_start=3021
+  _globals['_ANOMALYRESPONSE']._serialized_end=3219
+  _globals['_PLATFORMSERVICE']._serialized_start=3221
+  _globals['_PLATFORMSERVICE']._serialized_end=3316
+  _globals['_EXPECTEDSTATESERVICE']._serialized_start=3318
+  _globals['_EXPECTEDSTATESERVICE']._serialized_end=3434
+  _globals['_UNCERTAINTYSERVICE']._serialized_start=3436
+  _globals['_UNCERTAINTYSERVICE']._serialized_end=3546
+  _globals['_ANOMALYSERVICE']._serialized_start=3548
+  _globals['_ANOMALYSERVICE']._serialized_end=3646
 # @@protoc_insertion_point(module_scope)

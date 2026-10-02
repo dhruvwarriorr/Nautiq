@@ -154,3 +154,28 @@ uncertainty-maintain:
 	docker compose exec -T ml-inference python -m nautiq_ml.uncertainty.pipeline maintain --limit 500
 uncertainty-monitor:
 	docker compose exec -T normalizer python -c 'import json; from nautiq_ml.uncertainty.monitoring import monitor; print(json.dumps(monitor(), sort_keys=True, indent=2))'
+
+.PHONY: phase7-verify phase7-reliability phase7-smoke anomaly-build anomaly-verify anomaly-select anomaly-log anomaly-maintain anomaly-benchmark
+phase7-verify:
+	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase7.py
+phase7-reliability:
+	.venv/bin/python scripts/verify_phase7_reliability.py
+phase7-smoke:
+	.venv/bin/python scripts/verify_phase7_smoke.py
+anomaly-build:
+	@test -n '$(INTERVAL_ID)' || (echo 'Set INTERVAL_ID to an exact uncertainty release'; exit 1)
+	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" ml-inference python -m nautiq_ml.anomaly.pipeline build '$(INTERVAL_ID)'
+anomaly-verify:
+	@test -n '$(ANOMALY_ID)' || (echo 'Set ANOMALY_ID'; exit 1)
+	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline verify '$(ANOMALY_ID)'
+anomaly-select:
+	@test -n '$(ANOMALY_ID)' || (echo 'Set ANOMALY_ID'; exit 1)
+	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline select '$(ANOMALY_ID)'
+anomaly-log:
+	@test -n '$(ANOMALY_ID)' || (echo 'Set ANOMALY_ID'; exit 1)
+	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline log '$(ANOMALY_ID)'
+anomaly-benchmark:
+	@test -n '$(ANOMALY_ID)' || (echo 'Set ANOMALY_ID'; exit 1)
+	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline benchmark '$(ANOMALY_ID)'
+anomaly-maintain:
+	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline maintain --limit 500

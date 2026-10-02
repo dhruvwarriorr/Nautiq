@@ -7,3 +7,4 @@ nav button{font:inherit;color:inherit;background:none;border:0;text-decoration:u
 .audit-json {white-space:pre-wrap;overflow-wrap:anywhere;background:#eef2ea;padding:1.25rem;font-size:.84rem;max-width:100%;} article.evidence {margin-bottom:2rem;} .explorer section {margin-top:2.5rem;}
 
 .explorer td small { display: block; margin-top: .35rem; color: #53645f; font-size: .8rem; }
+.depth-curve{max-width:520px;margin:28px 0}.depth-curve svg{width:100%;height:auto;display:block;fill:#163c40}.depth-curve figcaption{font-size:12px;line-height:1.6}

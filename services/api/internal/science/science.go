@@ -33,6 +33,10 @@ func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/anomaly-releases", s.bound(s.anomalyReleases))
+	mux.Handle("GET /api/v1/anomaly-releases/selected", s.bound(s.selectedAnomaly))
+	mux.Handle("GET /api/v1/anomaly-releases/{id}", s.bound(s.anomalyRelease))
+	mux.Handle("GET /api/v1/profiles/{id}/anomaly", s.bound(s.profileAnomaly))
 	mux.Handle("GET /api/v1/uncertainty-releases", s.bound(s.uncertaintyReleases))
 	mux.Handle("GET /api/v1/uncertainty-releases/selected", s.bound(s.selectedUncertainty))
 	mux.Handle("GET /api/v1/uncertainty-releases/{id}", s.bound(s.uncertaintyRelease))

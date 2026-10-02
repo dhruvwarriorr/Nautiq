@@ -16,6 +16,8 @@ message CheckResponse {
   string expected_bundle_sha256 = 6;
   string uncertainty_release_id = 7;
   string uncertainty_bundle_sha256 = 8;
+  string anomaly_release_id = 9;
+  string anomaly_bundle_sha256 = 10;
 }
 
 // A request is bound to an explicit immutable release, never a registry alias.
@@ -112,4 +114,29 @@ message UncertaintyResponse {
   string interval_interpretation = 9;
   bool release_approved = 10;
   repeated IntervalDepth rows = 11;
+}
+
+// Exactly one profile on the pinned complete-case grid. Missing values stay absent.
+service AnomalyService {
+  rpc Infer(AnomalyRequest) returns (AnomalyResponse);
+}
+message AnomalyPoint {
+  ReferencePoint location = 1;
+  optional double temperature_c = 2;
+  optional double practical_salinity = 3;
+}
+message AnomalyRequest {
+  string release_id = 1;
+  repeated AnomalyPoint points = 2;
+}
+message AnomalyResponse {
+  string release_id = 1;
+  string bundle_sha256 = 2;
+  string uncertainty_id = 3;
+  string expected_id = 4;
+  string reference_id = 5;
+  string method_version = 6;
+  // Canonical bounded scientific primitives defined by anomaly.openapi.json.
+  bytes result_json = 7;
+  bool release_approved = 8;
 }
