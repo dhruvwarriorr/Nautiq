@@ -33,18 +33,6 @@ func Readiness(checks map[string]Check) http.Handler {
 	return Handler(required)
 }
 
-func Capabilities(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-store")
-	json.NewEncoder(w).Encode(map[string]any{
-		"schema_version": 1,
-		"capabilities": map[string]bool{"platform_runtime": true, "observations": true,
-			"expected_state": false, "profile_anomaly": false, "field_sampling": false,
-			"official_advisories": false, "trip_assessment": false},
-		"limitations": []string{"Argo original-level observations are enabled; scientific model serving and operational source approval remain unavailable."},
-	})
-}
-
 func Handler(checks map[string]Check) http.Handler {
 	slots := make(chan struct{}, 8)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

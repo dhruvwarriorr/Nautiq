@@ -171,13 +171,17 @@ AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL)""
         (jid, profile_id, revision, SUMMARY_VERSION),
     )
 
+    from ..climatology.pipeline import queue
+
+    queue(db, profile_id, revision)
+
 
 def invalidate(db, profile_id, revision):
     # Frozen historical snapshot evidence must remain frozen, even after upstream revision.
     db.execute(
         """UPDATE calculations c SET state='stale' FROM calculation_inputs i
 WHERE c.calculation_id=i.calculation_id AND i.profile_id=%s AND i.revision_sha256=%s
-AND c.kind IN ('normalization','profile_summary') AND c.state='current'""",
+AND c.kind IN ('normalization','profile_summary','climatology_comparison') AND c.state='current'""",
         (profile_id, revision),
     )
 

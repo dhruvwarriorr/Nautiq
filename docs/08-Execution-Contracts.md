@@ -6,8 +6,9 @@ These policies turn the design into implementation decisions. Values below are i
 
 | Capability | Current behavior | Enablement gate |
 | --- | --- | --- |
-| Platform runtime | Live dependency checks | Schema 3 and required dependency readiness |
+| Platform runtime | Live dependency checks | Schema 5 and required dependency readiness |
 | Observation query | Implemented local Argo canonical API/UI | Production source review remains separate |
+| Historical climatology | Dynamic API flag: selected ready reference plus supported current comparison | Train-only artifact integrity; local prototype only, production approval false |
 | Expected/profile inference | False in gRPC/API capabilities | Pinned validated release and coverage mask |
 | Field sampling | False | Reviewed product/cycle/mask/sampling contract |
 | Official advisory state | Unknown | Verified machine feed, completeness, cadence and rights |
@@ -84,3 +85,11 @@ Calculation IDs are content-addressed immutable manifests, not request traces. M
 Snapshots require explicit timezone-aware `AS_OF`, preserve one selected revision per stable profile at that time, and freeze split assignments before later fitting. The policy requires profile/parameter D, adjusted fields and QC 1. All variables/native depths of a profile share a temporal split; a missing salinity label does not discard a valid temperature label. No interpolation or synthetic labels are introduced. Bounds apply to candidate profiles/levels before allocation; overflow fails rather than silently downsampling. Hash-verified object publication precedes one SQL manifest commit. See `12-Phase-3-Delivery.md` for real counts and replay evidence.
 
 Local ingestion freshness uses only successful live upstream checks; legacy/backfill/reconciled/import/replay operations cannot refresh that timestamp. Provider freshness stays unverified until both cadence review and an observation-age budget exist. The source monitor reports queue age/count and QC audit-group counts, and expires after three minutes without a successful refresh. QC counts are audit groups, not a measured rejection rate over all source observations.
+
+## Historical-reference and comparison contract
+
+Schema 5 adds `/api/v1/climatology-releases`, `/climatology-releases/selected`, `/climatology-releases/{id}` and `/profiles/{id}/climatology`, described by `packages/schemas/climatology.openapi.json`. They reuse eight bounded evidence slots/eight-second deadlines and typed sanitized problems; list limits are 1–200, default 50. Invalid/absent IDs return evidence-not-found; unknown/repeated queries fail. An accepted profile returns its current revision and either reference-unavailable, pending, ready, partial or unavailable comparison state. Null expected values or observations never become zero differences or a whole-profile prediction failure.
+
+Fit calculations freeze input snapshot/raw/revision hashes, grid/policy/method/code/runtime, fitting and dataset years, all evaluation blocks and artifact checksums. Comparisons bind profile revision and selected reference, hash-verify raw/canonical/bundle inputs and refuse SQL/lake divergence. Signed difference is observed minus conditional mean; direction is descriptive, with no anomaly/event/confidence verdict. Fitting ends in 2016; the dataset's end year 2024 is not advertised as fitting coverage.
+
+Publication stages immutable output before an atomic SQL transaction. The canonical selection lock and final lease token/time, current ready revision and selected-reference checks prevent late work from publishing after revisions, reference switches or lease loss. Superseded live comparisons become stale; frozen fits/snapshots remain frozen. Temporary object/checksum failures retry with bounded backoff so restored verified artifacts recover; incompatible policy/code or invalid projections quarantine work. Fit is bounded to 2,000 profiles/100,000 levels, 128 MiB input Parquet and 16 MiB per output artifact; selecting a reference refuses >2,000 current profiles. Selection is explicit local configuration, never production approval. `/capabilities` reports climatology only for a selected ready reference with supported current comparison evidence; ML expected-state and other future capabilities remain false.

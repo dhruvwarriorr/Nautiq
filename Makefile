@@ -82,3 +82,22 @@ training-snapshot:
 verify-snapshot:
 	@test -n "$(SNAPSHOT_ID)" || (echo 'Supply SNAPSHOT_ID'; exit 2)
 	docker compose exec -T normalizer python -m nautiuq_ml.argo.tools verify-snapshot '$(SNAPSHOT_ID)'
+
+.PHONY: phase4-verify phase4-reliability phase4-smoke climatology-build climatology-verify climatology-select climatology-maintain
+phase4-verify:
+	.venv/bin/python scripts/verify_phase4.py
+phase4-reliability:
+	.venv/bin/python scripts/verify_phase4_reliability.py
+phase4-smoke:
+	.venv/bin/python scripts/verify_phase4_smoke.py
+climatology-build:
+	@test -n "$(SNAPSHOT_ID)" || (echo 'Supply SNAPSHOT_ID'; exit 2)
+	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline build '$(SNAPSHOT_ID)'
+climatology-verify:
+	@test -n "$(REFERENCE_ID)" || (echo 'Supply REFERENCE_ID'; exit 2)
+	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline verify '$(REFERENCE_ID)'
+climatology-select:
+	@test -n "$(REFERENCE_ID)" || (echo 'Supply REFERENCE_ID'; exit 2)
+	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline select '$(REFERENCE_ID)'
+climatology-maintain:
+	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline maintain --limit 500

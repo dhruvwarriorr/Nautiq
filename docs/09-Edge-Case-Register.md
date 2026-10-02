@@ -104,3 +104,23 @@ See [Phase 3 delivery](12-Phase-3-Delivery.md) for exact commands and evidence.
 | D19, M15 | Supersession invalidates live calculation evidence while frozen historical snapshots remain unchanged. Original as-of snapshots reproduce after upstream revision. Cadence/coverage stay unverified; live fetch age and delayed observation age are separate. |
 
 No production model, field/advisory/trip capability or release approval is enabled by this update.
+
+## Phase 4 execution update — 2026-10-02
+
+See [delivery and exact verification commands](13-Phase-4-Delivery.md).
+
+| Failure | Implemented behavior and evidence |
+| --- | --- |
+| Held-out labels or locations alter reference | Offline gate perturbs them; fitted coefficients, support, spread and fit hash remain identical. |
+| New Year/leap year/unsupported depth | UTC calendar phase; continuous annual harmonics; unsupported depth/geography refused. |
+| One variable missing; rejected native gap or wide bracket | Independent masks; no extrapolation or interpolation across missing labels/nonadjacent native indices/>250 m bracket. |
+| Sparse local pool or training envelope absent | Ordered cell→basin→band support checks; explicit fallback/counts or null estimate; no nearest coastal substitution. |
+| Zero residual variance | Versioned positive residual-scale floors; no calibrated interval claim. |
+| Empty region/depth test subgroup | Null metrics, evaluated/candidate counts and coverage reasons; 2,000 m real test evaluates zero rows. |
+| Revision/reference changes during object staging | Disposable gate interleaves both changes; final canonical-lock checks prevent obsolete work from publishing live. |
+| Expired or stolen lease | Expired work is reclaimed; staging with lost token/time cannot publish. |
+| Corrupt artifacts or mutable observation projection | Checksum or SQL/lake refusal; temporary checksum failures remain retryable and recover after verified byte restoration; invalid projection quarantines. |
+| SQL publication fails after staging | No reference or fit calculation is published; immutable staged artifacts cannot overwrite another release. |
+| Revision changes after frozen fit | Frozen reference/input checksums unchanged; old live comparison stale, replacement revision separately queued. |
+
+These checks establish local implementation/recovery. Spatial/platform independence, representative coastal coverage and calibrated uncertainty remain scientific release gates. No ML/anomaly/event/field/advisory/trip approval follows from a supported warmer/cooler difference.

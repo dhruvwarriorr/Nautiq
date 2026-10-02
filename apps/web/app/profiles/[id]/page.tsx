@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Climatology from "./Climatology";
+import type { ProfileClimatology } from "../../../lib/climatology";
 import { notFound } from "next/navigation";
 import { evidence, type Revision, type Statistics } from "../../../lib/science";
 import { apiURL, type Profile, type Level } from "../../../lib/profiles";
@@ -105,6 +107,9 @@ export default async function Detail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const climatologyRequest = evidence<ProfileClimatology>(
+    `/profiles/${encodeURIComponent(id)}/climatology`,
+  );
   const revisionRequest = evidence<{ items: Revision[] }>(
     `/profiles/${encodeURIComponent(id)}/revisions?limit=50`,
   );
@@ -130,7 +135,11 @@ export default async function Detail({
         <p>The observation service is unavailable. Refresh to retry.</p>
       </main>
     );
-  const [history, stats] = await Promise.all([revisionRequest, statsRequest]);
+  const [history, stats, climatology] = await Promise.all([
+    revisionRequest,
+    statsRequest,
+    climatologyRequest,
+  ]);
   const p = profile,
     pr = p.provenance;
   return (
@@ -237,6 +246,7 @@ export default async function Detail({
           establishes current local sea conditions or a trip verdict.
         </p>
       </section>
+      <Climatology value={climatology} revision={p.revision_sha256} />
       <section>
         <h2>Descriptive profile summary</h2>
         {stats?.status === "ready" &&

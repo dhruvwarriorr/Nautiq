@@ -52,6 +52,7 @@ export default async function Profiles({
     <main className="explorer">
       <nav>
         <Link href="/">Nautiuq</Link>
+        <Link href="/climatology">Historical normal</Link>
         <Link href="/data">Data quality</Link>
         <Link href="/status">Platform health</Link>
       </nav>

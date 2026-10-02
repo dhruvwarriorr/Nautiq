@@ -17,6 +17,7 @@ export default async function Data() {
       <nav>
         <Link href="/">Nautiuq</Link>
         <Link href="/profiles">Argo profiles</Link>
+        <Link href="/climatology">Historical normal</Link>
         <Link href="/status">Platform health</Link>
       </nav>
       <p className="eyebrow">DATA / QUALITY & REPRODUCIBILITY</p>

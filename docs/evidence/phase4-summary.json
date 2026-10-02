@@ -1,0 +1,353 @@
+{
+  "verified_at": "2026-10-02T06:02:31.208881+00:00",
+  "scope": "local train-only prototype; no scientific production approval",
+  "release_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+  "fit_calculation_id": "345f029f-0891-52e6-97d0-0521960085e0",
+  "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00",
+  "fitting_period": {
+    "end_year": 2016,
+    "start_year": 2005
+  },
+  "dataset_baseline": {
+    "end_year": 2024,
+    "start_year": 2005
+  },
+  "fit_hash": "13d88e64949e6664fb57a5b31e9ac9681a474862ec5b44b806eed99f6c18b8a9",
+  "bundle_sha256": "8041ff6792c1b5034367d36b402178ae35ebaa3b832fb606f038abdfd483f9e7",
+  "grid_sha256": "e46ff2ad4bb12b957c5a2b9acd2dd9fbb8c5f4d791cd43f55963f770a94c2311",
+  "evaluation_sha256": "870520a98aa9b068cfdb339fdaa3b84ef154be05116061b0ce90544fb4f52dd3",
+  "profile_count": 196,
+  "standard_grid_rows": 2940,
+  "model_count": 68,
+  "release_approved": false,
+  "partition_metrics": {
+    "temperature_c": {
+      "test": {
+        "mae": 1.1391821121895995,
+        "bias": 0.017379330112107273,
+        "rmse": 1.6447976658966004,
+        "profiles": 41,
+        "candidate_rows": 750,
+        "evaluated_rows": 499,
+        "coverage_counts": {
+          "basin_depth": 490,
+          "basin_depth_band": 9,
+          "missing_observed": 123,
+          "outside_training_envelope": 128
+        },
+        "profile_weighted_mae": 1.2479730089785321,
+        "profile_bootstrap_mae_95": [
+          1.00790072066029,
+          1.529897353210999
+        ]
+      },
+      "tune": {
+        "mae": 0.8484322724893464,
+        "bias": 0.2237206289748182,
+        "rmse": 1.2129851297301653,
+        "profiles": 39,
+        "candidate_rows": 735,
+        "evaluated_rows": 519,
+        "coverage_counts": {
+          "basin_depth": 517,
+          "basin_depth_band": 2,
+          "missing_observed": 106,
+          "outside_training_envelope": 110
+        },
+        "profile_weighted_mae": 0.8710192030131296,
+        "profile_bootstrap_mae_95": [
+          0.7700564557888318,
+          0.9968615739774047
+        ]
+      },
+      "train": {
+        "mae": 0.8252775797061228,
+        "bias": -1.009718624501195e-15,
+        "rmse": 1.1872740664075456,
+        "profiles": 45,
+        "candidate_rows": 705,
+        "evaluated_rows": 570,
+        "coverage_counts": {
+          "basin_depth": 570,
+          "missing_observed": 135
+        },
+        "profile_weighted_mae": 0.8244880707695441,
+        "profile_bootstrap_mae_95": [
+          0.7135367239292584,
+          0.9335401717415964
+        ]
+      },
+      "calibration": {
+        "mae": 0.8708954095614565,
+        "bias": 0.3802819611190558,
+        "rmse": 1.2898860104159868,
+        "profiles": 35,
+        "candidate_rows": 750,
+        "evaluated_rows": 433,
+        "coverage_counts": {
+          "basin_depth": 431,
+          "basin_depth_band": 2,
+          "missing_observed": 133,
+          "outside_training_envelope": 184
+        },
+        "profile_weighted_mae": 0.9377766387552509,
+        "profile_bootstrap_mae_95": [
+          0.784107095697298,
+          1.1152640034809258
+        ]
+      }
+    },
+    "practical_salinity": {
+      "test": {
+        "mae": 0.3332960813379755,
+        "bias": -0.1204573681326443,
+        "rmse": 0.7355203128951006,
+        "profiles": 37,
+        "candidate_rows": 750,
+        "evaluated_rows": 455,
+        "coverage_counts": {
+          "basin_depth": 446,
+          "basin_depth_band": 9,
+          "missing_observed": 210,
+          "outside_training_envelope": 85
+        },
+        "profile_weighted_mae": 0.40499507894541137,
+        "profile_bootstrap_mae_95": [
+          0.23088007777840525,
+          0.695928300396894
+        ]
+      },
+      "tune": {
+        "mae": 0.23383735726475402,
+        "bias": 0.014993455927572692,
+        "rmse": 0.3797981564318437,
+        "profiles": 36,
+        "candidate_rows": 735,
+        "evaluated_rows": 479,
+        "coverage_counts": {
+          "basin_depth": 477,
+          "basin_depth_band": 2,
+          "missing_observed": 145,
+          "outside_training_envelope": 111
+        },
+        "profile_weighted_mae": 0.2367497873897084,
+        "profile_bootstrap_mae_95": [
+          0.19418328313951128,
+          0.2848349328685482
+        ]
+      },
+      "train": {
+        "mae": 0.17915622717929366,
+        "bias": 1.5626597760137542e-15,
+        "rmse": 0.2722035677099166,
+        "profiles": 42,
+        "candidate_rows": 705,
+        "evaluated_rows": 532,
+        "coverage_counts": {
+          "basin_depth": 532,
+          "missing_observed": 173
+        },
+        "profile_weighted_mae": 0.18290101156996427,
+        "profile_bootstrap_mae_95": [
+          0.16009808424353847,
+          0.20901313711512706
+        ]
+      },
+      "calibration": {
+        "mae": 0.185880942196837,
+        "bias": 0.034822761980994196,
+        "rmse": 0.3218346459759677,
+        "profiles": 23,
+        "candidate_rows": 750,
+        "evaluated_rows": 312,
+        "coverage_counts": {
+          "basin_depth": 312,
+          "missing_observed": 300,
+          "outside_training_envelope": 138
+        },
+        "profile_weighted_mae": 0.1872315687201185,
+        "profile_bootstrap_mae_95": [
+          0.15252568687768234,
+          0.2266649537594293
+        ]
+      }
+    }
+  },
+  "test_regions": {
+    "temperature_c": {
+      "arabian": {
+        "mae": 1.3938989771083254,
+        "bias": -0.32774532701966946,
+        "rmse": 1.9240737622092141,
+        "profiles": 20,
+        "candidate_rows": 390,
+        "evaluated_rows": 228,
+        "coverage_counts": {
+          "basin_depth": 221,
+          "basin_depth_band": 7,
+          "missing_observed": 78,
+          "outside_training_envelope": 84
+        },
+        "profile_weighted_mae": 1.6035741399738916,
+        "profile_bootstrap_mae_95": [
+          1.2412187698931303,
+          2.0672348859499006
+        ]
+      },
+      "bay_bengal": {
+        "mae": 0.9248815763908191,
+        "bias": 0.3077425102820153,
+        "rmse": 1.3663114314849056,
+        "profiles": 21,
+        "candidate_rows": 360,
+        "evaluated_rows": 271,
+        "coverage_counts": {
+          "basin_depth": 269,
+          "basin_depth_band": 2,
+          "missing_observed": 45,
+          "outside_training_envelope": 44
+        },
+        "profile_weighted_mae": 0.9093052651734275,
+        "profile_bootstrap_mae_95": [
+          0.7684713054590023,
+          1.0732771300684976
+        ]
+      }
+    },
+    "practical_salinity": {
+      "arabian": {
+        "mae": 0.28999783724359174,
+        "bias": 0.046399233305780864,
+        "rmse": 0.38247582414484305,
+        "profiles": 19,
+        "candidate_rows": 390,
+        "evaluated_rows": 214,
+        "coverage_counts": {
+          "basin_depth": 207,
+          "basin_depth_band": 7,
+          "missing_observed": 135,
+          "outside_training_envelope": 41
+        },
+        "profile_weighted_mae": 0.33033779014520426,
+        "profile_bootstrap_mae_95": [
+          0.24710918518114774,
+          0.42171951822498466
+        ]
+      },
+      "bay_bengal": {
+        "mae": 0.3717434848076773,
+        "bias": -0.2686204914016193,
+        "rmse": 0.9441783397196244,
+        "profiles": 18,
+        "candidate_rows": 360,
+        "evaluated_rows": 241,
+        "coverage_counts": {
+          "basin_depth": 239,
+          "basin_depth_band": 2,
+          "missing_observed": 75,
+          "outside_training_envelope": 44
+        },
+        "profile_weighted_mae": 0.48379999490118547,
+        "profile_bootstrap_mae_95": [
+          0.1339555955686145,
+          1.0689948942436418
+        ]
+      }
+    }
+  },
+  "comparison_checkpoint": {
+    "profiles": 474,
+    "partial": 292,
+    "unavailable": 182,
+    "supported_pairs": 7023
+  },
+  "example": {
+    "profile_id": "e3e31b44-3347-54e0-be97-0686e0447bcc",
+    "revision_sha256": "f68b446935518db235ff21dcb77eb607a79c5b8758bf2ed8c7b5887f03c3c9ab",
+    "comparison_calculation_id": "26e84ed6-752c-51c2-b39d-8726d978ed13",
+    "depth_10m": {
+      "depth_m": 10.0,
+      "temperature_c": {
+        "reason": null,
+        "spread": 1.103090076023041,
+        "fallback": true,
+        "observed": 28.813244137659026,
+        "direction": "warmer",
+        "model_key": "temperature_c|basin_depth|arabian|10.0",
+        "difference": 1.377500646755795,
+        "method_group": "basin_depth",
+        "expected_mean": 27.43574349090323,
+        "observed_method": "linear_interpolation",
+        "observed_reason": null,
+        "training_months": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "fallback_reasons": [
+          "insufficient_training_support"
+        ],
+        "spread_estimator": "training_residual_rms_profile_weighted",
+        "training_profiles": 23,
+        "training_platforms": 21
+      },
+      "practical_salinity": {
+        "reason": null,
+        "spread": 0.3828650155999853,
+        "fallback": true,
+        "observed": 34.59519447571745,
+        "direction": "fresher",
+        "model_key": "practical_salinity|basin_depth|arabian|10.0",
+        "difference": -1.8371211370004659,
+        "method_group": "basin_depth",
+        "expected_mean": 36.432315612717915,
+        "observed_method": "linear_interpolation",
+        "observed_reason": null,
+        "training_months": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "fallback_reasons": [
+          "insufficient_training_support"
+        ],
+        "spread_estimator": "training_residual_rms_profile_weighted",
+        "training_profiles": 21,
+        "training_platforms": 19
+      }
+    }
+  },
+  "limitations": [
+    "Local prototype; cadence, representative coastal coverage, spatial/platform independence and scientific release validation remain unverified.",
+    "Training residual variability around the fixed reference; not a calibrated predictive interval or confidence interval for the mean.",
+    "Exploratory profile bootstrap does not resolve serial float dependence or spatial independence."
+  ],
+  "verification_commands": [
+    "make phase4-verify",
+    "make phase4-reliability",
+    "make phase4-smoke",
+    "make test-migrations",
+    "make lint build test",
+    "make phase2-verify phase2-reliability",
+    "make phase3-verify phase3-reliability phase3-smoke",
+    "make smoke"
+  ]
+}

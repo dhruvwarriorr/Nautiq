@@ -31,6 +31,11 @@ func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{db, storage, make(chan struct{}, 8), make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/climatology-releases", s.bound(s.climatologyReleases))
+	mux.Handle("GET /api/v1/climatology-releases/selected", s.bound(s.selectedClimatology))
+	mux.Handle("GET /api/v1/climatology-releases/{id}", s.bound(s.climatologyRelease))
+	mux.Handle("GET /api/v1/profiles/{id}/climatology", s.bound(s.profileClimatology))
+	mux.Handle("GET /api/v1/capabilities", s.bound(s.capabilities))
 	mux.Handle("GET /api/v1/sources", s.bound(s.sources))
 	mux.Handle("GET /api/v1/qc-rejections", s.bound(s.rejections))
 	mux.Handle("GET /api/v1/profiles/{id}/revisions", s.bound(s.revisions))

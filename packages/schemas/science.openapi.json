@@ -660,7 +660,9 @@
             "enum": [
               "normalization",
               "profile_summary",
-              "training_snapshot"
+              "training_snapshot",
+              "climatology_fit",
+              "climatology_comparison"
             ]
           },
           "method_version": {
@@ -1208,7 +1210,9 @@
             "enum": [
               "normalization",
               "profile_summary",
-              "training_snapshot"
+              "training_snapshot",
+              "climatology_fit",
+              "climatology_comparison"
             ]
           },
           "state": {

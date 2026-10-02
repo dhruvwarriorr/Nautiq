@@ -251,6 +251,8 @@ Reprocessing the same raw dataset produces the same canonical scientific result.
 
 ## 7. Phase 4 — climatology first
 
+Implemented locally; [13-Phase-4-Delivery.md](13-Phase-4-Delivery.md) maps each deliverable to code, immutable real-data artifacts, comparison UI and measured verification. The reference uses training years only; local selection leaves scientific production approval false.
+
 Implement the physics/statistical reference before boosting.
 
 ### Deliverables

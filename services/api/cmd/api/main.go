@@ -46,7 +46,6 @@ func main() {
 	})
 	mux.Handle("GET /api/v1/health", platform.Handler(deps))
 	mux.Handle("GET /health/ready", platform.Readiness(deps))
-	mux.HandleFunc("GET /api/v1/capabilities", platform.Capabilities)
 	server := &http.Server{Addr: ":8080", Handler: mux, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second}
 	go func() {
 		<-ctx.Done()

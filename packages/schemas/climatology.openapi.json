@@ -1,0 +1,1044 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiuq historical climatology API",
+    "version": "1.0.0",
+    "description": "Train-only local prototype. Expected values are conditional means; residual spread is uncalibrated natural variability. No scientific production approval."
+  },
+  "paths": {
+    "/api/v1/climatology-releases": {
+      "get": {
+        "summary": "ReferencePage",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferencePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown, repeated, malformed or over-budget query",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded query/download capacity reached",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Evidence unavailable or integrity failure",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/climatology-releases/selected": {
+      "get": {
+        "summary": "SelectedReference",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Evidence available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SelectedReference"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown, repeated, malformed or over-budget query",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded query/download capacity reached",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Evidence unavailable or integrity failure",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/climatology-releases/{id}": {
+      "get": {
+        "summary": "Reference",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown, repeated, malformed or over-budget query",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded query/download capacity reached",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Evidence unavailable or integrity failure",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profiles/{id}/climatology": {
+      "get": {
+        "summary": "ProfileComparison",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileComparison"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown, repeated, malformed or over-budget query",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded query/download capacity reached",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Evidence unavailable or integrity failure",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ComparedVariable": {
+        "type": "object",
+        "properties": {
+          "observed": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "observed_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "observed_method": {
+            "enum": [
+              "exact",
+              "linear_interpolation",
+              null
+            ]
+          },
+          "expected_mean": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "difference": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "direction": {
+            "enum": [
+              "warmer",
+              "cooler",
+              "saltier",
+              "fresher",
+              "equal",
+              "unavailable"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spread": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "spread_estimator": {
+            "const": "training_residual_rms_profile_weighted"
+          },
+          "method_group": {
+            "enum": [
+              "cell_depth",
+              "basin_depth",
+              "basin_depth_band"
+            ]
+          },
+          "model_key": {
+            "type": "string"
+          },
+          "fallback": {
+            "type": "boolean"
+          },
+          "fallback_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "training_profiles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "training_platforms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "training_months": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          }
+        },
+        "required": [
+          "observed",
+          "observed_reason",
+          "observed_method",
+          "expected_mean",
+          "difference",
+          "direction",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "ComparisonResult": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depth_m": {
+                  "type": "number"
+                },
+                "temperature_c": {
+                  "$ref": "#/components/schemas/ComparedVariable"
+                },
+                "practical_salinity": {
+                  "$ref": "#/components/schemas/ComparedVariable"
+                }
+              },
+              "required": [
+                "depth_m",
+                "temperature_c",
+                "practical_salinity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "supported_pairs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "partial",
+              "unavailable"
+            ]
+          },
+          "estimand": {
+            "const": "conditional_mean"
+          },
+          "method_version": {
+            "const": "harmonic-climatology-v1"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "spread_interpretation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rows",
+          "supported_pairs",
+          "status",
+          "estimand",
+          "method_version",
+          "release_approved",
+          "spread_interpretation"
+        ],
+        "additionalProperties": false
+      },
+      "Evaluation": {
+        "type": "object",
+        "required": [
+          "variables",
+          "bootstrap_limitations",
+          "selection",
+          "release_approved",
+          "bootstrap_unit",
+          "fitting_split",
+          "spread_is_calibrated"
+        ],
+        "properties": {
+          "variables": {
+            "type": "object",
+            "properties": {
+              "temperature_c": {
+                "type": "object",
+                "properties": {
+                  "train": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "tune": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "calibration": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "test": {
+                    "$ref": "#/components/schemas/Partition"
+                  }
+                },
+                "required": [
+                  "train",
+                  "tune",
+                  "calibration",
+                  "test"
+                ],
+                "additionalProperties": false
+              },
+              "practical_salinity": {
+                "type": "object",
+                "properties": {
+                  "train": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "tune": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "calibration": {
+                    "$ref": "#/components/schemas/Partition"
+                  },
+                  "test": {
+                    "$ref": "#/components/schemas/Partition"
+                  }
+                },
+                "required": [
+                  "train",
+                  "tune",
+                  "calibration",
+                  "test"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "temperature_c",
+              "practical_salinity"
+            ],
+            "additionalProperties": false
+          },
+          "bootstrap_limitations": {
+            "type": "string"
+          },
+          "selection": {
+            "const": "fixed_policy_no_holdout_tuning"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "bootstrap_unit": {
+            "const": "stable_profile"
+          },
+          "fitting_split": {
+            "const": "train"
+          },
+          "spread_is_calibrated": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "Input": {
+        "type": "object",
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "raw_sha256"
+        ],
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "raw_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      },
+      "Manifest": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "kind",
+          "method_version",
+          "inputs",
+          "output",
+          "policy",
+          "evaluation_time",
+          "code_sha256",
+          "environment",
+          "calculation_id",
+          "calculation_sha256"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": 1
+          },
+          "kind": {
+            "enum": [
+              "normalization",
+              "profile_summary",
+              "training_snapshot",
+              "climatology_fit",
+              "climatology_comparison"
+            ]
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Input"
+            }
+          },
+          "output": {
+            "type": "object"
+          },
+          "policy": {
+            "type": "object"
+          },
+          "evaluation_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "code_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "environment": {
+            "type": "object"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "parquet_key": {
+            "type": "string"
+          }
+        }
+      },
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "candidate_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "evaluated_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profiles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mae": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "rmse": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "bias": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "profile_weighted_mae": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "profile_bootstrap_mae_95": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "coverage_counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "required": [
+          "candidate_rows",
+          "evaluated_rows",
+          "profiles",
+          "mae",
+          "rmse",
+          "bias",
+          "profile_weighted_mae",
+          "profile_bootstrap_mae_95",
+          "coverage_counts"
+        ],
+        "additionalProperties": false
+      },
+      "Partition": {
+        "type": "object",
+        "properties": {
+          "overall": {
+            "$ref": "#/components/schemas/Metric"
+          },
+          "regions": {
+            "type": "object",
+            "properties": {
+              "arabian": {
+                "$ref": "#/components/schemas/Metric"
+              },
+              "bay_bengal": {
+                "$ref": "#/components/schemas/Metric"
+              }
+            },
+            "required": [
+              "arabian",
+              "bay_bengal"
+            ],
+            "additionalProperties": false
+          },
+          "depths": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Metric"
+            }
+          }
+        },
+        "required": [
+          "overall",
+          "regions",
+          "depths"
+        ],
+        "additionalProperties": false
+      },
+      "Period": {
+        "type": "object",
+        "properties": {
+          "start_year": {
+            "type": "integer"
+          },
+          "end_year": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start_year",
+          "end_year"
+        ],
+        "additionalProperties": false
+      },
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileComparison": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "reference_unavailable",
+              "pending",
+              "ready",
+              "partial",
+              "unavailable"
+            ]
+          },
+          "release_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reference_calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fitting_period": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Period"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dataset_baseline": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Period"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "status",
+          "release_id",
+          "calculation_id",
+          "reference_calculation_id",
+          "fitting_period",
+          "dataset_baseline",
+          "release_approved",
+          "result"
+        ],
+        "additionalProperties": false
+      },
+      "Reference": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/Manifest"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/Evaluation"
+          }
+        },
+        "required": [
+          "release_id",
+          "snapshot_id",
+          "calculation_id",
+          "created_at",
+          "status",
+          "release_approved",
+          "selected",
+          "manifest",
+          "evaluation"
+        ],
+        "additionalProperties": false
+      },
+      "ReferencePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceSummary"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "ReferenceSummary": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "fitting_period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "model_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "release_id",
+          "snapshot_id",
+          "calculation_id",
+          "created_at",
+          "status",
+          "release_approved",
+          "selected",
+          "fitting_period",
+          "model_count"
+        ],
+        "additionalProperties": false
+      },
+      "SelectedReference": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "selected_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fitting_period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "model_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "release_id",
+          "selected_at",
+          "status",
+          "release_approved",
+          "calculation_id",
+          "fitting_period",
+          "model_count"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

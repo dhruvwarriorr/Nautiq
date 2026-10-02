@@ -1,0 +1,31 @@
+{
+  "fixture": "Synthetic analytical annual temperature/salinity cycle; verification only, never scientific acceptance data",
+  "recipe": "scripts/verify_phase4.py:fixture",
+  "reference_tolerance": 1e-08,
+  "expected_mean": 24.51599841024577,
+  "spread": 0.07430251960737504,
+  "spread_estimator": "training_residual_rms_profile_weighted",
+  "method_group": "basin_depth",
+  "model_key": "temperature_c|basin_depth|arabian|10.0",
+  "fallback": true,
+  "fallback_reasons": [
+    "insufficient_training_support"
+  ],
+  "training_profiles": 36,
+  "training_platforms": 4,
+  "training_months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "reason": null
+}

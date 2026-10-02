@@ -62,8 +62,8 @@ func Dependencies(ctx context.Context) (map[string]Check, func(), error) {
 		"schema": func(ctx context.Context) error {
 			var version int
 			var complete bool
-			err := pool.QueryRow(ctx, "SELECT (SELECT max(version) FROM platform_schema_version), (SELECT count(*)=4 FROM platform_migrations WHERE version IN (1,2,3,4)) AND to_regclass('public.event_outbox') IS NOT NULL AND to_regclass('public.consumer_inbox') IS NOT NULL AND to_regclass('public.profile_revisions') IS NOT NULL AND to_regclass('public.raw_artifacts') IS NOT NULL AND to_regclass('public.calculations') IS NOT NULL AND to_regclass('public.training_snapshots') IS NOT NULL").Scan(&version, &complete)
-			if err == nil && (version != 4 || !complete) {
+			err := pool.QueryRow(ctx, "SELECT (SELECT max(version) FROM platform_schema_version), (SELECT count(*)=5 FROM platform_migrations WHERE version IN (1,2,3,4,5)) AND to_regclass('public.event_outbox') IS NOT NULL AND to_regclass('public.consumer_inbox') IS NOT NULL AND to_regclass('public.profile_revisions') IS NOT NULL AND to_regclass('public.raw_artifacts') IS NOT NULL AND to_regclass('public.calculations') IS NOT NULL AND to_regclass('public.training_snapshots') IS NOT NULL AND to_regclass('public.climatology_releases') IS NOT NULL AND to_regclass('public.climatology_comparisons') IS NOT NULL").Scan(&version, &complete)
+			if err == nil && (version != 5 || !complete) {
 				return errors.New("unexpected schema version")
 			}
 			return err

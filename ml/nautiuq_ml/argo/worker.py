@@ -625,8 +625,9 @@ async def consume():
 
 def maintenance():
     from .freshness import monitor
+    from ..climatology.pipeline import recompute as compare_profiles
 
-    for task in (repair, monitor, evidence.recompute):
+    for task in (repair, monitor, evidence.recompute, compare_profiles):
         try:
             task()
         except Exception:
