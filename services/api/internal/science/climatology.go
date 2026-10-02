@@ -1,6 +1,11 @@
 package science
 
-import "net/http"
+import (
+	"context"
+	pb "nautiuq.local/api/gen/nautiuq/platform/v1"
+	"net/http"
+	"time"
+)
 
 func (s *Server) climatologyReleases(w http.ResponseWriter, r *http.Request) {
 	q, ok := query(w, r, "limit")
@@ -60,10 +65,24 @@ func (s *Server) capabilities(w http.ResponseWriter, r *http.Request) {
 	if _, ok := query(w, r); !ok {
 		return
 	}
+	rid, sha := "", ""
+	if s.Runtime != nil {
+		ctx, cancel := context.WithTimeout(r.Context(), time.Second)
+		response, err := s.Runtime.Check(ctx, &pb.CheckRequest{})
+		cancel()
+		if err == nil && response.Service == "ml-inference" && response.Capabilities["expected_state"] {
+			rid, sha = response.ExpectedReleaseId, response.ExpectedBundleSha256
+		}
+	}
 	s.serve(w, r, `SELECT json_build_object('schema_version',1,'capabilities',json_build_object('platform_runtime',true,'observations',true,
  'climatology',EXISTS(SELECT 1 FROM climatology_selection a JOIN climatology_releases c USING(release_id)
  JOIN climatology_comparisons v USING(release_id) JOIN profile_revisions r USING(profile_id,revision_sha256)
  WHERE c.status='ready' AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL AND (v.result->>'supported_pairs')::integer>0),
- 'expected_state',false,'profile_anomaly',false,'field_sampling',false,'official_advisories',false,'trip_assessment',false),
- 'limitations',json_build_array('Local train-only climatology is a prototype; source coverage and scientific production approval remain unverified. No ML model, field, advisory or trip verdict is served.'))`)
+ 'expected_state',EXISTS(SELECT 1 FROM expected_state_selection s JOIN expected_state_releases m USING(release_id) JOIN climatology_selection c ON c.release_id=m.reference_id
+ JOIN expected_state_comparisons v ON v.release_id=m.release_id JOIN profile_revisions r USING(profile_id,revision_sha256)
+ WHERE m.release_id::text=$1 AND m.bundle_sha256=$2 AND m.status='ready' AND r.science_ready AND r.selected_at IS NOT NULL AND r.superseded_at IS NULL AND (v.result->>'supported_pairs')::integer>0),
+ 'ml_residual',EXISTS(SELECT 1 FROM expected_state_selection s JOIN expected_state_releases m USING(release_id) JOIN climatology_selection c ON c.release_id=m.reference_id
+ WHERE m.release_id::text=$1 AND m.bundle_sha256=$2 AND (m.manifest->'output'->'active_methods'->>'temperature_c'='lightgbm_residual' OR m.manifest->'output'->'active_methods'->>'practical_salinity'='lightgbm_residual')),
+ 'profile_anomaly',false,'field_sampling',false,'official_advisories',false,'trip_assessment',false),
+ 'limitations',json_build_array('Local train-only climatology is a prototype; source coverage and scientific production approval remain unverified. Point means may use fixed climatology fallback; production approval, calibrated intervals, field, advisory and trip verdicts remain unavailable.'))`, rid, sha)
 }

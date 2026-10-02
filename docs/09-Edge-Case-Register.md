@@ -124,3 +124,20 @@ See [delivery and exact verification commands](13-Phase-4-Delivery.md).
 | Revision changes after frozen fit | Frozen reference/input checksums unchanged; old live comparison stale, replacement revision separately queued. |
 
 These checks establish local implementation/recovery. Spatial/platform independence, representative coastal coverage and calibrated uncertainty remain scientific release gates. No ML/anomaly/event/field/advisory/trip approval follows from a supported warmer/cooler difference.
+
+## Phase 5 execution update — 2026-10-02
+
+| Failure or ambiguity | Delivered behavior and verification |
+| --- | --- |
+| Random rows, split revisions, held labels leaking into fit | Stable profile/depth identity checks and frozen temporal assignments; changed calibration/test labels leave native models unchanged in the offline gate |
+| Residual-only spatial holdout still leaks the reference | Buffered spatial and grouped platform audits refit the full climatology/support and residual fitting on complements; missing support is explicit |
+| A registered or marginally better candidate is called promoted | Reviewed criteria, untouched-test, independence/source, material-improvement, bias and subgroup checks are separate; both real candidates retain climatology |
+| Nonboolean approval strings or zero baseline error pass a numerical gate | Policy parser requires boolean approvals; zero baseline MAE cannot qualify as material improvement |
+| Registry latest, wrong runtime pin, changed native/reference code | Exact ID/checksum/native features, expected/climatology code and locked runtime dependency checks; gRPC wrong-release refusal and code-mismatch reliability check |
+| Artifact logging bytes differ from scientific bundle | MLflow logs the same canonical bundle bytes; live artifact download matches S3 SHA-256; exact run/version metadata remains independent of serving selection |
+| Missing variable, unsupported depth/coverage or unsafe candidate | Independently nullable observed/reference/candidate values; climatology fallback or unavailable mean, zero applied residual only with a supported fallback |
+| Revision/model/reference changes after inference | Final lease/current-revision/selected-pins check and atomic stale/restore lifecycle; races verified in disposable SQL/S3/gRPC |
+| Expired or stolen lease, RPC outage, corrupt model bundle | Lease recovery/ownership guard; deferred retry preserves valid observations; corrupt bundles cannot select/load; verified in disposable recovery checks |
+| Model explanations mistaken for causal oceanography or uncertainty | Native TreeSHAP additive residual explanations are labelled model behavior; no calibrated interval, anomaly or scientific production claim |
+
+`verify_phase5.py`, `verify_phase5_reliability.py` and `verify_phase5_smoke.py` own these gates. Local acceptance and real measurements are recorded in `14-Phase-5-Delivery.md`; no production deployment, visual browser acceptance or scientific release approval is implied.

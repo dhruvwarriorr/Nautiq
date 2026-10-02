@@ -11,7 +11,7 @@
 
 The project is deliberately split into six documents so each topic has one owner and information is not repeated.
 
-The six documents define the target product. Execution contracts in `08-Execution-Contracts.md`, the failure register in `09-Edge-Case-Register.md`, and measured Phase 0 evidence in `10-Phase-0-Delivery.md` make the target actionable. `07-Phase-1-Delivery.md` records the actual platform; `11-Phase-2-Delivery.md` records the delivered Argo slice. `12-Phase-3-Delivery.md` records reproducible calculations, QC/freshness monitoring and frozen training snapshots. `13-Phase-4-Delivery.md` records the train-only harmonic reference, profile differences and measured regional/depth evaluation. A design statement is not an implementation or validation claim.
+The six documents define the target product. Execution contracts in `08-Execution-Contracts.md`, the failure register in `09-Edge-Case-Register.md`, and measured Phase 0 evidence in `10-Phase-0-Delivery.md` make the target actionable. `07-Phase-1-Delivery.md` records the actual platform; `11-Phase-2-Delivery.md` records the delivered Argo slice. `12-Phase-3-Delivery.md` records reproducible calculations, QC/freshness monitoring and frozen training snapshots. `13-Phase-4-Delivery.md` records the train-only harmonic reference, profile differences and measured regional/depth evaluation. `14-Phase-5-Delivery.md` records residual LightGBM/HGBR comparisons, immutable MLflow/model release pins and revision-safe gRPC inference with climatology fallback. A design statement is not an implementation or validation claim.
 
 | File | Owns |
 |---|---|
@@ -28,6 +28,7 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `11-Phase-2-Delivery.md` | Argo ingestion, canonical profiles, API/explorer and measured recovery checks |
 | `12-Phase-3-Delivery.md` | Revision-safe calculations, QC/source monitoring, frozen fixtures and pinned training snapshots |
 | `13-Phase-4-Delivery.md` | Standard depths, train-only seasonal climatology, profile comparisons and held-out evidence |
+| `14-Phase-5-Delivery.md` | Shared residual features, grouped audits, native LightGBM/HGBR comparisons, MLflow registry and pinned expected-mean inference |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

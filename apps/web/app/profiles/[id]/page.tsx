@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Climatology from "./Climatology";
+import ExpectedState from "./ExpectedState";
+import type { ExpectedProfile } from "../../../lib/expected";
 import type { ProfileClimatology } from "../../../lib/climatology";
 import { notFound } from "next/navigation";
 import { evidence, type Revision, type Statistics } from "../../../lib/science";
@@ -116,6 +118,9 @@ export default async function Detail({
   const statsRequest = evidence<Statistics>(
     `/profiles/${encodeURIComponent(id)}/statistics`,
   );
+  const expectedRequest = evidence<ExpectedProfile>(
+    `/profiles/${encodeURIComponent(id)}/expected-state`,
+  );
   let profile: Profile | null = null;
   let absent = false;
   try {
@@ -135,10 +140,11 @@ export default async function Detail({
         <p>The observation service is unavailable. Refresh to retry.</p>
       </main>
     );
-  const [history, stats, climatology] = await Promise.all([
+  const [history, stats, climatology, expected] = await Promise.all([
     revisionRequest,
     statsRequest,
     climatologyRequest,
+    expectedRequest,
   ]);
   const p = profile,
     pr = p.provenance;
@@ -247,6 +253,7 @@ export default async function Detail({
         </p>
       </section>
       <Climatology value={climatology} revision={p.revision_sha256} />
+      <ExpectedState value={expected} revision={p.revision_sha256} />
       <section>
         <h2>Descriptive profile summary</h2>
         {stats?.status === "ready" &&

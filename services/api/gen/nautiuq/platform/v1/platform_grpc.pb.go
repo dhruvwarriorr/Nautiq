@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+// Runtime readiness remains independent of explicitly loaded scientific releases.
 type PlatformServiceClient interface {
 	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 }
@@ -53,7 +53,7 @@ func (c *platformServiceClient) Check(ctx context.Context, in *CheckRequest, opt
 // All implementations must embed UnimplementedPlatformServiceServer
 // for forward compatibility.
 //
-// Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+// Runtime readiness remains independent of explicitly loaded scientific releases.
 type PlatformServiceServer interface {
 	Check(context.Context, *CheckRequest) (*CheckResponse, error)
 	mustEmbedUnimplementedPlatformServiceServer()
@@ -118,6 +118,112 @@ var PlatformService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Check",
 			Handler:    _PlatformService_Check_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "nautiuq/platform/v1/platform.proto",
+}
+
+const (
+	ExpectedStateService_Infer_FullMethodName = "/nautiuq.platform.v1.ExpectedStateService/Infer"
+)
+
+// ExpectedStateServiceClient is the client API for ExpectedStateService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// A request is bound to an explicit immutable release, never a registry alias.
+type ExpectedStateServiceClient interface {
+	Infer(ctx context.Context, in *ExpectedStateRequest, opts ...grpc.CallOption) (*ExpectedStateResponse, error)
+}
+
+type expectedStateServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewExpectedStateServiceClient(cc grpc.ClientConnInterface) ExpectedStateServiceClient {
+	return &expectedStateServiceClient{cc}
+}
+
+func (c *expectedStateServiceClient) Infer(ctx context.Context, in *ExpectedStateRequest, opts ...grpc.CallOption) (*ExpectedStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExpectedStateResponse)
+	err := c.cc.Invoke(ctx, ExpectedStateService_Infer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ExpectedStateServiceServer is the server API for ExpectedStateService service.
+// All implementations must embed UnimplementedExpectedStateServiceServer
+// for forward compatibility.
+//
+// A request is bound to an explicit immutable release, never a registry alias.
+type ExpectedStateServiceServer interface {
+	Infer(context.Context, *ExpectedStateRequest) (*ExpectedStateResponse, error)
+	mustEmbedUnimplementedExpectedStateServiceServer()
+}
+
+// UnimplementedExpectedStateServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedExpectedStateServiceServer struct{}
+
+func (UnimplementedExpectedStateServiceServer) Infer(context.Context, *ExpectedStateRequest) (*ExpectedStateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Infer not implemented")
+}
+func (UnimplementedExpectedStateServiceServer) mustEmbedUnimplementedExpectedStateServiceServer() {}
+func (UnimplementedExpectedStateServiceServer) testEmbeddedByValue()                              {}
+
+// UnsafeExpectedStateServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ExpectedStateServiceServer will
+// result in compilation errors.
+type UnsafeExpectedStateServiceServer interface {
+	mustEmbedUnimplementedExpectedStateServiceServer()
+}
+
+func RegisterExpectedStateServiceServer(s grpc.ServiceRegistrar, srv ExpectedStateServiceServer) {
+	// If the following call panics, it indicates UnimplementedExpectedStateServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ExpectedStateService_ServiceDesc, srv)
+}
+
+func _ExpectedStateService_Infer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExpectedStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExpectedStateServiceServer).Infer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExpectedStateService_Infer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExpectedStateServiceServer).Infer(ctx, req.(*ExpectedStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ExpectedStateService_ServiceDesc is the grpc.ServiceDesc for ExpectedStateService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ExpectedStateService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "nautiuq.platform.v1.ExpectedStateService",
+	HandlerType: (*ExpectedStateServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Infer",
+			Handler:    _ExpectedStateService_Infer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

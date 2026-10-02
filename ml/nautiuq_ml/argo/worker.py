@@ -627,7 +627,15 @@ def maintenance():
     from .freshness import monitor
     from ..climatology.pipeline import recompute as compare_profiles
 
-    for task in (repair, monitor, evidence.recompute, compare_profiles):
+    from ..expected_state.jobs import recompute as expected_profiles
+
+    for task in (
+        repair,
+        monitor,
+        evidence.recompute,
+        compare_profiles,
+        expected_profiles,
+    ):
         try:
             task()
         except Exception:

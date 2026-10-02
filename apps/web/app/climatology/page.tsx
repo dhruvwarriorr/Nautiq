@@ -13,6 +13,7 @@ export default async function References() {
         <Link href="/">Nautiuq</Link>
         <Link href="/profiles">Argo profiles</Link>
         <Link href="/data">Data quality</Link>
+        <Link href="/models">Expected-state models</Link>
       </nav>
       <p className="eyebrow">HISTORICAL / SEASONAL REFERENCE</p>
       <h1>Normal, with its evidence.</h1>

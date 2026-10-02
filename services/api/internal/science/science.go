@@ -18,19 +18,25 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
+	pb "nautiuq.local/api/gen/nautiuq/platform/v1"
 )
 
 type Server struct {
 	DB        *pgxpool.Pool
 	Storage   *minio.Client
+	Runtime   pb.PlatformServiceClient
 	slots     chan struct{}
 	downloads chan struct{}
 }
 
 func New(db *pgxpool.Pool, storage *minio.Client) *Server {
-	return &Server{db, storage, make(chan struct{}, 8), make(chan struct{}, 2)}
+	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/expected-state-releases", s.bound(s.expectedReleases))
+	mux.Handle("GET /api/v1/expected-state-releases/selected", s.bound(s.selectedExpected))
+	mux.Handle("GET /api/v1/expected-state-releases/{id}", s.bound(s.expectedRelease))
+	mux.Handle("GET /api/v1/profiles/{id}/expected-state", s.bound(s.profileExpected))
 	mux.Handle("GET /api/v1/climatology-releases", s.bound(s.climatologyReleases))
 	mux.Handle("GET /api/v1/climatology-releases/selected", s.bound(s.selectedClimatology))
 	mux.Handle("GET /api/v1/climatology-releases/{id}", s.bound(s.climatologyRelease))

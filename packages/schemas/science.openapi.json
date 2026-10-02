@@ -662,7 +662,9 @@
               "profile_summary",
               "training_snapshot",
               "climatology_fit",
-              "climatology_comparison"
+              "climatology_comparison",
+              "expected_state_fit",
+              "expected_state_comparison"
             ]
           },
           "method_version": {
@@ -1212,7 +1214,9 @@
               "profile_summary",
               "training_snapshot",
               "climatology_fit",
-              "climatology_comparison"
+              "climatology_comparison",
+              "expected_state_fit",
+              "expected_state_comparison"
             ]
           },
           "state": {

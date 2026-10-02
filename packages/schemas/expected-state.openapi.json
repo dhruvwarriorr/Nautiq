@@ -1,0 +1,1534 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiuq expected mean model evidence API",
+    "version": "1.0.0",
+    "description": "Explicit pinned native models. Diagnostic residual candidates; promotion can retain climatology. No calibrated intervals, causal explanations or scientific production approval."
+  },
+  "paths": {
+    "/api/v1/expected-state-releases": {
+      "get": {
+        "summary": "ModelPage",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable model evidence or revision-matched comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/expected-state-releases/selected": {
+      "get": {
+        "summary": "SelectedModel",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Immutable model evidence or revision-matched comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SelectedModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/expected-state-releases/{id}": {
+      "get": {
+        "summary": "Model",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable model evidence or revision-matched comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profiles/{id}/expected-state": {
+      "get": {
+        "summary": "ProfileModel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable model evidence or revision-matched comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured evidence error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Manifest": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "kind",
+          "method_version",
+          "inputs",
+          "output",
+          "policy",
+          "evaluation_time",
+          "code_sha256",
+          "environment",
+          "calculation_id",
+          "calculation_sha256"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": 1
+          },
+          "kind": {
+            "enum": [
+              "normalization",
+              "profile_summary",
+              "training_snapshot",
+              "climatology_fit",
+              "climatology_comparison",
+              "expected_state_fit",
+              "expected_state_comparison"
+            ]
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Input"
+            }
+          },
+          "output": {
+            "type": "object"
+          },
+          "policy": {
+            "type": "object"
+          },
+          "evaluation_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "code_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "environment": {
+            "type": "object"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshot_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "parquet_key": {
+            "type": "string"
+          }
+        }
+      },
+      "Input": {
+        "type": "object",
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "raw_sha256"
+        ],
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "raw_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "additionalProperties": false
+      },
+      "Period": {
+        "type": "object",
+        "properties": {
+          "start_year": {
+            "type": "integer"
+          },
+          "end_year": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start_year",
+          "end_year"
+        ],
+        "additionalProperties": false
+      },
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "profiles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "median_absolute_error": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_weighted_mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_bootstrap_mae_95": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "rows",
+          "profiles",
+          "mae",
+          "rmse",
+          "median_absolute_error",
+          "bias",
+          "profile_weighted_mae",
+          "profile_bootstrap_mae_95"
+        ],
+        "additionalProperties": false
+      },
+      "SelectedModel": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "active_methods": {
+            "type": "object",
+            "properties": {
+              "temperature_c": {
+                "enum": [
+                  "climatology",
+                  "lightgbm_residual"
+                ]
+              },
+              "practical_salinity": {
+                "enum": [
+                  "climatology",
+                  "lightgbm_residual"
+                ]
+              }
+            },
+            "required": [
+              "temperature_c",
+              "practical_salinity"
+            ],
+            "additionalProperties": false
+          },
+          "fitting_period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "model_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "selected_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "release_id",
+          "reference_id",
+          "calculation_id",
+          "status",
+          "release_approved",
+          "active_methods",
+          "fitting_period",
+          "model_count",
+          "selected_at"
+        ],
+        "additionalProperties": false
+      },
+      "ModelSummary": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "active_methods": {
+            "type": "object",
+            "properties": {
+              "temperature_c": {
+                "enum": [
+                  "climatology",
+                  "lightgbm_residual"
+                ]
+              },
+              "practical_salinity": {
+                "enum": [
+                  "climatology",
+                  "lightgbm_residual"
+                ]
+              }
+            },
+            "required": [
+              "temperature_c",
+              "practical_salinity"
+            ],
+            "additionalProperties": false
+          },
+          "fitting_period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "model_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "release_id",
+          "reference_id",
+          "calculation_id",
+          "status",
+          "release_approved",
+          "active_methods",
+          "fitting_period",
+          "model_count",
+          "snapshot_id",
+          "created_at",
+          "selected"
+        ],
+        "additionalProperties": false
+      },
+      "ModelPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelSummary"
+            },
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "Promotion": {
+        "type": "object",
+        "properties": {
+          "eligible": {
+            "type": "boolean"
+          },
+          "active_method": {
+            "enum": [
+              "climatology",
+              "lightgbm_residual"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subgroup_checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "group": {
+                  "type": "string"
+                },
+                "profiles": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "adequate": {
+                  "type": "boolean"
+                },
+                "regressed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "group",
+                "profiles",
+                "adequate",
+                "regressed"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "thresholds": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "eligible",
+          "active_method",
+          "reasons"
+        ],
+        "additionalProperties": false
+      },
+      "VariableReport": {
+        "type": "object",
+        "required": [
+          "status",
+          "profile_counts",
+          "promotion"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "trained",
+              "unsupported"
+            ]
+          },
+          "profile_counts": {
+            "type": "object",
+            "properties": {
+              "train": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tune": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "calibration": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "test": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "train",
+              "tune",
+              "calibration",
+              "test"
+            ],
+            "additionalProperties": false
+          },
+          "promotion": {
+            "$ref": "#/components/schemas/Promotion"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "evaluation": {
+            "type": "object",
+            "properties": {
+              "train": {
+                "type": "object",
+                "properties": {
+                  "climatology": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "lightgbm": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "hgbr": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  }
+                },
+                "required": [
+                  "climatology",
+                  "lightgbm",
+                  "hgbr"
+                ],
+                "additionalProperties": false
+              },
+              "tune": {
+                "type": "object",
+                "properties": {
+                  "climatology": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "lightgbm": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "hgbr": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  }
+                },
+                "required": [
+                  "climatology",
+                  "lightgbm",
+                  "hgbr"
+                ],
+                "additionalProperties": false
+              },
+              "calibration": {
+                "type": "object",
+                "properties": {
+                  "climatology": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "lightgbm": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "hgbr": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  }
+                },
+                "required": [
+                  "climatology",
+                  "lightgbm",
+                  "hgbr"
+                ],
+                "additionalProperties": false
+              },
+              "test": {
+                "type": "object",
+                "properties": {
+                  "climatology": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "lightgbm": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  },
+                  "hgbr": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/Metric"
+                    },
+                    "required": [
+                      "overall"
+                    ]
+                  }
+                },
+                "required": [
+                  "climatology",
+                  "lightgbm",
+                  "hgbr"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "train",
+              "tune",
+              "calibration",
+              "test"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "required": [
+          "variables",
+          "independence_audits",
+          "feature_schema",
+          "estimand",
+          "release_approved",
+          "code_sha256",
+          "environment"
+        ],
+        "properties": {
+          "variables": {
+            "type": "object",
+            "properties": {
+              "temperature_c": {
+                "$ref": "#/components/schemas/VariableReport"
+              },
+              "practical_salinity": {
+                "$ref": "#/components/schemas/VariableReport"
+              }
+            },
+            "required": [
+              "temperature_c",
+              "practical_salinity"
+            ],
+            "additionalProperties": false
+          },
+          "independence_audits": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "fold",
+                "complement_profiles",
+                "held_profiles",
+                "reference_fit_hash",
+                "variables"
+              ]
+            }
+          },
+          "feature_schema": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "const": "ocean-reference-features-v1"
+              },
+              "names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 8,
+                "maxItems": 8
+              },
+              "omitted_static_features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "version",
+              "names",
+              "omitted_static_features",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "estimand": {
+            "const": "conditional_mean"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "code_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "environment": {
+            "type": "object"
+          }
+        }
+      },
+      "Model": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unsupported"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/Manifest"
+          },
+          "report": {
+            "$ref": "#/components/schemas/Report"
+          },
+          "tracking": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "run_id": {
+                    "type": "string"
+                  },
+                  "registered_model": {
+                    "type": "string"
+                  },
+                  "model_version": {
+                    "type": "string"
+                  },
+                  "logged_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "run_id",
+                  "registered_model",
+                  "model_version",
+                  "logged_at"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "release_id",
+          "reference_id",
+          "calculation_id",
+          "status",
+          "release_approved",
+          "snapshot_id",
+          "created_at",
+          "selected",
+          "manifest",
+          "report",
+          "tracking"
+        ],
+        "additionalProperties": false
+      },
+      "Point": {
+        "type": "object",
+        "properties": {
+          "observed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "climatology_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "candidate_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "candidate_residual": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ml_residual": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contribution_bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "difference": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "candidate_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed_method": {
+            "enum": [
+              "exact",
+              "linear_interpolation",
+              null
+            ]
+          },
+          "active_method": {
+            "enum": [
+              "climatology",
+              "lightgbm_residual",
+              "unavailable"
+            ]
+          },
+          "promotion_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "feature_contributions": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "properties": {
+                "feature": {
+                  "type": "string"
+                },
+                "contribution": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "feature",
+                "contribution"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "baseline_support": {
+            "type": "object"
+          },
+          "direction": {
+            "enum": [
+              "warmer",
+              "cooler",
+              "saltier",
+              "fresher",
+              "equal",
+              "unavailable"
+            ]
+          }
+        },
+        "required": [
+          "observed",
+          "climatology_mean",
+          "candidate_mean",
+          "candidate_residual",
+          "expected_mean",
+          "ml_residual",
+          "contribution_bias",
+          "difference",
+          "reason",
+          "candidate_reason",
+          "observed_reason",
+          "observed_method",
+          "active_method",
+          "promotion_reasons",
+          "feature_contributions",
+          "baseline_support",
+          "direction"
+        ],
+        "additionalProperties": false
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "depth_m": {
+                  "type": "number"
+                },
+                "temperature_c": {
+                  "$ref": "#/components/schemas/Point"
+                },
+                "practical_salinity": {
+                  "$ref": "#/components/schemas/Point"
+                }
+              },
+              "required": [
+                "depth_m",
+                "temperature_c",
+                "practical_salinity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "supported_pairs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "partial",
+              "unavailable"
+            ]
+          },
+          "estimand": {
+            "const": "conditional_mean"
+          },
+          "method_version": {
+            "const": "residual-expected-mean-v1"
+          },
+          "feature_version": {
+            "const": "ocean-reference-features-v1"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "interval_status": {
+            "const": "unavailable_not_calibrated"
+          },
+          "explanation_interpretation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rows",
+          "supported_pairs",
+          "status",
+          "estimand",
+          "method_version",
+          "feature_version",
+          "release_approved",
+          "interval_status",
+          "explanation_interpretation"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileModel": {
+        "type": "object",
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "release_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reference_calculation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "reference_unavailable",
+              "reference_mismatch",
+              "pending",
+              "ready",
+              "partial",
+              "unavailable"
+            ]
+          },
+          "pending_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "active_methods": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "temperature_c": {
+                    "enum": [
+                      "climatology",
+                      "lightgbm_residual"
+                    ]
+                  },
+                  "practical_salinity": {
+                    "enum": [
+                      "climatology",
+                      "lightgbm_residual"
+                    ]
+                  }
+                },
+                "required": [
+                  "temperature_c",
+                  "practical_salinity"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fitting_period": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Period"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Result"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "profile_id",
+          "revision_sha256",
+          "release_id",
+          "reference_id",
+          "calculation_id",
+          "reference_calculation_id",
+          "status",
+          "pending_reason",
+          "active_methods",
+          "fitting_period",
+          "release_approved",
+          "result"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

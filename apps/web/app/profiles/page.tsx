@@ -53,7 +53,9 @@ export default async function Profiles({
       <nav>
         <Link href="/">Nautiuq</Link>
         <Link href="/climatology">Historical normal</Link>
+        <Link href="/models">Expected-state models</Link>
         <Link href="/data">Data quality</Link>
+        <Link href="/models">Expected-state models</Link>
         <Link href="/status">Platform health</Link>
       </nav>
       <p className="eyebrow">ARGO / OBSERVATION EXPLORER</p>

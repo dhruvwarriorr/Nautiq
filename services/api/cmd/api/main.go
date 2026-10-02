@@ -12,6 +12,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	pb "nautiuq.local/api/gen/nautiuq/platform/v1"
 	"nautiuq.local/api/internal/platform"
 	"nautiuq.local/api/internal/profiles"
 	"nautiuq.local/api/internal/science"
@@ -39,7 +42,15 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	profiles.New(pool, storage).Register(mux)
-	science.New(pool, storage).Register(mux)
+	scientificConnection, err := grpc.NewClient(os.Getenv("ML_GRPC_ADDR"), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024), grpc.MaxCallSendMsgSize(1024*1024)))
+	if err != nil {
+		slog.Error("configure scientific runtime")
+		os.Exit(1)
+	}
+	defer scientificConnection.Close()
+	scientific := science.New(pool, storage)
+	scientific.Runtime = pb.NewPlatformServiceClient(scientificConnection)
+	scientific.Register(mux)
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"status":"ok"}`))

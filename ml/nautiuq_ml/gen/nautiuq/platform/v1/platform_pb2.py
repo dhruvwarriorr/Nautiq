@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"nautiuq/platform/v1/platform.proto\x12\x13nautiuq.platform.v1\"\x0e\n\x0c\x43heckRequest\"\xc1\x01\n\rCheckResponse\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05ready\x18\x03 \x01(\x08\x12J\n\x0c\x63\x61pabilities\x18\x04 \x03(\x0b\x32\x34.nautiuq.platform.v1.CheckResponse.CapabilitiesEntry\x1a\x33\n\x11\x43\x61pabilitiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\x32\x61\n\x0fPlatformService\x12N\n\x05\x43heck\x12!.nautiuq.platform.v1.CheckRequest\x1a\".nautiuq.platform.v1.CheckResponseB6Z4nautiuq.local/api/gen/nautiuq/platform/v1;platformv1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"nautiuq/platform/v1/platform.proto\x12\x13nautiuq.platform.v1\"\x0e\n\x0c\x43heckRequest\"\xfe\x01\n\rCheckResponse\x12\x0f\n\x07service\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05ready\x18\x03 \x01(\x08\x12J\n\x0c\x63\x61pabilities\x18\x04 \x03(\x0b\x32\x34.nautiuq.platform.v1.CheckResponse.CapabilitiesEntry\x12\x1b\n\x13\x65xpected_release_id\x18\x05 \x01(\t\x12\x1e\n\x16\x65xpected_bundle_sha256\x18\x06 \x01(\t\x1a\x33\n\x11\x43\x61pabilitiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01\"[\n\x0eReferencePoint\x12\x10\n\x08latitude\x18\x01 \x01(\x01\x12\x11\n\tlongitude\x18\x02 \x01(\x01\x12\x0f\n\x07\x64\x65pth_m\x18\x03 \x01(\x01\x12\x13\n\x0bobserved_at\x18\x04 \x01(\t\"p\n\x14\x45xpectedStateRequest\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x33\n\x06points\x18\x02 \x03(\x0b\x32#.nautiuq.platform.v1.ReferencePoint\x12\x0f\n\x07\x65xplain\x18\x03 \x01(\x08\"<\n\x13\x46\x65\x61tureContribution\x12\x0f\n\x07\x66\x65\x61ture\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontribution\x18\x02 \x01(\x01\"\x82\x04\n\x12\x45xpectedPrediction\x12\x1d\n\x10\x63limatology_mean\x18\x01 \x01(\x01H\x00\x88\x01\x01\x12\x1b\n\x0e\x63\x61ndidate_mean\x18\x02 \x01(\x01H\x01\x88\x01\x01\x12\x1f\n\x12\x63\x61ndidate_residual\x18\x03 \x01(\x01H\x02\x88\x01\x01\x12\x1a\n\rexpected_mean\x18\x04 \x01(\x01H\x03\x88\x01\x01\x12\x18\n\x0bml_residual\x18\x05 \x01(\x01H\x04\x88\x01\x01\x12\x15\n\ractive_method\x18\x06 \x01(\t\x12\x0e\n\x06reason\x18\x07 \x01(\t\x12\x18\n\x10\x63\x61ndidate_reason\x18\x08 \x01(\t\x12\x19\n\x11promotion_reasons\x18\t \x03(\t\x12G\n\x15\x66\x65\x61ture_contributions\x18\n \x03(\x0b\x32(.nautiuq.platform.v1.FeatureContribution\x12\x1e\n\x11\x63ontribution_bias\x18\x0b \x01(\x01H\x05\x88\x01\x01\x12\x1d\n\x15\x62\x61seline_support_json\x18\x0c \x01(\x0c\x42\x13\n\x11_climatology_meanB\x11\n\x0f_candidate_meanB\x15\n\x13_candidate_residualB\x10\n\x0e_expected_meanB\x0e\n\x0c_ml_residualB\x14\n\x12_contribution_bias\"\xa7\x01\n\x0f\x44\x65pthPrediction\x12\x0f\n\x07\x64\x65pth_m\x18\x01 \x01(\x01\x12>\n\rtemperature_c\x18\x02 \x01(\x0b\x32\'.nautiuq.platform.v1.ExpectedPrediction\x12\x43\n\x12practical_salinity\x18\x03 \x01(\x0b\x32\'.nautiuq.platform.v1.ExpectedPrediction\"\x90\x02\n\x15\x45xpectedStateResponse\x12\x12\n\nrelease_id\x18\x01 \x01(\t\x12\x15\n\rbundle_sha256\x18\x02 \x01(\t\x12\x16\n\x0emethod_version\x18\x03 \x01(\t\x12\x17\n\x0f\x66\x65\x61ture_version\x18\x04 \x01(\t\x12\x10\n\x08\x65stimand\x18\x05 \x01(\t\x12\x32\n\x04rows\x18\x06 \x03(\x0b\x32$.nautiuq.platform.v1.DepthPrediction\x12\x18\n\x10release_approved\x18\x07 \x01(\x08\x12\x17\n\x0finterval_status\x18\x08 \x01(\t\x12\"\n\x1a\x65xplanation_interpretation\x18\t \x01(\t2a\n\x0fPlatformService\x12N\n\x05\x43heck\x12!.nautiuq.platform.v1.CheckRequest\x1a\".nautiuq.platform.v1.CheckResponse2v\n\x14\x45xpectedStateService\x12^\n\x05Infer\x12).nautiuq.platform.v1.ExpectedStateRequest\x1a*.nautiuq.platform.v1.ExpectedStateResponseB6Z4nautiuq.local/api/gen/nautiuq/platform/v1;platformv1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,9 +37,23 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_CHECKREQUEST']._serialized_start=59
   _globals['_CHECKREQUEST']._serialized_end=73
   _globals['_CHECKRESPONSE']._serialized_start=76
-  _globals['_CHECKRESPONSE']._serialized_end=269
-  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_start=218
-  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_end=269
-  _globals['_PLATFORMSERVICE']._serialized_start=271
-  _globals['_PLATFORMSERVICE']._serialized_end=368
+  _globals['_CHECKRESPONSE']._serialized_end=330
+  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_start=279
+  _globals['_CHECKRESPONSE_CAPABILITIESENTRY']._serialized_end=330
+  _globals['_REFERENCEPOINT']._serialized_start=332
+  _globals['_REFERENCEPOINT']._serialized_end=423
+  _globals['_EXPECTEDSTATEREQUEST']._serialized_start=425
+  _globals['_EXPECTEDSTATEREQUEST']._serialized_end=537
+  _globals['_FEATURECONTRIBUTION']._serialized_start=539
+  _globals['_FEATURECONTRIBUTION']._serialized_end=599
+  _globals['_EXPECTEDPREDICTION']._serialized_start=602
+  _globals['_EXPECTEDPREDICTION']._serialized_end=1116
+  _globals['_DEPTHPREDICTION']._serialized_start=1119
+  _globals['_DEPTHPREDICTION']._serialized_end=1286
+  _globals['_EXPECTEDSTATERESPONSE']._serialized_start=1289
+  _globals['_EXPECTEDSTATERESPONSE']._serialized_end=1561
+  _globals['_PLATFORMSERVICE']._serialized_start=1563
+  _globals['_PLATFORMSERVICE']._serialized_end=1660
+  _globals['_EXPECTEDSTATESERVICE']._serialized_start=1662
+  _globals['_EXPECTEDSTATESERVICE']._serialized_end=1780
 # @@protoc_insertion_point(module_scope)

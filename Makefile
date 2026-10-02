@@ -101,3 +101,27 @@ climatology-select:
 	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline select '$(REFERENCE_ID)'
 climatology-maintain:
 	docker compose exec -T normalizer python -m nautiuq_ml.climatology.pipeline maintain --limit 500
+
+.PHONY: expected-setup phase5-verify phase5-reliability phase5-smoke expected-build expected-verify expected-select expected-log expected-maintain
+expected-setup:
+	uv pip install --python .venv/bin/python -r ml/requirements-expected.lock -e ./ml
+phase5-verify:
+	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase5.py
+phase5-reliability:
+	.venv/bin/python scripts/verify_phase5_reliability.py
+phase5-smoke:
+	.venv/bin/python scripts/verify_phase5_smoke.py
+expected-build:
+	@test -n "$(REFERENCE_ID)" || (echo 'Supply REFERENCE_ID'; exit 2)
+	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" ml-inference python -m nautiuq_ml.expected_state.pipeline build '$(REFERENCE_ID)'
+expected-verify:
+	@test -n "$(MODEL_ID)" || (echo 'Supply MODEL_ID'; exit 2)
+	docker compose exec -T ml-inference python -m nautiuq_ml.expected_state.pipeline verify '$(MODEL_ID)'
+expected-select:
+	@test -n "$(MODEL_ID)" || (echo 'Supply MODEL_ID'; exit 2)
+	docker compose exec -T ml-inference python -m nautiuq_ml.expected_state.pipeline select '$(MODEL_ID)'
+expected-log:
+	@test -n "$(MODEL_ID)" || (echo 'Supply MODEL_ID'; exit 2)
+	docker compose exec -T ml-inference python -m nautiuq_ml.expected_state.pipeline log '$(MODEL_ID)'
+expected-maintain:
+	docker compose exec -T ml-inference python -m nautiuq_ml.expected_state.pipeline maintain --limit 500

@@ -1,0 +1,1130 @@
+{
+  "active_methods": {
+    "practical_salinity": "climatology",
+    "temperature_c": "climatology"
+  },
+  "bundle_key": "lake/expected-state/dad71501-e9bd-57c7-9f40-cc72335b921c/bundle.json",
+  "bundle_sha256": "868714edf5868157f665fecbd5aa371c8b0854e26e1b357a365c153b21c972af",
+  "calculation_id": "50f58c0d-d850-593b-8668-ca9163519418",
+  "capabilities": {
+    "climatology": true,
+    "expected_state": true,
+    "field_sampling": false,
+    "ml_residual": false,
+    "observations": true,
+    "official_advisories": false,
+    "platform_runtime": true,
+    "profile_anomaly": false,
+    "trip_assessment": false
+  },
+  "code_sha256": "092290176ccc5e4b6b5af6b2ed5637fbf749b09816f45e786b2dd3bf5366692d",
+  "dataset_baseline": {
+    "end_year": 2024,
+    "start_year": 2005
+  },
+  "environment": {
+    "dependency_lock_sha256": "ce06cb895fd4d368ba792c5be2f6d5f0f3fc524541856954fa1ed8e0e3f8db87",
+    "gsw": "3.6.23",
+    "lightgbm": "4.7.0",
+    "machine": "aarch64",
+    "netcdf4": "1.7.4",
+    "numpy": "2.5.3",
+    "platform": "linux",
+    "pyarrow": "23.0.1",
+    "python": "3.12.15",
+    "scikit_learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "example": {
+    "calculation_id": "89fe5025-af12-5347-9d73-f24cbbc1dd5f",
+    "profile_id": "e3e31b44-3347-54e0-be97-0686e0447bcc",
+    "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+    "release_id": "dad71501-e9bd-57c7-9f40-cc72335b921c",
+    "revision_sha256": "f68b446935518db235ff21dcb77eb607a79c5b8758bf2ed8c7b5887f03c3c9ab",
+    "status": "partial"
+  },
+  "example_depth_10m": {
+    "practical_salinity": {
+      "active_method": "climatology",
+      "candidate_mean": 36.55580885741232,
+      "candidate_residual": 0.12349324469440724,
+      "climatology_mean": 36.432315612717915,
+      "difference": -1.8371211370004659,
+      "direction": "fresher",
+      "expected_mean": 36.432315612717915,
+      "ml_residual": 0.0,
+      "observed": 34.59519447571745
+    },
+    "temperature_c": {
+      "active_method": "climatology",
+      "candidate_mean": 27.759734138029998,
+      "candidate_residual": 0.323990647126765,
+      "climatology_mean": 27.43574349090323,
+      "difference": 1.377500646755795,
+      "direction": "warmer",
+      "expected_mean": 27.43574349090323,
+      "ml_residual": 0.0,
+      "observed": 28.813244137659026
+    }
+  },
+  "feature_schema": {
+    "names": [
+      "latitude",
+      "longitude",
+      "depth_m",
+      "season_sin",
+      "season_cos",
+      "season_sin2",
+      "season_cos2",
+      "basin_id"
+    ],
+    "omitted_static_features": [
+      "bathymetry_m",
+      "distance_to_coast_km"
+    ],
+    "reason": "static_sources_not_validated",
+    "version": "ocean-reference-features-v1"
+  },
+  "feature_version": "ocean-reference-features-v1",
+  "fitting_period": {
+    "end_year": 2016,
+    "start_year": 2005
+  },
+  "independence_audits": [
+    {
+      "complement_profiles": 102,
+      "fold": "spatial-0",
+      "held_profiles": 61,
+      "kind": "spatial",
+      "reference_fit_hash": "bf9a396c614e5e495ff114f3fb11eb85257f47a1e7f7b2ef5e943535b02037e9",
+      "variables": {
+        "practical_salinity": {
+          "held_candidate_rows": 915,
+          "held_comparison": {
+            "climatology": {
+              "bias": 0.05475849450658704,
+              "mae": 0.35913718806048534,
+              "median_absolute_error": 0.3212173489566048,
+              "profile_bootstrap_mae_95": [
+                0.31851842188988,
+                0.4093850486579647
+              ],
+              "profile_weighted_mae": 0.3570344478017484,
+              "profiles": 13,
+              "rmse": 0.43017368389111643,
+              "rows": 140
+            },
+            "hgbr": {
+              "bias": -0.05399100722165337,
+              "mae": 0.2922395362670541,
+              "median_absolute_error": 0.27140424229290616,
+              "profile_bootstrap_mae_95": [
+                0.24642368305235776,
+                0.35353923436199747
+              ],
+              "profile_weighted_mae": 0.2898375075250021,
+              "profiles": 13,
+              "rmse": 0.3740287956129534,
+              "rows": 140
+            },
+            "lightgbm": {
+              "bias": -0.022594383602628453,
+              "mae": 0.3032666013962126,
+              "median_absolute_error": 0.3052143869864068,
+              "profile_bootstrap_mae_95": [
+                0.2548906421703202,
+                0.3621637573574296
+              ],
+              "profile_weighted_mae": 0.30063834241275156,
+              "profiles": 13,
+              "rmse": 0.3905047247915606,
+              "rows": 140
+            }
+          },
+          "held_supported_rows": 140,
+          "profile_counts": {
+            "calibration": 9,
+            "test": 14,
+            "train": 27,
+            "tune": 18
+          },
+          "status": "trained"
+        },
+        "temperature_c": {
+          "held_candidate_rows": 915,
+          "held_comparison": {
+            "climatology": {
+              "bias": 0.8844363257283797,
+              "mae": 2.119961677516778,
+              "median_absolute_error": 1.6101830494513116,
+              "profile_bootstrap_mae_95": [
+                1.791606489929531,
+                2.4159909046965122
+              ],
+              "profile_weighted_mae": 2.087093171545726,
+              "profiles": 13,
+              "rmse": 2.6619978053744187,
+              "rows": 167
+            },
+            "hgbr": {
+              "bias": 0.7039485314460592,
+              "mae": 1.9760823796731635,
+              "median_absolute_error": 1.619574603328454,
+              "profile_bootstrap_mae_95": [
+                1.6574374697105083,
+                2.278537390335826
+              ],
+              "profile_weighted_mae": 1.9400099558281596,
+              "profiles": 13,
+              "rmse": 2.5259079266572444,
+              "rows": 167
+            },
+            "lightgbm": {
+              "bias": 0.7274183331255119,
+              "mae": 1.9666485353462917,
+              "median_absolute_error": 1.5997749112722612,
+              "profile_bootstrap_mae_95": [
+                1.6427604809287835,
+                2.2669111495381333
+              ],
+              "profile_weighted_mae": 1.9323023603709866,
+              "profiles": 13,
+              "rmse": 2.524765768676436,
+              "rows": 167
+            }
+          },
+          "held_supported_rows": 167,
+          "profile_counts": {
+            "calibration": 12,
+            "test": 14,
+            "train": 28,
+            "tune": 20
+          },
+          "status": "trained"
+        }
+      }
+    },
+    {
+      "complement_profiles": 41,
+      "fold": "spatial-1",
+      "held_profiles": 135,
+      "kind": "spatial",
+      "reference_fit_hash": "0e53966c535fb4f1bbd1aa9a04f0a6deca79a4375d85d2d8d942cb49617fdb42",
+      "variables": {
+        "practical_salinity": {
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    },
+    {
+      "complement_profiles": 98,
+      "fold": "platform-0",
+      "held_profiles": 98,
+      "kind": "platform",
+      "reference_fit_hash": "021330bb300a5b54cff7f6ee9dafcdf425d8c56d182d0578d5ccd9f42c32e157",
+      "variables": {
+        "practical_salinity": {
+          "profile_counts": {
+            "calibration": 0,
+            "test": 0,
+            "train": 0,
+            "tune": 0
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "profile_counts": {
+            "calibration": 6,
+            "test": 10,
+            "train": 12,
+            "tune": 15
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    },
+    {
+      "complement_profiles": 98,
+      "fold": "platform-1",
+      "held_profiles": 98,
+      "kind": "platform",
+      "reference_fit_hash": "8da0444819a5d72c581c9da92cd250ef18560d4fbeaa53a8d123d562f70bae56",
+      "variables": {
+        "practical_salinity": {
+          "profile_counts": {
+            "calibration": 5,
+            "test": 9,
+            "train": 13,
+            "tune": 7
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        },
+        "temperature_c": {
+          "profile_counts": {
+            "calibration": 10,
+            "test": 9,
+            "train": 13,
+            "tune": 7
+          },
+          "reason": "insufficient_training_or_tuning_profiles",
+          "status": "unsupported"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Previously inspected 2022-2024 test is diagnostic, not untouched promotion evidence.",
+    "Provisional promotion thresholds are unreviewed; independence/source coverage approvals are false.",
+    "Both LightGBM candidates fail numerical promotion checks; climatology remains active.",
+    "Three independence audit complements lack eligible train/tune support.",
+    "Coast distance and bathymetry sources are not validated; features/evaluation omitted.",
+    "Profile bootstrap does not establish serial-float independence.",
+    "No calibrated intervals, median or anomaly verdicts; explanations are model behavior, not causation.",
+    "Source cadence, representative coverage, licensing and scientific production release remain unapproved.",
+    "HTTP-rendered pages were checked; interactive visual/browser acceptance and production deployment were not performed."
+  ],
+  "model_count": 2,
+  "operational_counts": {
+    "comparison_states": {
+      "partial": 292,
+      "unavailable": 182
+    },
+    "current_profiles": 474,
+    "jobs": {
+      "complete": 474
+    },
+    "schema_version": 7,
+    "supported_pairs": 7023
+  },
+  "original_levels": 61281,
+  "profile_count": 196,
+  "promotion_policy": {
+    "independence_audits_approved": false,
+    "max_absolute_bias": {
+      "practical_salinity": 0.1,
+      "temperature_c": 0.5
+    },
+    "max_subgroup_relative_regression": 0.05,
+    "min_relative_profile_mae_improvement": 0.05,
+    "reviewed_gate_id": null,
+    "source_and_coverage_approved": false,
+    "untouched_test": false
+  },
+  "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+  "release_approved": false,
+  "release_id": "dad71501-e9bd-57c7-9f40-cc72335b921c",
+  "release_sha256": "bdac5bc2ebe88db222213d52d7d7c40f2bbe2b9b6ce9b147c7eac3e243d14efc",
+  "report_key": "lake/expected-state/dad71501-e9bd-57c7-9f40-cc72335b921c/report.json",
+  "report_sha256": "8ff356341c6e49d603a7e89c76bf295f6994111299fe3966b993806391b5b0df",
+  "scope": "local implementation and diagnostic real-data evaluation; no scientific production approval",
+  "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00",
+  "source_git_commit": "047b10c9e079c484b0e569d9d331e0983254cfec",
+  "standard_grid_rows": 2940,
+  "status": "ready",
+  "temporal_profile_counts": {
+    "calibration": 50,
+    "test": 50,
+    "train": 47,
+    "tune": 49
+  },
+  "tracking": {
+    "model_version": "3",
+    "registered_model": "nautiuq-expected-mean",
+    "run_id": "7832c1a47bf54e3eb6e5e2035bba0252"
+  },
+  "variables": {
+    "practical_salinity": {
+      "partition_metrics": {
+        "calibration": {
+          "climatology": {
+            "bias": 0.034822761980994196,
+            "mae": 0.185880942196837,
+            "median_absolute_error": 0.08291509059911917,
+            "profile_bootstrap_mae_95": [
+              0.15252568687768234,
+              0.2266649537594293
+            ],
+            "profile_weighted_mae": 0.1872315687201185,
+            "profiles": 23,
+            "rmse": 0.3218346459759677,
+            "rows": 312
+          },
+          "hgbr": {
+            "bias": 0.06837848961186005,
+            "mae": 0.1957935863419077,
+            "median_absolute_error": 0.10238219868054443,
+            "profile_bootstrap_mae_95": [
+              0.15840221617414024,
+              0.23757443592546199
+            ],
+            "profile_weighted_mae": 0.1955714077659053,
+            "profiles": 23,
+            "rmse": 0.3228231928392037,
+            "rows": 312
+          },
+          "lightgbm": {
+            "bias": 0.019295946029704972,
+            "mae": 0.17416751902187294,
+            "median_absolute_error": 0.08317753365894731,
+            "profile_bootstrap_mae_95": [
+              0.1453107421767158,
+              0.21466895225928398
+            ],
+            "profile_weighted_mae": 0.17474612646917298,
+            "profiles": 23,
+            "rmse": 0.29299455854764456,
+            "rows": 312
+          }
+        },
+        "test": {
+          "climatology": {
+            "bias": -0.1204573681326443,
+            "mae": 0.3332960813379755,
+            "median_absolute_error": 0.14624676428369554,
+            "profile_bootstrap_mae_95": [
+              0.23088007777840525,
+              0.695928300396894
+            ],
+            "profile_weighted_mae": 0.40499507894541137,
+            "profiles": 37,
+            "rmse": 0.7355203128951006,
+            "rows": 455
+          },
+          "hgbr": {
+            "bias": -0.11711767594502562,
+            "mae": 0.3200023386919858,
+            "median_absolute_error": 0.13716030941321122,
+            "profile_bootstrap_mae_95": [
+              0.20660660051762542,
+              0.6652875307862682
+            ],
+            "profile_weighted_mae": 0.3854733219386004,
+            "profiles": 37,
+            "rmse": 0.72078685156374,
+            "rows": 455
+          },
+          "lightgbm": {
+            "bias": -0.14057980661664596,
+            "mae": 0.3266340602839339,
+            "median_absolute_error": 0.1312133006789793,
+            "profile_bootstrap_mae_95": [
+              0.21419662015378693,
+              0.6859815450747608
+            ],
+            "profile_weighted_mae": 0.39743515229672793,
+            "profiles": 37,
+            "rmse": 0.7366365271422881,
+            "rows": 455
+          }
+        },
+        "train": {
+          "climatology": {
+            "bias": 1.5626597760137542e-15,
+            "mae": 0.17915622717929366,
+            "median_absolute_error": 0.1110864155307354,
+            "profile_bootstrap_mae_95": [
+              0.16009808424353847,
+              0.20901313711512706
+            ],
+            "profile_weighted_mae": 0.18290101156996427,
+            "profiles": 42,
+            "rmse": 0.2722035677099166,
+            "rows": 532
+          },
+          "hgbr": {
+            "bias": 0.0009344427035769989,
+            "mae": 0.09503047160445655,
+            "median_absolute_error": 0.057186620912389685,
+            "profile_bootstrap_mae_95": [
+              0.08220892087529454,
+              0.11030335964796423
+            ],
+            "profile_weighted_mae": 0.09603977428853407,
+            "profiles": 42,
+            "rmse": 0.14636174246426725,
+            "rows": 532
+          },
+          "lightgbm": {
+            "bias": 0.003811248044212759,
+            "mae": 0.13854159748715436,
+            "median_absolute_error": 0.07658096822452976,
+            "profile_bootstrap_mae_95": [
+              0.12340858660386383,
+              0.161259616817157
+            ],
+            "profile_weighted_mae": 0.14164796799348872,
+            "profiles": 42,
+            "rmse": 0.21995788790833196,
+            "rows": 532
+          }
+        },
+        "tune": {
+          "climatology": {
+            "bias": 0.014993455927572692,
+            "mae": 0.23383735726475402,
+            "median_absolute_error": 0.1386360906676245,
+            "profile_bootstrap_mae_95": [
+              0.19418328313951128,
+              0.2848349328685482
+            ],
+            "profile_weighted_mae": 0.2367497873897084,
+            "profiles": 36,
+            "rmse": 0.3797981564318437,
+            "rows": 479
+          },
+          "hgbr": {
+            "bias": 0.04011271241078748,
+            "mae": 0.23237092493281414,
+            "median_absolute_error": 0.11074449600187108,
+            "profile_bootstrap_mae_95": [
+              0.19097409888292746,
+              0.2667944676153518
+            ],
+            "profile_weighted_mae": 0.23297865706755522,
+            "profiles": 36,
+            "rmse": 0.38503077585629286,
+            "rows": 479
+          },
+          "lightgbm": {
+            "bias": 0.011975965332096546,
+            "mae": 0.2203945998758267,
+            "median_absolute_error": 0.10687474322519819,
+            "profile_bootstrap_mae_95": [
+              0.18212491605290337,
+              0.2751674722470133
+            ],
+            "profile_weighted_mae": 0.22158207556670062,
+            "profiles": 36,
+            "rmse": 0.3683646764834929,
+            "rows": 479
+          }
+        }
+      },
+      "profile_counts": {
+        "calibration": 23,
+        "test": 37,
+        "train": 42,
+        "tune": 36
+      },
+      "promotion": {
+        "active_method": "climatology",
+        "eligible": false,
+        "reasons": [
+          "promotion_thresholds_not_reviewed",
+          "test_block_previously_inspected",
+          "spatial_platform_audits_not_approved",
+          "source_coverage_not_approved",
+          "insufficient_material_improvement",
+          "bias_gate_failed",
+          "subgroup_regression:depth:1000m",
+          "subgroup_regression:depth:1500m"
+        ],
+        "subgroup_checks": [
+          {
+            "adequate": true,
+            "group": "depth:1000m",
+            "profiles": 25,
+            "regressed": true
+          },
+          {
+            "adequate": true,
+            "group": "depth:100m",
+            "profiles": 35,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:10m",
+            "profiles": 36,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:1500m",
+            "profiles": 24,
+            "regressed": true
+          },
+          {
+            "adequate": true,
+            "group": "depth:150m",
+            "profiles": 35,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "depth:2000m",
+            "profiles": 0,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:200m",
+            "profiles": 33,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:20m",
+            "profiles": 36,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:300m",
+            "profiles": 33,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:30m",
+            "profiles": 36,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:400m",
+            "profiles": 32,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:500m",
+            "profiles": 32,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:50m",
+            "profiles": 34,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:750m",
+            "profiles": 30,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:75m",
+            "profiles": 34,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:0-100m",
+            "profiles": 37,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:100-500m",
+            "profiles": 35,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:500-2000m",
+            "profiles": 30,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "region:arabian",
+            "profiles": 19,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "region:bay_bengal",
+            "profiles": 18,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "season:DJF",
+            "profiles": 9,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "season:JJA",
+            "profiles": 11,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "season:MAM",
+            "profiles": 10,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "season:SON",
+            "profiles": 7,
+            "regressed": false
+          }
+        ],
+        "thresholds": {
+          "independence_audits_approved": false,
+          "max_absolute_bias": {
+            "practical_salinity": 0.1,
+            "temperature_c": 0.5
+          },
+          "max_subgroup_relative_regression": 0.05,
+          "min_relative_profile_mae_improvement": 0.05,
+          "reviewed_gate_id": null,
+          "source_and_coverage_approved": false,
+          "untouched_test": false
+        }
+      },
+      "selected": {
+        "hgbr": {
+          "leaves": 15,
+          "parameters": {
+            "early_stopping": false,
+            "l2_regularization": 1.0,
+            "learning_rate": 0.05,
+            "max_iter": 80,
+            "max_leaf_nodes": 15,
+            "min_samples_leaf": 20,
+            "random_state": 42
+          },
+          "tuning_profile_weighted_mae": 0.23297865706755522
+        },
+        "lightgbm": {
+          "leaves": 15,
+          "parameters": {
+            "best_iteration": 14,
+            "deterministic": true,
+            "force_col_wise": true,
+            "lambda_l2": 1.0,
+            "learning_rate": 0.05,
+            "metric": "None",
+            "min_data_in_leaf": 20,
+            "num_leaves": 15,
+            "num_threads": 1,
+            "objective": "regression",
+            "seed": 42,
+            "verbosity": -1
+          },
+          "tuning_profile_weighted_mae": 0.22158207556670062
+        }
+      },
+      "status": "trained"
+    },
+    "temperature_c": {
+      "partition_metrics": {
+        "calibration": {
+          "climatology": {
+            "bias": 0.3802819611190558,
+            "mae": 0.8708954095614565,
+            "median_absolute_error": 0.5746794732701161,
+            "profile_bootstrap_mae_95": [
+              0.784107095697298,
+              1.1152640034809258
+            ],
+            "profile_weighted_mae": 0.9377766387552509,
+            "profiles": 35,
+            "rmse": 1.2898860104159868,
+            "rows": 433
+          },
+          "hgbr": {
+            "bias": 0.3899258156734813,
+            "mae": 0.8361375089500077,
+            "median_absolute_error": 0.4979139612735537,
+            "profile_bootstrap_mae_95": [
+              0.7223169734953567,
+              1.0128735226794876
+            ],
+            "profile_weighted_mae": 0.8764240232879121,
+            "profiles": 35,
+            "rmse": 1.3051543867547666,
+            "rows": 433
+          },
+          "lightgbm": {
+            "bias": 0.38263667786122896,
+            "mae": 0.8300419011974155,
+            "median_absolute_error": 0.48402728994164335,
+            "profile_bootstrap_mae_95": [
+              0.7304760924282117,
+              1.0648310172654791
+            ],
+            "profile_weighted_mae": 0.8899744949814856,
+            "profiles": 35,
+            "rmse": 1.2722592902962897,
+            "rows": 433
+          }
+        },
+        "test": {
+          "climatology": {
+            "bias": 0.017379330112107273,
+            "mae": 1.1391821121895995,
+            "median_absolute_error": 0.7335651366926541,
+            "profile_bootstrap_mae_95": [
+              1.00790072066029,
+              1.529897353210999
+            ],
+            "profile_weighted_mae": 1.2479730089785321,
+            "profiles": 41,
+            "rmse": 1.6447976658966004,
+            "rows": 499
+          },
+          "hgbr": {
+            "bias": 0.03772346928294452,
+            "mae": 1.1004220482596772,
+            "median_absolute_error": 0.7185461534380257,
+            "profile_bootstrap_mae_95": [
+              0.9745217051530284,
+              1.3782491834955752
+            ],
+            "profile_weighted_mae": 1.1650418851941993,
+            "profiles": 41,
+            "rmse": 1.5376055281982586,
+            "rows": 499
+          },
+          "lightgbm": {
+            "bias": 0.09375090238873608,
+            "mae": 1.1414808621884782,
+            "median_absolute_error": 0.7206882428438952,
+            "profile_bootstrap_mae_95": [
+              1.0247624542266336,
+              1.467997599466433
+            ],
+            "profile_weighted_mae": 1.2317372219702962,
+            "profiles": 41,
+            "rmse": 1.6132425429688355,
+            "rows": 499
+          }
+        },
+        "train": {
+          "climatology": {
+            "bias": -1.009718624501195e-15,
+            "mae": 0.8252775797061228,
+            "median_absolute_error": 0.5416069876755039,
+            "profile_bootstrap_mae_95": [
+              0.7135367239292584,
+              0.9335401717415964
+            ],
+            "profile_weighted_mae": 0.8244880707695441,
+            "profiles": 45,
+            "rmse": 1.1872740664075456,
+            "rows": 570
+          },
+          "hgbr": {
+            "bias": 0.0062722344187408794,
+            "mae": 0.47913219170227134,
+            "median_absolute_error": 0.2970929501778894,
+            "profile_bootstrap_mae_95": [
+              0.4195743031579909,
+              0.5334809133905353
+            ],
+            "profile_weighted_mae": 0.47885943737488623,
+            "profiles": 45,
+            "rmse": 0.7009977019736109,
+            "rows": 570
+          },
+          "lightgbm": {
+            "bias": 0.008851810038753244,
+            "mae": 0.6562174280097276,
+            "median_absolute_error": 0.4059252125580812,
+            "profile_bootstrap_mae_95": [
+              0.5792382593321485,
+              0.7284427365418455
+            ],
+            "profile_weighted_mae": 0.6548407645008321,
+            "profiles": 45,
+            "rmse": 0.9531041700004608,
+            "rows": 570
+          }
+        },
+        "tune": {
+          "climatology": {
+            "bias": 0.2237206289748182,
+            "mae": 0.8484322724893464,
+            "median_absolute_error": 0.6028023249771088,
+            "profile_bootstrap_mae_95": [
+              0.7700564557888318,
+              0.9968615739774047
+            ],
+            "profile_weighted_mae": 0.8710192030131296,
+            "profiles": 39,
+            "rmse": 1.2129851297301653,
+            "rows": 519
+          },
+          "hgbr": {
+            "bias": 0.16846974073422444,
+            "mae": 0.8147125863922311,
+            "median_absolute_error": 0.5159591896795028,
+            "profile_bootstrap_mae_95": [
+              0.7319198209944499,
+              0.9501194923122016
+            ],
+            "profile_weighted_mae": 0.8338279188873168,
+            "profiles": 39,
+            "rmse": 1.2100253845339322,
+            "rows": 519
+          },
+          "lightgbm": {
+            "bias": 0.255088199887517,
+            "mae": 0.8428348054629272,
+            "median_absolute_error": 0.5402593565634284,
+            "profile_bootstrap_mae_95": [
+              0.7579959956603769,
+              0.9818324215992268
+            ],
+            "profile_weighted_mae": 0.8624693105925584,
+            "profiles": 39,
+            "rmse": 1.2258849890011343,
+            "rows": 519
+          }
+        }
+      },
+      "profile_counts": {
+        "calibration": 35,
+        "test": 41,
+        "train": 45,
+        "tune": 39
+      },
+      "promotion": {
+        "active_method": "climatology",
+        "eligible": false,
+        "reasons": [
+          "promotion_thresholds_not_reviewed",
+          "test_block_previously_inspected",
+          "spatial_platform_audits_not_approved",
+          "source_coverage_not_approved",
+          "insufficient_material_improvement",
+          "subgroup_regression:depth:100m",
+          "subgroup_regression:depth:1500m",
+          "subgroup_regression:depth:500m"
+        ],
+        "subgroup_checks": [
+          {
+            "adequate": true,
+            "group": "depth:1000m",
+            "profiles": 28,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:100m",
+            "profiles": 38,
+            "regressed": true
+          },
+          {
+            "adequate": true,
+            "group": "depth:10m",
+            "profiles": 40,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:1500m",
+            "profiles": 26,
+            "regressed": true
+          },
+          {
+            "adequate": true,
+            "group": "depth:150m",
+            "profiles": 38,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "depth:2000m",
+            "profiles": 0,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:200m",
+            "profiles": 36,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:20m",
+            "profiles": 40,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:300m",
+            "profiles": 36,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:30m",
+            "profiles": 40,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:400m",
+            "profiles": 35,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:500m",
+            "profiles": 35,
+            "regressed": true
+          },
+          {
+            "adequate": true,
+            "group": "depth:50m",
+            "profiles": 37,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:750m",
+            "profiles": 33,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth:75m",
+            "profiles": 37,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:0-100m",
+            "profiles": 41,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:100-500m",
+            "profiles": 38,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "depth_band:500-2000m",
+            "profiles": 33,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "region:arabian",
+            "profiles": 20,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "region:bay_bengal",
+            "profiles": 21,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "season:DJF",
+            "profiles": 9,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "season:JJA",
+            "profiles": 12,
+            "regressed": false
+          },
+          {
+            "adequate": true,
+            "group": "season:MAM",
+            "profiles": 13,
+            "regressed": false
+          },
+          {
+            "adequate": false,
+            "group": "season:SON",
+            "profiles": 7,
+            "regressed": false
+          }
+        ],
+        "thresholds": {
+          "independence_audits_approved": false,
+          "max_absolute_bias": {
+            "practical_salinity": 0.1,
+            "temperature_c": 0.5
+          },
+          "max_subgroup_relative_regression": 0.05,
+          "min_relative_profile_mae_improvement": 0.05,
+          "reviewed_gate_id": null,
+          "source_and_coverage_approved": false,
+          "untouched_test": false
+        }
+      },
+      "selected": {
+        "hgbr": {
+          "leaves": 15,
+          "parameters": {
+            "early_stopping": false,
+            "l2_regularization": 1.0,
+            "learning_rate": 0.05,
+            "max_iter": 80,
+            "max_leaf_nodes": 15,
+            "min_samples_leaf": 20,
+            "random_state": 42
+          },
+          "tuning_profile_weighted_mae": 0.8338279188873168
+        },
+        "lightgbm": {
+          "leaves": 15,
+          "parameters": {
+            "best_iteration": 20,
+            "deterministic": true,
+            "force_col_wise": true,
+            "lambda_l2": 1.0,
+            "learning_rate": 0.05,
+            "metric": "None",
+            "min_data_in_leaf": 20,
+            "num_leaves": 15,
+            "num_threads": 1,
+            "objective": "regression",
+            "seed": 42,
+            "verbosity": -1
+          },
+          "tuning_profile_weighted_mae": 0.8624693105925584
+        }
+      },
+      "status": "trained"
+    }
+  },
+  "verification": [
+    "make lint",
+    "make build",
+    "make test",
+    "make test-migrations",
+    "make phase2-verify phase3-verify phase4-verify phase5-verify",
+    "make phase2-reliability phase3-reliability phase4-reliability phase5-reliability",
+    "make phase2-smoke phase3-smoke phase4-smoke phase5-smoke",
+    "make smoke",
+    "byte-identical regenerated Go/Python protobuf contracts",
+    "two identical final real-data builds and MLflow bundle download checksum"
+  ],
+  "verified_at": "2026-10-02T07:19:22.586112+00:00"
+}

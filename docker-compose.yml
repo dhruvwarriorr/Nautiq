@@ -52,8 +52,29 @@ services:
         mc mb --ignore-existing local/nautiuq
     depends_on: [minio]
   ml-inference:
-    build: {context: ., dockerfile: ml/Dockerfile}
-    environment: {SERVICE_NAME: ml-inference}
+    build: {context: ., dockerfile: ml/Expected.Dockerfile}
+    environment:
+      SERVICE_NAME: ml-inference
+      DATABASE_URL: postgres://${POSTGRES_USER:-nautiuq}:${POSTGRES_PASSWORD:-nautiuq_local_dev}@postgres:5432/${POSTGRES_DB:-nautiuq}?sslmode=disable
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nautiuq_local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiuq_local_storage}
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      ML_RELEASE_ID: ${ML_RELEASE_ID:-}
+      SOURCE_GIT_COMMIT: ${SOURCE_GIT_COMMIT:-unavailable}
+    mem_limit: 2g
+    cpus: 1
+    read_only: true
+    tmpfs: ['/tmp:size=512m,mode=1777']
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+  mlflow:
+    build: {context: ., dockerfile: ml/Expected.Dockerfile}
+    command: [mlflow, server, --workers, '1', --backend-store-uri, 'sqlite:////tracking/mlflow.db', --artifacts-destination, '/tracking/artifacts', --host, '0.0.0.0', --port, '5000', --allowed-hosts, 'mlflow:5000,localhost:${MLFLOW_PORT:-5001},127.0.0.1:${MLFLOW_PORT:-5001}']
+    volumes: [mlflow_data:/tracking]
+    ports: ['127.0.0.1:${MLFLOW_PORT:-5001}:5000']
+    mem_limit: 1g
   field-service:
     build: {context: ., dockerfile: ml/Dockerfile}
     environment: {SERVICE_NAME: field-service}
@@ -121,3 +142,4 @@ volumes:
   redis_data:
   minio_data:
   nats_data:
+  mlflow_data:

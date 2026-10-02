@@ -284,6 +284,8 @@ This baseline becomes the model to beat.
 
 ## 8. Phase 5 — LightGBM expected-state residual model
 
+Implemented locally; [14-Phase-5-Delivery.md](14-Phase-5-Delivery.md) maps all deliverables to code and measured checks. Both residual candidates remain diagnostic, with climatology active. Previously inspected test data, provisional promotion criteria and sparse independence audits do not authorize scientific production promotion.
+
 ### Build
 
 - shared feature package;

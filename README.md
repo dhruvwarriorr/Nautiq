@@ -35,7 +35,7 @@ make up
 - Implemented capabilities: http://localhost:8080/api/v1/capabilities
 - MinIO console: http://localhost:9001
 
-Copying `.env.example` is handled by setup without overwriting an existing `.env`. Its credentials are for local development. Services are reachable through the Compose network; only web, API and the MinIO console are exposed, bound to loopback. Change `WEB_PORT` or `API_PORT` in `.env` if needed. Passwords embedded in `DATABASE_URL` must be URL-safe (or percent-encoded).
+Copying `.env.example` is handled by setup without overwriting an existing `.env`. Its credentials are for local development. Services are reachable through the Compose network; web, API, MLflow and the MinIO console are exposed, bound to loopback. Change `WEB_PORT` or `API_PORT` in `.env` if needed. Passwords embedded in `DATABASE_URL` must be URL-safe (or percent-encoded).
 
 ```sh
 make test       # Go race tests, Python gRPC round trip, frontend health contracts
@@ -100,7 +100,26 @@ make climatology-maintain
 make phase4-smoke
 ```
 
-IDs refer to retained local data; fresh installations use their own verified snapshot and returned reference IDs. The historical dataset baseline is 2005–2024, while fitting uses only 2005–2016. Tuning/calibration/test years never alter coefficients, support or spread. Reference selection is an explicit local prototype action; scientific production approval remains false. Unsupported coverage returns null without suppressing original observations. No boosted ML model, anomaly, field, advisory or trip verdict is enabled.
+IDs refer to retained local data; fresh installations use their own verified snapshot and returned reference IDs. The historical dataset baseline is 2005–2024, while fitting uses only 2005–2016. Tuning/calibration/test years never alter coefficients, support or spread. Reference selection is an explicit local prototype action; scientific production approval remains false. Unsupported coverage returns null without suppressing original observations. Residual candidate evaluation and serving are described below; unqualified models retain climatology. Anomaly, field, advisory and trip verdicts remain unavailable.
+
+## Residual expected means and model evidence
+
+Open http://localhost:3000/models to compare LightGBM, HGBR and climatology, inspect exact release/MLflow pins and review grouped evaluations. Profile pages show diagnostic candidates, model explanations and the active serving mean. Both candidates failed the configured promotion checks, so climatology remains active. The reused historical test block cannot authorize promotion. See [delivery and real-data evidence](docs/14-Phase-5-Delivery.md).
+
+```sh
+make expected-setup
+make phase5-verify
+make phase5-reliability
+make expected-build REFERENCE_ID=<verified-selected-climatology-id>
+make expected-verify MODEL_ID=<returned-model-id>
+make expected-select MODEL_ID=<returned-model-id>
+# Set ML_RELEASE_ID=<same exact model ID> in .env, then restart:
+docker compose up -d --no-deps ml-inference
+make expected-maintain
+make phase5-smoke
+```
+
+MLflow is available at http://localhost:5001, with persistent local SQLite metadata and proxied artifacts. `MLFLOW_PORT` changes its loopback port. Serving uses the exact `ML_RELEASE_ID` and verified native model bundle, never a latest registry version. An unset or mismatched runtime pin leaves inference unavailable while observations remain readable. `make expected-log MODEL_ID=...` retries experiment/registry logging without changing the scientific release. `expected_state` reports the implemented mean service; `ml_residual` remains false until a candidate qualifies. Static coastal features, calibrated intervals and anomaly verdicts are unavailable.
 
 ## Local services
 
@@ -110,7 +129,8 @@ IDs refer to retained local data; fresh installations use their own verified sna
 | Go API | Bounded profile/provenance API and dependency probes |
 | Go ingestion | GDAC discovery, immutable raw acquisition and leased outbox publisher |
 | Python normalizer | Durable Argo consumer, canonical revisions and immutable Parquet |
-| Python ML runtime | gRPC scientific package runtime; no model loaded yet |
+| Python ML runtime | Pinned native residual candidates and historical fallback via typed gRPC |
+| MLflow | Persistent experiment metrics, exact native bundles and registry versions |
 | Python field runtime | gRPC field-service boundary; no gridded data loaded yet |
 | PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
 | MinIO | Private `nautiuq` S3 bucket, initialized idempotently |
@@ -123,10 +143,10 @@ MinIO Community is source-only; the local Dockerfile builds the pinned server re
 
 ## Database and persistence
 
-The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 5 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. Schema 5 adds immutable climatology references, explicit local selection and revision/reference-safe comparison jobs. `make down` preserves volumes. Never reset volumes to apply an upgrade.
+The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 7 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. Schema 5 adds immutable climatology references, explicit local selection and revision/reference-safe comparison jobs. Schema 6 adds expected-mean releases, MLflow metadata and leased profile comparison jobs; schema 7 invalidates/restores comparisons atomically when the historical reference changes. `make down` preserves volumes. Never reset volumes to apply an upgrade.
 
 ## Scope
 
-Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. Model serving, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow and production operations arrive in their owning phases.
+Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Calibrated uncertainty, anomaly detection, field sampling, advisory ingestion and trip assessments remain future capabilities. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
 
 See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiuq-Implementation-Blueprint.md).

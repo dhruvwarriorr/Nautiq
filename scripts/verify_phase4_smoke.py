@@ -48,7 +48,6 @@ def main():
     assert all(
         caps[k] is False
         for k in (
-            "expected_state",
             "profile_anomaly",
             "field_sampling",
             "official_advisories",

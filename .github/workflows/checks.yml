@@ -14,7 +14,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: make setup
       - name: Install locked offline scientific test dependencies
-        run: make phase0-setup
+        run: make phase0-setup expected-setup
       - name: Check generated contract reproducibility
         run: git diff --exit-code -- services/api/gen ml/nautiuq_ml/gen
       - run: make lint
@@ -22,14 +22,14 @@ jobs:
       - name: Verify offline Argo normalization contracts
         run: make phase2-verify
       - name: Verify frozen scientific fixtures and training policy
-        run: make phase3-verify phase4-verify
+        run: make phase3-verify phase4-verify phase5-verify
       - run: make build
       - name: Start isolated persistence for reproducibility checks
         run: docker compose up -d --wait postgres minio nats
       - run: make migrate
-      - run: docker compose up --build -d normalizer
+      - run: docker compose up --build -d normalizer ml-inference mlflow
       - name: Verify revision recovery and frozen snapshot integrity
-        run: make phase2-reliability phase3-reliability phase4-reliability
+        run: make phase2-reliability phase3-reliability phase4-reliability phase5-reliability
       - name: Stop verification infrastructure
         if: always()
         run: docker compose down --remove-orphans

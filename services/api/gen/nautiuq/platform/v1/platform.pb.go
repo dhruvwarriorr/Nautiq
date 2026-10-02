@@ -63,9 +63,11 @@ type CheckResponse struct {
 	Version string                 `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
 	Ready   bool                   `protobuf:"varint,3,opt,name=ready,proto3" json:"ready,omitempty"`
 	// Runtime responsiveness and loaded scientific capabilities are independent.
-	Capabilities  map[string]bool `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Capabilities         map[string]bool `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	ExpectedReleaseId    string          `protobuf:"bytes,5,opt,name=expected_release_id,json=expectedReleaseId,proto3" json:"expected_release_id,omitempty"`
+	ExpectedBundleSha256 string          `protobuf:"bytes,6,opt,name=expected_bundle_sha256,json=expectedBundleSha256,proto3" json:"expected_bundle_sha256,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *CheckResponse) Reset() {
@@ -126,22 +128,570 @@ func (x *CheckResponse) GetCapabilities() map[string]bool {
 	return nil
 }
 
+func (x *CheckResponse) GetExpectedReleaseId() string {
+	if x != nil {
+		return x.ExpectedReleaseId
+	}
+	return ""
+}
+
+func (x *CheckResponse) GetExpectedBundleSha256() string {
+	if x != nil {
+		return x.ExpectedBundleSha256
+	}
+	return ""
+}
+
+type ReferencePoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Latitude      float64                `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude     float64                `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	DepthM        float64                `protobuf:"fixed64,3,opt,name=depth_m,json=depthM,proto3" json:"depth_m,omitempty"`
+	ObservedAt    string                 `protobuf:"bytes,4,opt,name=observed_at,json=observedAt,proto3" json:"observed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReferencePoint) Reset() {
+	*x = ReferencePoint{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReferencePoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReferencePoint) ProtoMessage() {}
+
+func (x *ReferencePoint) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReferencePoint.ProtoReflect.Descriptor instead.
+func (*ReferencePoint) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ReferencePoint) GetLatitude() float64 {
+	if x != nil {
+		return x.Latitude
+	}
+	return 0
+}
+
+func (x *ReferencePoint) GetLongitude() float64 {
+	if x != nil {
+		return x.Longitude
+	}
+	return 0
+}
+
+func (x *ReferencePoint) GetDepthM() float64 {
+	if x != nil {
+		return x.DepthM
+	}
+	return 0
+}
+
+func (x *ReferencePoint) GetObservedAt() string {
+	if x != nil {
+		return x.ObservedAt
+	}
+	return ""
+}
+
+type ExpectedStateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Points        []*ReferencePoint      `protobuf:"bytes,2,rep,name=points,proto3" json:"points,omitempty"`
+	Explain       bool                   `protobuf:"varint,3,opt,name=explain,proto3" json:"explain,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExpectedStateRequest) Reset() {
+	*x = ExpectedStateRequest{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpectedStateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpectedStateRequest) ProtoMessage() {}
+
+func (x *ExpectedStateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpectedStateRequest.ProtoReflect.Descriptor instead.
+func (*ExpectedStateRequest) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ExpectedStateRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *ExpectedStateRequest) GetPoints() []*ReferencePoint {
+	if x != nil {
+		return x.Points
+	}
+	return nil
+}
+
+func (x *ExpectedStateRequest) GetExplain() bool {
+	if x != nil {
+		return x.Explain
+	}
+	return false
+}
+
+type FeatureContribution struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Feature       string                 `protobuf:"bytes,1,opt,name=feature,proto3" json:"feature,omitempty"`
+	Contribution  float64                `protobuf:"fixed64,2,opt,name=contribution,proto3" json:"contribution,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FeatureContribution) Reset() {
+	*x = FeatureContribution{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FeatureContribution) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FeatureContribution) ProtoMessage() {}
+
+func (x *FeatureContribution) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FeatureContribution.ProtoReflect.Descriptor instead.
+func (*FeatureContribution) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *FeatureContribution) GetFeature() string {
+	if x != nil {
+		return x.Feature
+	}
+	return ""
+}
+
+func (x *FeatureContribution) GetContribution() float64 {
+	if x != nil {
+		return x.Contribution
+	}
+	return 0
+}
+
+type ExpectedPrediction struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	ClimatologyMean      *float64               `protobuf:"fixed64,1,opt,name=climatology_mean,json=climatologyMean,proto3,oneof" json:"climatology_mean,omitempty"`
+	CandidateMean        *float64               `protobuf:"fixed64,2,opt,name=candidate_mean,json=candidateMean,proto3,oneof" json:"candidate_mean,omitempty"`
+	CandidateResidual    *float64               `protobuf:"fixed64,3,opt,name=candidate_residual,json=candidateResidual,proto3,oneof" json:"candidate_residual,omitempty"`
+	ExpectedMean         *float64               `protobuf:"fixed64,4,opt,name=expected_mean,json=expectedMean,proto3,oneof" json:"expected_mean,omitempty"`
+	MlResidual           *float64               `protobuf:"fixed64,5,opt,name=ml_residual,json=mlResidual,proto3,oneof" json:"ml_residual,omitempty"`
+	ActiveMethod         string                 `protobuf:"bytes,6,opt,name=active_method,json=activeMethod,proto3" json:"active_method,omitempty"`
+	Reason               string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
+	CandidateReason      string                 `protobuf:"bytes,8,opt,name=candidate_reason,json=candidateReason,proto3" json:"candidate_reason,omitempty"`
+	PromotionReasons     []string               `protobuf:"bytes,9,rep,name=promotion_reasons,json=promotionReasons,proto3" json:"promotion_reasons,omitempty"`
+	FeatureContributions []*FeatureContribution `protobuf:"bytes,10,rep,name=feature_contributions,json=featureContributions,proto3" json:"feature_contributions,omitempty"`
+	ContributionBias     *float64               `protobuf:"fixed64,11,opt,name=contribution_bias,json=contributionBias,proto3,oneof" json:"contribution_bias,omitempty"`
+	BaselineSupportJson  []byte                 `protobuf:"bytes,12,opt,name=baseline_support_json,json=baselineSupportJson,proto3" json:"baseline_support_json,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *ExpectedPrediction) Reset() {
+	*x = ExpectedPrediction{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpectedPrediction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpectedPrediction) ProtoMessage() {}
+
+func (x *ExpectedPrediction) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpectedPrediction.ProtoReflect.Descriptor instead.
+func (*ExpectedPrediction) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ExpectedPrediction) GetClimatologyMean() float64 {
+	if x != nil && x.ClimatologyMean != nil {
+		return *x.ClimatologyMean
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetCandidateMean() float64 {
+	if x != nil && x.CandidateMean != nil {
+		return *x.CandidateMean
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetCandidateResidual() float64 {
+	if x != nil && x.CandidateResidual != nil {
+		return *x.CandidateResidual
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetExpectedMean() float64 {
+	if x != nil && x.ExpectedMean != nil {
+		return *x.ExpectedMean
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetMlResidual() float64 {
+	if x != nil && x.MlResidual != nil {
+		return *x.MlResidual
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetActiveMethod() string {
+	if x != nil {
+		return x.ActiveMethod
+	}
+	return ""
+}
+
+func (x *ExpectedPrediction) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ExpectedPrediction) GetCandidateReason() string {
+	if x != nil {
+		return x.CandidateReason
+	}
+	return ""
+}
+
+func (x *ExpectedPrediction) GetPromotionReasons() []string {
+	if x != nil {
+		return x.PromotionReasons
+	}
+	return nil
+}
+
+func (x *ExpectedPrediction) GetFeatureContributions() []*FeatureContribution {
+	if x != nil {
+		return x.FeatureContributions
+	}
+	return nil
+}
+
+func (x *ExpectedPrediction) GetContributionBias() float64 {
+	if x != nil && x.ContributionBias != nil {
+		return *x.ContributionBias
+	}
+	return 0
+}
+
+func (x *ExpectedPrediction) GetBaselineSupportJson() []byte {
+	if x != nil {
+		return x.BaselineSupportJson
+	}
+	return nil
+}
+
+type DepthPrediction struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	DepthM            float64                `protobuf:"fixed64,1,opt,name=depth_m,json=depthM,proto3" json:"depth_m,omitempty"`
+	TemperatureC      *ExpectedPrediction    `protobuf:"bytes,2,opt,name=temperature_c,json=temperatureC,proto3" json:"temperature_c,omitempty"`
+	PracticalSalinity *ExpectedPrediction    `protobuf:"bytes,3,opt,name=practical_salinity,json=practicalSalinity,proto3" json:"practical_salinity,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *DepthPrediction) Reset() {
+	*x = DepthPrediction{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DepthPrediction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DepthPrediction) ProtoMessage() {}
+
+func (x *DepthPrediction) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DepthPrediction.ProtoReflect.Descriptor instead.
+func (*DepthPrediction) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DepthPrediction) GetDepthM() float64 {
+	if x != nil {
+		return x.DepthM
+	}
+	return 0
+}
+
+func (x *DepthPrediction) GetTemperatureC() *ExpectedPrediction {
+	if x != nil {
+		return x.TemperatureC
+	}
+	return nil
+}
+
+func (x *DepthPrediction) GetPracticalSalinity() *ExpectedPrediction {
+	if x != nil {
+		return x.PracticalSalinity
+	}
+	return nil
+}
+
+type ExpectedStateResponse struct {
+	state                     protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId                 string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	BundleSha256              string                 `protobuf:"bytes,2,opt,name=bundle_sha256,json=bundleSha256,proto3" json:"bundle_sha256,omitempty"`
+	MethodVersion             string                 `protobuf:"bytes,3,opt,name=method_version,json=methodVersion,proto3" json:"method_version,omitempty"`
+	FeatureVersion            string                 `protobuf:"bytes,4,opt,name=feature_version,json=featureVersion,proto3" json:"feature_version,omitempty"`
+	Estimand                  string                 `protobuf:"bytes,5,opt,name=estimand,proto3" json:"estimand,omitempty"`
+	Rows                      []*DepthPrediction     `protobuf:"bytes,6,rep,name=rows,proto3" json:"rows,omitempty"`
+	ReleaseApproved           bool                   `protobuf:"varint,7,opt,name=release_approved,json=releaseApproved,proto3" json:"release_approved,omitempty"`
+	IntervalStatus            string                 `protobuf:"bytes,8,opt,name=interval_status,json=intervalStatus,proto3" json:"interval_status,omitempty"`
+	ExplanationInterpretation string                 `protobuf:"bytes,9,opt,name=explanation_interpretation,json=explanationInterpretation,proto3" json:"explanation_interpretation,omitempty"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *ExpectedStateResponse) Reset() {
+	*x = ExpectedStateResponse{}
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpectedStateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpectedStateResponse) ProtoMessage() {}
+
+func (x *ExpectedStateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiuq_platform_v1_platform_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpectedStateResponse.ProtoReflect.Descriptor instead.
+func (*ExpectedStateResponse) Descriptor() ([]byte, []int) {
+	return file_nautiuq_platform_v1_platform_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ExpectedStateResponse) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetBundleSha256() string {
+	if x != nil {
+		return x.BundleSha256
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetMethodVersion() string {
+	if x != nil {
+		return x.MethodVersion
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetFeatureVersion() string {
+	if x != nil {
+		return x.FeatureVersion
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetEstimand() string {
+	if x != nil {
+		return x.Estimand
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetRows() []*DepthPrediction {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
+func (x *ExpectedStateResponse) GetReleaseApproved() bool {
+	if x != nil {
+		return x.ReleaseApproved
+	}
+	return false
+}
+
+func (x *ExpectedStateResponse) GetIntervalStatus() string {
+	if x != nil {
+		return x.IntervalStatus
+	}
+	return ""
+}
+
+func (x *ExpectedStateResponse) GetExplanationInterpretation() string {
+	if x != nil {
+		return x.ExplanationInterpretation
+	}
+	return ""
+}
+
 var File_nautiuq_platform_v1_platform_proto protoreflect.FileDescriptor
 
 const file_nautiuq_platform_v1_platform_proto_rawDesc = "" +
 	"\n" +
 	"\"nautiuq/platform/v1/platform.proto\x12\x13nautiuq.platform.v1\"\x0e\n" +
-	"\fCheckRequest\"\xf4\x01\n" +
+	"\fCheckRequest\"\xda\x02\n" +
 	"\rCheckResponse\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x14\n" +
 	"\x05ready\x18\x03 \x01(\bR\x05ready\x12X\n" +
-	"\fcapabilities\x18\x04 \x03(\v24.nautiuq.platform.v1.CheckResponse.CapabilitiesEntryR\fcapabilities\x1a?\n" +
+	"\fcapabilities\x18\x04 \x03(\v24.nautiuq.platform.v1.CheckResponse.CapabilitiesEntryR\fcapabilities\x12.\n" +
+	"\x13expected_release_id\x18\x05 \x01(\tR\x11expectedReleaseId\x124\n" +
+	"\x16expected_bundle_sha256\x18\x06 \x01(\tR\x14expectedBundleSha256\x1a?\n" +
 	"\x11CapabilitiesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\bR\x05value:\x028\x012a\n" +
+	"\x05value\x18\x02 \x01(\bR\x05value:\x028\x01\"\x84\x01\n" +
+	"\x0eReferencePoint\x12\x1a\n" +
+	"\blatitude\x18\x01 \x01(\x01R\blatitude\x12\x1c\n" +
+	"\tlongitude\x18\x02 \x01(\x01R\tlongitude\x12\x17\n" +
+	"\adepth_m\x18\x03 \x01(\x01R\x06depthM\x12\x1f\n" +
+	"\vobserved_at\x18\x04 \x01(\tR\n" +
+	"observedAt\"\x8c\x01\n" +
+	"\x14ExpectedStateRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12;\n" +
+	"\x06points\x18\x02 \x03(\v2#.nautiuq.platform.v1.ReferencePointR\x06points\x12\x18\n" +
+	"\aexplain\x18\x03 \x01(\bR\aexplain\"S\n" +
+	"\x13FeatureContribution\x12\x18\n" +
+	"\afeature\x18\x01 \x01(\tR\afeature\x12\"\n" +
+	"\fcontribution\x18\x02 \x01(\x01R\fcontribution\"\xc5\x05\n" +
+	"\x12ExpectedPrediction\x12.\n" +
+	"\x10climatology_mean\x18\x01 \x01(\x01H\x00R\x0fclimatologyMean\x88\x01\x01\x12*\n" +
+	"\x0ecandidate_mean\x18\x02 \x01(\x01H\x01R\rcandidateMean\x88\x01\x01\x122\n" +
+	"\x12candidate_residual\x18\x03 \x01(\x01H\x02R\x11candidateResidual\x88\x01\x01\x12(\n" +
+	"\rexpected_mean\x18\x04 \x01(\x01H\x03R\fexpectedMean\x88\x01\x01\x12$\n" +
+	"\vml_residual\x18\x05 \x01(\x01H\x04R\n" +
+	"mlResidual\x88\x01\x01\x12#\n" +
+	"\ractive_method\x18\x06 \x01(\tR\factiveMethod\x12\x16\n" +
+	"\x06reason\x18\a \x01(\tR\x06reason\x12)\n" +
+	"\x10candidate_reason\x18\b \x01(\tR\x0fcandidateReason\x12+\n" +
+	"\x11promotion_reasons\x18\t \x03(\tR\x10promotionReasons\x12]\n" +
+	"\x15feature_contributions\x18\n" +
+	" \x03(\v2(.nautiuq.platform.v1.FeatureContributionR\x14featureContributions\x120\n" +
+	"\x11contribution_bias\x18\v \x01(\x01H\x05R\x10contributionBias\x88\x01\x01\x122\n" +
+	"\x15baseline_support_json\x18\f \x01(\fR\x13baselineSupportJsonB\x13\n" +
+	"\x11_climatology_meanB\x11\n" +
+	"\x0f_candidate_meanB\x15\n" +
+	"\x13_candidate_residualB\x10\n" +
+	"\x0e_expected_meanB\x0e\n" +
+	"\f_ml_residualB\x14\n" +
+	"\x12_contribution_bias\"\xd0\x01\n" +
+	"\x0fDepthPrediction\x12\x17\n" +
+	"\adepth_m\x18\x01 \x01(\x01R\x06depthM\x12L\n" +
+	"\rtemperature_c\x18\x02 \x01(\v2'.nautiuq.platform.v1.ExpectedPredictionR\ftemperatureC\x12V\n" +
+	"\x12practical_salinity\x18\x03 \x01(\v2'.nautiuq.platform.v1.ExpectedPredictionR\x11practicalSalinity\"\x94\x03\n" +
+	"\x15ExpectedStateResponse\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12#\n" +
+	"\rbundle_sha256\x18\x02 \x01(\tR\fbundleSha256\x12%\n" +
+	"\x0emethod_version\x18\x03 \x01(\tR\rmethodVersion\x12'\n" +
+	"\x0ffeature_version\x18\x04 \x01(\tR\x0efeatureVersion\x12\x1a\n" +
+	"\bestimand\x18\x05 \x01(\tR\bestimand\x128\n" +
+	"\x04rows\x18\x06 \x03(\v2$.nautiuq.platform.v1.DepthPredictionR\x04rows\x12)\n" +
+	"\x10release_approved\x18\a \x01(\bR\x0freleaseApproved\x12'\n" +
+	"\x0finterval_status\x18\b \x01(\tR\x0eintervalStatus\x12=\n" +
+	"\x1aexplanation_interpretation\x18\t \x01(\tR\x19explanationInterpretation2a\n" +
 	"\x0fPlatformService\x12N\n" +
-	"\x05Check\x12!.nautiuq.platform.v1.CheckRequest\x1a\".nautiuq.platform.v1.CheckResponseB6Z4nautiuq.local/api/gen/nautiuq/platform/v1;platformv1b\x06proto3"
+	"\x05Check\x12!.nautiuq.platform.v1.CheckRequest\x1a\".nautiuq.platform.v1.CheckResponse2v\n" +
+	"\x14ExpectedStateService\x12^\n" +
+	"\x05Infer\x12).nautiuq.platform.v1.ExpectedStateRequest\x1a*.nautiuq.platform.v1.ExpectedStateResponseB6Z4nautiuq.local/api/gen/nautiuq/platform/v1;platformv1b\x06proto3"
 
 var (
 	file_nautiuq_platform_v1_platform_proto_rawDescOnce sync.Once
@@ -155,21 +705,34 @@ func file_nautiuq_platform_v1_platform_proto_rawDescGZIP() []byte {
 	return file_nautiuq_platform_v1_platform_proto_rawDescData
 }
 
-var file_nautiuq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_nautiuq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_nautiuq_platform_v1_platform_proto_goTypes = []any{
-	(*CheckRequest)(nil),  // 0: nautiuq.platform.v1.CheckRequest
-	(*CheckResponse)(nil), // 1: nautiuq.platform.v1.CheckResponse
-	nil,                   // 2: nautiuq.platform.v1.CheckResponse.CapabilitiesEntry
+	(*CheckRequest)(nil),          // 0: nautiuq.platform.v1.CheckRequest
+	(*CheckResponse)(nil),         // 1: nautiuq.platform.v1.CheckResponse
+	(*ReferencePoint)(nil),        // 2: nautiuq.platform.v1.ReferencePoint
+	(*ExpectedStateRequest)(nil),  // 3: nautiuq.platform.v1.ExpectedStateRequest
+	(*FeatureContribution)(nil),   // 4: nautiuq.platform.v1.FeatureContribution
+	(*ExpectedPrediction)(nil),    // 5: nautiuq.platform.v1.ExpectedPrediction
+	(*DepthPrediction)(nil),       // 6: nautiuq.platform.v1.DepthPrediction
+	(*ExpectedStateResponse)(nil), // 7: nautiuq.platform.v1.ExpectedStateResponse
+	nil,                           // 8: nautiuq.platform.v1.CheckResponse.CapabilitiesEntry
 }
 var file_nautiuq_platform_v1_platform_proto_depIdxs = []int32{
-	2, // 0: nautiuq.platform.v1.CheckResponse.capabilities:type_name -> nautiuq.platform.v1.CheckResponse.CapabilitiesEntry
-	0, // 1: nautiuq.platform.v1.PlatformService.Check:input_type -> nautiuq.platform.v1.CheckRequest
-	1, // 2: nautiuq.platform.v1.PlatformService.Check:output_type -> nautiuq.platform.v1.CheckResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	8, // 0: nautiuq.platform.v1.CheckResponse.capabilities:type_name -> nautiuq.platform.v1.CheckResponse.CapabilitiesEntry
+	2, // 1: nautiuq.platform.v1.ExpectedStateRequest.points:type_name -> nautiuq.platform.v1.ReferencePoint
+	4, // 2: nautiuq.platform.v1.ExpectedPrediction.feature_contributions:type_name -> nautiuq.platform.v1.FeatureContribution
+	5, // 3: nautiuq.platform.v1.DepthPrediction.temperature_c:type_name -> nautiuq.platform.v1.ExpectedPrediction
+	5, // 4: nautiuq.platform.v1.DepthPrediction.practical_salinity:type_name -> nautiuq.platform.v1.ExpectedPrediction
+	6, // 5: nautiuq.platform.v1.ExpectedStateResponse.rows:type_name -> nautiuq.platform.v1.DepthPrediction
+	0, // 6: nautiuq.platform.v1.PlatformService.Check:input_type -> nautiuq.platform.v1.CheckRequest
+	3, // 7: nautiuq.platform.v1.ExpectedStateService.Infer:input_type -> nautiuq.platform.v1.ExpectedStateRequest
+	1, // 8: nautiuq.platform.v1.PlatformService.Check:output_type -> nautiuq.platform.v1.CheckResponse
+	7, // 9: nautiuq.platform.v1.ExpectedStateService.Infer:output_type -> nautiuq.platform.v1.ExpectedStateResponse
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_nautiuq_platform_v1_platform_proto_init() }
@@ -177,15 +740,16 @@ func file_nautiuq_platform_v1_platform_proto_init() {
 	if File_nautiuq_platform_v1_platform_proto != nil {
 		return
 	}
+	file_nautiuq_platform_v1_platform_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nautiuq_platform_v1_platform_proto_rawDesc), len(file_nautiuq_platform_v1_platform_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   9,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_nautiuq_platform_v1_platform_proto_goTypes,
 		DependencyIndexes: file_nautiuq_platform_v1_platform_proto_depIdxs,

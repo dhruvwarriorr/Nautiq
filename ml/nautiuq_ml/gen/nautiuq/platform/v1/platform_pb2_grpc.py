@@ -26,7 +26,7 @@ if _version_not_supported:
 
 
 class PlatformServiceStub(object):
-    """Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+    """Runtime readiness remains independent of explicitly loaded scientific releases.
     """
 
     def __init__(self, channel):
@@ -43,7 +43,7 @@ class PlatformServiceStub(object):
 
 
 class PlatformServiceServicer(object):
-    """Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+    """Runtime readiness remains independent of explicitly loaded scientific releases.
     """
 
     def Check(self, request, context):
@@ -69,7 +69,7 @@ def add_PlatformServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class PlatformService(object):
-    """Phase 1 runtime contract. Scientific inference is introduced in Phase 5.
+    """Runtime readiness remains independent of explicitly loaded scientific releases.
     """
 
     @staticmethod
@@ -89,6 +89,81 @@ class PlatformService(object):
             '/nautiuq.platform.v1.PlatformService/Check',
             nautiuq_dot_platform_dot_v1_dot_platform__pb2.CheckRequest.SerializeToString,
             nautiuq_dot_platform_dot_v1_dot_platform__pb2.CheckResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class ExpectedStateServiceStub(object):
+    """A request is bound to an explicit immutable release, never a registry alias.
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.Infer = channel.unary_unary(
+                '/nautiuq.platform.v1.ExpectedStateService/Infer',
+                request_serializer=nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateRequest.SerializeToString,
+                response_deserializer=nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateResponse.FromString,
+                _registered_method=True)
+
+
+class ExpectedStateServiceServicer(object):
+    """A request is bound to an explicit immutable release, never a registry alias.
+    """
+
+    def Infer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_ExpectedStateServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Infer': grpc.unary_unary_rpc_method_handler(
+                    servicer.Infer,
+                    request_deserializer=nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateRequest.FromString,
+                    response_serializer=nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'nautiuq.platform.v1.ExpectedStateService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('nautiuq.platform.v1.ExpectedStateService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class ExpectedStateService(object):
+    """A request is bound to an explicit immutable release, never a registry alias.
+    """
+
+    @staticmethod
+    def Infer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiuq.platform.v1.ExpectedStateService/Infer',
+            nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateRequest.SerializeToString,
+            nautiuq_dot_platform_dot_v1_dot_platform__pb2.ExpectedStateResponse.FromString,
             options,
             channel_credentials,
             insecure,
