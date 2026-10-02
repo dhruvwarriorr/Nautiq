@@ -22,17 +22,25 @@ import (
 )
 
 type Server struct {
-	DB        *pgxpool.Pool
-	Storage   *minio.Client
-	Runtime   pb.PlatformServiceClient
-	slots     chan struct{}
-	downloads chan struct{}
+	DB           *pgxpool.Pool
+	Storage      *minio.Client
+	Runtime      pb.PlatformServiceClient
+	Fields       pb.FieldServiceClient
+	FieldRuntime pb.PlatformServiceClient
+	slots        chan struct{}
+	downloads    chan struct{}
 }
 
 func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/fields", s.bound(s.fields))
+	mux.Handle("GET /api/v1/fields/sample", s.bound(s.fieldSample))
+	mux.Handle("POST /api/v1/fields/route", s.bound(s.fieldRoute))
+	mux.Handle("POST /api/v1/fields/polygon", s.bound(s.fieldPolygon))
+	mux.Handle("GET /api/v1/fields/{id}", s.bound(s.fieldDetail))
+	mux.Handle("GET /api/v1/fields/{id}/tiles/{variable}/{z}/{x}/{y}", s.bound(s.fieldTile))
 	mux.Handle("GET /api/v1/anomaly-releases", s.bound(s.anomalyReleases))
 	mux.Handle("GET /api/v1/anomaly-releases/selected", s.bound(s.selectedAnomaly))
 	mux.Handle("GET /api/v1/anomaly-releases/{id}", s.bound(s.anomalyRelease))

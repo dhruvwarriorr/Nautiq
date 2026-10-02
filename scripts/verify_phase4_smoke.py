@@ -49,7 +49,6 @@ def main():
         caps[k] is False
         for k in (
             "profile_anomaly",
-            "field_sampling",
             "official_advisories",
             "trip_assessment",
         )

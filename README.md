@@ -100,7 +100,7 @@ make climatology-maintain
 make phase4-smoke
 ```
 
-IDs refer to retained local data; fresh installations use their own verified snapshot and returned reference IDs. The historical dataset baseline is 2005–2024, while fitting uses only 2005–2016. Tuning/calibration/test years never alter coefficients, support or spread. Reference selection is an explicit local prototype action; scientific production approval remains false. Unsupported coverage returns null without suppressing original observations. Residual candidate evaluation and serving are described below; unqualified models retain climatology. Anomaly, field, advisory and trip verdicts remain unavailable.
+IDs refer to retained local data; fresh installations use their own verified snapshot and returned reference IDs. The historical dataset baseline is 2005–2024, while fitting uses only 2005–2016. Tuning/calibration/test years never alter coefficients, support or spread. Reference selection is an explicit local prototype action; scientific production approval remains false. Unsupported coverage returns null without suppressing original observations. Residual candidate evaluation and serving are described below; unqualified models retain climatology. Qualified anomaly, advisory and trip verdicts remain unavailable. Field sampling is implemented below.
 
 ## Residual expected means and model evidence
 
@@ -131,23 +131,24 @@ MLflow is available at http://localhost:5001, with persistent local SQLite metad
 | Python normalizer | Durable Argo consumer, canonical revisions and immutable Parquet |
 | Python ML runtime | Pinned native residual candidates and historical fallback via typed gRPC |
 | MLflow | Persistent experiment metrics, exact native bundles and registry versions |
-| Python field runtime | gRPC field-service boundary; no gridded data loaded yet |
+| Python field runtime | Independent read-only Zarr sampling and native raster tiles |
+| Optional field ingestion | Bounded hourly provider refresh, enabled with the `fields-live` profile |
 | PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
 | MinIO | Private `nautiq` S3 bucket, initialized idempotently |
 | Redis | Cache runtime |
 | NATS | JetStream enabled with persistent local storage |
 
-The diagnostic health API returns HTTP 200 only when all checks pass; failures return HTTP 503 and the status page shows them. Traffic readiness checks the required DB/schema capabilities; Redis/NATS/ML/web failure does not remove API readiness. Error responses suppress connection details and credentials. Scientific gRPC and public capability flags explicitly report that no production model, gridded fields, advisories or trip engine are served yet. The local observation slice is implemented; this does not establish production source approval.
+The diagnostic health API returns HTTP 200 only when all checks pass; failures return HTTP 503 and the status page shows them. Traffic readiness checks the required DB/schema capabilities; Redis/NATS/ML/web failure does not remove API readiness. Error responses suppress connection details and credentials. Scientific gRPC and public capability flags distinguish implemented observation/profile/field evidence from qualified models, official advisories and trip assessments. Supported gridded releases are available locally; scientific production approval and operational source coverage remain separate gates.
 
 MinIO Community is source-only; the local Dockerfile builds the pinned server release rather than relying on unavailable registry images. See [the upstream release instructions](https://github.com/minio/minio/releases). This establishes the requested local runtime, not a production storage recommendation.
 
 ## Database and persistence
 
-The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 7 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. Schema 5 adds immutable climatology references, explicit local selection and revision/reference-safe comparison jobs. Schema 6 adds expected-mean releases, MLflow metadata and leased profile comparison jobs; schema 7 invalidates/restores comparisons atomically when the historical reference changes. `make down` preserves volumes. Never reset volumes to apply an upgrade.
+The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 10 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. Schema 5 adds immutable climatology references, explicit local selection and revision/reference-safe comparison jobs. Schema 6 adds expected-mean releases, MLflow metadata and leased profile comparison jobs; schema 7 invalidates/restores comparisons atomically when the historical reference changes. Schema 8 adds predictive interval releases and monitoring; schema 9 adds profile anomaly diagnostics; schema 10 adds field catalog/releases, per-product selection and acquisition runs. `make down` preserves volumes. Never reset volumes to apply an upgrade.
 
 ## Scope
 
-Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Predictive quantile/CQR intervals and residual/PCA profile diagnostics are implemented with their own frozen releases. Qualified uncertainty/anomaly verdicts, field sampling, advisory ingestion and trip assessments remain unavailable. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
+Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Predictive quantile/CQR intervals and residual/PCA profile diagnostics are implemented with their own frozen releases. Regional SST/wave/weather/current adapters, immutable Zarr releases, field sampling and the raster explorer are implemented. Qualified uncertainty/anomaly verdicts, regional events, advisory ingestion and trip assessments remain unavailable. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
 
 See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiq-Implementation-Blueprint.md).
 
@@ -186,3 +187,23 @@ make phase7-verify phase7-reliability phase7-smoke
 ```
 
 `profile_anomaly_diagnostics` means supported local implementation with exact selected/runtime pins and current revision evidence. Scientific `profile_anomaly` remains false: interval qualification, expert-reviewed events, quiet-period false-alert rates, independent audits and a new untouched test have not established a qualified anomaly verdict. Historical ranks are descriptive, not event probabilities. Fixed references never adapt automatically during an event.
+
+## Ocean and marine weather fields
+
+Open [the field explorer](http://localhost:3000/fields) for real NOAA OISST, GFS-Wave, GFS weather and FNMOC/HYCOM surface currents. Each release exposes exact provider/cycle/valid-time metadata, masks, native resolution, source revision and immutable hashes. The map supports variable/time selection, point inspection and timed route samples with return legs and stops. Polygon summaries are also available through the API. See [delivery and provider definitions](docs/17-Phase-8-Delivery.md), [measured evidence](docs/evidence/phase8-summary.json) and [OpenAPI](packages/schemas/fields.openapi.json).
+
+```sh
+make fields-setup
+make migrate
+docker compose up -d --build field-service api ingestion web
+make field-refresh
+make field-ingest PRODUCT=noaa_gfs_wave HOURS=24
+make field-verify FIELD_ID=<returned-release-id>
+make field-replay FIELD_ID=<retained-release-id>  # Exact retained raw bytes, no download
+make field-maintain
+make phase8-verify phase8-reliability phase8-smoke
+```
+
+Forecasts default to nine valid times across 24 hours. Point/route interpolation preserves masked support and rejects out-of-horizon queries; tiles retain transparent land. Wind/current speed and directions derive from components. NOAA PERPW is primary wave mean period. OISST is a daily blended analysis, not an independent satellite validation of Argo. Source-age budgets and sampled extrema remain prototype evidence, without event or trip verdicts.
+
+`field-refresh` performs one explicit acquisition. An optional separate hourly worker is enabled with `SOURCE_GIT_COMMIT=$(git rev-parse HEAD) docker compose --profile fields-live up -d --build field-ingestion`. Default startup leaves it off. A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.

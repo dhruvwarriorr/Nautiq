@@ -163,7 +163,6 @@ def main():
         for k in (
             "profile_anomaly",
             "calibrated_uncertainty",
-            "field_sampling",
             "official_advisories",
             "trip_assessment",
         )

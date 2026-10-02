@@ -160,3 +160,16 @@ The diagnostic quantile/CQR workflow, exact parent pins, profile aggregation uni
 | Diagnostic percentile becomes a scientific alert | Approval false in policy/SQL/RPC/API; separate diagnostic capability; expert/quiet-period/untouched audits explicitly unavailable | capabilities and delivery evidence |
 
 These controls complete the declared complete-case implementation. Sparse functional inference and scientifically validated event/false-alert behavior remain outstanding review requirements; see [delivery](16-Phase-7-Delivery.md).
+
+## Gridded field execution update — 2026-10-02
+
+| Register scope | Delivered behavior and verification |
+| --- | --- |
+| D14, D15, D17 | Native NetCDF/GRIB dimension/calendar/units/packing/parameter/level checks; descending latitude and regional longitude normalization; explicit projected/curvilinear refusal; offline encoded-provider fixtures and full real-source parsing |
+| D16, P01, P03 | Land/missing support remains null or transparent; positive-weight coastal masks refuse interpolation; exact native coordinates/weights/time/distance and source resolution are exposed |
+| D18, D19 | Actual source cycle separate from valid time; complete requested lead windows; no mixed-run HYCOM aggregation; preliminary/final SST precedence and no independent-Argo-validation claim |
+| A01, A03, A05 | Staged immutable Zarr/raw hashes before atomic SQL/calculation/outbox publication; idempotence, forced rollback, late-cycle ordering, missing/corrupt chunks and verified-byte recovery tested in a disposable database |
+| P02, P07 | Timed outward/return/stopped/dateline routes; invalid timing/geometry and oversize budgets rejected without coarsening; polygons require valid bounded geometry and explicit dateline splitting |
+| P13 | Interactive desktop/mobile field rendering, timeline/variable controls, point/route actions, transparent masks, request cancellation and keyboard-accessible evidence tables checked locally |
+
+[Field delivery](17-Phase-8-Delivery.md) and [real-source evidence](evidence/phase8-summary.json) distinguish encoded test fixtures from real provider acquisition/replay and browser checks. Provisional source-age limits do not establish repeated provider cadence or complete coverage. D20–D22 advisory completeness/rights, scientific coastal validation, regional events, approved trip thresholds and production operations remain pending. Field availability does not grant scientific release approval.

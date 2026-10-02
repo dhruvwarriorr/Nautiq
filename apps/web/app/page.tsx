@@ -19,6 +19,8 @@ export default function Home() {
         <Link href="/data">Review source quality and frozen datasets →</Link>
         <br />
         <Link href="/uncertainty">Inspect predictive interval evidence →</Link>
+        <br />
+        <Link href="/fields">Explore surface fields and forecast timelines →</Link>
       </p>
     </main>
   );

@@ -29,6 +29,9 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `12-Phase-3-Delivery.md` | Revision-safe calculations, QC/source monitoring, frozen fixtures and pinned training snapshots |
 | `13-Phase-4-Delivery.md` | Standard depths, train-only seasonal climatology, profile comparisons and held-out evidence |
 | `14-Phase-5-Delivery.md` | Shared residual features, grouped audits, native LightGBM/HGBR comparisons, MLflow registry and pinned expected-mean inference |
+| `15-Phase-6-Delivery.md` | Predictive quantile/CQR intervals, calibration support and fixed-reference coverage evidence |
+| `16-Phase-7-Delivery.md` | Complete-case residual magnitude, correlated distance, weighted PCA and historical ranks |
+| `17-Phase-8-Delivery.md` | Real SST/wave/weather/current adapters, immutable Zarr releases, field sampling and raster explorer |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

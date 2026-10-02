@@ -320,3 +320,207 @@ class AnomalyService(object):
             timeout,
             metadata,
             _registered_method=True)
+
+
+class FieldServiceStub(object):
+    """Each request pins exactly one immutable field release (and therefore one cycle).
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.Sample = channel.unary_unary(
+                '/nautiq.platform.v1.FieldService/Sample',
+                request_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldSampleRequest.SerializeToString,
+                response_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+                _registered_method=True)
+        self.Route = channel.unary_unary(
+                '/nautiq.platform.v1.FieldService/Route',
+                request_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldRouteRequest.SerializeToString,
+                response_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+                _registered_method=True)
+        self.Polygon = channel.unary_unary(
+                '/nautiq.platform.v1.FieldService/Polygon',
+                request_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldPolygonRequest.SerializeToString,
+                response_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+                _registered_method=True)
+        self.Tile = channel.unary_unary(
+                '/nautiq.platform.v1.FieldService/Tile',
+                request_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileRequest.SerializeToString,
+                response_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileResponse.FromString,
+                _registered_method=True)
+
+
+class FieldServiceServicer(object):
+    """Each request pins exactly one immutable field release (and therefore one cycle).
+    """
+
+    def Sample(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Route(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Polygon(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Tile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_FieldServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Sample': grpc.unary_unary_rpc_method_handler(
+                    servicer.Sample,
+                    request_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldSampleRequest.FromString,
+                    response_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.SerializeToString,
+            ),
+            'Route': grpc.unary_unary_rpc_method_handler(
+                    servicer.Route,
+                    request_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldRouteRequest.FromString,
+                    response_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.SerializeToString,
+            ),
+            'Polygon': grpc.unary_unary_rpc_method_handler(
+                    servicer.Polygon,
+                    request_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldPolygonRequest.FromString,
+                    response_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.SerializeToString,
+            ),
+            'Tile': grpc.unary_unary_rpc_method_handler(
+                    servicer.Tile,
+                    request_deserializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileRequest.FromString,
+                    response_serializer=nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'nautiq.platform.v1.FieldService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('nautiq.platform.v1.FieldService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class FieldService(object):
+    """Each request pins exactly one immutable field release (and therefore one cycle).
+    """
+
+    @staticmethod
+    def Sample(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiq.platform.v1.FieldService/Sample',
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldSampleRequest.SerializeToString,
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Route(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiq.platform.v1.FieldService/Route',
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldRouteRequest.SerializeToString,
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Polygon(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiq.platform.v1.FieldService/Polygon',
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldPolygonRequest.SerializeToString,
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldEvidence.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Tile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/nautiq.platform.v1.FieldService/Tile',
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileRequest.SerializeToString,
+            nautiq_dot_platform_dot_v1_dot_platform__pb2.FieldTileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

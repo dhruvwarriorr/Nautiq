@@ -78,8 +78,38 @@ services:
     ports: ['127.0.0.1:${MLFLOW_PORT:-5001}:5000']
     mem_limit: 1g
   field-service:
-    build: {context: ., dockerfile: ml/Dockerfile}
-    environment: {SERVICE_NAME: field-service}
+    build: {context: ., dockerfile: ml/Fields.Dockerfile}
+    environment: &field_environment
+      DATABASE_URL: postgres://${POSTGRES_USER:-nautiq}:${POSTGRES_PASSWORD:-nautiq_local_dev}@postgres:5432/${POSTGRES_DB:-nautiq}?sslmode=disable
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nautiq_local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiq_local_storage}
+      SOURCE_GIT_COMMIT: ${SOURCE_GIT_COMMIT:-unavailable}
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+    read_only: true
+    tmpfs: ['/tmp:size=256m,mode=1777']
+    mem_limit: 1g
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+  field-ingestion:
+    build: {context: ., dockerfile: ml/Fields.Dockerfile}
+    environment: *field_environment
+    command: [python, -m, nautiq_ml.fields.pipeline, refresh, --watch]
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+    profiles: [fields-live]
+    read_only: true
+    tmpfs: ['/tmp:size=256m,mode=1777']
+    mem_limit: 1g
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
   ingestion:
     build: {context: ., dockerfile: services/ingestion/Dockerfile}
     environment:

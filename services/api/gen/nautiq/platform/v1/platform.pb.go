@@ -1283,6 +1283,482 @@ func (x *AnomalyResponse) GetReleaseApproved() bool {
 	return false
 }
 
+type TimedFieldPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Latitude      float64                `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude     float64                `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	Time          string                 `protobuf:"bytes,3,opt,name=time,proto3" json:"time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TimedFieldPoint) Reset() {
+	*x = TimedFieldPoint{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TimedFieldPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TimedFieldPoint) ProtoMessage() {}
+
+func (x *TimedFieldPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TimedFieldPoint.ProtoReflect.Descriptor instead.
+func (*TimedFieldPoint) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *TimedFieldPoint) GetLatitude() float64 {
+	if x != nil {
+		return x.Latitude
+	}
+	return 0
+}
+
+func (x *TimedFieldPoint) GetLongitude() float64 {
+	if x != nil {
+		return x.Longitude
+	}
+	return 0
+}
+
+func (x *TimedFieldPoint) GetTime() string {
+	if x != nil {
+		return x.Time
+	}
+	return ""
+}
+
+type FieldSampleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Variable      string                 `protobuf:"bytes,2,opt,name=variable,proto3" json:"variable,omitempty"`
+	Point         *TimedFieldPoint       `protobuf:"bytes,3,opt,name=point,proto3" json:"point,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FieldSampleRequest) Reset() {
+	*x = FieldSampleRequest{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldSampleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldSampleRequest) ProtoMessage() {}
+
+func (x *FieldSampleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldSampleRequest.ProtoReflect.Descriptor instead.
+func (*FieldSampleRequest) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *FieldSampleRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldSampleRequest) GetVariable() string {
+	if x != nil {
+		return x.Variable
+	}
+	return ""
+}
+
+func (x *FieldSampleRequest) GetPoint() *TimedFieldPoint {
+	if x != nil {
+		return x.Point
+	}
+	return nil
+}
+
+type FieldRouteRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Variable      string                 `protobuf:"bytes,2,opt,name=variable,proto3" json:"variable,omitempty"`
+	Waypoints     []*TimedFieldPoint     `protobuf:"bytes,3,rep,name=waypoints,proto3" json:"waypoints,omitempty"`
+	SpacingKm     float64                `protobuf:"fixed64,4,opt,name=spacing_km,json=spacingKm,proto3" json:"spacing_km,omitempty"`
+	StepMinutes   float64                `protobuf:"fixed64,5,opt,name=step_minutes,json=stepMinutes,proto3" json:"step_minutes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FieldRouteRequest) Reset() {
+	*x = FieldRouteRequest{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldRouteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldRouteRequest) ProtoMessage() {}
+
+func (x *FieldRouteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldRouteRequest.ProtoReflect.Descriptor instead.
+func (*FieldRouteRequest) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *FieldRouteRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldRouteRequest) GetVariable() string {
+	if x != nil {
+		return x.Variable
+	}
+	return ""
+}
+
+func (x *FieldRouteRequest) GetWaypoints() []*TimedFieldPoint {
+	if x != nil {
+		return x.Waypoints
+	}
+	return nil
+}
+
+func (x *FieldRouteRequest) GetSpacingKm() float64 {
+	if x != nil {
+		return x.SpacingKm
+	}
+	return 0
+}
+
+func (x *FieldRouteRequest) GetStepMinutes() float64 {
+	if x != nil {
+		return x.StepMinutes
+	}
+	return 0
+}
+
+type FieldPolygonRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Variable      string                 `protobuf:"bytes,2,opt,name=variable,proto3" json:"variable,omitempty"`
+	GeometryJson  []byte                 `protobuf:"bytes,3,opt,name=geometry_json,json=geometryJson,proto3" json:"geometry_json,omitempty"`
+	Time          string                 `protobuf:"bytes,4,opt,name=time,proto3" json:"time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FieldPolygonRequest) Reset() {
+	*x = FieldPolygonRequest{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldPolygonRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldPolygonRequest) ProtoMessage() {}
+
+func (x *FieldPolygonRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldPolygonRequest.ProtoReflect.Descriptor instead.
+func (*FieldPolygonRequest) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *FieldPolygonRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldPolygonRequest) GetVariable() string {
+	if x != nil {
+		return x.Variable
+	}
+	return ""
+}
+
+func (x *FieldPolygonRequest) GetGeometryJson() []byte {
+	if x != nil {
+		return x.GeometryJson
+	}
+	return nil
+}
+
+func (x *FieldPolygonRequest) GetTime() string {
+	if x != nil {
+		return x.Time
+	}
+	return ""
+}
+
+type FieldEvidence struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId      string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	ManifestSha256 string                 `protobuf:"bytes,2,opt,name=manifest_sha256,json=manifestSha256,proto3" json:"manifest_sha256,omitempty"`
+	ResultJson     []byte                 `protobuf:"bytes,3,opt,name=result_json,json=resultJson,proto3" json:"result_json,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *FieldEvidence) Reset() {
+	*x = FieldEvidence{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldEvidence) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldEvidence) ProtoMessage() {}
+
+func (x *FieldEvidence) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldEvidence.ProtoReflect.Descriptor instead.
+func (*FieldEvidence) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *FieldEvidence) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldEvidence) GetManifestSha256() string {
+	if x != nil {
+		return x.ManifestSha256
+	}
+	return ""
+}
+
+func (x *FieldEvidence) GetResultJson() []byte {
+	if x != nil {
+		return x.ResultJson
+	}
+	return nil
+}
+
+type FieldTileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId     string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Variable      string                 `protobuf:"bytes,2,opt,name=variable,proto3" json:"variable,omitempty"`
+	Time          string                 `protobuf:"bytes,3,opt,name=time,proto3" json:"time,omitempty"`
+	Z             int32                  `protobuf:"varint,4,opt,name=z,proto3" json:"z,omitempty"`
+	X             int32                  `protobuf:"varint,5,opt,name=x,proto3" json:"x,omitempty"`
+	Y             int32                  `protobuf:"varint,6,opt,name=y,proto3" json:"y,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FieldTileRequest) Reset() {
+	*x = FieldTileRequest{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldTileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldTileRequest) ProtoMessage() {}
+
+func (x *FieldTileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldTileRequest.ProtoReflect.Descriptor instead.
+func (*FieldTileRequest) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *FieldTileRequest) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldTileRequest) GetVariable() string {
+	if x != nil {
+		return x.Variable
+	}
+	return ""
+}
+
+func (x *FieldTileRequest) GetTime() string {
+	if x != nil {
+		return x.Time
+	}
+	return ""
+}
+
+func (x *FieldTileRequest) GetZ() int32 {
+	if x != nil {
+		return x.Z
+	}
+	return 0
+}
+
+func (x *FieldTileRequest) GetX() int32 {
+	if x != nil {
+		return x.X
+	}
+	return 0
+}
+
+func (x *FieldTileRequest) GetY() int32 {
+	if x != nil {
+		return x.Y
+	}
+	return 0
+}
+
+type FieldTileResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ReleaseId      string                 `protobuf:"bytes,1,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	ManifestSha256 string                 `protobuf:"bytes,2,opt,name=manifest_sha256,json=manifestSha256,proto3" json:"manifest_sha256,omitempty"`
+	Png            []byte                 `protobuf:"bytes,3,opt,name=png,proto3" json:"png,omitempty"`
+	MetadataJson   []byte                 `protobuf:"bytes,4,opt,name=metadata_json,json=metadataJson,proto3" json:"metadata_json,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *FieldTileResponse) Reset() {
+	*x = FieldTileResponse{}
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FieldTileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FieldTileResponse) ProtoMessage() {}
+
+func (x *FieldTileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nautiq_platform_v1_platform_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FieldTileResponse.ProtoReflect.Descriptor instead.
+func (*FieldTileResponse) Descriptor() ([]byte, []int) {
+	return file_nautiq_platform_v1_platform_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *FieldTileResponse) GetReleaseId() string {
+	if x != nil {
+		return x.ReleaseId
+	}
+	return ""
+}
+
+func (x *FieldTileResponse) GetManifestSha256() string {
+	if x != nil {
+		return x.ManifestSha256
+	}
+	return ""
+}
+
+func (x *FieldTileResponse) GetPng() []byte {
+	if x != nil {
+		return x.Png
+	}
+	return nil
+}
+
+func (x *FieldTileResponse) GetMetadataJson() []byte {
+	if x != nil {
+		return x.MetadataJson
+	}
+	return nil
+}
+
 var File_nautiq_platform_v1_platform_proto protoreflect.FileDescriptor
 
 const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
@@ -1427,7 +1903,50 @@ const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
 	"\x0emethod_version\x18\x06 \x01(\tR\rmethodVersion\x12\x1f\n" +
 	"\vresult_json\x18\a \x01(\fR\n" +
 	"resultJson\x12)\n" +
-	"\x10release_approved\x18\b \x01(\bR\x0freleaseApproved2_\n" +
+	"\x10release_approved\x18\b \x01(\bR\x0freleaseApproved\"_\n" +
+	"\x0fTimedFieldPoint\x12\x1a\n" +
+	"\blatitude\x18\x01 \x01(\x01R\blatitude\x12\x1c\n" +
+	"\tlongitude\x18\x02 \x01(\x01R\tlongitude\x12\x12\n" +
+	"\x04time\x18\x03 \x01(\tR\x04time\"\x8a\x01\n" +
+	"\x12FieldSampleRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12\x1a\n" +
+	"\bvariable\x18\x02 \x01(\tR\bvariable\x129\n" +
+	"\x05point\x18\x03 \x01(\v2#.nautiq.platform.v1.TimedFieldPointR\x05point\"\xd3\x01\n" +
+	"\x11FieldRouteRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12\x1a\n" +
+	"\bvariable\x18\x02 \x01(\tR\bvariable\x12A\n" +
+	"\twaypoints\x18\x03 \x03(\v2#.nautiq.platform.v1.TimedFieldPointR\twaypoints\x12\x1d\n" +
+	"\n" +
+	"spacing_km\x18\x04 \x01(\x01R\tspacingKm\x12!\n" +
+	"\fstep_minutes\x18\x05 \x01(\x01R\vstepMinutes\"\x89\x01\n" +
+	"\x13FieldPolygonRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12\x1a\n" +
+	"\bvariable\x18\x02 \x01(\tR\bvariable\x12#\n" +
+	"\rgeometry_json\x18\x03 \x01(\fR\fgeometryJson\x12\x12\n" +
+	"\x04time\x18\x04 \x01(\tR\x04time\"x\n" +
+	"\rFieldEvidence\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12'\n" +
+	"\x0fmanifest_sha256\x18\x02 \x01(\tR\x0emanifestSha256\x12\x1f\n" +
+	"\vresult_json\x18\x03 \x01(\fR\n" +
+	"resultJson\"\x8b\x01\n" +
+	"\x10FieldTileRequest\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12\x1a\n" +
+	"\bvariable\x18\x02 \x01(\tR\bvariable\x12\x12\n" +
+	"\x04time\x18\x03 \x01(\tR\x04time\x12\f\n" +
+	"\x01z\x18\x04 \x01(\x05R\x01z\x12\f\n" +
+	"\x01x\x18\x05 \x01(\x05R\x01x\x12\f\n" +
+	"\x01y\x18\x06 \x01(\x05R\x01y\"\x92\x01\n" +
+	"\x11FieldTileResponse\x12\x1d\n" +
+	"\n" +
+	"release_id\x18\x01 \x01(\tR\treleaseId\x12'\n" +
+	"\x0fmanifest_sha256\x18\x02 \x01(\tR\x0emanifestSha256\x12\x10\n" +
+	"\x03png\x18\x03 \x01(\fR\x03png\x12#\n" +
+	"\rmetadata_json\x18\x04 \x01(\fR\fmetadataJson2_\n" +
 	"\x0fPlatformService\x12L\n" +
 	"\x05Check\x12 .nautiq.platform.v1.CheckRequest\x1a!.nautiq.platform.v1.CheckResponse2t\n" +
 	"\x14ExpectedStateService\x12\\\n" +
@@ -1435,7 +1954,12 @@ const file_nautiq_platform_v1_platform_proto_rawDesc = "" +
 	"\x12UncertaintyService\x12X\n" +
 	"\x05Infer\x12&.nautiq.platform.v1.UncertaintyRequest\x1a'.nautiq.platform.v1.UncertaintyResponse2b\n" +
 	"\x0eAnomalyService\x12P\n" +
-	"\x05Infer\x12\".nautiq.platform.v1.AnomalyRequest\x1a#.nautiq.platform.v1.AnomalyResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3"
+	"\x05Infer\x12\".nautiq.platform.v1.AnomalyRequest\x1a#.nautiq.platform.v1.AnomalyResponse2\xe2\x02\n" +
+	"\fFieldService\x12S\n" +
+	"\x06Sample\x12&.nautiq.platform.v1.FieldSampleRequest\x1a!.nautiq.platform.v1.FieldEvidence\x12Q\n" +
+	"\x05Route\x12%.nautiq.platform.v1.FieldRouteRequest\x1a!.nautiq.platform.v1.FieldEvidence\x12U\n" +
+	"\aPolygon\x12'.nautiq.platform.v1.FieldPolygonRequest\x1a!.nautiq.platform.v1.FieldEvidence\x12S\n" +
+	"\x04Tile\x12$.nautiq.platform.v1.FieldTileRequest\x1a%.nautiq.platform.v1.FieldTileResponseB4Z2nautiq.local/api/gen/nautiq/platform/v1;platformv1b\x06proto3"
 
 var (
 	file_nautiq_platform_v1_platform_proto_rawDescOnce sync.Once
@@ -1449,7 +1973,7 @@ func file_nautiq_platform_v1_platform_proto_rawDescGZIP() []byte {
 	return file_nautiq_platform_v1_platform_proto_rawDescData
 }
 
-var file_nautiq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_nautiq_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_nautiq_platform_v1_platform_proto_goTypes = []any{
 	(*CheckRequest)(nil),          // 0: nautiq.platform.v1.CheckRequest
 	(*CheckResponse)(nil),         // 1: nautiq.platform.v1.CheckResponse
@@ -1466,10 +1990,17 @@ var file_nautiq_platform_v1_platform_proto_goTypes = []any{
 	(*AnomalyPoint)(nil),          // 12: nautiq.platform.v1.AnomalyPoint
 	(*AnomalyRequest)(nil),        // 13: nautiq.platform.v1.AnomalyRequest
 	(*AnomalyResponse)(nil),       // 14: nautiq.platform.v1.AnomalyResponse
-	nil,                           // 15: nautiq.platform.v1.CheckResponse.CapabilitiesEntry
+	(*TimedFieldPoint)(nil),       // 15: nautiq.platform.v1.TimedFieldPoint
+	(*FieldSampleRequest)(nil),    // 16: nautiq.platform.v1.FieldSampleRequest
+	(*FieldRouteRequest)(nil),     // 17: nautiq.platform.v1.FieldRouteRequest
+	(*FieldPolygonRequest)(nil),   // 18: nautiq.platform.v1.FieldPolygonRequest
+	(*FieldEvidence)(nil),         // 19: nautiq.platform.v1.FieldEvidence
+	(*FieldTileRequest)(nil),      // 20: nautiq.platform.v1.FieldTileRequest
+	(*FieldTileResponse)(nil),     // 21: nautiq.platform.v1.FieldTileResponse
+	nil,                           // 22: nautiq.platform.v1.CheckResponse.CapabilitiesEntry
 }
 var file_nautiq_platform_v1_platform_proto_depIdxs = []int32{
-	15, // 0: nautiq.platform.v1.CheckResponse.capabilities:type_name -> nautiq.platform.v1.CheckResponse.CapabilitiesEntry
+	22, // 0: nautiq.platform.v1.CheckResponse.capabilities:type_name -> nautiq.platform.v1.CheckResponse.CapabilitiesEntry
 	2,  // 1: nautiq.platform.v1.ExpectedStateRequest.points:type_name -> nautiq.platform.v1.ReferencePoint
 	4,  // 2: nautiq.platform.v1.ExpectedPrediction.feature_contributions:type_name -> nautiq.platform.v1.FeatureContribution
 	5,  // 3: nautiq.platform.v1.DepthPrediction.temperature_c:type_name -> nautiq.platform.v1.ExpectedPrediction
@@ -1481,19 +2012,29 @@ var file_nautiq_platform_v1_platform_proto_depIdxs = []int32{
 	10, // 9: nautiq.platform.v1.UncertaintyResponse.rows:type_name -> nautiq.platform.v1.IntervalDepth
 	2,  // 10: nautiq.platform.v1.AnomalyPoint.location:type_name -> nautiq.platform.v1.ReferencePoint
 	12, // 11: nautiq.platform.v1.AnomalyRequest.points:type_name -> nautiq.platform.v1.AnomalyPoint
-	0,  // 12: nautiq.platform.v1.PlatformService.Check:input_type -> nautiq.platform.v1.CheckRequest
-	3,  // 13: nautiq.platform.v1.ExpectedStateService.Infer:input_type -> nautiq.platform.v1.ExpectedStateRequest
-	8,  // 14: nautiq.platform.v1.UncertaintyService.Infer:input_type -> nautiq.platform.v1.UncertaintyRequest
-	13, // 15: nautiq.platform.v1.AnomalyService.Infer:input_type -> nautiq.platform.v1.AnomalyRequest
-	1,  // 16: nautiq.platform.v1.PlatformService.Check:output_type -> nautiq.platform.v1.CheckResponse
-	7,  // 17: nautiq.platform.v1.ExpectedStateService.Infer:output_type -> nautiq.platform.v1.ExpectedStateResponse
-	11, // 18: nautiq.platform.v1.UncertaintyService.Infer:output_type -> nautiq.platform.v1.UncertaintyResponse
-	14, // 19: nautiq.platform.v1.AnomalyService.Infer:output_type -> nautiq.platform.v1.AnomalyResponse
-	16, // [16:20] is the sub-list for method output_type
-	12, // [12:16] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	15, // 12: nautiq.platform.v1.FieldSampleRequest.point:type_name -> nautiq.platform.v1.TimedFieldPoint
+	15, // 13: nautiq.platform.v1.FieldRouteRequest.waypoints:type_name -> nautiq.platform.v1.TimedFieldPoint
+	0,  // 14: nautiq.platform.v1.PlatformService.Check:input_type -> nautiq.platform.v1.CheckRequest
+	3,  // 15: nautiq.platform.v1.ExpectedStateService.Infer:input_type -> nautiq.platform.v1.ExpectedStateRequest
+	8,  // 16: nautiq.platform.v1.UncertaintyService.Infer:input_type -> nautiq.platform.v1.UncertaintyRequest
+	13, // 17: nautiq.platform.v1.AnomalyService.Infer:input_type -> nautiq.platform.v1.AnomalyRequest
+	16, // 18: nautiq.platform.v1.FieldService.Sample:input_type -> nautiq.platform.v1.FieldSampleRequest
+	17, // 19: nautiq.platform.v1.FieldService.Route:input_type -> nautiq.platform.v1.FieldRouteRequest
+	18, // 20: nautiq.platform.v1.FieldService.Polygon:input_type -> nautiq.platform.v1.FieldPolygonRequest
+	20, // 21: nautiq.platform.v1.FieldService.Tile:input_type -> nautiq.platform.v1.FieldTileRequest
+	1,  // 22: nautiq.platform.v1.PlatformService.Check:output_type -> nautiq.platform.v1.CheckResponse
+	7,  // 23: nautiq.platform.v1.ExpectedStateService.Infer:output_type -> nautiq.platform.v1.ExpectedStateResponse
+	11, // 24: nautiq.platform.v1.UncertaintyService.Infer:output_type -> nautiq.platform.v1.UncertaintyResponse
+	14, // 25: nautiq.platform.v1.AnomalyService.Infer:output_type -> nautiq.platform.v1.AnomalyResponse
+	19, // 26: nautiq.platform.v1.FieldService.Sample:output_type -> nautiq.platform.v1.FieldEvidence
+	19, // 27: nautiq.platform.v1.FieldService.Route:output_type -> nautiq.platform.v1.FieldEvidence
+	19, // 28: nautiq.platform.v1.FieldService.Polygon:output_type -> nautiq.platform.v1.FieldEvidence
+	21, // 29: nautiq.platform.v1.FieldService.Tile:output_type -> nautiq.platform.v1.FieldTileResponse
+	22, // [22:30] is the sub-list for method output_type
+	14, // [14:22] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_nautiq_platform_v1_platform_proto_init() }
@@ -1510,9 +2051,9 @@ func file_nautiq_platform_v1_platform_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nautiq_platform_v1_platform_proto_rawDesc), len(file_nautiq_platform_v1_platform_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   23,
 			NumExtensions: 0,
-			NumServices:   4,
+			NumServices:   5,
 		},
 		GoTypes:           file_nautiq_platform_v1_platform_proto_goTypes,
 		DependencyIndexes: file_nautiq_platform_v1_platform_proto_depIdxs,

@@ -50,6 +50,14 @@ func main() {
 	defer scientificConnection.Close()
 	scientific := science.New(pool, storage)
 	scientific.Runtime = pb.NewPlatformServiceClient(scientificConnection)
+	fieldConnection, err := grpc.NewClient(os.Getenv("FIELD_GRPC_ADDR"), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024), grpc.MaxCallSendMsgSize(1024*1024)))
+	if err != nil {
+		slog.Error("configure field runtime")
+		os.Exit(1)
+	}
+	defer fieldConnection.Close()
+	scientific.Fields = pb.NewFieldServiceClient(fieldConnection)
+	scientific.FieldRuntime = pb.NewPlatformServiceClient(fieldConnection)
 	scientific.Register(mux)
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

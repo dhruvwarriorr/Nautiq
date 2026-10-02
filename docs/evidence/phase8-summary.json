@@ -1,0 +1,1154 @@
+{
+  "captured_at": "2026-10-02T14:32:59.085795+00:00",
+  "scope": "Local retained real provider fields, API and rendered HTML; a single acquisition/replay does not prove cadence or scientific production approval. Browser interactions are recorded separately in delivery documentation.",
+  "capabilities": {
+    "platform_runtime": true,
+    "observations": true,
+    "climatology": true,
+    "expected_state": true,
+    "ml_residual": false,
+    "predictive_intervals": true,
+    "calibrated_uncertainty": false,
+    "profile_anomaly_diagnostics": true,
+    "profile_anomaly": false,
+    "field_sampling": true,
+    "official_advisories": false,
+    "trip_assessment": false
+  },
+  "products": [
+    {
+      "product_id": "noaa_oisst",
+      "release_id": "2ae88303-5539-56c0-8fe7-779e87ca589c",
+      "calculation_id": "82a1d9cd-65d5-5d2b-898e-659979c4d2e3",
+      "manifest_sha256": "d48c3c8b66f2e84782b0172f76e2022c6e9beee5ad451643bffa514cb3d331af",
+      "metadata": {
+        "crs": "EPSG:4326",
+        "grid": "rectilinear",
+        "kind": "analysis",
+        "cycle": null,
+        "shape": [
+          1,
+          160,
+          200
+        ],
+        "times": [
+          "2026-10-01T12:00:00Z"
+        ],
+        "extent": [
+          50.125,
+          -9.875,
+          99.875,
+          29.875
+        ],
+        "product": "OISST v2.1 daily blended SST analysis",
+        "provider": "NOAA NCEI",
+        "variables": [
+          "sst_c"
+        ],
+        "product_id": "noaa_oisst",
+        "resolution": {
+          "latitude_degrees": 0.25,
+          "longitude_degrees": 0.25
+        },
+        "attribution": "NOAA/NCEI OISST v2.1; blended satellite and in-situ analysis, not independent Argo validation",
+        "limitations": [
+          "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+          "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+          "Samples and route extrema do not guarantee conditions between samples.",
+          "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+          "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+        ],
+        "mask_counts": {
+          "sst_c": 8955
+        },
+        "documentation": "https://www.ncei.noaa.gov/products/optimum-interpolation-sst",
+        "max_age_hours": 72,
+        "valid_time_end": "2026-10-02T00:00:00Z",
+        "release_approved": false,
+        "sampling_version": "masked-bilinear-linear-time-v1",
+        "valid_time_start": "2026-10-01T00:00:00Z",
+        "derived_variables": [],
+        "variable_metadata": {
+          "sst_c": {
+            "label": "Blended sea surface temperature",
+            "units": "degree_Celsius",
+            "bounds": [
+              -3,
+              45
+            ],
+            "colors": [
+              -2,
+              35
+            ]
+          }
+        },
+        "max_time_gap_hours": 24,
+        "normalizer_version": "regular-latlon-zarr-v1"
+      },
+      "source_version": "preliminary",
+      "raw_artifacts": 1,
+      "zarr_objects": 22,
+      "zarr_bytes": 45850,
+      "release_code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+      "source_git_commit": "389db134ed5ad1c95d552ab5c0632c6aafcd84e4",
+      "runtime": {
+        "python": "3.12.15",
+        "libraries": {
+          "zarr": "2.18.7",
+          "minio": "7.2.20",
+          "numpy": "2.5.3",
+          "grpcio": "1.78.0",
+          "pillow": "12.3.0",
+          "eccodes": "2.49.0",
+          "netCDF4": "1.7.4",
+          "psycopg": "3.3.6",
+          "shapely": "2.1.2",
+          "protobuf": "6.33.5",
+          "numcodecs": "0.15.1",
+          "eccodeslib": "2.49.0.30"
+        },
+        "requirements_sha256": "7f0c66ad9bb7a21fd3747ea3c03ba0d0d2027868b4ad03ea72459d06f80347fb"
+      },
+      "point_evidence": {
+        "calculation": {
+          "as_of": "2026-10-02T14:32:56.152437+00:00",
+          "code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+          "method_version": "masked-bilinear-linear-time-v1",
+          "output_sha256": "903045ace8dd16bf6ac14ed42d068968e36fefb156251504350cd82cc73a8407",
+          "request_sha256": "03af6a15420d3edb46736cdf754c766bef1e0327a6701683652fe01031df75b2"
+        },
+        "calculation_id": "82a1d9cd-65d5-5d2b-898e-659979c4d2e3",
+        "created_at": "2026-10-02T14:30:07.286522+00:00",
+        "freshness": "available",
+        "manifest_sha256": "d48c3c8b66f2e84782b0172f76e2022c6e9beee5ad451643bffa514cb3d331af",
+        "metadata": {
+          "attribution": "NOAA/NCEI OISST v2.1; blended satellite and in-situ analysis, not independent Argo validation",
+          "crs": "EPSG:4326",
+          "cycle": null,
+          "derived_variables": [],
+          "documentation": "https://www.ncei.noaa.gov/products/optimum-interpolation-sst",
+          "extent": [
+            50.125,
+            -9.875,
+            99.875,
+            29.875
+          ],
+          "grid": "rectilinear",
+          "kind": "analysis",
+          "limitations": [
+            "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+            "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+            "Samples and route extrema do not guarantee conditions between samples.",
+            "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+            "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+          ],
+          "mask_counts": {
+            "sst_c": 8955
+          },
+          "max_age_hours": 72,
+          "max_time_gap_hours": 24,
+          "normalizer_version": "regular-latlon-zarr-v1",
+          "product": "OISST v2.1 daily blended SST analysis",
+          "product_id": "noaa_oisst",
+          "provider": "NOAA NCEI",
+          "release_approved": false,
+          "resolution": {
+            "latitude_degrees": 0.25,
+            "longitude_degrees": 0.25
+          },
+          "sampling_version": "masked-bilinear-linear-time-v1",
+          "shape": [
+            1,
+            160,
+            200
+          ],
+          "times": [
+            "2026-10-01T12:00:00Z"
+          ],
+          "valid_time_end": "2026-10-02T00:00:00Z",
+          "valid_time_start": "2026-10-01T00:00:00Z",
+          "variable_metadata": {
+            "sst_c": {
+              "bounds": [
+                -3,
+                45
+              ],
+              "colors": [
+                -2,
+                35
+              ],
+              "label": "Blended sea surface temperature",
+              "units": "degree_Celsius"
+            }
+          },
+          "variables": [
+            "sst_c"
+          ]
+        },
+        "release_approved": false,
+        "release_id": "2ae88303-5539-56c0-8fe7-779e87ca589c",
+        "result": {
+          "latitude": 12.0,
+          "longitude": 72.0,
+          "method": "masked-bilinear-linear-time-v1",
+          "reason": null,
+          "requested_time": "2026-10-01T12:00:00Z",
+          "source_distance_km": 19.44090002719234,
+          "spatial_support": [
+            {
+              "latitude": 11.875,
+              "longitude": 71.875,
+              "weight": 0.2500000000000142
+            },
+            {
+              "latitude": 11.875,
+              "longitude": 72.125,
+              "weight": 0.2499999999999858
+            },
+            {
+              "latitude": 12.125,
+              "longitude": 71.875,
+              "weight": 0.2500000000000142
+            },
+            {
+              "latitude": 12.125,
+              "longitude": 72.125,
+              "weight": 0.2499999999999858
+            }
+          ],
+          "status": "available",
+          "temporal_support": [
+            {
+              "valid_time": "2026-10-01T12:00:00Z",
+              "weight": 1.0
+            }
+          ],
+          "units": "degree_Celsius",
+          "value": 30.144999504089355
+        },
+        "source_version": "preliminary",
+        "variable": "sst_c"
+      },
+      "point_request_ms": 65.30008300615009,
+      "route_samples": 15,
+      "route_available_fraction": 1.0,
+      "polygon_available_cells": 16,
+      "tile_bytes": 5957
+    },
+    {
+      "product_id": "noaa_gfs_weather",
+      "release_id": "1c68666b-7777-59fc-82ec-9bfbfea0f87d",
+      "calculation_id": "6548bccb-70a0-5d54-b1d4-c4ad8abd52df",
+      "manifest_sha256": "1123dbcbce8180a5d89bfe860eb5c3916401a257be5e3a214a5003d07ec1d70d",
+      "metadata": {
+        "crs": "EPSG:4326",
+        "grid": "rectilinear",
+        "kind": "forecast",
+        "cycle": "2026-10-02T06:00:00Z",
+        "shape": [
+          9,
+          161,
+          201
+        ],
+        "times": [
+          "2026-10-02T06:00:00Z",
+          "2026-10-02T09:00:00Z",
+          "2026-10-02T12:00:00Z",
+          "2026-10-02T15:00:00Z",
+          "2026-10-02T18:00:00Z",
+          "2026-10-02T21:00:00Z",
+          "2026-10-03T00:00:00Z",
+          "2026-10-03T03:00:00Z",
+          "2026-10-03T06:00:00Z"
+        ],
+        "extent": [
+          50.0,
+          -10.0,
+          100.0,
+          30.0
+        ],
+        "product": "GFS atmosphere 0.25 degree surface weather",
+        "provider": "NOAA NCEP",
+        "variables": [
+          "wind_east_m_s",
+          "wind_north_m_s",
+          "air_temperature_c",
+          "surface_pressure_pa"
+        ],
+        "product_id": "noaa_gfs_weather",
+        "resolution": {
+          "latitude_degrees": 0.25,
+          "longitude_degrees": 0.2500000000000071
+        },
+        "attribution": "NOAA/NCEP GFS; 10 m wind and 2 m air temperature; model forecast",
+        "limitations": [
+          "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+          "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+          "Samples and route extrema do not guarantee conditions between samples.",
+          "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+          "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+        ],
+        "mask_counts": {
+          "wind_east_m_s": 82701,
+          "wind_north_m_s": 82701,
+          "air_temperature_c": 82701,
+          "surface_pressure_pa": 82701
+        },
+        "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/gfs/nomads/",
+        "max_age_hours": 18,
+        "valid_time_end": "2026-10-03T06:00:00Z",
+        "release_approved": false,
+        "sampling_version": "masked-bilinear-linear-time-v1",
+        "valid_time_start": "2026-10-02T06:00:00Z",
+        "derived_variables": [
+          "wind_speed_m_s",
+          "wind_direction_from_deg"
+        ],
+        "variable_metadata": {
+          "wind_east_m_s": {
+            "label": "Eastward wind at 10 m",
+            "units": "m s-1",
+            "bounds": [
+              -150,
+              150
+            ],
+            "colors": [
+              -20,
+              20
+            ]
+          },
+          "wind_north_m_s": {
+            "label": "Northward wind at 10 m",
+            "units": "m s-1",
+            "bounds": [
+              -150,
+              150
+            ],
+            "colors": [
+              -20,
+              20
+            ]
+          },
+          "wind_speed_m_s": {
+            "label": "Wind speed at 10 m",
+            "units": "m s-1",
+            "colors": [
+              0,
+              25
+            ]
+          },
+          "air_temperature_c": {
+            "label": "Air temperature at 2 m",
+            "units": "degree_Celsius",
+            "bounds": [
+              -90,
+              65
+            ],
+            "colors": [
+              -10,
+              40
+            ]
+          },
+          "surface_pressure_pa": {
+            "label": "Surface air pressure",
+            "units": "Pa",
+            "bounds": [
+              50000,
+              120000
+            ],
+            "colors": [
+              95000,
+              105000
+            ]
+          },
+          "wind_direction_from_deg": {
+            "label": "Wind direction from true north",
+            "units": "degree",
+            "colors": [
+              0,
+              360
+            ],
+            "direction": "from, clockwise from true north; derived after component interpolation"
+          }
+        },
+        "max_time_gap_hours": 3,
+        "normalizer_version": "regular-latlon-zarr-v1"
+      },
+      "source_version": "forecast",
+      "raw_artifacts": 9,
+      "zarr_objects": 445,
+      "zarr_bytes": 1442125,
+      "release_code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+      "source_git_commit": "389db134ed5ad1c95d552ab5c0632c6aafcd84e4",
+      "runtime": {
+        "python": "3.12.15",
+        "libraries": {
+          "zarr": "2.18.7",
+          "minio": "7.2.20",
+          "numpy": "2.5.3",
+          "grpcio": "1.78.0",
+          "pillow": "12.3.0",
+          "eccodes": "2.49.0",
+          "netCDF4": "1.7.4",
+          "psycopg": "3.3.6",
+          "shapely": "2.1.2",
+          "protobuf": "6.33.5",
+          "numcodecs": "0.15.1",
+          "eccodeslib": "2.49.0.30"
+        },
+        "requirements_sha256": "7f0c66ad9bb7a21fd3747ea3c03ba0d0d2027868b4ad03ea72459d06f80347fb"
+      },
+      "point_evidence": {
+        "calculation": {
+          "as_of": "2026-10-02T14:32:56.813931+00:00",
+          "code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+          "method_version": "masked-bilinear-linear-time-v1",
+          "output_sha256": "1b524c67461048342591e72d6bb4b5fd2f77a06bd005d33b99fbb7cac49ee543",
+          "request_sha256": "10e54f9e539fbe5338f005d53113b69b53d6f8c41aeaaefeae15f633a9af99d6"
+        },
+        "calculation_id": "6548bccb-70a0-5d54-b1d4-c4ad8abd52df",
+        "created_at": "2026-10-02T14:30:06.588157+00:00",
+        "freshness": "available",
+        "manifest_sha256": "1123dbcbce8180a5d89bfe860eb5c3916401a257be5e3a214a5003d07ec1d70d",
+        "metadata": {
+          "attribution": "NOAA/NCEP GFS; 10 m wind and 2 m air temperature; model forecast",
+          "crs": "EPSG:4326",
+          "cycle": "2026-10-02T06:00:00Z",
+          "derived_variables": [
+            "wind_speed_m_s",
+            "wind_direction_from_deg"
+          ],
+          "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/gfs/nomads/",
+          "extent": [
+            50.0,
+            -10.0,
+            100.0,
+            30.0
+          ],
+          "grid": "rectilinear",
+          "kind": "forecast",
+          "limitations": [
+            "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+            "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+            "Samples and route extrema do not guarantee conditions between samples.",
+            "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+            "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+          ],
+          "mask_counts": {
+            "air_temperature_c": 82701,
+            "surface_pressure_pa": 82701,
+            "wind_east_m_s": 82701,
+            "wind_north_m_s": 82701
+          },
+          "max_age_hours": 18,
+          "max_time_gap_hours": 3,
+          "normalizer_version": "regular-latlon-zarr-v1",
+          "product": "GFS atmosphere 0.25 degree surface weather",
+          "product_id": "noaa_gfs_weather",
+          "provider": "NOAA NCEP",
+          "release_approved": false,
+          "resolution": {
+            "latitude_degrees": 0.25,
+            "longitude_degrees": 0.2500000000000071
+          },
+          "sampling_version": "masked-bilinear-linear-time-v1",
+          "shape": [
+            9,
+            161,
+            201
+          ],
+          "times": [
+            "2026-10-02T06:00:00Z",
+            "2026-10-02T09:00:00Z",
+            "2026-10-02T12:00:00Z",
+            "2026-10-02T15:00:00Z",
+            "2026-10-02T18:00:00Z",
+            "2026-10-02T21:00:00Z",
+            "2026-10-03T00:00:00Z",
+            "2026-10-03T03:00:00Z",
+            "2026-10-03T06:00:00Z"
+          ],
+          "valid_time_end": "2026-10-03T06:00:00Z",
+          "valid_time_start": "2026-10-02T06:00:00Z",
+          "variable_metadata": {
+            "air_temperature_c": {
+              "bounds": [
+                -90,
+                65
+              ],
+              "colors": [
+                -10,
+                40
+              ],
+              "label": "Air temperature at 2 m",
+              "units": "degree_Celsius"
+            },
+            "surface_pressure_pa": {
+              "bounds": [
+                50000,
+                120000
+              ],
+              "colors": [
+                95000,
+                105000
+              ],
+              "label": "Surface air pressure",
+              "units": "Pa"
+            },
+            "wind_direction_from_deg": {
+              "colors": [
+                0,
+                360
+              ],
+              "direction": "from, clockwise from true north; derived after component interpolation",
+              "label": "Wind direction from true north",
+              "units": "degree"
+            },
+            "wind_east_m_s": {
+              "bounds": [
+                -150,
+                150
+              ],
+              "colors": [
+                -20,
+                20
+              ],
+              "label": "Eastward wind at 10 m",
+              "units": "m s-1"
+            },
+            "wind_north_m_s": {
+              "bounds": [
+                -150,
+                150
+              ],
+              "colors": [
+                -20,
+                20
+              ],
+              "label": "Northward wind at 10 m",
+              "units": "m s-1"
+            },
+            "wind_speed_m_s": {
+              "colors": [
+                0,
+                25
+              ],
+              "label": "Wind speed at 10 m",
+              "units": "m s-1"
+            }
+          },
+          "variables": [
+            "wind_east_m_s",
+            "wind_north_m_s",
+            "air_temperature_c",
+            "surface_pressure_pa"
+          ]
+        },
+        "release_approved": false,
+        "release_id": "1c68666b-7777-59fc-82ec-9bfbfea0f87d",
+        "result": {
+          "latitude": 12.0,
+          "longitude": 72.0,
+          "method": "masked-bilinear-linear-time-v1",
+          "reason": null,
+          "requested_time": "2026-10-02T06:00:00Z",
+          "source_distance_km": 0.0,
+          "spatial_support": [
+            {
+              "latitude": 12.0,
+              "longitude": 72.0,
+              "weight": 1.0
+            }
+          ],
+          "status": "available",
+          "temporal_support": [
+            {
+              "valid_time": "2026-10-02T06:00:00Z",
+              "weight": 1.0
+            }
+          ],
+          "units": "m s-1",
+          "value": 1.5198873723271562
+        },
+        "source_version": "forecast",
+        "variable": "wind_speed_m_s"
+      },
+      "point_request_ms": 28.097292000893503,
+      "route_samples": 15,
+      "route_available_fraction": 1.0,
+      "polygon_available_cells": 9,
+      "tile_bytes": 12292
+    },
+    {
+      "product_id": "noaa_gfs_wave",
+      "release_id": "bffa17c3-2a53-53d8-a547-d37bdbddca5c",
+      "calculation_id": "0ffe8da8-4a05-5e92-bb50-8a833c7f5477",
+      "manifest_sha256": "255d31c6c18519a47804245c9703c58abc20bdb529409287ec104351f390f015",
+      "metadata": {
+        "crs": "EPSG:4326",
+        "grid": "rectilinear",
+        "kind": "forecast",
+        "cycle": "2026-10-02T06:00:00Z",
+        "shape": [
+          9,
+          161,
+          200
+        ],
+        "times": [
+          "2026-10-02T06:00:00Z",
+          "2026-10-02T09:00:00Z",
+          "2026-10-02T12:00:00Z",
+          "2026-10-02T15:00:00Z",
+          "2026-10-02T18:00:00Z",
+          "2026-10-02T21:00:00Z",
+          "2026-10-03T00:00:00Z",
+          "2026-10-03T03:00:00Z",
+          "2026-10-03T06:00:00Z"
+        ],
+        "extent": [
+          50.000001999999995,
+          -10.0,
+          99.75000399999999,
+          30.0
+        ],
+        "product": "GFS-Wave global 0.25 degree",
+        "provider": "NOAA NCEP",
+        "variables": [
+          "wave_height_m",
+          "primary_wave_mean_period_s",
+          "primary_wave_direction_from_deg"
+        ],
+        "product_id": "noaa_gfs_wave",
+        "resolution": {
+          "latitude_degrees": 0.25,
+          "longitude_degrees": 0.2500000100502575
+        },
+        "attribution": "NOAA/NCEP GFS-Wave; model forecast",
+        "limitations": [
+          "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+          "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+          "Samples and route extrema do not guarantee conditions between samples.",
+          "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+          "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+        ],
+        "mask_counts": {
+          "wave_height_m": 83592,
+          "primary_wave_mean_period_s": 83592,
+          "primary_wave_direction_from_deg": 83592
+        },
+        "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/wave/",
+        "max_age_hours": 18,
+        "valid_time_end": "2026-10-03T06:00:00Z",
+        "release_approved": false,
+        "sampling_version": "masked-bilinear-linear-time-v1",
+        "valid_time_start": "2026-10-02T06:00:00Z",
+        "derived_variables": [],
+        "variable_metadata": {
+          "wave_height_m": {
+            "label": "Significant height of combined wind waves and swell",
+            "units": "m",
+            "bounds": [
+              0,
+              40
+            ],
+            "colors": [
+              0,
+              10
+            ]
+          },
+          "primary_wave_mean_period_s": {
+            "label": "Primary wave mean period (NOAA PERPW)",
+            "units": "s",
+            "bounds": [
+              0,
+              40
+            ],
+            "colors": [
+              0,
+              25
+            ]
+          },
+          "primary_wave_direction_from_deg": {
+            "label": "Primary wave direction from true north",
+            "units": "degree",
+            "bounds": [
+              0,
+              360
+            ],
+            "colors": [
+              0,
+              360
+            ],
+            "direction": "from, clockwise from true north; circular component interpolation"
+          }
+        },
+        "max_time_gap_hours": 3,
+        "normalizer_version": "regular-latlon-zarr-v1"
+      },
+      "source_version": "forecast",
+      "raw_artifacts": 9,
+      "zarr_objects": 336,
+      "zarr_bytes": 1044515,
+      "release_code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+      "source_git_commit": "389db134ed5ad1c95d552ab5c0632c6aafcd84e4",
+      "runtime": {
+        "python": "3.12.15",
+        "libraries": {
+          "zarr": "2.18.7",
+          "minio": "7.2.20",
+          "numpy": "2.5.3",
+          "grpcio": "1.78.0",
+          "pillow": "12.3.0",
+          "eccodes": "2.49.0",
+          "netCDF4": "1.7.4",
+          "psycopg": "3.3.6",
+          "shapely": "2.1.2",
+          "protobuf": "6.33.5",
+          "numcodecs": "0.15.1",
+          "eccodeslib": "2.49.0.30"
+        },
+        "requirements_sha256": "7f0c66ad9bb7a21fd3747ea3c03ba0d0d2027868b4ad03ea72459d06f80347fb"
+      },
+      "point_evidence": {
+        "calculation": {
+          "as_of": "2026-10-02T14:32:57.339349+00:00",
+          "code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+          "method_version": "masked-bilinear-linear-time-v1",
+          "output_sha256": "30df109735d0edee398308c066965c0b7ad6956e6ab7762b533c769366241685",
+          "request_sha256": "a542c2c9c6aaac57d783466a9c57117183e93be01a70bdfcad5338a8513f2b42"
+        },
+        "calculation_id": "0ffe8da8-4a05-5e92-bb50-8a833c7f5477",
+        "created_at": "2026-10-02T14:30:04.591943+00:00",
+        "freshness": "available",
+        "manifest_sha256": "255d31c6c18519a47804245c9703c58abc20bdb529409287ec104351f390f015",
+        "metadata": {
+          "attribution": "NOAA/NCEP GFS-Wave; model forecast",
+          "crs": "EPSG:4326",
+          "cycle": "2026-10-02T06:00:00Z",
+          "derived_variables": [],
+          "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/wave/",
+          "extent": [
+            50.000001999999995,
+            -10.0,
+            99.75000399999999,
+            30.0
+          ],
+          "grid": "rectilinear",
+          "kind": "forecast",
+          "limitations": [
+            "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+            "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+            "Samples and route extrema do not guarantee conditions between samples.",
+            "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+            "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+          ],
+          "mask_counts": {
+            "primary_wave_direction_from_deg": 83592,
+            "primary_wave_mean_period_s": 83592,
+            "wave_height_m": 83592
+          },
+          "max_age_hours": 18,
+          "max_time_gap_hours": 3,
+          "normalizer_version": "regular-latlon-zarr-v1",
+          "product": "GFS-Wave global 0.25 degree",
+          "product_id": "noaa_gfs_wave",
+          "provider": "NOAA NCEP",
+          "release_approved": false,
+          "resolution": {
+            "latitude_degrees": 0.25,
+            "longitude_degrees": 0.2500000100502575
+          },
+          "sampling_version": "masked-bilinear-linear-time-v1",
+          "shape": [
+            9,
+            161,
+            200
+          ],
+          "times": [
+            "2026-10-02T06:00:00Z",
+            "2026-10-02T09:00:00Z",
+            "2026-10-02T12:00:00Z",
+            "2026-10-02T15:00:00Z",
+            "2026-10-02T18:00:00Z",
+            "2026-10-02T21:00:00Z",
+            "2026-10-03T00:00:00Z",
+            "2026-10-03T03:00:00Z",
+            "2026-10-03T06:00:00Z"
+          ],
+          "valid_time_end": "2026-10-03T06:00:00Z",
+          "valid_time_start": "2026-10-02T06:00:00Z",
+          "variable_metadata": {
+            "primary_wave_direction_from_deg": {
+              "bounds": [
+                0,
+                360
+              ],
+              "colors": [
+                0,
+                360
+              ],
+              "direction": "from, clockwise from true north; circular component interpolation",
+              "label": "Primary wave direction from true north",
+              "units": "degree"
+            },
+            "primary_wave_mean_period_s": {
+              "bounds": [
+                0,
+                40
+              ],
+              "colors": [
+                0,
+                25
+              ],
+              "label": "Primary wave mean period (NOAA PERPW)",
+              "units": "s"
+            },
+            "wave_height_m": {
+              "bounds": [
+                0,
+                40
+              ],
+              "colors": [
+                0,
+                10
+              ],
+              "label": "Significant height of combined wind waves and swell",
+              "units": "m"
+            }
+          },
+          "variables": [
+            "wave_height_m",
+            "primary_wave_mean_period_s",
+            "primary_wave_direction_from_deg"
+          ]
+        },
+        "release_approved": false,
+        "release_id": "bffa17c3-2a53-53d8-a547-d37bdbddca5c",
+        "result": {
+          "latitude": 12.0,
+          "longitude": 72.0,
+          "method": "masked-bilinear-linear-time-v1",
+          "reason": null,
+          "requested_time": "2026-10-02T06:00:00Z",
+          "source_distance_km": 0.00031372476653909905,
+          "spatial_support": [
+            {
+              "latitude": 12.0,
+              "longitude": 71.750002874372,
+              "weight": 1.153768856965165e-05
+            },
+            {
+              "latitude": 12.0,
+              "longitude": 72.00000288442226,
+              "weight": 0.9999884623114303
+            }
+          ],
+          "status": "available",
+          "temporal_support": [
+            {
+              "valid_time": "2026-10-02T06:00:00Z",
+              "weight": 1.0
+            }
+          ],
+          "units": "m",
+          "value": 0.8600011680735591
+        },
+        "source_version": "forecast",
+        "variable": "wave_height_m"
+      },
+      "point_request_ms": 20.24433400220005,
+      "route_samples": 15,
+      "route_available_fraction": 1.0,
+      "polygon_available_cells": 12,
+      "tile_bytes": 6462
+    },
+    {
+      "product_id": "hycom_espc",
+      "release_id": "ac9a073e-d1d3-50ef-aabf-108a1608bc5b",
+      "calculation_id": "3018ba04-0a40-59ad-ac0a-4c7712c07eff",
+      "manifest_sha256": "169bb598229d7611372101e5f51bf3efeff5a252e2c080d0729989152323ed7a",
+      "metadata": {
+        "crs": "EPSG:4326",
+        "grid": "rectilinear",
+        "kind": "forecast",
+        "cycle": "2026-10-01T12:00:00Z",
+        "shape": [
+          9,
+          1001,
+          626
+        ],
+        "times": [
+          "2026-10-01T12:00:00Z",
+          "2026-10-01T15:00:00Z",
+          "2026-10-01T18:00:00Z",
+          "2026-10-01T21:00:00Z",
+          "2026-10-02T00:00:00Z",
+          "2026-10-02T03:00:00Z",
+          "2026-10-02T06:00:00Z",
+          "2026-10-02T09:00:00Z",
+          "2026-10-02T12:00:00Z"
+        ],
+        "extent": [
+          50.0,
+          -10.0,
+          100.0,
+          30.0
+        ],
+        "product": "ESPC-D-V02 single-run surface currents",
+        "provider": "FNMOC / HYCOM.org",
+        "variables": [
+          "current_east_m_s",
+          "current_north_m_s"
+        ],
+        "product_id": "hycom_espc",
+        "resolution": {
+          "latitude_degrees": 0.039999961853027344,
+          "longitude_degrees": 0.0799560546875
+        },
+        "attribution": "FNMOC ESPC-D-V02 distributed by HYCOM.org; freely available, provided as is; surface (0 m) currents",
+        "limitations": [
+          "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+          "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+          "Samples and route extrema do not guarantee conditions between samples.",
+          "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+          "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+        ],
+        "mask_counts": {
+          "current_east_m_s": 1613916,
+          "current_north_m_s": 1613916
+        },
+        "documentation": "https://www.hycom.org/dataserver/espc-d-v02/global-analysis",
+        "max_age_hours": 72,
+        "valid_time_end": "2026-10-02T12:00:00Z",
+        "release_approved": false,
+        "sampling_version": "masked-bilinear-linear-time-v1",
+        "valid_time_start": "2026-10-01T12:00:00Z",
+        "derived_variables": [
+          "current_speed_m_s",
+          "current_direction_to_deg"
+        ],
+        "variable_metadata": {
+          "current_east_m_s": {
+            "label": "Eastward surface current at 0 m",
+            "units": "m s-1",
+            "bounds": [
+              -10,
+              10
+            ],
+            "colors": [
+              -2,
+              2
+            ]
+          },
+          "current_north_m_s": {
+            "label": "Northward surface current at 0 m",
+            "units": "m s-1",
+            "bounds": [
+              -10,
+              10
+            ],
+            "colors": [
+              -2,
+              2
+            ]
+          },
+          "current_speed_m_s": {
+            "label": "Surface current speed at 0 m",
+            "units": "m s-1",
+            "colors": [
+              0,
+              2
+            ]
+          },
+          "current_direction_to_deg": {
+            "label": "Surface current direction toward true north",
+            "units": "degree",
+            "colors": [
+              0,
+              360
+            ],
+            "direction": "to, clockwise from true north; derived after component interpolation"
+          }
+        },
+        "max_time_gap_hours": 3,
+        "normalizer_version": "regular-latlon-zarr-v1"
+      },
+      "source_version": "forecast",
+      "raw_artifacts": 2,
+      "zarr_objects": 2891,
+      "zarr_bytes": 18051279,
+      "release_code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+      "source_git_commit": "389db134ed5ad1c95d552ab5c0632c6aafcd84e4",
+      "runtime": {
+        "python": "3.12.15",
+        "libraries": {
+          "zarr": "2.18.7",
+          "minio": "7.2.20",
+          "numpy": "2.5.3",
+          "grpcio": "1.78.0",
+          "pillow": "12.3.0",
+          "eccodes": "2.49.0",
+          "netCDF4": "1.7.4",
+          "psycopg": "3.3.6",
+          "shapely": "2.1.2",
+          "protobuf": "6.33.5",
+          "numcodecs": "0.15.1",
+          "eccodeslib": "2.49.0.30"
+        },
+        "requirements_sha256": "7f0c66ad9bb7a21fd3747ea3c03ba0d0d2027868b4ad03ea72459d06f80347fb"
+      },
+      "point_evidence": {
+        "calculation": {
+          "as_of": "2026-10-02T14:32:57.788301+00:00",
+          "code_sha256": "b5e81318579899476a86e3abceac6031e06a8cf302e16b606bf78555cc38e63c",
+          "method_version": "masked-bilinear-linear-time-v1",
+          "output_sha256": "4fdb67eddd55f2cc02dd51f7348a866e98576faa1a6fb3cfc5ec49bb5ae854eb",
+          "request_sha256": "33d70f9a964d644dd0c13e90353bbbb76f1162cd1ef3d4e771eda9fb1b2bf7cd"
+        },
+        "calculation_id": "3018ba04-0a40-59ad-ac0a-4c7712c07eff",
+        "created_at": "2026-10-02T14:29:59.217616+00:00",
+        "freshness": "available",
+        "manifest_sha256": "169bb598229d7611372101e5f51bf3efeff5a252e2c080d0729989152323ed7a",
+        "metadata": {
+          "attribution": "FNMOC ESPC-D-V02 distributed by HYCOM.org; freely available, provided as is; surface (0 m) currents",
+          "crs": "EPSG:4326",
+          "cycle": "2026-10-01T12:00:00Z",
+          "derived_variables": [
+            "current_speed_m_s",
+            "current_direction_to_deg"
+          ],
+          "documentation": "https://www.hycom.org/dataserver/espc-d-v02/global-analysis",
+          "extent": [
+            50.0,
+            -10.0,
+            100.0,
+            30.0
+          ],
+          "grid": "rectilinear",
+          "kind": "forecast",
+          "limitations": [
+            "Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.",
+            "Conservative masks do not resolve local coastal hazards, tides or navigation channels.",
+            "Samples and route extrema do not guarantee conditions between samples.",
+            "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.",
+            "A single retained download does not establish provider cadence, uptime or public scientific release approval."
+          ],
+          "mask_counts": {
+            "current_east_m_s": 1613916,
+            "current_north_m_s": 1613916
+          },
+          "max_age_hours": 72,
+          "max_time_gap_hours": 3,
+          "normalizer_version": "regular-latlon-zarr-v1",
+          "product": "ESPC-D-V02 single-run surface currents",
+          "product_id": "hycom_espc",
+          "provider": "FNMOC / HYCOM.org",
+          "release_approved": false,
+          "resolution": {
+            "latitude_degrees": 0.039999961853027344,
+            "longitude_degrees": 0.0799560546875
+          },
+          "sampling_version": "masked-bilinear-linear-time-v1",
+          "shape": [
+            9,
+            1001,
+            626
+          ],
+          "times": [
+            "2026-10-01T12:00:00Z",
+            "2026-10-01T15:00:00Z",
+            "2026-10-01T18:00:00Z",
+            "2026-10-01T21:00:00Z",
+            "2026-10-02T00:00:00Z",
+            "2026-10-02T03:00:00Z",
+            "2026-10-02T06:00:00Z",
+            "2026-10-02T09:00:00Z",
+            "2026-10-02T12:00:00Z"
+          ],
+          "valid_time_end": "2026-10-02T12:00:00Z",
+          "valid_time_start": "2026-10-01T12:00:00Z",
+          "variable_metadata": {
+            "current_direction_to_deg": {
+              "colors": [
+                0,
+                360
+              ],
+              "direction": "to, clockwise from true north; derived after component interpolation",
+              "label": "Surface current direction toward true north",
+              "units": "degree"
+            },
+            "current_east_m_s": {
+              "bounds": [
+                -10,
+                10
+              ],
+              "colors": [
+                -2,
+                2
+              ],
+              "label": "Eastward surface current at 0 m",
+              "units": "m s-1"
+            },
+            "current_north_m_s": {
+              "bounds": [
+                -10,
+                10
+              ],
+              "colors": [
+                -2,
+                2
+              ],
+              "label": "Northward surface current at 0 m",
+              "units": "m s-1"
+            },
+            "current_speed_m_s": {
+              "colors": [
+                0,
+                2
+              ],
+              "label": "Surface current speed at 0 m",
+              "units": "m s-1"
+            }
+          },
+          "variables": [
+            "current_east_m_s",
+            "current_north_m_s"
+          ]
+        },
+        "release_approved": false,
+        "release_id": "ac9a073e-d1d3-50ef-aabf-108a1608bc5b",
+        "result": {
+          "latitude": 12.0,
+          "longitude": 72.0,
+          "method": "masked-bilinear-linear-time-v1",
+          "reason": null,
+          "requested_time": "2026-10-01T12:00:00Z",
+          "source_distance_km": 0.0,
+          "spatial_support": [
+            {
+              "latitude": 12.0,
+              "longitude": 72.0,
+              "weight": 1.0
+            }
+          ],
+          "status": "available",
+          "temporal_support": [
+            {
+              "valid_time": "2026-10-01T12:00:00Z",
+              "weight": 1.0
+            }
+          ],
+          "units": "m s-1",
+          "value": 0.1600281338518918
+        },
+        "source_version": "forecast",
+        "variable": "current_speed_m_s"
+      },
+      "point_request_ms": 38.60300000087591,
+      "route_samples": 15,
+      "route_available_fraction": 1.0,
+      "polygon_available_cells": 325,
+      "tile_bytes": 76071
+    }
+  ]
+}

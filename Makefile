@@ -179,3 +179,26 @@ anomaly-benchmark:
 	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline benchmark '$(ANOMALY_ID)'
 anomaly-maintain:
 	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline maintain --limit 500
+
+.PHONY: fields-setup phase8-verify phase8-reliability phase8-smoke field-ingest field-refresh field-verify field-maintain field-replay
+fields-setup:
+	uv pip install --python .venv/bin/python -r ml/requirements-fields.lock -e ./ml
+phase8-verify:
+	.venv/bin/python scripts/verify_phase8.py
+phase8-reliability:
+	.venv/bin/python scripts/verify_phase8_reliability.py
+phase8-smoke:
+	.venv/bin/python scripts/verify_phase8_smoke.py
+field-ingest:
+	@test -n '$(PRODUCT)' || (echo 'Set PRODUCT to a catalog product ID'; exit 1)
+	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline ingest '$(PRODUCT)' $(if $(CYCLE),--cycle '$(CYCLE)') $(if $(DAY),--day '$(DAY)') $(if $(HOURS),--hours '$(HOURS)')
+field-refresh:
+	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline refresh
+field-verify:
+	@test -n '$(FIELD_ID)' || (echo 'Set FIELD_ID to an immutable field release'; exit 1)
+	docker compose exec -T field-service python -m nautiq_ml.fields.pipeline verify '$(FIELD_ID)'
+field-maintain:
+	docker compose exec -T field-service python -m nautiq_ml.fields.pipeline maintain
+field-replay:
+	@test -n '$(FIELD_ID)' || (echo 'Set FIELD_ID to an immutable field release'; exit 1)
+	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline replay '$(FIELD_ID)'

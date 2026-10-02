@@ -88,7 +88,6 @@ def main():
         for k in (
             "ml_residual",
             "profile_anomaly",
-            "field_sampling",
             "official_advisories",
             "trip_assessment",
         )

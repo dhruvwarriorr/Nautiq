@@ -140,3 +140,53 @@ message AnomalyResponse {
   bytes result_json = 7;
   bool release_approved = 8;
 }
+
+// Each request pins exactly one immutable field release (and therefore one cycle).
+service FieldService {
+  rpc Sample(FieldSampleRequest) returns (FieldEvidence);
+  rpc Route(FieldRouteRequest) returns (FieldEvidence);
+  rpc Polygon(FieldPolygonRequest) returns (FieldEvidence);
+  rpc Tile(FieldTileRequest) returns (FieldTileResponse);
+}
+message TimedFieldPoint {
+  double latitude = 1;
+  double longitude = 2;
+  string time = 3;
+}
+message FieldSampleRequest {
+  string release_id = 1;
+  string variable = 2;
+  TimedFieldPoint point = 3;
+}
+message FieldRouteRequest {
+  string release_id = 1;
+  string variable = 2;
+  repeated TimedFieldPoint waypoints = 3;
+  double spacing_km = 4;
+  double step_minutes = 5;
+}
+message FieldPolygonRequest {
+  string release_id = 1;
+  string variable = 2;
+  bytes geometry_json = 3;
+  string time = 4;
+}
+message FieldEvidence {
+  string release_id = 1;
+  string manifest_sha256 = 2;
+  bytes result_json = 3;
+}
+message FieldTileRequest {
+  string release_id = 1;
+  string variable = 2;
+  string time = 3;
+  int32 z = 4;
+  int32 x = 5;
+  int32 y = 6;
+}
+message FieldTileResponse {
+  string release_id = 1;
+  string manifest_sha256 = 2;
+  bytes png = 3;
+  bytes metadata_json = 4;
+}

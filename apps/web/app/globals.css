@@ -8,3 +8,22 @@ nav button{font:inherit;color:inherit;background:none;border:0;text-decoration:u
 
 .explorer td small { display: block; margin-top: .35rem; color: #53645f; font-size: .8rem; }
 .depth-curve{max-width:520px;margin:28px 0}.depth-curve svg{width:100%;height:auto;display:block;fill:#163c40}.depth-curve figcaption{font-size:12px;line-height:1.6}
+/* Surface fields reuse the evidence explorer's restrained visual system. */
+.field-controls {display:flex;flex-wrap:wrap;align-items:end;gap:1rem;margin:1.5rem 0}
+.field-metadata {grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.field-metadata dd{overflow-wrap:anywhere}.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}.evidence-grid section{border-top:1px solid #cbd3ce}.evidence-grid .footnote{margin-top:1rem}
+.field-controls label {display:grid;gap:.5rem;flex:1;min-width:180px}
+.field-controls input,.field-controls select,.field-viewer table input {font:inherit;color:inherit;background:#fff;border:1px solid #cbd3ce;border-radius:4px;padding:.65rem;min-height:44px;max-width:100%}
+.field-controls input,.field-controls select {width:100%;min-width:0}
+.field-viewer button {font:inherit;color:inherit;background:#f0f3ee;border:1px solid #cbd3ce;border-radius:4px;padding:.65rem 1rem;min-height:44px;cursor:pointer}
+.field-viewer button:disabled {opacity:.55;cursor:default}
+.field-map-controls {display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.field-map {display:block;width:100%;aspect-ratio:3/2;border:1px solid #cbd3ce;border-radius:6px;cursor:crosshair}
+.field-viewer figure {margin:1rem 0}
+.field-viewer figcaption {font-size:.9rem;color:#52675e;margin:.75rem 0}
+.field-timeline {display:grid;gap:.75rem;margin:1.5rem 0}
+.field-timeline input {width:100%;accent-color:#1c8491}
+.field-legend {display:flex;align-items:center;gap:1rem;font-size:.85rem;margin:1rem 0}
+.field-legend div {flex:1;height:12px;background:linear-gradient(90deg,#183759,#1c8491,#e1da95,#da753a,#973034)}
+.field-viewer table input {width:100%;min-width:110px}
+.field-viewer table input[type=datetime-local] {min-width:200px}
+@media(max-width:600px) {.field-metadata,.evidence-grid{grid-template-columns:1fr}.field-map-controls button{flex:1}.field-controls{gap:.75rem}.field-controls label{flex-basis:100%;min-width:0}.field-legend{gap:.5rem;font-size:.75rem}}

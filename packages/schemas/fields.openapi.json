@@ -1,0 +1,1448 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq regional field evidence",
+    "version": "1.0.0",
+    "description": "One explicit immutable release per request. No mixed cycles, nearest-water substitution or safety verdict. Daily analysis is held only in its full UTC day. Forecasts interpolate native components/strict masks in space and valid time. Stale retained values stay labeled stale. Missing values are null. Route extrema include retained stale samples and do not guarantee unsampled extremes. Polygon means use available native centers and cosine latitude weights; dateline polygons must be split. Request 32 KiB, query 4 KiB, RPC 1 MiB, response 900 KiB, tile 300 KiB, timeout 6 seconds. Limits never silently coarsen routes."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/fields": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Pinned evidence with explicit support and freshness",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/fields/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Pinned evidence with explicit support and freshness",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Release"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/fields/sample": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Pinned evidence with explicit support and freshness",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PointEvidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "release_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "variable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ]
+      }
+    },
+    "/fields/route": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Pinned evidence with explicit support and freshness",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteEvidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fields/polygon": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Pinned evidence with explicit support and freshness",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolygonEvidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded public error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolygonRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fields/{id}/tiles/{variable}/{z}/{x}/{y}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "variable",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "z",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            }
+          },
+          {
+            "name": "x",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "y",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "256x256 RGBA Web Mercator native-nearest raster; masks/outside domain transparent. Fixed legend is in variable metadata. X-Field-* headers pin release/checksum/cycle/valid-time/freshness.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinate, variable or horizon"
+          },
+          "503": {
+            "description": "Runtime or verified chunks unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "code"
+        ],
+        "additionalProperties": true
+      },
+      "Variable": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          },
+          "bounds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "direction": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "units",
+          "colors"
+        ],
+        "additionalProperties": false
+      },
+      "Metadata": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "analysis",
+              "forecast"
+            ]
+          },
+          "cycle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "valid_time_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_time_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "times": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "minItems": 1,
+            "maxItems": 25
+          },
+          "max_age_hours": {
+            "type": "number"
+          },
+          "max_time_gap_hours": {
+            "type": "number"
+          },
+          "documentation": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "derived_variables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0,
+            "maxItems": 4
+          },
+          "extent": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "resolution": {
+            "type": "object",
+            "properties": {
+              "longitude_degrees": {
+                "type": "number"
+              },
+              "latitude_degrees": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "longitude_degrees",
+              "latitude_degrees"
+            ],
+            "additionalProperties": false
+          },
+          "shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "crs": {
+            "const": "EPSG:4326"
+          },
+          "grid": {
+            "const": "rectilinear"
+          },
+          "normalizer_version": {
+            "type": "string"
+          },
+          "sampling_version": {
+            "type": "string"
+          },
+          "variable_metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Variable"
+            }
+          },
+          "mask_counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0
+          },
+          "release_approved": {
+            "const": false
+          }
+        },
+        "required": [
+          "product_id",
+          "provider",
+          "product",
+          "kind",
+          "cycle",
+          "valid_time_start",
+          "valid_time_end",
+          "times",
+          "max_age_hours",
+          "max_time_gap_hours",
+          "documentation",
+          "attribution",
+          "variables",
+          "derived_variables",
+          "extent",
+          "resolution",
+          "shape",
+          "crs",
+          "grid",
+          "normalizer_version",
+          "sampling_version",
+          "variable_metadata",
+          "mask_counts",
+          "limitations",
+          "release_approved"
+        ],
+        "additionalProperties": false
+      },
+      "Sample": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "requested_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "units": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "stale",
+              "unavailable",
+              "outside_domain",
+              "outside_horizon"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spatial_support": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "type": "number"
+                },
+                "longitude": {
+                  "type": "number"
+                },
+                "weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude",
+                "weight"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0,
+            "maxItems": 4
+          },
+          "temporal_support": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "valid_time": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "valid_time",
+                "weight"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0,
+            "maxItems": 2
+          },
+          "method": {
+            "type": "string"
+          },
+          "source_distance_km": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude",
+          "requested_time",
+          "value",
+          "units",
+          "status",
+          "reason",
+          "spatial_support",
+          "temporal_support",
+          "method",
+          "source_distance_km"
+        ],
+        "additionalProperties": false
+      },
+      "Evidence": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_version": {
+            "enum": [
+              "preliminary",
+              "final",
+              "forecast"
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "freshness": {
+            "enum": [
+              "available",
+              "stale"
+            ]
+          },
+          "variable": {
+            "type": "string"
+          },
+          "release_approved": {
+            "const": false
+          },
+          "result": {
+            "type": "object"
+          },
+          "calculation": {
+            "type": "object",
+            "required": [
+              "as_of",
+              "method_version",
+              "code_sha256",
+              "request_sha256",
+              "output_sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "as_of": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "method_version": {
+                "type": "string"
+              },
+              "code_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "request_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "output_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "required": [
+          "release_id",
+          "calculation_id",
+          "manifest_sha256",
+          "created_at",
+          "source_version",
+          "metadata",
+          "freshness",
+          "variable",
+          "release_approved",
+          "result",
+          "calculation"
+        ],
+        "additionalProperties": false
+      },
+      "PointEvidence": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/Sample"
+              }
+            }
+          }
+        ]
+      },
+      "RouteResult": {
+        "type": "object",
+        "properties": {
+          "sampling": {
+            "type": "object",
+            "properties": {
+              "distance_km": {
+                "type": "number"
+              },
+              "spacing_km": {
+                "type": "number"
+              },
+              "step_minutes": {
+                "type": "number"
+              },
+              "path": {
+                "type": "string"
+              },
+              "sample_count": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 512
+              }
+            },
+            "required": [
+              "distance_km",
+              "spacing_km",
+              "step_minutes",
+              "path",
+              "sample_count"
+            ],
+            "additionalProperties": false
+          },
+          "samples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sample"
+            },
+            "minItems": 2,
+            "maxItems": 512
+          },
+          "status": {
+            "enum": [
+              "available",
+              "partial",
+              "unavailable"
+            ]
+          },
+          "available_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "sampled_minimum": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "sampled_maximum": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "extrema_scope": {
+            "type": "string"
+          },
+          "assessment": {
+            "const": "not_assessed"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "sampling",
+          "samples",
+          "status",
+          "available_fraction",
+          "sampled_minimum",
+          "sampled_maximum",
+          "extrema_scope",
+          "assessment",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "RouteEvidence": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/RouteResult"
+              }
+            }
+          }
+        ]
+      },
+      "PolygonResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "available",
+              "partial",
+              "unavailable",
+              "outside_domain"
+            ]
+          },
+          "native_cells": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "available_cells": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "available_fraction": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "area_weighted_mean": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "minimum": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "maximum": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "method": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "native_cells",
+          "available_cells",
+          "available_fraction",
+          "area_weighted_mean",
+          "minimum",
+          "maximum",
+          "method",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "PolygonEvidence": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/PolygonResult"
+              }
+            }
+          }
+        ]
+      },
+      "ReleaseSummary": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cycle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "valid_time_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_time_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_version": {
+            "enum": [
+              "preliminary",
+              "final",
+              "forecast"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "freshness": {
+            "enum": [
+              "available",
+              "stale"
+            ]
+          }
+        },
+        "required": [
+          "release_id",
+          "product_id",
+          "calculation_id",
+          "cycle",
+          "valid_time_start",
+          "valid_time_end",
+          "source_version",
+          "created_at",
+          "manifest_sha256",
+          "status",
+          "release_approved",
+          "metadata",
+          "selected",
+          "freshness"
+        ],
+        "additionalProperties": false
+      },
+      "Release": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cycle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "valid_time_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_time_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_version": {
+            "enum": [
+              "preliminary",
+              "final",
+              "forecast"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ]
+          },
+          "release_approved": {
+            "const": false
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "freshness": {
+            "enum": [
+              "available",
+              "stale"
+            ]
+          },
+          "manifest": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "release_id",
+          "product_id",
+          "calculation_id",
+          "cycle",
+          "valid_time_start",
+          "valid_time_end",
+          "source_version",
+          "created_at",
+          "manifest_sha256",
+          "status",
+          "release_approved",
+          "metadata",
+          "selected",
+          "freshness",
+          "manifest"
+        ],
+        "additionalProperties": false
+      },
+      "Catalog": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReleaseSummary"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        },
+        "required": [
+          "items",
+          "products"
+        ],
+        "additionalProperties": false
+      },
+      "TimedPoint": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -85,
+            "maximum": 85
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude",
+          "time"
+        ],
+        "additionalProperties": false
+      },
+      "RouteRequest": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "waypoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimedPoint"
+            },
+            "minItems": 2,
+            "maxItems": 32
+          },
+          "spacing_km": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 5,
+            "default": 5
+          },
+          "step_minutes": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 30,
+            "default": 30
+          }
+        },
+        "required": [
+          "release_id",
+          "variable",
+          "waypoints"
+        ],
+        "additionalProperties": false
+      },
+      "PolygonRequest": {
+        "type": "object",
+        "properties": {
+          "release_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "geometry": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "release_id",
+          "variable",
+          "time",
+          "geometry"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

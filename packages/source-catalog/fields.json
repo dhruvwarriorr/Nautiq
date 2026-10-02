@@ -1,0 +1,30 @@
+{
+  "version": "surface-fields-v1",
+  "normalizer": "regular-latlon-zarr-v1",
+  "sampling": "masked-bilinear-linear-time-v1",
+  "bbox": [50, -10, 100, 30],
+  "limits": {"raw_bytes": 67108864, "total_download_bytes": 134217728, "cells": 16000000, "normalized_bytes": 134217728, "objects": 4096, "max_times": 25, "route_waypoints": 32, "route_samples": 512, "route_km": 1000, "route_hours": 96, "polygon_cells": 10000, "tile_zoom": 12},
+  "products": {
+    "noaa_oisst": {"provider": "NOAA NCEI", "product": "OISST v2.1 daily blended SST analysis", "kind": "analysis", "max_age_hours": 72, "max_time_gap_hours": 24, "documentation": "https://www.ncei.noaa.gov/products/optimum-interpolation-sst", "attribution": "NOAA/NCEI OISST v2.1; blended satellite and in-situ analysis, not independent Argo validation", "variables": ["sst_c"]},
+    "noaa_gfs_wave": {"provider": "NOAA NCEP", "product": "GFS-Wave global 0.25 degree", "kind": "forecast", "max_age_hours": 18, "max_time_gap_hours": 3, "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/wave/", "attribution": "NOAA/NCEP GFS-Wave; model forecast", "variables": ["wave_height_m", "primary_wave_mean_period_s", "primary_wave_direction_from_deg"]},
+    "noaa_gfs_weather": {"provider": "NOAA NCEP", "product": "GFS atmosphere 0.25 degree surface weather", "kind": "forecast", "max_age_hours": 18, "max_time_gap_hours": 3, "documentation": "https://www.nco.ncep.noaa.gov/pmb/products/gfs/nomads/", "attribution": "NOAA/NCEP GFS; 10 m wind and 2 m air temperature; model forecast", "variables": ["wind_east_m_s", "wind_north_m_s", "air_temperature_c", "surface_pressure_pa"]},
+    "hycom_espc": {"provider": "FNMOC / HYCOM.org", "product": "ESPC-D-V02 single-run surface currents", "kind": "forecast", "max_age_hours": 72, "max_time_gap_hours": 3, "documentation": "https://www.hycom.org/dataserver/espc-d-v02/global-analysis", "attribution": "FNMOC ESPC-D-V02 distributed by HYCOM.org; freely available, provided as is; surface (0 m) currents", "variables": ["current_east_m_s", "current_north_m_s"]}
+  },
+  "variables": {
+    "sst_c": {"label": "Blended sea surface temperature", "units": "degree_Celsius", "bounds": [-3, 45], "colors": [-2, 35]},
+    "wave_height_m": {"label": "Significant height of combined wind waves and swell", "units": "m", "bounds": [0, 40], "colors": [0, 10]},
+    "primary_wave_mean_period_s": {"label": "Primary wave mean period (NOAA PERPW)", "units": "s", "bounds": [0, 40], "colors": [0, 25]},
+    "primary_wave_direction_from_deg": {"label": "Primary wave direction from true north", "units": "degree", "bounds": [0, 360], "colors": [0, 360], "direction": "from, clockwise from true north; circular component interpolation"},
+    "wind_east_m_s": {"label": "Eastward wind at 10 m", "units": "m s-1", "bounds": [-150, 150], "colors": [-20, 20]},
+    "wind_north_m_s": {"label": "Northward wind at 10 m", "units": "m s-1", "bounds": [-150, 150], "colors": [-20, 20]},
+    "air_temperature_c": {"label": "Air temperature at 2 m", "units": "degree_Celsius", "bounds": [-90, 65], "colors": [-10, 40]},
+    "surface_pressure_pa": {"label": "Surface air pressure", "units": "Pa", "bounds": [50000, 120000], "colors": [95000, 105000]},
+    "current_east_m_s": {"label": "Eastward surface current at 0 m", "units": "m s-1", "bounds": [-10, 10], "colors": [-2, 2]},
+    "current_north_m_s": {"label": "Northward surface current at 0 m", "units": "m s-1", "bounds": [-10, 10], "colors": [-2, 2]},
+    "wind_speed_m_s": {"label": "Wind speed at 10 m", "units": "m s-1", "colors": [0, 25]},
+    "wind_direction_from_deg": {"label": "Wind direction from true north", "units": "degree", "colors": [0, 360], "direction": "from, clockwise from true north; derived after component interpolation"},
+    "current_speed_m_s": {"label": "Surface current speed at 0 m", "units": "m s-1", "colors": [0, 2]},
+    "current_direction_to_deg": {"label": "Surface current direction toward true north", "units": "degree", "colors": [0, 360], "direction": "to, clockwise from true north; derived after component interpolation"}
+  },
+  "limitations": ["Regional rectilinear WGS84 grids only; curvilinear/projected grids require a separately reviewed adapter.", "Conservative masks do not resolve local coastal hazards, tides or navigation channels.", "Samples and route extrema do not guarantee conditions between samples.", "Forecast cycles, valid times and received times are separate; SST is a daily analysis, not a forecast.", "A single retained download does not establish provider cadence, uptime or public scientific release approval."]
+}

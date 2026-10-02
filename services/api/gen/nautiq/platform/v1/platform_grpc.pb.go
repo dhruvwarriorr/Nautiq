@@ -437,3 +437,223 @@ var AnomalyService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "nautiq/platform/v1/platform.proto",
 }
+
+const (
+	FieldService_Sample_FullMethodName  = "/nautiq.platform.v1.FieldService/Sample"
+	FieldService_Route_FullMethodName   = "/nautiq.platform.v1.FieldService/Route"
+	FieldService_Polygon_FullMethodName = "/nautiq.platform.v1.FieldService/Polygon"
+	FieldService_Tile_FullMethodName    = "/nautiq.platform.v1.FieldService/Tile"
+)
+
+// FieldServiceClient is the client API for FieldService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Each request pins exactly one immutable field release (and therefore one cycle).
+type FieldServiceClient interface {
+	Sample(ctx context.Context, in *FieldSampleRequest, opts ...grpc.CallOption) (*FieldEvidence, error)
+	Route(ctx context.Context, in *FieldRouteRequest, opts ...grpc.CallOption) (*FieldEvidence, error)
+	Polygon(ctx context.Context, in *FieldPolygonRequest, opts ...grpc.CallOption) (*FieldEvidence, error)
+	Tile(ctx context.Context, in *FieldTileRequest, opts ...grpc.CallOption) (*FieldTileResponse, error)
+}
+
+type fieldServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFieldServiceClient(cc grpc.ClientConnInterface) FieldServiceClient {
+	return &fieldServiceClient{cc}
+}
+
+func (c *fieldServiceClient) Sample(ctx context.Context, in *FieldSampleRequest, opts ...grpc.CallOption) (*FieldEvidence, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FieldEvidence)
+	err := c.cc.Invoke(ctx, FieldService_Sample_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fieldServiceClient) Route(ctx context.Context, in *FieldRouteRequest, opts ...grpc.CallOption) (*FieldEvidence, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FieldEvidence)
+	err := c.cc.Invoke(ctx, FieldService_Route_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fieldServiceClient) Polygon(ctx context.Context, in *FieldPolygonRequest, opts ...grpc.CallOption) (*FieldEvidence, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FieldEvidence)
+	err := c.cc.Invoke(ctx, FieldService_Polygon_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fieldServiceClient) Tile(ctx context.Context, in *FieldTileRequest, opts ...grpc.CallOption) (*FieldTileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FieldTileResponse)
+	err := c.cc.Invoke(ctx, FieldService_Tile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FieldServiceServer is the server API for FieldService service.
+// All implementations must embed UnimplementedFieldServiceServer
+// for forward compatibility.
+//
+// Each request pins exactly one immutable field release (and therefore one cycle).
+type FieldServiceServer interface {
+	Sample(context.Context, *FieldSampleRequest) (*FieldEvidence, error)
+	Route(context.Context, *FieldRouteRequest) (*FieldEvidence, error)
+	Polygon(context.Context, *FieldPolygonRequest) (*FieldEvidence, error)
+	Tile(context.Context, *FieldTileRequest) (*FieldTileResponse, error)
+	mustEmbedUnimplementedFieldServiceServer()
+}
+
+// UnimplementedFieldServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedFieldServiceServer struct{}
+
+func (UnimplementedFieldServiceServer) Sample(context.Context, *FieldSampleRequest) (*FieldEvidence, error) {
+	return nil, status.Error(codes.Unimplemented, "method Sample not implemented")
+}
+func (UnimplementedFieldServiceServer) Route(context.Context, *FieldRouteRequest) (*FieldEvidence, error) {
+	return nil, status.Error(codes.Unimplemented, "method Route not implemented")
+}
+func (UnimplementedFieldServiceServer) Polygon(context.Context, *FieldPolygonRequest) (*FieldEvidence, error) {
+	return nil, status.Error(codes.Unimplemented, "method Polygon not implemented")
+}
+func (UnimplementedFieldServiceServer) Tile(context.Context, *FieldTileRequest) (*FieldTileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Tile not implemented")
+}
+func (UnimplementedFieldServiceServer) mustEmbedUnimplementedFieldServiceServer() {}
+func (UnimplementedFieldServiceServer) testEmbeddedByValue()                      {}
+
+// UnsafeFieldServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FieldServiceServer will
+// result in compilation errors.
+type UnsafeFieldServiceServer interface {
+	mustEmbedUnimplementedFieldServiceServer()
+}
+
+func RegisterFieldServiceServer(s grpc.ServiceRegistrar, srv FieldServiceServer) {
+	// If the following call panics, it indicates UnimplementedFieldServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&FieldService_ServiceDesc, srv)
+}
+
+func _FieldService_Sample_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FieldSampleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FieldServiceServer).Sample(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FieldService_Sample_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FieldServiceServer).Sample(ctx, req.(*FieldSampleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FieldService_Route_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FieldRouteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FieldServiceServer).Route(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FieldService_Route_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FieldServiceServer).Route(ctx, req.(*FieldRouteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FieldService_Polygon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FieldPolygonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FieldServiceServer).Polygon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FieldService_Polygon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FieldServiceServer).Polygon(ctx, req.(*FieldPolygonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FieldService_Tile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FieldTileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FieldServiceServer).Tile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FieldService_Tile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FieldServiceServer).Tile(ctx, req.(*FieldTileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// FieldService_ServiceDesc is the grpc.ServiceDesc for FieldService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FieldService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "nautiq.platform.v1.FieldService",
+	HandlerType: (*FieldServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Sample",
+			Handler:    _FieldService_Sample_Handler,
+		},
+		{
+			MethodName: "Route",
+			Handler:    _FieldService_Route_Handler,
+		},
+		{
+			MethodName: "Polygon",
+			Handler:    _FieldService_Polygon_Handler,
+		},
+		{
+			MethodName: "Tile",
+			Handler:    _FieldService_Tile_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "nautiq/platform/v1/platform.proto",
+}
