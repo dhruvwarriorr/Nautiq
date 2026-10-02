@@ -110,6 +110,19 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
+  advisory-worker:
+    build: {context: ., dockerfile: ml/Advisories.Dockerfile}
+    environment: *field_environment
+    profiles: [advisories-tools]
+    read_only: true
+    tmpfs: ['/tmp:size=128m,mode=1777']
+    mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
   event-worker:
     build: {context: ., dockerfile: ml/Events.Dockerfile}
     environment: *field_environment

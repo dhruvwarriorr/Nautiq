@@ -1,0 +1,40 @@
+{
+  "version": "official-cap-v1",
+  "method": "cap-identity-validity-geometry-v1",
+  "production_approved": false,
+  "sources": [
+    {
+      "id": "ndma_cap_rss",
+      "authority": "NDMA India / originating CAP sender",
+      "authority_registry": "https://alertingauthority.wmo.int/authorities.php?recId=331",
+      "url": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml",
+      "integration_guide": "https://sachet.ndma.gov.in/docs/Integration_Guide_For_Agencies.pdf",
+      "enabled": true,
+      "required": true,
+      "transport_max_age_seconds": 1800,
+      "marine_coverage_verified": false,
+      "cadence_verified": false,
+      "redistribution_reviewed": false
+    },
+    {
+      "id": "incois_advisories",
+      "authority": "INCOIS",
+      "url": null,
+      "documentation": "https://www.incois.gov.in/oceanservices/osfforecast.jsp",
+      "enabled": false,
+      "required": true,
+      "transport_max_age_seconds": 1800,
+      "marine_coverage_verified": false,
+      "cadence_verified": false,
+      "redistribution_reviewed": false
+    }
+  ],
+  "limits": {"feed_items": 128, "xml_bytes": 1048576, "feed_bytes": 4194304, "run_bytes": 33554432, "xml_nodes": 10000, "vertices": 4096, "infos": 16, "areas": 64, "references": 64, "messages": 4000},
+  "poll_seconds": 900,
+  "limitations": [
+    "The registered public CAP feed is retained as official source evidence. Transport freshness does not establish complete marine warning coverage.",
+    "INCOIS machine access, marine coverage, source cadence and redistribution review remain unverified. The advisory state is unknown unless a relevant retained official warning is established.",
+    "Text-only areas, unmapped geocodes, absent expiry, invalid geometries, identity conflicts and unresolved revisions remain potential warnings with unknown relevance.",
+    "Only an explicit valid same-sender CAP Update or Cancel withdraws a referenced warning. Feed disappearance never cancels it."
+  ]
+}

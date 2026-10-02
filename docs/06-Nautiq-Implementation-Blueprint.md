@@ -816,3 +816,7 @@ The [field implementation report](17-Phase-8-Delivery.md), [OpenAPI contract](..
 ## Event implementation update
 
 The [event implementation report](18-Phase-9-Delivery.md), [OpenAPI contract](../packages/schemas/events.openapi.json) and [real-source evidence](evidence/phase9-summary.json) complete section 12. A retained fixed daily NOAA SST baseline supplies strict percentile/persistence detection and native space/time grouping. Profile departures remain distinct sparse MultiPoint diagnostics with explicit isolation/support rules. Atomic publication, input/calc checksums, missing-day refusal, replay, snapshot races and browser evidence establish local implementation. Scientific event approval, independent event/quiet-period audits, advisory completeness and trip thresholds remain separate gates.
+
+## Official advisory implementation evidence
+
+The [advisory delivery](19-Phase-10-Delivery.md), [API contract](../packages/schemas/advisories.openapi.json) and [retained real-source summary](evidence/phase10-summary.json) implement section 13's source adapter, geometry/validity, health/revisions and UI. The registered NDMA CAP source uses mandatory conditional ETags and immutable evidence. Unknown marine coverage, missing geometry/expiry, unresolved references and stale feeds remain explicit. Official warning precedence is implemented independently from scientific events; complete operational marine coverage and approved trip policy remain release gates.

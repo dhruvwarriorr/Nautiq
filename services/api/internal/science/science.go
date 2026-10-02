@@ -35,6 +35,9 @@ func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/advisories", s.bound(s.advisoryCatalog))
+	mux.Handle("GET /api/v1/advisories/state", s.bound(s.advisoryState))
+	mux.Handle("GET /api/v1/advisories/{id}", s.bound(s.advisoryDetail))
 	mux.Handle("GET /api/v1/event-datasets", s.bound(s.eventDatasets))
 	mux.Handle("GET /api/v1/event-datasets/{id}", s.bound(s.eventDataset))
 	mux.Handle("GET /api/v1/event-runs", s.bound(s.eventRuns))

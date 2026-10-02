@@ -1,0 +1,40 @@
+{
+  "method": "cap-identity-validity-geometry-v1",
+  "run_id": "d3008b26-cb53-5b0c-8cc4-dd235258ee87",
+  "calculation_id": "c9e251af-2f66-5fe0-86c4-1ab6697f372a",
+  "report_sha256": "73787f1845f1823b268d205dbb1ead11eb9ab111d50c8895fc3201d4e94a5c3d",
+  "source": "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml",
+  "retained_bulletins": 99,
+  "operational_bulletins": 99,
+  "polygon_count": 0,
+  "circle_count": 0,
+  "unresolved_revision_bulletins": 44,
+  "sources": [
+    {
+      "source_id": "incois_advisories",
+      "transport": "unconfigured",
+      "checked_at": null,
+      "coverage": "unconfigured"
+    },
+    {
+      "source_id": "ndma_cap_rss",
+      "transport": "healthy",
+      "checked_at": "2026-10-02T19:30:39.076357Z",
+      "coverage": "unverified"
+    }
+  ],
+  "production_approved": false,
+  "validation": [
+    "offline CAP and Go precedence contracts",
+    "disposable SQL and real object-store failure/recovery",
+    "real-source API contracts",
+    "lint race tests build migration checks",
+    "desktop/mobile browser location form, keyboard table, no errors or overflow"
+  ],
+  "limitations": [
+    "No verified marine completeness, source cadence or redistribution review",
+    "INCOIS machine feed unconfigured",
+    "Text-only areas and missing reference parents remain unknown",
+    "No trip or public operational approval"
+  ]
+}

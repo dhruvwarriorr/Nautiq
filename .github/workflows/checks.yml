@@ -22,15 +22,15 @@ jobs:
       - name: Verify offline Argo normalization contracts
         run: make phase2-verify
       - name: Verify frozen scientific fixtures and training policy
-        run: make phase3-verify phase4-verify phase5-verify phase6-verify phase7-verify phase8-verify phase9-verify
+        run: make phase3-verify phase4-verify phase5-verify phase6-verify phase7-verify phase8-verify phase9-verify phase10-verify
       - run: make build
       - name: Start isolated persistence for reproducibility checks
         run: docker compose up -d --wait postgres minio nats
       - run: make migrate
       - run: docker compose up --build -d normalizer ml-inference mlflow field-service
-      - run: docker compose build event-worker
+      - run: docker compose build event-worker advisory-worker
       - name: Verify revision recovery and frozen snapshot integrity
-        run: make phase2-reliability phase3-reliability phase4-reliability phase5-reliability phase6-reliability phase7-reliability phase8-reliability phase9-reliability
+        run: make phase2-reliability phase3-reliability phase4-reliability phase5-reliability phase6-reliability phase7-reliability phase8-reliability phase9-reliability phase10-reliability
       - name: Stop verification infrastructure
         if: always()
         run: docker compose down --remove-orphans

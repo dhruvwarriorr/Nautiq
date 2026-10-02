@@ -227,3 +227,18 @@ make event-maintain
 ```
 
 The optional `event-worker` tool runs with readonly filesystem and locked field dependencies. Acquisition caches verified requests for restart; `REFRESH=1` explicitly fetches a new source revision without changing retained datasets. Dataset replay uses recorded raw receipts without refetching. Run replay preserves exact inputs and frozen profile snapshot time; changed code creates a distinct immutable calculation. The default bounded SST pilot is 71–73°E, 11–13°N, native 0.25° resolution. Diagnostic availability is separate from scientific event approval, live monitoring and alerting.
+
+## Official advisory evidence
+
+Open http://localhost:3000/advisories to inspect retained agency CAP bulletins, exact revisions, validity and independent source health. NDMA's registered RSS adapter uses verified conditional ETags; disappearing messages never cancel warnings. Text-only areas and missing validity remain unknown. Marine completeness, INCOIS machine access, cadence and redistribution review remain unverified. See [delivery evidence](docs/19-Phase-10-Delivery.md) and [API contract](packages/schemas/advisories.openapi.json).
+
+```sh
+docker compose build advisory-worker
+make advisory-refresh
+make advisory-verify RUN_ID=<retained-run-id>
+make advisory-replay RUN_ID=<retained-run-id>
+make advisory-maintain
+make phase10-verify phase10-reliability phase10-smoke
+```
+
+Default startup does not poll advisory sources. For an explicit local continuous poll, run `docker compose run --rm advisory-worker python -m nautiq_ml.advisories.pipeline refresh --watch`. Feed transport health never establishes an absence of relevant official warnings. Diagnostic evidence availability and official operational approval are distinct capabilities.

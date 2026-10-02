@@ -641,6 +641,11 @@ func (a *App) dispatch(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	_, err = js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{Name: "OFFICIAL_ADVISORIES", Subjects: []string{"advisory.feed.checked"}, Storage: jetstream.FileStorage, MaxAge: 7 * 24 * time.Hour, MaxBytes: 32 << 20, Discard: jetstream.DiscardNew})
+	if err != nil {
+		return err
+	}
+
 	leaseToken := uuid.NewString()
 	rows, err := a.db.Query(ctx, `WITH claimed AS (SELECT event_id FROM event_outbox WHERE published_at IS NULL AND next_attempt_at<=now() AND (lease_until IS NULL OR lease_until<now()) ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 5) UPDATE event_outbox e SET lease_until=now()+interval '30 seconds',lease_token=$1,attempts=attempts+1 FROM claimed c WHERE e.event_id=c.event_id RETURNING e.event_id::text,e.event_type,e.schema_version,e.aggregate_key,e.revision_sha256,e.payload,e.created_at`, leaseToken)
 	if err != nil {
