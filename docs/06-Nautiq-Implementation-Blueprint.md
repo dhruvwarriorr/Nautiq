@@ -538,6 +538,8 @@ Required before calling the product market-ready:
 - accessibility pass;
 - safety/legal review of trip wording and advisory redistribution.
 
+Implemented locally in [production operations delivery](23-Phase-14-Delivery.md), with [deployment/recovery runbooks](24-Operations-Runbook.md) and [wording/rights review register](25-Release-Review.md). Executable controls and disposable HTTPS/restore acceptance do not grant actual public deployment, independent security/legal review or scientific approval.
+
 ---
 
 ## 18. Test pyramid

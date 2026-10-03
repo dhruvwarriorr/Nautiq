@@ -1,0 +1,179 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq operations evidence",
+    "version": "1.0.0",
+    "description": "Read-only redacted operational state. No public administrator mutation. Source transport/freshness and connectivity never establish safe conditions or scientific approval."
+  },
+  "paths": {
+    "/api/v1/operations/status": {
+      "get": {
+        "summary": "Bounded current incident/source/worker status",
+        "responses": {
+          "200": {
+            "description": "Operational SQL evidence available; Cache-Control no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "as_of",
+                    "controls",
+                    "sources",
+                    "workers",
+                    "production_approved",
+                    "scientific_approved"
+                  ],
+                  "properties": {
+                    "status": {
+                      "const": "available"
+                    },
+                    "as_of": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "controls": {
+                      "type": "object",
+                      "required": [
+                        "revision",
+                        "paused",
+                        "updated_at"
+                      ],
+                      "properties": {
+                        "revision": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "paused": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "boolean"
+                          }
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "sources": {
+                      "type": "object",
+                      "required": [
+                        "fields",
+                        "advisories"
+                      ],
+                      "properties": {
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "product_id",
+                              "status",
+                              "cycle",
+                              "valid_time_end",
+                              "fresh"
+                            ],
+                            "properties": {
+                              "product_id": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "cycle": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "valid_time_end": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "fresh": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "advisories": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "source_id",
+                              "transport",
+                              "checked_at",
+                              "integrity"
+                            ],
+                            "properties": {
+                              "source_id": {
+                                "type": "string"
+                              },
+                              "transport": {
+                                "type": "string"
+                              },
+                              "checked_at": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "integrity": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "workers": {
+                      "type": "object",
+                      "required": [
+                        "notifications",
+                        "email_configured"
+                      ],
+                      "properties": {
+                        "notifications": {
+                          "type": "boolean"
+                        },
+                        "email_configured": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "production_approved": {
+                      "const": false
+                    },
+                    "scientific_approved": {
+                      "const": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Control or evidence storage missing/corrupt/unavailable; no favorable fallback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

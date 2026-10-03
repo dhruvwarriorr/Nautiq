@@ -19,6 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
 	pb "nautiq.local/api/gen/nautiq/platform/v1"
+	"nautiq.local/api/internal/operations"
 )
 
 type Server struct {
@@ -71,7 +72,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.Handle("GET /api/v1/climatology-releases/selected", s.bound(s.selectedClimatology))
 	mux.Handle("GET /api/v1/climatology-releases/{id}", s.bound(s.climatologyRelease))
 	mux.Handle("GET /api/v1/profiles/{id}/climatology", s.bound(s.profileClimatology))
-	mux.Handle("GET /api/v1/capabilities", s.bound(s.capabilities))
+	mux.Handle("GET /api/v1/capabilities", operations.Capabilities(s.DB, s.bound(s.capabilities)))
 	mux.Handle("GET /api/v1/sources", s.bound(s.sources))
 	mux.Handle("GET /api/v1/qc-rejections", s.bound(s.rejections))
 	mux.Handle("GET /api/v1/profiles/{id}/revisions", s.bound(s.revisions))

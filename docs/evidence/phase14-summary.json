@@ -1,0 +1,147 @@
+{
+  "recorded_at": "2026-10-03T14:13:55.526035+00:00",
+  "scope": "Local production-operations implementation and disposable acceptance; no public deployment",
+  "schema_version": 16,
+  "production_approved": false,
+  "scientific_approved": false,
+  "checks": {
+    "lint_types_format_compose": "passed",
+    "go_race_tests": "passed",
+    "python_tests": {
+      "passed": 21,
+      "warnings": "existing NumPy shape deprecations"
+    },
+    "frontend_health_tests": {
+      "passed": 3
+    },
+    "native_and_next_production_builds": "passed",
+    "fresh_repeat_legacy_checksum_rollback_migrations": "passed",
+    "offline_operations": {
+      "passed": true,
+      "includes": [
+        "HTTP correlation/route-label/privacy and panic sanitization",
+        "AES-GCM replay/header/nonce/ciphertext/tag tamper and wrong-key refusal",
+        "Authenticated archive traversal/symlink/duplicate-member refusal before storage/SQL use",
+        "Mounted secret conflict and production HTTP-origin refusal",
+        "Image digest/secret directory/certificate hostname/key/backend port preflight refusal",
+        "Private manifest networking and fail-closed production gate",
+        "Restricted application/worker database identity preflight"
+      ]
+    },
+    "disposable_controls": {
+      "passed": true,
+      "includes": [
+        "Schema 16",
+        "Scoped serving and capability pause",
+        "Missing/unknown/null controls fail closed",
+        "In-flight alert publication fence",
+        "Paused email preserves queued attempt budget",
+        "Pause between mail claim and send returns the unattempted lease without double-refunding"
+      ]
+    },
+    "disposable_https": {
+      "passed": true,
+      "certificate": "Self-signed disposable localhost fixture explicitly trusted by the verifier; not public certificate acceptance",
+      "includes": [
+        "TLS certificate validation",
+        "Private backend paths unavailable through gateway",
+        "__Host Secure HttpOnly SameSite session cookie",
+        "Same-origin CSRF-protected account deletion",
+        "HSTS/CSP/frame/referrer/content-type headers",
+        "Separate SQL roles and operator release lock without edit privilege",
+        "App storage write denial and worker retained-object deletion denial",
+        "Private backend ports/network",
+        "Provisioned production schema isolated backup/restore, RLS role references and restored function ACL refusal"
+      ]
+    },
+    "real_coordinated_backup_restore": {
+      "passed": true,
+      "objects_verified": 17593,
+      "encrypted_bytes": 704010276,
+      "source": "Real retained local SQL and complete object bucket at the coordinated snapshot",
+      "sql_counts_migration_hashes_matched": true,
+      "restored_sessions_and_download_grants_revoked": true,
+      "restored_serving_writes_delivery_paused": true,
+      "tampered_archive_refused": true,
+      "existing_target_refused": true,
+      "isolated_targets_removed": true,
+      "previous_running_writers_restarted": true,
+      "live_database_or_bucket_replaced": false
+    },
+    "retained_model_rollback": {
+      "passed": true,
+      "target": "Isolated restored database; original immutable artifact bytes read without rewriting",
+      "complete_selected_parent_chain_verified": true,
+      "missing_release_refused_without_selection_change": true,
+      "atomic_retained_chain_reselection_and_audit": true,
+      "serving_remained_paused": true,
+      "new_fit_or_scientific_promotion": false,
+      "limitation": "Acceptance reselected the retained verified chain; independent prior-image target-host recovery is external acceptance."
+    },
+    "product_export_trip_notification_disposable_regressions": "passed",
+    "live_stack": {
+      "all_ten_dependency_checks": "passed",
+      "schema_readiness": "passed",
+      "notification_worker": "available",
+      "owned_frozen_alert_replay": "passed",
+      "retained_source_outcomes": {
+        "field_threshold": "unknown",
+        "official_advisory": "unknown",
+        "source_stale": "triggered"
+      },
+      "external_email_sent": false
+    },
+    "accessibility": {
+      "tool": "axe-core browser WCAG 2 A/AA and 2.1 AA rule tags",
+      "desktop_status_violations": 0,
+      "mobile_width": 390,
+      "mobile_routes": [
+        "/status",
+        "/sign-in",
+        "/trips",
+        "/locations",
+        "/research",
+        "/",
+        "/map",
+        "/fields",
+        "/advisories",
+        "/data-sources",
+        "/methodology",
+        "/app"
+      ],
+      "mobile_violations_after_scroll_region_fix": 0,
+      "status_tables_keyboard_scroll": "passed; ArrowRight moved focused field table by 40px",
+      "page_horizontal_overflow": false,
+      "skip_link": "passed: Tab/Enter moves focus to #content with visible keyboard focus",
+      "incomplete_automated_rules": [
+        "color-contrast on offscreen/overflow content on status, trips, map, fields and advisory pages"
+      ],
+      "manual_status_text_contrast_minimum": 5.98,
+      "status_focus_outline_contrast": 3.47,
+      "assistive_technology_certification": false,
+      "browser_errors_final_status": 0,
+      "map_evidence_links": "passed after replacing the single-image role with a labeled group for linked overlays"
+    }
+  },
+  "unproven_external_gates": [
+    "scientific_validation",
+    "source_cadence",
+    "marine_advisory_completeness",
+    "source_rights",
+    "trip_threshold_and_wording_review",
+    "public_identity_security_review",
+    "deployment_tls_and_network_review",
+    "offsite_backup_restore",
+    "incident_ownership_and_response"
+  ],
+  "limitations": [
+    "Local implementation and synthetic verification never approve a public or scientific release.",
+    "The Docker deployment assumes a trusted single host; internal service traffic is private, not mutually authenticated across untrusted hosts.",
+    "Backup keys and offsite copies require operator-managed protected storage and tested retention.",
+    "External SMTP, public identity recovery and independent domain/legal/security sign-offs remain separate evidence gates.",
+    "Public requests admitted before a pause may finish within their existing deadline; private RPC/administrator tools remain privileged diagnostics.",
+    "Restored bucket is isolated; real target-host cutover and storage policy/credential reapplication require the runbook.",
+    "Original source/calculation/alert timestamps, policy/code hashes and scientific approval are never renewed by restore/replay."
+  ],
+  "commit_or_push_performed": false
+}

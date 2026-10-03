@@ -326,7 +326,7 @@ func isolated() {
 	}()
 	files, e := filepath.Glob("/migrations/*.sql")
 	must(e)
-	check(len(files) == 15, "complete migration chain")
+	check(len(files) == 16, "complete migration chain")
 	for _, path := range files {
 		b, e := os.ReadFile(path)
 		must(e)

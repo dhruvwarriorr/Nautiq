@@ -37,6 +37,9 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `20-Phase-11-Delivery.md` | Timed diagnostic trips, private frozen receipts and exact replay |
 | `21-Phase-12-Delivery.md` | Public product views, authenticated owned state, research queries and private exports |
 | `22-Phase-13-Delivery.md` | Evidence-based alert lifecycle, durable in-app/email delivery and recipient verification |
+| `23-Phase-14-Delivery.md` | HTTPS/private deployment, mounted secrets, incident controls, observability and recovery acceptance |
+| `24-Operations-Runbook.md` | Deployment, containment, retained model rollback, backup recovery and credential rotation |
+| `25-Release-Review.md` | Product wording, redistribution boundaries and pending external release sign-offs |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

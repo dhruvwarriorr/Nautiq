@@ -12,6 +12,7 @@ import (
 	pb "nautiq.local/api/gen/nautiq/platform/v1"
 	"nautiq.local/api/internal/advisories"
 	"nautiq.local/api/internal/notifications"
+	"nautiq.local/api/internal/operations"
 	"nautiq.local/api/internal/product"
 	"nautiq.local/api/internal/trips"
 )
@@ -141,6 +142,10 @@ type notificationSample struct {
 
 func (s *Server) notificationField(ctx context.Context, shape notificationShape, variable string, now time.Time) (notificationField, notifications.Pin, []byte, error) {
 	var out notificationField
+	permitted, controlErr := operations.Allowed(ctx, s.DB, "field_sampling")
+	if controlErr != nil || !permitted {
+		return out, notifications.Pin{}, nil, errors.New("field_serving_paused")
+	}
 	pin := notifications.Pin{Kind: "field", Product: map[string]string{"wave_height_m": "noaa_gfs_wave", "wind_speed_m_s": "noaa_gfs_weather", "current_speed_m_s": "hycom_espc"}[variable]}
 	err := s.DB.QueryRow(ctx, `SELECT r.release_id::text,r.manifest_sha256 FROM field_selection s JOIN field_releases r USING(release_id) WHERE s.product_id=$1 AND r.status='ready'`, pin.Product).Scan(&pin.ID, &pin.SHA)
 	if err != nil || s.Fields == nil {
@@ -233,6 +238,10 @@ func fieldMaximum(field notificationField, units string) (*float64, bool, any, e
 }
 
 func (s *Server) notificationAdvisories(ctx context.Context, shape notificationShape, now time.Time) (advisories.State, []notifications.Pin, []string, error) {
+	permitted, controlErr := operations.Allowed(ctx, s.DB, "advisories")
+	if controlErr != nil || !permitted {
+		return advisories.State{}, nil, nil, errors.New("advisory_serving_paused")
+	}
 	req, _ := http.NewRequestWithContext(ctx, "GET", "http://localhost/internal", nil)
 	snapshot, err := s.advisorySnapshot(req)
 	if err != nil {

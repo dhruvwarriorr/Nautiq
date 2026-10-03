@@ -2,7 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { apiURL } from "./profiles";
 import type { Session } from "./product";
-export const sessionCookie = "nautiq_session";
+export const sessionCookie = process.env.NAUTIQ_DEPLOYMENT === "production" ? "__Host-nautiq_session" : "nautiq_session";
 export const webOrigin =
   process.env.PRODUCT_WEB_ORIGIN ?? "http://localhost:3000";
 export async function accountEvidence<T>(path: string): Promise<T | null> {

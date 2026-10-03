@@ -281,3 +281,18 @@ phase11-reliability:
 	.venv/bin/python scripts/verify_phase11_reliability.py
 phase11-smoke:
 	.venv/bin/python scripts/verify_phase11_smoke.py
+
+.PHONY: operations-setup phase14-verify phase14-reliability phase14-production phase14-restore production-gate
+operations-setup:
+	uv pip install --python .venv/bin/python -r infrastructure/production/requirements.lock
+phase14-verify:
+	cd services/api && go run -race ./cmd/verify-operations --offline
+	.venv/bin/python scripts/verify_phase14.py
+phase14-reliability:
+	docker compose run --rm --no-deps -T operations-verifier
+phase14-production:
+	.venv/bin/python scripts/verify_phase14_production.py
+phase14-restore:
+	.venv/bin/python scripts/verify_phase14_restore.py
+production-gate:
+	.venv/bin/python scripts/production_gate.py

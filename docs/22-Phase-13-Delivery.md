@@ -37,7 +37,7 @@ make lint test build test-migrations
 make phase12-reliability phase11-reliability
 ```
 
-Set `NOTIFICATION_SMTP_HOST`, `NOTIFICATION_SMTP_PORT`, `NOTIFICATION_SMTP_MODE`, `NOTIFICATION_SMTP_FROM` and optional authenticated credentials consistently for API/worker. The checked-in defaults leave email unavailable. Verify worker health and a recipient before enabling email rules; no secrets belong in evidence or version control.
+Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_MODE`, `SMTP_FROM` and optional authenticated credentials consistently for API/worker. The checked-in defaults leave email unavailable. Verify worker health and a recipient before enabling email rules; no secrets belong in evidence or version control.
 
 The executable verifier uses disposable PostgreSQL/PostGIS, actual MinIO, synthetic native field RPC responses and a local SMTP collector. It checks lifecycle tables, ownership/CSRF, recipient proof, quota/idempotency, duplicate evaluation, cooldown/escalation, positive recovery, source geometry/time matching, lease/version/source publication fences, rollback, corrupted byte/mirror refusal, mail retry/exhaustion, consent/recipient changes, owner-bound pagination and deletion. These synthetic cases do not prove scientific calibration or real CAP acquisition completeness.
 

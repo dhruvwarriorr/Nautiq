@@ -108,6 +108,8 @@ async function proxy(
       "X-Artifact-SHA256",
       "Content-Security-Policy",
       "ETag",
+"X-Request-ID",
+"traceparent",
     ]) {
       const value = response.headers.get(name);
       if (value) returned.set(name, value);

@@ -1,0 +1,156 @@
+# Use with the base Compose file. Private networking requires a trusted single host.
+# Secret-file paths and certificate identity are validated before deployment.
+services:
+  api:
+    ports: !reset []
+    environment: &app_environment
+      SMTP_HOST: ''
+      SMTP_FROM: ''
+      SMTP_USERNAME: ''
+      SMTP_PASSWORD: ''
+      NAUTIQ_DEPLOYMENT: production
+      PRODUCT_WEB_ORIGIN: https://${PUBLIC_DOMAIN:?Set PUBLIC_DOMAIN}
+      DATABASE_URL: ''
+      DATABASE_URL_FILE: /run/secrets/app_database_url
+      MINIO_ROOT_USER: ''
+      MINIO_ROOT_USER_FILE: /run/secrets/storage_app_user
+      MINIO_ROOT_PASSWORD: ''
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/storage_app_password
+    secrets: [app_database_url, storage_app_user, storage_app_password]
+    read_only: true
+    tmpfs: ['/tmp:size=32m,mode=1777']
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    cpus: 1
+    restart: unless-stopped
+    networks: [default, egress]
+  notifications:
+    environment: *app_environment
+    secrets: [app_database_url, storage_app_user, storage_app_password]
+    networks: [default, egress]
+  web:
+    ports: !reset []
+    environment:
+      NAUTIQ_DEPLOYMENT: production
+      PRODUCT_WEB_ORIGIN: https://${PUBLIC_DOMAIN}
+    networks: [default, edge]
+    read_only: true
+    tmpfs: ['/tmp:size=32m,mode=1777', '/app/.next/cache:size=32m,uid=1000,gid=1000']
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    cpus: 1
+    restart: unless-stopped
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ''
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_password
+    secrets: [database_password]
+    restart: unless-stopped
+  minio:
+    ports: !reset []
+    environment: {MINIO_ROOT_USER: '', MINIO_ROOT_PASSWORD: ''}
+    secrets: [storage_root_user, storage_root_password]
+    entrypoint: [/bin/sh, -ec]
+    command: ['export MINIO_ROOT_USER="$$(cat /run/secrets/storage_root_user)" MINIO_ROOT_PASSWORD="$$(cat /run/secrets/storage_root_password)"; exec minio server /data --console-address :9001']
+    restart: unless-stopped
+  storage-init:
+    environment: {MINIO_ROOT_USER: '', MINIO_ROOT_PASSWORD: ''}
+    secrets: [storage_root_user, storage_root_password]
+    command:
+      - |
+        export MINIO_ROOT_USER="$$(cat /run/secrets/storage_root_user)" MINIO_ROOT_PASSWORD="$$(cat /run/secrets/storage_root_password)"
+        attempts=0
+        until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do
+          attempts=$$((attempts + 1)); [ "$$attempts" -lt 60 ] || exit 1; sleep 2
+        done
+        mc mb --ignore-existing local/nautiq
+  ml-inference:
+    environment: &worker_environment
+      NAUTIQ_DEPLOYMENT: production
+      PRODUCT_WEB_ORIGIN: https://${PUBLIC_DOMAIN}
+      DATABASE_URL: ''
+      DATABASE_URL_FILE: /run/secrets/worker_database_url
+      MINIO_ROOT_USER: ''
+      MINIO_ROOT_USER_FILE: /run/secrets/storage_worker_user
+      MINIO_ROOT_PASSWORD: ''
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/storage_worker_password
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+    networks: [default, egress]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+  mlflow:
+    ports: !reset []
+    profiles: [tracking-private]
+  field-service:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+  field-ingestion:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+    networks: [default, egress]
+  ingestion:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+    networks: [default, egress]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    read_only: true
+    tmpfs: ['/tmp:size=64m,mode=1777']
+  normalizer:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+  export-worker:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+  advisory-worker:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+    networks: [default, egress]
+  event-worker:
+    environment: *worker_environment
+    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
+    networks: [default, egress]
+  operations-tools:
+    environment:
+      DATABASE_URL: ''
+      DATABASE_URL_FILE: /run/secrets/backup_database_url
+      MINIO_ROOT_USER: ''
+      MINIO_ROOT_USER_FILE: /run/secrets/storage_root_user
+      MINIO_ROOT_PASSWORD: ''
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/storage_root_password
+    secrets: [backup_database_url, storage_root_user, storage_root_password]
+  gateway:
+    image: caddy:2.10-alpine
+    environment: {PUBLIC_HOST: '${PUBLIC_HOST:?Set PUBLIC_HOST to the certificate hostname without a port}'}
+    ports: ['${HTTPS_BIND_ADDRESS:-127.0.0.1}:${HTTPS_PORT:-8443}:443']
+    volumes: ['./infrastructure/production/Caddyfile:/etc/caddy/Caddyfile:ro']
+    secrets: [tls_cert, tls_key]
+    networks: [edge]
+    read_only: true
+    tmpfs: ['/data:size=16m', '/config:size=16m']
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    # The upstream binary carries this file capability for its TLS listener.
+    cap_add: [NET_BIND_SERVICE]
+    depends_on: [web]
+networks:
+  default: {internal: true}
+  egress: {}
+  edge: {}
+secrets:
+  app_database_url: {file: '${NAUTIQ_SECRETS_DIR:?Set NAUTIQ_SECRETS_DIR}/app_database_url'}
+  worker_database_url: {file: '${NAUTIQ_SECRETS_DIR}/worker_database_url'}
+  database_password: {file: '${NAUTIQ_SECRETS_DIR}/database_password'}
+  backup_database_url: {file: '${NAUTIQ_SECRETS_DIR}/backup_database_url'}
+  storage_root_user: {file: '${NAUTIQ_SECRETS_DIR}/storage_root_user'}
+  storage_root_password: {file: '${NAUTIQ_SECRETS_DIR}/storage_root_password'}
+  storage_app_user: {file: '${NAUTIQ_SECRETS_DIR}/storage_app_user'}
+  storage_app_password: {file: '${NAUTIQ_SECRETS_DIR}/storage_app_password'}
+  storage_worker_user: {file: '${NAUTIQ_SECRETS_DIR}/storage_worker_user'}
+  storage_worker_password: {file: '${NAUTIQ_SECRETS_DIR}/storage_worker_password'}
+  tls_cert: {file: '${NAUTIQ_SECRETS_DIR}/tls_cert'}
+  tls_key: {file: '${NAUTIQ_SECRETS_DIR}/tls_key'}

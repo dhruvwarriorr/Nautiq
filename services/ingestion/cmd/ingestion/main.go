@@ -88,6 +88,10 @@ func key(path string, t time.Time) string { return path + "|" + t.UTC().Format(t
 var safePath = regexp.MustCompile(`^[a-z]+/[0-9]{5,8}/profiles/[RD][0-9]{5,8}_[0-9]+D?\.nc$`)
 
 func main() {
+	if LoadSecrets() != nil {
+		slog.Error("configuration_refused")
+		os.Exit(1)
+	}
 	once := flag.Bool("once", false, "discover/download once and dispatch pending events")
 	dispatch := flag.Bool("dispatch-only", false, "publish pending outbox events only")
 	reconcile := flag.Bool("reconcile", false, "scan all unseen index records in this configured observation scope")

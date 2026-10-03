@@ -16,7 +16,9 @@ export default function Layout({
           Skip to content
         </a>
         <ProductNav />
-        <div id="content">{children}</div>
+        <div id="content" tabIndex={-1}>
+          {children}
+        </div>
       </body>
     </html>
   );

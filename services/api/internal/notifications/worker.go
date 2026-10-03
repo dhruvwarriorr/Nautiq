@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"nautiq.local/api/internal/operations"
 )
 
 type Input struct {
@@ -77,7 +78,11 @@ func equalJSON(a, b []byte) bool {
 }
 
 func (w *Worker) Claim(ctx context.Context) (*Input, error) {
-	_, e := w.DB.Exec(ctx, `INSERT INTO notification_rule_state(rule_id) SELECT object_id FROM product_objects WHERE kind='alert-rules' AND deleted_at IS NULL AND data->>'enabled'='true' ON CONFLICT DO NOTHING`)
+	permitted, e := operations.Allowed(ctx, w.DB, "notification_evaluation")
+	if e != nil || !permitted {
+		return nil, e
+	}
+	_, e = w.DB.Exec(ctx, `INSERT INTO notification_rule_state(rule_id) SELECT object_id FROM product_objects WHERE kind='alert-rules' AND deleted_at IS NULL AND data->>'enabled'='true' ON CONFLICT DO NOTHING`)
 	if e != nil {
 		return nil, e
 	}
@@ -169,6 +174,13 @@ func (w *Worker) Publish(ctx context.Context, in Input, e Evidence) (bool, error
 		return false, err
 	}
 	defer tx.Rollback(ctx)
+	controls, err := operations.Read(ctx, tx, true)
+	if err != nil {
+		return false, err
+	}
+	if !controls.Allows("notification_evaluation") {
+		return false, nil
+	}
 	var enabled bool
 	err = tx.QueryRow(ctx, `SELECT notifications_enabled FROM product_accounts WHERE account_id=$1 FOR UPDATE`, in.Owner).Scan(&enabled)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -299,11 +311,19 @@ func (w *Worker) Publish(ctx context.Context, in Input, e Evidence) (bool, error
 
 // Claims are fenced separately from network I/O. Owner locks order delivery with opt-out/deletion.
 func (w *Worker) DeliverOne(ctx context.Context) (bool, error) {
+	permitted, err := operations.Allowed(ctx, w.DB, "email_delivery")
+	if err != nil || !permitted {
+		return false, err
+	}
 	tx, e := w.DB.Begin(ctx)
 	if e != nil {
 		return false, e
 	}
 	defer tx.Rollback(ctx)
+	claimControls, e := operations.Read(ctx, tx, true)
+	if e != nil || !claimControls.Allows("email_delivery") {
+		return false, e
+	}
 	_, e = tx.Exec(ctx, `UPDATE notification_deliveries SET state='failed',reason='retry_exhausted',lease_id=NULL,lease_expires_at=NULL WHERE state='sending' AND lease_expires_at<=now() AND attempts>=5`)
 	if e != nil {
 		return false, e
@@ -332,6 +352,18 @@ func (w *Worker) DeliverClaim(ctx context.Context, id, owner, lease string) (boo
 		return false, e
 	}
 	defer tx.Rollback(ctx)
+	controls, e := operations.Read(ctx, tx, true)
+	if e != nil {
+		return false, e
+	}
+	if !controls.Allows("email_delivery") {
+		// A pause between claim and send restores this unattempted lease once.
+		_, e = tx.Exec(ctx, `UPDATE notification_deliveries SET state='pending',lease_id=NULL,lease_expires_at=NULL,attempts=greatest(attempts-1,0),next_attempt_at=now()+interval '60 seconds',reason='delivery_paused' WHERE delivery_id=$1 AND owner_id=$2 AND state='sending' AND lease_id=$3 AND lease_expires_at>now()`, id, owner, lease)
+		if e != nil {
+			return false, e
+		}
+		return false, tx.Commit(ctx)
+	}
 	var allowed bool
 	var email *string
 	var verified *time.Time

@@ -1,0 +1,21 @@
+{
+ admin off
+ auto_https disable_redirects
+ servers {
+  protocols h1 h2
+ }
+}
+https://{$PUBLIC_HOST}:443 {
+ tls /run/secrets/tls_cert /run/secrets/tls_key {
+  protocols tls1.2 tls1.3
+ }
+ header {
+  Strict-Transport-Security "max-age=31536000"
+  -Server
+ }
+ # All application access uses the web's bounded, same-origin proxies.
+ # Internal API metrics/admin/storage/service ports are never routed publicly.
+ @internal path /internal/* /api/v1/*
+ respond @internal 404
+ reverse_proxy web:3000
+}

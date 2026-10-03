@@ -279,3 +279,16 @@ make phase13-verify phase13-reliability phase13-smoke
 ```
 
 Private rules now evaluate personal native-field limits, relevant official warning references and stale sources. The inbox shows immutable evidence, corrections, recovery, acknowledgement, worker status and delivery attempts. A durable worker deduplicates revisions, applies cooldown, requires positive fresh recovery evidence and retries delivery with consent/version fences. Email requires configured TLS SMTP and a separately verified recipient; defaults leave email unavailable. Personal limits and recovered alerts do not establish navigation safety. See [delivery and exact bounds](docs/22-Phase-13-Delivery.md) and [acceptance evidence](docs/evidence/phase13-summary.json).
+
+## Production operations
+
+[Delivery and acceptance](docs/23-Phase-14-Delivery.md), [deployment/incident/recovery runbook](docs/24-Operations-Runbook.md), and [release review register](docs/25-Release-Review.md) describe schema 16 controls. The production Compose overlay supplies mounted secrets, restricted SQL/storage identities, private backend ports and a certificate-backed HTTPS gateway. It does not deploy automatically or grant public/scientific approval.
+
+```sh
+make operations-setup
+make phase14-verify phase14-reliability phase14-production
+make phase14-restore # briefly quiesces local writers, restores only new isolated targets
+make production-gate # expected exit 2 while release approval remains false
+```
+
+`/status` separates service connectivity, source age/integrity, worker health and incident pauses. The operator CLI supports revision-fenced pause/resume; retained-lineage rollback keeps science paused. Coordinated encrypted backups cover SQL and all retained objects; restored sessions are revoked. Keep secret files, backup keys, plaintext staging and archives outside Git/build contexts.

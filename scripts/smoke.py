@@ -25,7 +25,9 @@ for attempt in range(60):
         time.sleep(2)
 with urllib.request.urlopen(f"{web}/status", timeout=10) as response:
     html = response.read().decode()
-assert "Local platform ready." in html
+assert "Services are connected." in html
+assert "Source health" in html
+assert "Public production and scientific approval remain unavailable" in html
 with urllib.request.urlopen(f"{api}/health/ready", timeout=5) as response:
     ready = json.load(response)
 assert ready["status"] == "healthy"

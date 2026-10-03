@@ -260,6 +260,25 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
+  operations-verifier:
+    build: {context: ., dockerfile: services/api/Dockerfile}
+    entrypoint: ['/verify-operations']
+    environment: *api_environment
+    profiles: [operations-tools]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+  operations-tools:
+    build: {context: ., dockerfile: infrastructure/production/Operations.Dockerfile}
+    environment: *api_environment
+    profiles: [operations-tools]
+    read_only: true
+    tmpfs: ['/tmp:size=4g,mode=1777']
+    mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
   web:
     build: {context: ., dockerfile: apps/web/Dockerfile}
     environment: {API_INTERNAL_URL: 'http://api:8080', PRODUCT_WEB_ORIGIN: '${PRODUCT_WEB_ORIGIN:-http://localhost:3000}'}

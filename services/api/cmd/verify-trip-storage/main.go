@@ -185,7 +185,7 @@ func main() {
 	}()
 	files, err := filepath.Glob("/migrations/*.sql")
 	must(err)
-	check(len(files) == 15, "all migrations present")
+	check(len(files) == 16, "all migrations present")
 	for _, file := range files {
 		raw, e := os.ReadFile(file)
 		must(e)

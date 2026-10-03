@@ -228,3 +228,20 @@ See [product acceptance](21-Phase-12-Delivery.md); fresh-source field/trip gates
 | New inbox entries shift pagination / cross-owner cursor | Signed owner-bound snapshot cursor avoids duplicate/skip navigation |
 
 See [notification acceptance](22-Phase-13-Delivery.md). Synthetic SMTP/field/CAP fixtures establish implementation behavior; external provider deliverability and scientific source completeness remain unproven.
+
+## Production operations acceptance
+
+| Failure | Required behavior | Verification |
+| --- | --- | --- |
+| Missing/corrupt/null/unknown incident controls | Scoped scientific requests refuse; no favorable fallback | Disposable SQL/control verifier |
+| Pause races with alert/mail publication | Control row fence blocks publication; paused mail consumes no attempt | Disposable notification verifier |
+| Stale operator revision/concurrent rollback | Refuse mutation; preserve committed selections and remain paused | Operator CLI and isolated rollback drill |
+| Wrong backup key/tamper/path traversal/existing target | Authenticate and validate archive before use; never overwrite live targets | Offline crypto/archive checks and real restore drill |
+| Backup worker failure | Previously running writers restarted; no successful archive claim | Wrapper finally and observed refusal/recovery drills |
+| Conflicting file/env secrets or HTTP production origin | Fail startup with sanitized reason | Offline configuration checks |
+| App role attempts scientific/control write | Restricted SQL/RLS denies; operator credentials separate | Disposable HTTPS provisioned roles |
+| Public backend/metrics/RPC access | Gateway refuses backend paths; no backend host ports | Disposable HTTPS and manifest checks |
+| User path/proof enters telemetry | Only registered route/status labels and generated request correlation | Independent HTTP privacy verifier |
+| Unproven legal/security/scientific release record | Public/scientific approval false; gate exits 2 | Production gate |
+
+[Operational delivery](23-Phase-14-Delivery.md) and [runbooks](24-Operations-Runbook.md) record local evidence and exact containment limits. Actual host ingress, public identity security, offsite/key escrow recovery, on-call ownership and independent scientific/legal review remain pending external acceptance.

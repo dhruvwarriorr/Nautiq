@@ -1,0 +1,8 @@
+{
+ "version":"production-readiness-v1",
+ "production_approved":false,
+ "scientific_approved":false,
+ "required_external_gates":["scientific_validation","source_cadence","marine_advisory_completeness","source_rights","trip_threshold_and_wording_review","public_identity_security_review","deployment_tls_and_network_review","offsite_backup_restore","incident_ownership_and_response"],
+ "limits":{"http_concurrency":64,"control_deadline_seconds":1,"evidence_status_deadline_seconds":2,"backup_objects":50000,"backup_bytes":2147483648,"rollback_profiles":2000},
+ "limitations":["Local implementation and synthetic verification never approve a public or scientific release.","The Docker deployment assumes a trusted single host; internal service traffic is private, not mutually authenticated across untrusted hosts.","Backup keys and offsite copies require operator-managed protected storage and tested retention.","External SMTP, public identity recovery and independent domain/legal/security sign-offs remain separate evidence gates."]
+}
