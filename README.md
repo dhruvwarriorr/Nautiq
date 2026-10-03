@@ -267,4 +267,15 @@ docker compose up --build -d
 make phase12-verify phase12-reliability phase12-smoke
 ```
 
-Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast/advisory redistribution, public identity operations, notification evaluation/delivery and scientific promotion retain separate gates. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).
+Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast/advisory redistribution, public identity operations, scientific promotion and public deployment retain separate gates. Notification evaluation and delivery are implemented as described below. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).
+
+## Alerts and notifications
+
+```sh
+make migrate
+docker compose build api web notifications notification-verifier export-worker
+docker compose up -d api web notifications export-worker
+make phase13-verify phase13-reliability phase13-smoke
+```
+
+Private rules now evaluate personal native-field limits, relevant official warning references and stale sources. The inbox shows immutable evidence, corrections, recovery, acknowledgement, worker status and delivery attempts. A durable worker deduplicates revisions, applies cooldown, requires positive fresh recovery evidence and retries delivery with consent/version fences. Email requires configured TLS SMTP and a separately verified recipient; defaults leave email unavailable. Personal limits and recovered alerts do not establish navigation safety. See [delivery and exact bounds](docs/22-Phase-13-Delivery.md) and [acceptance evidence](docs/evidence/phase13-summary.json).

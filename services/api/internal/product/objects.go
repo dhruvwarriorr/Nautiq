@@ -98,7 +98,7 @@ func (s *Server) objects(w http.ResponseWriter, r *http.Request, u Identity) {
 		items = items[:limit]
 		next = &items[len(items)-1].ID
 	}
-	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": time.Now().UTC(), "notification_delivery_available": false})
+	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": time.Now().UTC(), "notification_delivery_available": s.notificationAvailable(r)})
 }
 func (s *Server) object(w http.ResponseWriter, r *http.Request, u Identity) {
 	if !noQuery(w, r) {
@@ -463,11 +463,11 @@ func (s *Server) forgetTrip(w http.ResponseWriter, r *http.Request, u Identity) 
 	})
 }
 func (s *Server) alerts(w http.ResponseWriter, r *http.Request, u Identity) {
-	limit, after, ok := page(w, r)
+	limit, cursor, ok := s.inboxPage(w, r, u.ID)
 	if !ok {
 		return
 	}
-	rows, e := s.DB.Query(r.Context(), `SELECT json_build_object('alert_id',alert_id,'rule_id',rule_id,'rule_version',rule_version,'event_revision',event_revision,'state',state,'evidence',evidence,'evidence_sha256',evidence_sha256,'created_at',created_at,'acknowledged_at',acknowledged_at),evidence_bytes,evidence_sha256 FROM product_alerts WHERE owner_id=$1 AND ($2='' OR alert_id::text>$2) ORDER BY alert_id LIMIT $3`, u.ID, after, limit+1)
+	rows, e := s.DB.Query(r.Context(), `SELECT json_build_object('alert_id',a.alert_id,'rule_id',a.rule_id,'rule_version',a.rule_version,'event_revision',a.event_revision,'state',a.state,'evidence',a.evidence,'evidence_sha256',a.evidence_sha256,'created_at',a.created_at,'acknowledged_at',a.acknowledged_at,'supersedes',a.supersedes,'deliveries',COALESCE((SELECT json_agg(json_build_object('channel',d.channel,'state',d.state,'attempts',d.attempts,'reason',d.reason,'sent_at',d.sent_at)) FROM notification_deliveries d WHERE d.alert_id=a.alert_id),'[]')),a.evidence_bytes,a.evidence_sha256 FROM product_alerts a WHERE a.owner_id=$1 AND a.created_at<=$2 AND ($3::timestamptz IS NULL OR (a.created_at,a.alert_id)<($3::timestamptz,$4::uuid)) ORDER BY a.created_at DESC,a.alert_id DESC LIMIT $5`, u.ID, cursor.Snapshot, cursor.Before, cursor.ID, limit+1)
 	if e != nil {
 		fail(w, 503, "alert_inbox_unavailable")
 		return
@@ -496,9 +496,18 @@ func (s *Server) alerts(w http.ResponseWriter, r *http.Request, u Identity) {
 	var next any
 	if len(items) > limit {
 		items = items[:limit]
-		next = items[len(items)-1]["alert_id"]
+		last := items[len(items)-1]
+		before, e := time.Parse(time.RFC3339Nano, last["created_at"].(string))
+		if e != nil {
+			fail(w, 503, "alert_cursor_integrity")
+			return
+		}
+		cursor.Before = &before
+		cursor.ID = last["alert_id"].(string)
+		next = s.signInbox(cursor)
 	}
-	write(w, 200, map[string]any{"items": items, "next_cursor": next, "evaluation_available": false, "delivery_available": false})
+	available := s.notificationAvailable(r)
+	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": cursor.Snapshot, "evaluation_available": available, "delivery_available": available})
 }
 func (s *Server) acknowledge(w http.ResponseWriter, r *http.Request, u Identity) {
 	if r.ContentLength > 0 || !identifier(r.PathValue("id")) {

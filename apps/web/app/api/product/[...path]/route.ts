@@ -6,7 +6,7 @@ import { boundedTripBody } from "../../../../lib/trip-proxy";
 export const dynamic = "force-dynamic";
 const uuid = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}";
 const allowed = new RegExp(
-  `^(auth/(register|login|session|logout)|account|saved-trips(?:/${uuid})?|alerts(?:/${uuid}/acknowledge)?|(?:routes|watchlists|alert-rules)(?:/${uuid})?|(?:reports|exports)(?:/${uuid}(?:/(cancel|download-grants|download))?)?)$`,
+  `^(auth/(register|login|session|logout)|account|notification-(?:status|settings|email(?:/verify)?|evidence/[a-f0-9]{64})|saved-trips(?:/${uuid})?|alerts(?:/${uuid}/(?:acknowledge|replay|retry-email))?|(?:routes|watchlists|alert-rules)(?:/${uuid})?|(?:reports|exports)(?:/${uuid}(?:/(cancel|download-grants|download))?)?)$`,
 );
 async function proxy(
   request: Request,

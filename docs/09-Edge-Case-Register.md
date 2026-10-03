@@ -208,6 +208,23 @@ Trip verification covers all precedence branches, equality at limits, warning pr
 | Failed worker, orphan or expired artifact | Durable fenced leases, bounded attempts, cleanup queue, DB reconnect and record grace-period purge | Actual MinIO and disposable DB lifecycle |
 | Grant leaked/reused or crossed owner | Owning session plus five-minute single-use identifier, checked bytes and atomic use | API/download verification |
 | Relative time, unnamed place, arbitrary query or apparent all-clear | Typed bounded preview/clarification; per-layer unknown/stale states remain explicit | Offline/public query, empty research and browser location checks |
-| Configured rule mistaken for active monitoring | Evaluation/delivery unavailable, empty inbox has no safety meaning | API flags and rendered rule/inbox notices |
+| Configured rule mistaken for active monitoring | Per-rule evaluation time, explicit worker health/delays; empty inbox has no safety meaning | Actual worker/API/browser acceptance |
 
 See [product acceptance](21-Phase-12-Delivery.md); fresh-source field/trip gates remain separate from product implementation acceptance.
+
+## Notification failure verification
+
+| Failure | Delivered behavior |
+| --- | --- |
+| Repeated source revision or concurrent worker | Episode/revision deduplication and fenced leases prevent duplicate inbox alerts |
+| Cooldown hides escalation or official replacement | Severity increase/replacement bypasses cooldown; same/lower changed evidence remains pending |
+| Failed fetch, vanished warning or stale favorable field | Unknown interrupts fresh confirmations; correction preserves prior alert, never all-clear |
+| Warning expires before arrival / route already passed | Timed validity intersection and remaining route clipping; expired schedule refused |
+| Mutation or source selection during acquisition | Input/source/version pins rechecked under publication locks |
+| Mail retries after opt-out/recipient change/deletion | Current consent, versions, verified address and frozen evidence rechecked before each attempt |
+| SMTP transient failure, abandoned lease or fifth failure | Bounded durable retries, terminal failure and explicit quota-limited retry |
+| Identical manual retry consumes another allowance | Atomic idempotency replay bypasses action-specific quota increment |
+| Corrupt frozen byte/mirror or source blob | Refuse replay/read/send; immutable prior evidence is not replaced |
+| New inbox entries shift pagination / cross-owner cursor | Signed owner-bound snapshot cursor avoids duplicate/skip navigation |
+
+See [notification acceptance](22-Phase-13-Delivery.md). Synthetic SMTP/field/CAP fixtures establish implementation behavior; external provider deliverability and scientific source completeness remain unproven.

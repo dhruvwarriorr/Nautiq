@@ -1,0 +1,19 @@
+{
+  "version": "evidence-alerts-v1",
+  "evaluation_seconds": 60,
+  "lease_seconds": 90,
+  "default_cooldown_minutes": 60,
+  "recovery_confirmations": 2,
+  "delivery_attempts": 5,
+  "evidence_bytes": 32768,
+  "evaluation_retention_days": 7,
+  "scientific_alerts_approved": false,
+  "channels": ["in_app", "email"],
+  "limitations": [
+    "Personal field limits are preferences, not reviewed vessel or navigation safety thresholds.",
+    "Unknown, missing, stale or failed inputs never establish recovery or an all-clear.",
+    "SMTP provides at-least-once delivery. An accepted message followed by a crash may be repeated with the same Message-ID.",
+    "Email contains a generic private inbox link, never forecast measurements, bulletin text or private coordinates.",
+    "Email requires an explicit configured transport and a verified recipient. Scientific promotion and public deployment remain separate gates."
+  ]
+}

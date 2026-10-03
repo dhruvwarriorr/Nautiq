@@ -183,6 +183,12 @@ services:
       ML_GRPC_ADDR: ml-inference:50051
       FIELD_GRPC_ADDR: field-service:50051
       PRODUCT_WEB_ORIGIN: ${PRODUCT_WEB_ORIGIN:-http://localhost:3000}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_MODE: ${SMTP_MODE:-starttls}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     ports: ['127.0.0.1:${API_PORT:-8080}:8080']
     depends_on:
       postgres: {condition: service_healthy}
@@ -208,6 +214,36 @@ services:
     read_only: true
     tmpfs: ['/tmp:size=64m,mode=1777']
     mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  notifications:
+    build: {context: ., dockerfile: services/api/Notifications.Dockerfile}
+    environment: *api_environment
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+      field-service: {condition: service_started}
+    read_only: true
+    tmpfs: ['/tmp:size=32m,mode=1777']
+    mem_limit: 256m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', '/notifications', '--health']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+  notification-verifier:
+    build: {context: ., dockerfile: services/api/Notifications.Dockerfile}
+    entrypoint: ['/verify-notifications']
+    environment: *api_environment
+    profiles: [notification-tools]
+    read_only: true
+    tmpfs: ['/tmp:size=32m,mode=1777']
+    mem_limit: 256m
     cpus: 1
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]

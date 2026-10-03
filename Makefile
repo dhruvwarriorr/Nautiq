@@ -43,6 +43,15 @@ build:
 logs:
 	docker compose logs --tail=100 -f
 
+.PHONY: phase13-verify phase13-reliability phase13-smoke
+phase13-verify:
+	cd services/api && go run -race ./cmd/verify-notifications --offline
+	.venv/bin/python scripts/verify_phase13.py
+phase13-reliability:
+	docker compose run --rm --no-deps -T notification-verifier
+phase13-smoke:
+	.venv/bin/python scripts/verify_phase13_smoke.py
+
 .PHONY: phase12-verify phase12-reliability phase12-smoke
 phase12-verify:
 	.venv/bin/python scripts/verify_phase12.py

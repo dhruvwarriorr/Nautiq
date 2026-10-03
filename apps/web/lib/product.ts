@@ -22,7 +22,7 @@ export type ProductPolicy = {
     export_permissions: Record<string, boolean>;
   };
   accounts_available: boolean;
-  notification_delivery_available: false;
+  notification_delivery_available: boolean;
 };
 export type Session = {
   account_id: string;

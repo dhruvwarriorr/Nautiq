@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   privateQuery,
@@ -19,6 +19,7 @@ import AccountGate, { type AccountContext } from "./AccountGate";
 import PrivateJobs from "./PrivateJobs";
 import ResearchExplorer from "./ResearchExplorer";
 import RouteDiagram from "./RouteDiagram";
+import { NotificationEmail, NotificationStatus } from "./NotificationControls";
 import { TripForm } from "../trips/TripForm";
 const surfaces = [
   "map",
@@ -83,6 +84,7 @@ function WorkspaceContent({
     <ObjectEditor account={account} kind="watchlists" policy={policy} />
   ) : surface === "alerts" ? (
     <>
+      <NotificationStatus account={account} />
       <ObjectEditor account={account} kind="alert-rules" policy={policy} />
       <AlertInbox account={account} />
     </>
@@ -466,6 +468,8 @@ function ObjectEditor({
   const [variable, setVariable] = useState("wave_height_m");
   const [limit, setLimit] = useState("2");
   const [enabled, setEnabled] = useState(true);
+  const [channel, setChannel] = useState("in_app");
+  const [cooldown, setCooldown] = useState("60");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   function edit(o: SavedObject) {
@@ -481,6 +485,8 @@ function ObjectEditor({
     setVariable(String(o.data.variable ?? "wave_height_m"));
     setLimit(String(o.data.limit ?? 2));
     setEnabled(o.data.enabled !== false);
+    setChannel(String(o.data.channel ?? "in_app"));
+    setCooldown(String(o.data.cooldown_minutes || 60));
     setMessage("");
   }
   async function save() {
@@ -502,7 +508,8 @@ function ObjectEditor({
         else if (type === "route") data.route_id = reference;
         else data.polygon = JSON.parse(polygon);
       } else {
-        data = { type, watchlist_id: reference, channel: "in_app", enabled };
+        if (!cooldown.trim() || !Number.isInteger(Number(cooldown))) throw Error("cooldown_minutes_required");
+        data = { type, watchlist_id: reference, channel, enabled, cooldown_minutes: Number(cooldown) };
         if (type === "field_threshold") {
           if (!limit.trim()) throw Error("personal_limit_required");
           Object.assign(data, {
@@ -528,9 +535,10 @@ function ObjectEditor({
       <h2>{kind === "watchlists" ? "Watchlists" : "Alert rules"}</h2>
       {kind === "alert-rules" ? (
         <p className="notice">
-          Rules store personal preferences. Evaluation, delivery, retries and
-          recovery are unavailable. “Enabled” records your intent; it does not
-          activate monitoring.
+          Enabled rules request bounded evidence evaluation. Personal limits are
+          preferences, not validated safety thresholds. Escalations bypass
+          cooldown; recovery requires two distinct fresh confirmations.
+          Inspect monitoring status and source age before interpreting an empty inbox.
         </p>
       ) : (
         <p>
@@ -711,14 +719,18 @@ function ObjectEditor({
           </label>
         ) : null}
         {kind === "alert-rules" ? (
+          <div className="field-controls">
+            <label>Delivery channel<select value={channel} onChange={(e) => setChannel(e.target.value)}><option value="in_app">In-app</option><option value="email">Email and retained inbox evidence</option><option value="both">In-app and email</option></select></label>
+            <label>Update cooldown (minutes)<input required type="number" min={1} max={1440} step={1} value={cooldown} onChange={(e) => setCooldown(e.target.value)} /></label>
           <label>
             <input
               type="checkbox"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
             />{" "}
-            Save as enabled configuration (monitoring unavailable)
+            Enable evidence monitoring
           </label>
+          </div>
         ) : null}
         <p>
           <button disabled={busy}>
@@ -740,8 +752,12 @@ type InboxItem = {
   evidence_sha256: string;
   rule_version: number;
   event_revision: string;
+  supersedes: string | null;
+  deliveries: { channel: string; state: string; attempts: number; reason: string | null }[];
 };
 function AlertInbox({ account }: { account: AccountContext }) {
+  const requestSequence = useRef({ value: 0, active: true });
+  const paged = useRef(false);
   const [items, setItems] = useState<InboxItem[]>([]);
   const [error, setError] = useState("");
   const [next, setNext] = useState<string | null>(null);
@@ -749,14 +765,20 @@ function AlertInbox({ account }: { account: AccountContext }) {
     expire = account.expire;
   const load = useCallback(
     async (after?: string) => {
+      const scope = requestSequence.current;
+      const requestId = ++scope.value;
+      paged.current = Boolean(after);
       try {
         const d = await privateQuery<{
           items: InboxItem[];
           next_cursor: string | null;
         }>(`alerts${after ? `?after=${after}` : ""}`, session);
+        if (!scope.active || requestId !== scope.value) return;
+        setError("");
         setItems((old) => (after ? [...old, ...d.items] : d.items));
         setNext(d.next_cursor);
       } catch (e) {
+        if (!scope.active || requestId !== scope.value) return;
         const m = e instanceof Error ? e.message : "inbox_unavailable";
         setError(m);
         if (m === "session_expired") expire();
@@ -765,52 +787,60 @@ function AlertInbox({ account }: { account: AccountContext }) {
     [session, expire],
   );
   useEffect(() => {
-    let active = true;
-    privateQuery<{ items: InboxItem[]; next_cursor: string | null }>(
-      "alerts",
-      session,
-    )
-      .then((d) => {
-        if (active) {
-          setItems(d.items);
-          setNext(d.next_cursor);
-        }
-      })
-      .catch((e) => {
-        if (active) {
-          const m = e instanceof Error ? e.message : "inbox_unavailable";
-          setError(m);
-          if (m === "session_expired") expire();
-        }
-      });
+    const scope = requestSequence.current;
+    scope.active = true;
+    const requestId = ++scope.value;
+    privateQuery<{ items: InboxItem[]; next_cursor: string | null }>("alerts", session).then((d) => {
+      if (scope.active && requestId === scope.value) { setItems(d.items); setNext(d.next_cursor); setError(""); }
+    }).catch((e) => {
+      if (!scope.active || requestId !== scope.value) return;
+      const m = e instanceof Error ? e.message : "inbox_unavailable";
+      setError(m); if (m === "session_expired") expire();
+    });
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible" && !paged.current) void load();
+    }, 30000);
     return () => {
-      active = false;
+      clearInterval(timer);
+      scope.active = false;
     };
-  }, [session, expire]);
+  }, [load, session, expire]);
   return (
     <section>
       <h2>Retained alert inbox</h2>
       <p role="status">{error}</p>
       {items.length === 0 ? (
         <p>
-          No retained alerts. Source coverage and active monitoring remain
-          unknown.
+          No retained alerts. Check each rule&apos;s monitoring status and source
+          coverage; an empty inbox does not establish safe conditions.
         </p>
       ) : (
         items.map((i) => (
           <article key={i.alert_id}>
             <h3>{i.state}</h3>
+            <p>{i.state === "recovered" ? "Two distinct fresh confirmations resolved this rule's condition. Other inputs and safety remain unresolved." : i.state === "corrected" ? "Earlier authority evidence was revised or withdrawn. This correction is not an all-clear." : "Retained trigger evidence; current conditions may differ. Inspect source age and unresolved inputs."}</p>
             <p>
               {i.created_at} · rule version {i.rule_version} · event revision{" "}
-              {i.event_revision}
+              <span className="digest">{i.event_revision}</span>
             </p>
+            {i.supersedes ? <p className="digest">Follows retained alert {i.supersedes}. Earlier evidence is preserved.</p> : null}
+            <ul>{i.deliveries.map((d) => <li key={d.channel}>{d.channel === "in_app" ? "In-app" : "Email"}: {d.state} · {d.attempts} transport attempts{d.reason ? ` · ${d.reason.replaceAll("_", " ")}` : ""}</li>)}</ul>
             <details>
               <summary>Immutable alert evidence</summary>
               <pre className="audit-json">
                 {JSON.stringify(i.evidence, null, 2)}
               </pre>
               <p className="digest">{i.evidence_sha256}</p>
+              {(i.evidence as { observation?: { field_evidence_sha256?: string[] } } | null)?.observation?.field_evidence_sha256?.map((sha) => <p key={sha}><a href={`/api/product/notification-evidence/${sha}`} target="_blank" rel="noopener noreferrer">Inspect original private field evidence ({sha.slice(0, 12)})</a></p>)}
             </details>
+            <button onClick={async () => {
+              try { const result = await privateQuery<{matched: boolean}>(`alerts/${i.alert_id}/replay`, session, "POST"); setError(result.matched ? "Frozen lifecycle replay matched. It does not refresh current conditions." : "Replay did not match."); }
+              catch (e) { const m = e instanceof Error ? e.message : "replay_unavailable"; setError(m); if (m === "session_expired") expire(); }
+            }}>Replay frozen lifecycle</button>{" "}
+            {i.deliveries.some((d) => d.channel === "email" && (d.state === "failed" || d.state === "blocked")) ? <button onClick={async () => {
+              try { await privateQuery(`alerts/${i.alert_id}/retry-email`, session, "POST"); await load(); }
+              catch (e) { const m = e instanceof Error ? e.message : "email_retry_unavailable"; setError(m.replaceAll("_", " ")); if (m === "session_expired") expire(); }
+            }}>Retry email with current verified recipient</button> : null}{" "}
             {i.acknowledged_at ? (
               <p>Acknowledged {i.acknowledged_at}</p>
             ) : (
@@ -1007,7 +1037,7 @@ function Settings({ account }: { account: AccountContext }) {
       <h2>Account settings</h2>
       <p>
         Local handle account: {account.session.handle}. This pilot has no
-        verified email, MFA or password recovery.
+        identity provider, MFA or password recovery. Notification email is verified separately.
       </p>
       <p role="status">{message}</p>
       <form
@@ -1022,12 +1052,13 @@ function Settings({ account }: { account: AccountContext }) {
             checked={notifications}
             onChange={(e) => setNotifications(e.target.checked)}
           />{" "}
-          Notifications allowed (delivery currently unavailable)
+          Allow notification delivery, including retries
         </label>
         <p>
           <button disabled={busy}>Save notification preference</button>
         </p>
       </form>
+      <NotificationEmail account={account} />
       <h2>Change password</h2>
       <form
         onSubmit={(e) => {

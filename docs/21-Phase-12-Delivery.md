@@ -1,5 +1,7 @@
 # Product surfaces delivery
 
+This records the original section 15 acceptance. Subsequent notification evaluation, verified email recipients and schema 15 are documented in [alerts delivery](22-Phase-13-Delivery.md); the historical measurements and original bounds below are preserved.
+
 The local product connects public ocean evidence to an authenticated private workspace, implementing blueprint section 15. Scientific promotion, public identity operations and notification evaluation/delivery remain separate gates.
 
 ## Delivered experience

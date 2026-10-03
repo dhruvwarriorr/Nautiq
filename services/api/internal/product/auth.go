@@ -15,6 +15,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"golang.org/x/crypto/argon2"
 	"io"
+	"nautiq.local/api/internal/notifications"
 	"net"
 	"net/http"
 	"net/url"
@@ -31,6 +32,7 @@ type Server struct {
 	slots     chan struct{}
 	hashSlots chan struct{}
 	cursorKey []byte
+	Mailer    notifications.Mailer
 }
 type Identity struct {
 	ID            string    `json:"account_id"`
@@ -54,7 +56,15 @@ func New(db *pgxpool.Pool, storage *minio.Client, origin string) (*Server, error
 	if e != nil {
 		return nil, e
 	}
-	return &Server{db, storage, origin, make(chan struct{}, 12), make(chan struct{}, 2), key}, nil
+	mailer, e := notifications.SMTPFromEnv()
+	if e != nil {
+		return nil, e
+	}
+	server := &Server{DB: db, Storage: storage, Origin: origin, slots: make(chan struct{}, 12), hashSlots: make(chan struct{}, 2), cursorKey: key}
+	if mailer != nil {
+		server.Mailer = mailer
+	}
+	return server, nil
 }
 func (s *Server) Register(mux *http.ServeMux) {
 	mux.Handle("POST /api/v1/research", s.bound(s.research))
@@ -64,7 +74,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 			fail(w, 400, "unknown_query")
 			return
 		}
-		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "notification_delivery_available": false, "as_of": time.Now().UTC()})
+		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "notification_delivery_available": s.notificationAvailable(r), "as_of": time.Now().UTC()})
 	}))
 	mux.Handle("POST /api/v1/auth/register", s.bound(s.register))
 	mux.Handle("POST /api/v1/auth/login", s.bound(s.login))
@@ -85,6 +95,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.Handle("DELETE /api/v1/saved-trips/{id}", s.private(true, s.forgetTrip))
 	mux.Handle("GET /api/v1/alerts", s.private(false, s.alerts))
 	mux.Handle("POST /api/v1/alerts/{id}/acknowledge", s.private(true, s.acknowledge))
+	s.registerNotifications(mux)
 	for _, kind := range []string{"reports", "exports"} {
 		mux.Handle("GET /api/v1/"+kind, s.private(false, s.jobs))
 		mux.Handle("POST /api/v1/"+kind, s.private(true, s.createJob))

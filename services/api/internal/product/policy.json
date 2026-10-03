@@ -1,5 +1,5 @@
 {
-  "version": "product-surfaces-v1",
+  "version": "product-surfaces-v2",
   "authentication": "local-handle-argon2id-session-v1",
   "production_approved": false,
   "bounds": {
@@ -89,9 +89,9 @@
     "tides"
   ],
   "limitations": [
-    "Local accounts have no verified email, MFA or recovery provider; public identity operations require deployment review.",
+    "Local handle accounts support separately verified notification email, but no MFA or identity/recovery provider; public identity operations require deployment review.",
     "Forecast/advisory redistribution remains unreviewed. Private provenance reports omit those source measurements and bulletin content. Accepted original Argo research exports carry attribution under published unrestricted reuse terms.",
-    "Alert evaluation, cooldown, recovery and delivery are separate from rule and inbox management.",
+    "Evidence alerts require a healthy notification worker. Email requires verified opt-in and configured transport; scientific alerts and operational safety approval remain gated.",
     "Natural-language parsing uses a bounded grammar and typed plans; unresolved places, relative times and unsupported intents need clarification."
   ],
   "argo_export_policy": {

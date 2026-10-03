@@ -515,6 +515,8 @@ Implement:
 
 Start with in-app/email.
 
+Implemented locally in [alerts delivery](22-Phase-13-Delivery.md): immutable lifecycle evidence, version/source fences, positive fresh recovery, corrections, recipient verification and bounded consent-aware delivery retries. Scientific and public production approval remain separate gates.
+
 Add push/SMS/other channels only when there is a real need.
 
 ---

@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-03",
+  "scope": "Blueprint section 16: private evidence alerts and notifications",
+  "schema_version": 15,
+  "implementation_complete": true,
+  "public_production_approved": false,
+  "scientific_alerts_approved": false,
+  "verification": {
+    "offline_lifecycle_contracts": "passed",
+    "lint": "passed",
+    "go_race_tests": "passed",
+    "python_tests": {
+      "passed": 21,
+      "preexisting_numpy_deprecation_warnings": 8
+    },
+    "web_tests": {
+      "passed": 3
+    },
+    "native_and_next_production_build": "passed",
+    "docker_api_worker_web_builds": "passed",
+    "fresh_repeat_legacy_checksum_rollback_migrations": "passed",
+    "disposable_postgis_minio_http_smtp": "passed",
+    "existing_private_product_export_worker_regression": "passed",
+    "existing_trip_persistence_regression": "passed",
+    "cases": [
+      "episode/revision deduplication",
+      "cooldown and escalation",
+      "official replacement and correction",
+      "two distinct positive fresh recovery confirmations",
+      "partial fresh adverse and stale favorable evidence",
+      "CSRF and cross-owner isolation",
+      "recipient proof and header/TLS refusal",
+      "stable generic SMTP body and DATA acceptance despite QUIT failure",
+      "durable retry and five-attempt exhaustion",
+      "idempotent explicit retry without duplicate quota use",
+      "opt-out and changed recipient/rule/watch fences",
+      "lease expiry and competing claims",
+      "selected source supersession",
+      "publication rollback",
+      "original byte/mirror corruption refusal",
+      "signed owner-bound inbox pagination",
+      "point/radius/polygon official intersections",
+      "timed warning expiry before arrival",
+      "stationary route stop",
+      "already traversed segment exclusion",
+      "expired route refusal",
+      "acknowledgement and account deletion"
+    ]
+  },
+  "live_retained_source_acceptance": {
+    "worker_available": true,
+    "api_readiness_http": 200,
+    "rules_evaluated": 3,
+    "outcomes": {
+      "field_threshold": "unknown",
+      "official_advisory": "unknown",
+      "source_stale": "triggered"
+    },
+    "alerts": 1,
+    "frozen_lifecycle_replay": "matched",
+    "original_field_bytes_read": "passed",
+    "in_app_delivery": "sent",
+    "acknowledgement": "passed",
+    "temporary_account_deleted": true,
+    "external_email_sent": false
+  },
+  "browser_acceptance": {
+    "desktop_and_mobile": "passed",
+    "mobile_viewport": [
+      390,
+      844
+    ],
+    "cases": [
+      "signup",
+      "owned watch and enabled source-stale rule creation",
+      "worker health and evaluated condition",
+      "retained inbox delivery",
+      "frozen lifecycle replay",
+      "acknowledgement",
+      "notification opt-out persisted",
+      "opt-out notice in monitoring",
+      "unconfigured SMTP recipient controls disabled",
+      "account deletion",
+      "home navigation"
+    ],
+    "revision_hash_mobile_overflow": "fixed and rechecked",
+    "horizontal_page_overflow": false,
+    "console_errors": false,
+    "framework_error_overlay": false,
+    "temporary_account_deleted": true
+  },
+  "operational_bounds": {
+    "evaluation_target_seconds": 60,
+    "fenced_lease_seconds": 90,
+    "automatic_mail_attempts": 5,
+    "mail_retry_seconds": [
+      60,
+      120,
+      240,
+      480
+    ],
+    "manual_retries_per_alert_per_day": 3,
+    "recovery_confirmations": 2,
+    "minimum_distinct_recovery_spacing_seconds": 60,
+    "email_proof_expiry_minutes": 15,
+    "email_proof_attempts": 5,
+    "evidence_bytes": 32768,
+    "source_response_bytes": 900000,
+    "evaluation_retention_days": 7,
+    "smtp_delivery_semantics": "at least once; stable Message-ID"
+  },
+  "remaining_external_gates": [
+    "External SMTP configuration and provider deliverability have not been exercised; tests use a literal loopback collector.",
+    "Retained forecast cycles are stale; older fresh-source field/trip gates are not recorded as successes.",
+    "Repeated source cadence, complete marine advisories, redistribution rights, reviewed safety limits and scientific validation remain independent gates.",
+    "Public identity recovery, security review, deployment, backups and production operations remain separate work."
+  ],
+  "privacy": "No credentials, email proofs, account IDs, private routes, bulletin text or forecast measurements are retained in this summary."
+}

@@ -9,6 +9,7 @@ import (
 	"errors"
 	"io"
 	"math"
+	"nautiq.local/api/internal/notifications"
 	"nautiq.local/api/internal/trips"
 	"strings"
 	"time"
@@ -120,15 +121,7 @@ type Watch struct {
 	Polygon   [][]float64 `json:"polygon,omitempty"`
 	RouteID   string      `json:"route_id,omitempty"`
 }
-type AlertRule struct {
-	WatchlistID string   `json:"watchlist_id"`
-	Type        string   `json:"type"`
-	Variable    string   `json:"variable,omitempty"`
-	Units       string   `json:"units,omitempty"`
-	Limit       *float64 `json:"limit,omitempty"`
-	Enabled     bool     `json:"enabled"`
-	Channel     string   `json:"channel"`
-}
+type AlertRule = notifications.Rule
 
 func ValidateObject(kind string, body ObjectInput) error {
 	if !validName(body.Name) || len(body.Data) == 0 {
@@ -229,7 +222,11 @@ func ValidateObject(kind string, body ObjectInput) error {
 		}
 	case "alert-rules":
 		var v AlertRule
-		if Strict(body.Data, &v) != nil || v.WatchlistID == "" || v.Channel != "in_app" {
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(body.Data, &fields) != nil || (string(bytes.TrimSpace(fields["enabled"])) != "true" && string(bytes.TrimSpace(fields["enabled"])) != "false") || string(bytes.TrimSpace(fields["cooldown_minutes"])) == "null" {
+			return errors.New("explicit_alert_configuration_required")
+		}
+		if Strict(body.Data, &v) != nil || !identifier(v.WatchlistID) || (v.Channel != "in_app" && v.Channel != "email" && v.Channel != "both") || v.CooldownMinutes < 0 || v.CooldownMinutes > 1440 {
 			return errors.New("invalid_alert_rule")
 		}
 		switch v.Type {

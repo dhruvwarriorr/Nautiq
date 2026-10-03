@@ -128,7 +128,7 @@ func main() {
 	}()
 	files, e := filepath.Glob("/migrations/*.sql")
 	must(e)
-	check(len(files) == 14, "complete migration chain")
+	check(len(files) == 15, "complete migration chain")
 	for _, f := range files {
 		b, e := os.ReadFile(f)
 		must(e)
