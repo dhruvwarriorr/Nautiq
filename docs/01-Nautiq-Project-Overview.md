@@ -33,6 +33,9 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `16-Phase-7-Delivery.md` | Complete-case residual magnitude, correlated distance, weighted PCA and historical ranks |
 | `17-Phase-8-Delivery.md` | Real SST/wave/weather/current adapters, immutable Zarr releases, field sampling and raster explorer |
 | `18-Phase-9-Delivery.md` | Fixed daily SST baseline, persistent regional candidates and separate sparse profile groups |
+| `19-Phase-10-Delivery.md` | Immutable official CAP bulletins, authority coverage and revision handling |
+| `20-Phase-11-Delivery.md` | Timed diagnostic trips, private frozen receipts and exact replay |
+| `21-Phase-12-Delivery.md` | Public product views, authenticated owned state, research queries and private exports |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

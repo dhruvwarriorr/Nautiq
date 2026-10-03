@@ -182,6 +182,7 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nautiq_local_storage}
       ML_GRPC_ADDR: ml-inference:50051
       FIELD_GRPC_ADDR: field-service:50051
+      PRODUCT_WEB_ORIGIN: ${PRODUCT_WEB_ORIGIN:-http://localhost:3000}
     ports: ['127.0.0.1:${API_PORT:-8080}:8080']
     depends_on:
       postgres: {condition: service_healthy}
@@ -200,9 +201,32 @@ services:
     cpus: 1
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
+  product-verifier:
+    build: {context: ., dockerfile: services/api/ProductVerify.Dockerfile}
+    environment: *api_environment
+    profiles: [product-tools]
+    read_only: true
+    tmpfs: ['/tmp:size=64m,mode=1777']
+    mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  export-worker:
+    build: {context: ., dockerfile: ml/Product.Dockerfile}
+    environment: *api_environment
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+    read_only: true
+    tmpfs: ['/tmp:size=64m,mode=1777']
+    mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
   web:
     build: {context: ., dockerfile: apps/web/Dockerfile}
-    environment: {API_INTERNAL_URL: 'http://api:8080'}
+    environment: {API_INTERNAL_URL: 'http://api:8080', PRODUCT_WEB_ORIGIN: '${PRODUCT_WEB_ORIGIN:-http://localhost:3000}'}
     ports: ['127.0.0.1:${WEB_PORT:-3000}:3000']
     depends_on: [api]
 volumes:

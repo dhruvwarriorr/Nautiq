@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import RouteDiagram from "../components/RouteDiagram";
 import type {
   TripPolicy,
   TripPoint,
@@ -56,36 +57,69 @@ function missingSummaries(codes: string[]): string[] {
 export function TripForm({
   policy,
   releases,
+  initialRequest,
+  onSaveRoute,
+  onSaveTrip,
 }: {
   policy: TripPolicy;
   releases: Release[];
+  initialRequest?: TripRequest;
+  onSaveRoute?: (request: TripRequest) => Promise<void>;
+  onSaveTrip?: (result: TripResult) => Promise<void>;
 }) {
-  const initial = [0, 1, 2].map((i) => ({
-    latitude: i === 1 ? "12.05" : "12",
-    longitude: i === 1 ? "72.05" : "72",
-    time: new Date(Date.parse(policy.as_of) + (i + 1) * 3600000).toISOString(),
-  }));
+  const initial =
+    initialRequest?.waypoints.map((p) => ({
+      latitude: String(p.latitude),
+      longitude: String(p.longitude),
+      time: p.time,
+    })) ??
+    [0, 1, 2].map((i) => ({
+      latitude: i === 1 ? "12.05" : "12",
+      longitude: i === 1 ? "72.05" : "72",
+      time: new Date(
+        Date.parse(policy.as_of) + (i + 1) * 3600000,
+      ).toISOString(),
+    }));
   const [points, setPoints] =
     useState<{ latitude: string; longitude: string; time: string }[]>(initial);
-  const [activity, setActivity] = useState(policy.policy.activities[0]);
-  const [spacing, setSpacing] = useState("5");
-  const [step, setStep] = useState("30");
+  const [activity, setActivity] = useState(
+    initialRequest?.activity ?? policy.policy.activities[0],
+  );
+  const [spacing, setSpacing] = useState(
+    String(initialRequest?.spacing_km ?? 5),
+  );
+  const [step, setStep] = useState(String(initialRequest?.step_minutes ?? 30));
   const [bindings, setBindings] = useState<Record<string, string>>(() =>
-    Object.fromEntries(
-      policy.policy.inputs.map((s) => [
-        s.variable,
-        releases.find(
-          (r) =>
-            r.product_id === s.product_id && r.selected && r.status === "ready",
-        )?.release_id ?? "",
-      ]),
-    ),
+    initialRequest
+      ? Object.fromEntries(
+          initialRequest.fields.map((f) => [f.variable, f.release_id]),
+        )
+      : Object.fromEntries(
+          policy.policy.inputs.map((s) => [
+            s.variable,
+            releases.find(
+              (r) =>
+                r.product_id === s.product_id &&
+                r.selected &&
+                r.status === "ready",
+            )?.release_id ?? "",
+          ]),
+        ),
   );
   const [result, setResult] = useState<TripResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [evidence, setEvidence] = useState<unknown>(null);
   const [replayed, setReplayed] = useState(false);
+  const previewPoints = points.every(
+    (p) => p.latitude.trim() && p.longitude.trim(),
+  )
+    ? points.map((p) => ({
+        latitude: Number(p.latitude),
+        longitude: Number(p.longitude),
+        time: p.time,
+      }))
+    : [];
   function clear() {
     setResult(null);
     setEvidence(null);
@@ -96,11 +130,18 @@ export function TripForm({
     clear();
     setPoints(points.map((p, i) => (i === index ? { ...p, [key]: value } : p)));
   }
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    clear();
-    setBusy(true);
-    const body: TripRequest = {
+  function request(): TripRequest {
+    if (
+      points.some(
+        (p) =>
+          !p.latitude.trim() ||
+          !p.longitude.trim() ||
+          !Number.isFinite(Number(p.latitude)) ||
+          !Number.isFinite(Number(p.longitude)),
+      )
+    )
+      throw Error("coordinates_required");
+    return {
       activity,
       threshold_version: policy.policy.version,
       waypoints: points.map((p) => ({
@@ -115,7 +156,25 @@ export function TripForm({
       step_minutes: Number(step),
       preferences: {},
     };
+  }
+  async function save(trip: boolean) {
+    setBusy(true);
+    setError("");
     try {
+      if (trip && result) await onSaveTrip?.(result);
+      else await onSaveRoute?.(request());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "save_unavailable");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    clear();
+    setBusy(true);
+    try {
+      const body = request();
       const response = await fetch("/api/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,6 +267,7 @@ export function TripForm({
           No numeric limits are approved.
         </p>
         <h2>Timed waypoints</h2>
+        <RouteDiagram points={previewPoints} />
         <p>
           Include outward and return legs. A stop uses the same position at two
           increasing times. All times require a UTC offset; duration is at most
@@ -243,7 +303,9 @@ export function TripForm({
                       required
                       value={p.latitude}
                       disabled={busy}
-                      onInput={(e) => update(i, "latitude", e.currentTarget.value)}
+                      onInput={(e) =>
+                        update(i, "latitude", e.currentTarget.value)
+                      }
                     />
                   </td>
                   <td>
@@ -256,7 +318,9 @@ export function TripForm({
                       required
                       value={p.longitude}
                       disabled={busy}
-                      onInput={(e) => update(i, "longitude", e.currentTarget.value)}
+                      onInput={(e) =>
+                        update(i, "longitude", e.currentTarget.value)
+                      }
                     />
                   </td>
                   <td>
@@ -305,6 +369,30 @@ export function TripForm({
           }}
         >
           Add timed stop / waypoint
+        </button>{" "}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            clear();
+            const first = Date.parse(points[0].time);
+            if (
+              !Number.isFinite(first) ||
+              points.some((p) => !Number.isFinite(Date.parse(p.time)))
+            ) {
+              setError("invalid_waypoint_time");
+              return;
+            }
+            const shift = Date.now() + 3600000 - first;
+            setPoints(
+              points.map((p) => ({
+                ...p,
+                time: new Date(Date.parse(p.time) + shift).toISOString(),
+              })),
+            );
+          }}
+        >
+          Move departure to one hour from now
         </button>
         <h2>Pinned forecast releases</h2>
         <div className="field-controls">
@@ -339,12 +427,20 @@ export function TripForm({
         <button type="submit" disabled={busy}>
           {busy ? "Retaining trip evidence…" : "Inspect trip evidence"}
         </button>
+        {onSaveRoute ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void save(false)}
+          >
+            Save timed route
+          </button>
+        ) : null}
       </form>
       <div aria-live="polite">
         {error && (
           <p className="notice">
-            The request could not be completed: {error.replaceAll("_", " ")}. No
-            trip assessment is available.
+            The request could not be completed: {error.replaceAll("_", " ")}.
           </p>
         )}
         {result && (
@@ -353,6 +449,19 @@ export function TripForm({
               {result.verdict.status.replaceAll("_", " ")}
             </p>
             <h2>{result.verdict.wording}</h2>
+            <RouteDiagram
+              points={points.map((p) => ({
+                latitude: Number(p.latitude),
+                longitude: Number(p.longitude),
+                time: p.time,
+              }))}
+              verdict={result.verdict}
+            />
+            {onSaveTrip ? (
+              <button disabled={busy} onClick={() => void save(true)}>
+                Save private trip receipt to account
+              </button>
+            ) : null}
             <p>
               As of {result.verdict.as_of} ·{" "}
               {result.verdict.sampling.sample_count} timed samples ·{" "}

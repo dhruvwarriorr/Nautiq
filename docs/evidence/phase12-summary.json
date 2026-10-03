@@ -1,0 +1,123 @@
+{
+  "captured_at": "2026-10-03T04:50:29.754043+00:00",
+  "scope": "Local authenticated product implementation, disposable recovery/security contracts, real retained-source exports and browser acceptance. Not a production, identity-provider, alert-delivery or scientific approval.",
+  "schema_version": 14,
+  "capabilities": {
+    "platform_runtime": true,
+    "observations": true,
+    "climatology": true,
+    "expected_state": true,
+    "ml_residual": false,
+    "predictive_intervals": true,
+    "calibrated_uncertainty": false,
+    "profile_anomaly_diagnostics": true,
+    "profile_anomaly": false,
+    "event_detection_diagnostics": true,
+    "regional_events": false,
+    "field_sampling": true,
+    "advisory_diagnostics": true,
+    "official_advisories": false,
+    "trip_diagnostics": true,
+    "trip_assessment": false
+  },
+  "product_policy_version": "product-surfaces-v1",
+  "export_permissions": {
+    "user_owned_routes": true,
+    "user_owned_watchlists": true,
+    "source_profile_rows": true,
+    "source_forecast_rows": false,
+    "source_advisory_content": false,
+    "scientific_event_rows": false
+  },
+  "live_public": {
+    "map_profiles": 200,
+    "native_fields": 4,
+    "event_components": 6,
+    "advisory_state": "unknown",
+    "official_polygons": 0,
+    "official_circles": 0,
+    "location_variables": 4,
+    "research_snapshot_pagination": true,
+    "empty_research": true,
+    "query_preview_and_clarification": true
+  },
+  "live_private": {
+    "jobs_ready": 6,
+    "report_scopes": [
+      "route",
+      "location",
+      "event"
+    ],
+    "original_argo_rows": {
+      "csv": 1978,
+      "parquet": 1978,
+      "netcdf": 1978
+    },
+    "independent_format_readback": true,
+    "hash_verified_single_use_downloads": true,
+    "verification_accounts_deleted": true
+  },
+  "verification": {
+    "lint": "passed",
+    "go_race": "passed",
+    "python_suite": {
+      "passed": 21
+    },
+    "web_suite": {
+      "passed": 3
+    },
+    "production_build": "passed",
+    "docker_builds": [
+      "api",
+      "web",
+      "export-worker",
+      "product-verifier"
+    ],
+    "migrations_fresh_repeat_legacy_checksums_rollback": "passed",
+    "product_offline": "passed",
+    "product_disposable_api_sql_minio": "passed",
+    "product_worker_recovery_cancel_corruption_expiry_cleanup": "passed",
+    "live_product_smoke": "passed",
+    "platform_dependencies": {
+      "healthy": 10
+    },
+    "offline_field_event_advisory_trip": "passed",
+    "trip_disposable_regression": "passed",
+    "live_event_advisory_regressions": "passed"
+  },
+  "browser": {
+    "desktop_mobile": true,
+    "no_console_errors": true,
+    "no_page_overflow": true,
+    "query_execution_profiles": 50,
+    "measured_and_reference_depth_charts": true,
+    "residual_heatmap": true,
+    "route_watchlist_rule_report_creation": true,
+    "http_only_proof_not_readable": true,
+    "same_account_expired_draft_restored": true,
+    "different_account_draft_cleared": true,
+    "temporary_accounts_deleted": true,
+    "browser_closed": true
+  },
+  "known_acceptance_gaps": [
+    {
+      "check": "live_fresh_field_gate",
+      "state": "blocked",
+      "reason": "Retained NOAA GFS wave/weather cycles are stale; gate requires available fresh samples."
+    },
+    {
+      "check": "live_trip_two_worst_samples_gate",
+      "state": "blocked",
+      "reason": "Stale required forecast samples do not produce fresh worst-sample values. Offline/disposable trip precedence and persistence pass."
+    }
+  ],
+  "external_release_gates": [
+    "Public identity/security/backups/deployment",
+    "Scientific validation and calibrated operational confidence",
+    "Repeated provider cadence and complete marine advisory coverage",
+    "Reviewed forecast/advisory redistribution",
+    "Approved trip decision thresholds",
+    "Alert evaluation, deduplication, cooldown, recovery and delivery"
+  ],
+  "privacy": "No credentials, session/receipt proofs, account IDs, private routes, raw questions or provider bulletin text are included."
+}

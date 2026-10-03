@@ -1,0 +1,3926 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq public exploration and private product surfaces",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/product-policy": {
+      "get": {
+        "description": "Versioned source permissions, unavailable layers, locations and separate release gates.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "description": "Local handle and Argon2id credentials; returns raw session token once to the trusted web proxy, which sets HttpOnly SameSite=Lax cookie. API stores only token hashes.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Local handle and Argon2id credentials; returns raw session token once to the trusted web proxy, which sets HttpOnly SameSite=Lax cookie. API stores only token hashes.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "description": "24-hour absolute and 30-minute idle session; owner identity, version and CSRF proof.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Revoke current session.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          }
+        ]
+      }
+    },
+    "/account": {
+      "patch": {
+        "description": "Notification preference or password change. Password change verifies old password and revokes all sessions.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountChange"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Password-confirmed account deletion; cascade saved state and queue private artifact/claimed receipt removal.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccount"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/routes": {
+      "get": {
+        "description": "Owned paginated collection. limit 1\u2013100; UUID after cursor.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "Strict typed owned data; route uses trips.openapi.json request, watchlist uses point/place/polygon/owned-route, rule uses owned-watchlist and in_app channel.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/routes/{id}": {
+      "get": {
+        "description": "Owned current object, version and ETag.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "put": {
+        "description": "Replace owned object with optimistic version and idempotent UUID request.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Soft delete owned object; dependent references refuse deletion.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ]
+      }
+    },
+    "/watchlists": {
+      "get": {
+        "description": "Owned paginated collection. limit 1\u2013100; UUID after cursor.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "Strict typed owned data; route uses trips.openapi.json request, watchlist uses point/place/polygon/owned-route, rule uses owned-watchlist and in_app channel.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistsInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/watchlists/{id}": {
+      "get": {
+        "description": "Owned current object, version and ETag.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "put": {
+        "description": "Replace owned object with optimistic version and idempotent UUID request.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Soft delete owned object; dependent references refuse deletion.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ]
+      }
+    },
+    "/alert-rules": {
+      "get": {
+        "description": "Owned paginated collection. limit 1\u2013100; UUID after cursor.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "Strict typed owned data; route uses trips.openapi.json request, watchlist uses point/place/polygon/owned-route, rule uses owned-watchlist and in_app channel.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertrulesInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert-rules/{id}": {
+      "get": {
+        "description": "Owned current object, version and ETag.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "put": {
+        "description": "Replace owned object with optimistic version and idempotent UUID request.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedObject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertrulesInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Soft delete owned object; dependent references refuse deletion.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ]
+      }
+    },
+    "/saved-trips": {
+      "get": {
+        "description": "Owned retained receipt links, historical verdicts and paginated UUID cursor.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "First owner claims an immutable trip receipt using its one-time private access proof; raw access token is not saved in account state.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripClaim"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/saved-trips/{id}": {
+      "get": {
+        "description": "Owner-checked, hash/SQL-mirror verified frozen receipt. No resampling or freshness renewal.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "delete": {
+        "description": "Unlink owner claim; anonymous receipt retains original retention.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ]
+      }
+    },
+    "/alerts": {
+      "get": {
+        "description": "Owned paginated alert evidence with exact byte hash and mirror validation. Evaluation and delivery flags remain false.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/alerts/{id}/acknowledge": {
+      "post": {
+        "description": "Idempotently acknowledge owned alert; preserves event state and evidence.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ]
+      }
+    },
+    "/reports": {
+      "get": {
+        "description": "Owned paginated job metadata; original observation payloads omitted from list.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "Freeze owned/evidence snapshot and exact policy identity; queue durable worker. Reports JSON/HTML. Exports JSON/CSV/Parquet; NetCDF only accepted original Argo levels. 20 jobs/day; 10,000 rows; 4 MiB snapshot; 8 MiB artifact; 72-hour expiry.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "202": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/{id}": {
+      "get": {
+        "description": "Owner-checked job status and hash/mirror verified input snapshot.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/reports/{id}/cancel": {
+      "post": {
+        "description": "Fence queued/running lease using current version.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ]
+      }
+    },
+    "/reports/{id}/download-grants": {
+      "post": {
+        "description": "Create five-minute single-use grant identifier. Owning authenticated session is still required.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ]
+      }
+    },
+    "/reports/{id}/download": {
+      "get": {
+        "description": "grant UUID query plus owning session; exact size/SHA checked before atomic grant use. Attachment, no-store, sandbox, nosniff.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/exports": {
+      "get": {
+        "description": "Owned paginated job metadata; original observation payloads omitted from list.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      },
+      "post": {
+        "description": "Freeze owned/evidence snapshot and exact policy identity; queue durable worker. Reports JSON/HTML. Exports JSON/CSV/Parquet; NetCDF only accepted original Argo levels. 20 jobs/day; 10,000 rows; 4 MiB snapshot; 8 MiB artifact; 72-hour expiry.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "202": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exports/{id}": {
+      "get": {
+        "description": "Owner-checked job status and hash/mirror verified input snapshot.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/exports/{id}/cancel": {
+      "post": {
+        "description": "Fence queued/running lease using current version.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Quoted version from loaded resource."
+          }
+        ]
+      }
+    },
+    "/exports/{id}/download-grants": {
+      "post": {
+        "description": "Create five-minute single-use grant identifier. Owning authenticated session is still required.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "201": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured web origin."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session-bound proof obtained from session endpoint."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "UUID; required for saved objects, trip claims, jobs and actions; valid for 24 hours."
+          }
+        ]
+      }
+    },
+    "/exports/{id}/download": {
+      "get": {
+        "description": "grant UUID query plus owning session; exact size/SHA checked before atomic grant use. Attachment, no-store, sandbox, nosniff.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "security": [
+          {
+            "SessionBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Account-Scope",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "If supplied, must match authenticated account. Browser always supplies it."
+          }
+        ]
+      }
+    },
+    "/research": {
+      "post": {
+        "description": "Bounded original-level query. Snapshot-pinned signed 15-minute cursor; 100 profiles/page, 200 preview levels/instrument; full matched extrema and count. Filter changes, restart or expiry invalidate cursor.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchFilter"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query": {
+      "post": {
+        "description": "Bounded deterministic intent grammar creates typed plan only; raw text is never persisted or logged. Explicit dates/named places; relative or unsupported requests require clarification.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryText"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conditions/point": {
+      "get": {
+        "description": "Latitude/longitude plus optional explicit ISO time. Four exact native field timelines, nearby original instruments, official state and explicit unsupported expected-at-point/confidence. Partial dependencies remain unavailable per layer.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        }
+      }
+    },
+    "/conditions/region/{slug}": {
+      "get": {
+        "description": "Named region center point evidence; no regional average is inferred.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        }
+      }
+    },
+    "/map/overview": {
+      "get": {
+        "description": "Non-crossing bbox, explicit start/end at most 366 days. At most 200 accepted profiles, 8 selected native fields, 100 immutable diagnostic event components and 100 authority polygons/circles. Geometry carries separate valid times; unknown coverage never becomes all-clear.",
+        "responses": {
+          "400": {
+            "description": "Strict body/query, geometry or budget refusal"
+          },
+          "401": {
+            "description": "Session expired, missing or account scope changed"
+          },
+          "403": {
+            "description": "Exact origin or CSRF proof missing"
+          },
+          "404": {
+            "description": "Unknown or unowned resource"
+          },
+          "409": {
+            "description": "Stale edit, idempotency conflict or dependency refusal"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "422": {
+            "description": "Quota, snapshot or redistribution refusal"
+          },
+          "428": {
+            "description": "Quoted If-Match version required"
+          },
+          "429": {
+            "description": "Request or password hashing capacity"
+          },
+          "503": {
+            "description": "Dependency or immutable evidence integrity unavailable"
+          },
+          "200": {
+            "description": "Typed result; no-store. Null/unknown evidence remains explicit."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "SessionBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Raw API proof; browser callers use trusted same-origin proxy and HttpOnly cookie."
+      }
+    },
+    "schemas": {
+      "Credentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "handle": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{3,32}$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "handle",
+          "password"
+        ]
+      },
+      "AccountChange": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "notifications_enabled": {
+            "type": "boolean"
+          },
+          "old_password": {
+            "type": "string"
+          },
+          "new_password": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "DeleteAccount": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "ObjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "data": {
+            "type": "object",
+            "description": "Kind-specific strict typed body; unknown fields rejected."
+          }
+        },
+        "required": [
+          "name",
+          "data"
+        ]
+      },
+      "TripClaim": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "access_token": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "name",
+          "calculation_id",
+          "access_token"
+        ]
+      },
+      "JobInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scope": {
+            "enum": [
+              "route",
+              "watchlist",
+              "trip",
+              "research",
+              "location",
+              "event"
+            ]
+          },
+          "target_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "place": {
+            "type": "string"
+          },
+          "query": {
+            "$ref": "#/components/schemas/ResearchFilter"
+          },
+          "format": {
+            "enum": [
+              "json",
+              "html",
+              "csv",
+              "parquet",
+              "netcdf"
+            ]
+          }
+        },
+        "required": [
+          "scope",
+          "format"
+        ]
+      },
+      "QueryText": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "IANA time zone; relative times still require explicit UTC bounds."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "ResearchFilter": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "min_depth_m": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6000
+          },
+          "max_depth_m": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6000
+          },
+          "variable": {
+            "enum": [
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "source": {
+            "const": "argo_gdac"
+          },
+          "qc": {
+            "enum": [
+              "accepted",
+              "science_ready"
+            ]
+          },
+          "data_mode": {
+            "enum": [
+              "",
+              "R",
+              "A",
+              "D"
+            ]
+          },
+          "minimum_anomaly_percentile": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "polygon": {
+            "type": "array",
+            "maxItems": 129,
+            "description": "Closed longitude/latitude ring; PostGIS validity and <=1e12 m2 area required."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "bbox",
+          "start",
+          "end",
+          "min_depth_m",
+          "max_depth_m",
+          "variable",
+          "source",
+          "qc",
+          "limit"
+        ]
+      },
+      "Watch": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "point"
+              },
+              "latitude": {
+                "type": "number",
+                "minimum": -85,
+                "maximum": 85
+              },
+              "longitude": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180
+              },
+              "radius_km": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "type",
+              "latitude",
+              "longitude",
+              "radius_km"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "place"
+              },
+              "place": {
+                "enum": [
+                  "mumbai-offshore",
+                  "goa-offshore",
+                  "kerala-offshore",
+                  "arabian-sea",
+                  "bay-of-bengal"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "place"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "route"
+              },
+              "route_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "type",
+              "route_id"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "polygon"
+              },
+              "polygon": {
+                "type": "array",
+                "minItems": 4,
+                "maxItems": 129,
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "polygon"
+            ]
+          }
+        ]
+      },
+      "AlertRule": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "enum": [
+                  "official_advisory",
+                  "source_stale"
+                ]
+              },
+              "watchlist_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "channel": {
+                "const": "in_app"
+              }
+            },
+            "required": [
+              "type",
+              "watchlist_id",
+              "enabled",
+              "channel"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "field_threshold"
+              },
+              "watchlist_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "channel": {
+                "const": "in_app"
+              },
+              "variable": {
+                "enum": [
+                  "wave_height_m",
+                  "wind_speed_m_s",
+                  "current_speed_m_s"
+                ]
+              },
+              "units": {
+                "enum": [
+                  "m",
+                  "m s-1"
+                ]
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1000
+              }
+            },
+            "required": [
+              "type",
+              "watchlist_id",
+              "enabled",
+              "channel",
+              "variable",
+              "units",
+              "limit"
+            ]
+          }
+        ]
+      },
+      "SavedObject": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "enum": [
+              "routes",
+              "watchlists",
+              "alert-rules"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "data",
+          "version",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "Session": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "notifications_enabled": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "csrf_token": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "account_id",
+          "handle",
+          "notifications_enabled",
+          "version",
+          "csrf_token",
+          "expires_at"
+        ]
+      },
+      "Job": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "enum": [
+              "reports",
+              "exports"
+            ]
+          },
+          "format": {
+            "enum": [
+              "json",
+              "html",
+              "csv",
+              "parquet",
+              "netcdf"
+            ]
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "ready",
+              "blocked",
+              "failed",
+              "cancelled",
+              "expired"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "input": {
+            "type": "object"
+          },
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "artifact_sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "artifact_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "format",
+          "state",
+          "reason",
+          "version",
+          "input",
+          "input_sha256",
+          "artifact_sha256",
+          "artifact_bytes",
+          "created_at",
+          "finished_at",
+          "expires_at"
+        ]
+      },
+      "WatchlistsInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "data": {
+            "$ref": "#/components/schemas/Watch"
+          }
+        },
+        "required": [
+          "name",
+          "data"
+        ]
+      },
+      "AlertrulesInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "data": {
+            "$ref": "#/components/schemas/AlertRule"
+          }
+        },
+        "required": [
+          "name",
+          "data"
+        ]
+      }
+    }
+  }
+}

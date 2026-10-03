@@ -16,6 +16,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	pb "nautiq.local/api/gen/nautiq/platform/v1"
 	"nautiq.local/api/internal/platform"
+	"nautiq.local/api/internal/product"
 	"nautiq.local/api/internal/profiles"
 	"nautiq.local/api/internal/science"
 )
@@ -59,6 +60,17 @@ func main() {
 	scientific.Fields = pb.NewFieldServiceClient(fieldConnection)
 	scientific.FieldRuntime = pb.NewPlatformServiceClient(fieldConnection)
 	scientific.Register(mux)
+	scientific.RegisterSurfaces(mux)
+	origin := os.Getenv("PRODUCT_WEB_ORIGIN")
+	if origin == "" {
+		origin = "http://localhost:3000"
+	}
+	productServer, err := product.New(pool, storage, origin)
+	if err != nil {
+		slog.Error("configure product origin")
+		os.Exit(1)
+	}
+	productServer.Register(mux)
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"status":"ok"}`))

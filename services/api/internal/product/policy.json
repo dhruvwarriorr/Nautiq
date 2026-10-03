@@ -1,0 +1,104 @@
+{
+  "version": "product-surfaces-v1",
+  "authentication": "local-handle-argon2id-session-v1",
+  "production_approved": false,
+  "bounds": {
+    "objects_per_kind": 100,
+    "jobs_per_day": 20,
+    "rows_per_export": 10000,
+    "artifact_bytes": 8388608,
+    "job_expiry_hours": 72
+  },
+  "export_permissions": {
+    "user_owned_routes": true,
+    "user_owned_watchlists": true,
+    "source_profile_rows": true,
+    "source_forecast_rows": false,
+    "source_advisory_content": false,
+    "scientific_event_rows": false
+  },
+  "query_parser": "bounded-intent-grammar-v1",
+  "locations": [
+    {
+      "slug": "mumbai-offshore",
+      "name": "Mumbai Offshore",
+      "latitude": 19.0,
+      "longitude": 72.3,
+      "bbox": [
+        71,
+        18,
+        73,
+        20
+      ]
+    },
+    {
+      "slug": "goa-offshore",
+      "name": "Goa Offshore",
+      "latitude": 15.4,
+      "longitude": 73.3,
+      "bbox": [
+        72.5,
+        14.5,
+        74,
+        16.5
+      ]
+    },
+    {
+      "slug": "kerala-offshore",
+      "name": "Kerala Offshore",
+      "latitude": 10,
+      "longitude": 75.5,
+      "bbox": [
+        74,
+        8,
+        77,
+        12
+      ]
+    },
+    {
+      "slug": "arabian-sea",
+      "name": "Arabian Sea",
+      "latitude": 15,
+      "longitude": 65,
+      "bbox": [
+        45,
+        0,
+        77,
+        25
+      ]
+    },
+    {
+      "slug": "bay-of-bengal",
+      "name": "Bay of Bengal",
+      "latitude": 15,
+      "longitude": 87,
+      "bbox": [
+        78,
+        0,
+        100,
+        25
+      ]
+    }
+  ],
+  "unavailable_layers": [
+    "buoy_observations",
+    "operational_sst_anomaly",
+    "operational_profile_anomaly",
+    "validated_confidence",
+    "visibility",
+    "tides"
+  ],
+  "limitations": [
+    "Local accounts have no verified email, MFA or recovery provider; public identity operations require deployment review.",
+    "Forecast/advisory redistribution remains unreviewed. Private provenance reports omit those source measurements and bulletin content. Accepted original Argo research exports carry attribution under published unrestricted reuse terms.",
+    "Alert evaluation, cooldown, recovery and delivery are separate from rule and inbox management.",
+    "Natural-language parsing uses a bounded grammar and typed plans; unresolved places, relative times and unsupported intents need clarification."
+  ],
+  "argo_export_policy": {
+    "scope": "accepted original Argo observation levels in private bounded research exports",
+    "terms_url": "https://argo.ucsd.edu/data/acknowledging-argo/",
+    "checked_date": "2026-10-03",
+    "attribution": "International Argo Program and contributing national programmes; part of the Global Ocean Observing System. Argo GDAC DOI: 10.17882/42182.",
+    "production_science_approval": false
+  }
+}

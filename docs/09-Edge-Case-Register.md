@@ -194,3 +194,20 @@ These controls complete the declared complete-case implementation. Sparse functi
 Official CAP ingestion explicitly tests hostile XML/entities/URLs, duplicate index identities, truncation/byte/time budgets, damaged conditional caches, missing expiry, lat/lon reversal, text/geocode areas, invalid polygons, language multiplicity, private/test status, changed bytes under one identity, absent reference parents, wrong-sender cancellation, incomplete updates, arrival reordering, disappearance, atomic rollback and immutable projection corruption/recovery. Unknown feeds and geometry never establish an absence of warning; a verified relevant warning takes priority over unknown other feeds. See [delivery evidence](19-Phase-10-Delivery.md).
 
 Trip verification covers all precedence branches, equality at limits, warning priority over missing/stale data, retained adverse samples, null/unapproved limits, stricter-only preferences, co-timed combinations and worsening rules, malformed/duplicate request keys, incorrect units/cycles/horizons/sample plans, timed stops/returns, sample budgets without coarsening, dateline refusal, warning intersections between forecast samples and validity clipping, source run/policy publication races, private token access, public calculation exclusion, immutable object/SQL mirror corruption and transaction rollback. Replay uses frozen inputs and cannot refresh an old verdict. Numeric safety/domain approval and operational source completeness remain external gates.
+
+## Product ownership and export verification
+
+| Failure | Delivered behavior | Verification |
+| --- | --- | --- |
+| Guessed or spoofed owner/route/watchlist/job/receipt | Verified session owner, strict client fields and cross-owner 404 | Two-account disposable API and real object storage |
+| Lost response or concurrent repeat | Atomic UUID idempotency replay; changed payload conflicts | Concurrent API retries |
+| Stale form or cancellation | Quoted version conflict; lease publication cannot restore cancelled job | API CAS and cancellation-during-upload worker check |
+| Expiry while editing / different account | Hidden in-memory draft, same-account restoration, new-account draft reset | Actual browser session expiry and account switch |
+| Rewritten alert/file/source evidence | Byte hash and JSON mirror checks; refuse response/download | Corrupted evidence/artifact/input fixtures |
+| Formula strings or fabricated export completeness | CSV string sanitization; row/byte budgets require refinement; exact original-level units and source/QC | Independent CSV/Parquet/NetCDF readback |
+| Failed worker, orphan or expired artifact | Durable fenced leases, bounded attempts, cleanup queue, DB reconnect and record grace-period purge | Actual MinIO and disposable DB lifecycle |
+| Grant leaked/reused or crossed owner | Owning session plus five-minute single-use identifier, checked bytes and atomic use | API/download verification |
+| Relative time, unnamed place, arbitrary query or apparent all-clear | Typed bounded preview/clarification; per-layer unknown/stale states remain explicit | Offline/public query, empty research and browser location checks |
+| Configured rule mistaken for active monitoring | Evaluation/delivery unavailable, empty inbox has no safety meaning | API flags and rendered rule/inbox notices |
+
+See [product acceptance](21-Phase-12-Delivery.md); fresh-source field/trip gates remain separate from product implementation acceptance.

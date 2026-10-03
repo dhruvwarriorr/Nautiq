@@ -255,3 +255,16 @@ make phase11-reliability phase11-smoke
 ```
 
 Numeric decision thresholds are unapproved and remain null. Marine completeness and operational forecast approval remain unverified; current trips cannot receive favorable assessments. Relevant known official warnings still take precedence. Trip receipts are private: creation returns a random access token, and evidence/replay requires its Bearer header. Public calculation pages exclude trip inputs. The browser keeps access in page memory and clears obsolete results when inputs change; saved authenticated trips are separate work. Frozen replay never renews freshness.
+
+## Product workspace and original-observation exports
+
+The ocean map, named locations, research explorer, typed query preview and private workspace are available at `/map`, `/locations`, `/research`, `/query` and `/app`. Local handle accounts own routes, watchlists, rules, receipts and file jobs. Account proofs stay in HttpOnly cookies; writes require the configured `PRODUCT_WEB_ORIGIN` and session-bound CSRF proof.
+
+```sh
+make migrate
+# Includes the durable export worker in the default stack.
+docker compose up --build -d
+make phase12-verify phase12-reliability phase12-smoke
+```
+
+Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast/advisory redistribution, public identity operations, notification evaluation/delivery and scientific promotion retain separate gates. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).

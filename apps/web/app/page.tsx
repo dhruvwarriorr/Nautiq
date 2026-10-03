@@ -2,7 +2,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main>
-      <p className="eyebrow">NAUTIQ / LOCAL DEVELOPMENT</p>
+      <p className="eyebrow">NAUTIQ / OCEAN EVIDENCE</p>
       <h1>
         Ocean intelligence,
         <br />
@@ -12,9 +12,10 @@ export default function Home() {
         Explore original Argo temperature and salinity profiles with quality
         flags, depth charts and the exact scientific source files.
       </p>
-      <Link className="button" href="/profiles">
-        Explore Argo profiles →
+      <Link className="button" href="/map">
+        Explore the ocean map →
       </Link>
+      <p><Link href="/locations">Choose a location</Link> · <Link href="/research">Research observations</Link> · <Link href="/query">Ask about evidence</Link> · <Link href="/app">Open your workspace</Link></p>
       <p className="footnote">
         <Link href="/data">Review source quality and frozen datasets →</Link>
         <br />

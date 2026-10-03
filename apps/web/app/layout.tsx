@@ -1,6 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
-export const metadata: Metadata = { title: "Nautiq · Local platform", description: "Local development platform dependency health" };
-export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+import ProductNav from "./components/ProductNav";
+export const metadata: Metadata = {
+  title: "Nautiq · Ocean evidence",
+  description:
+    "Explore original observations, native forecasts and private timed trip evidence with source and scientific limitations.",
+};
+export default function Layout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en">
+      <body>
+        <a className="skip-link" href="#content">
+          Skip to content
+        </a>
+        <ProductNav />
+        <div id="content">{children}</div>
+      </body>
+    </html>
+  );
 }

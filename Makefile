@@ -43,6 +43,14 @@ build:
 logs:
 	docker compose logs --tail=100 -f
 
+.PHONY: phase12-verify phase12-reliability phase12-smoke
+phase12-verify:
+	.venv/bin/python scripts/verify_phase12.py
+phase12-reliability:
+	.venv/bin/python scripts/verify_phase12_reliability.py
+phase12-smoke:
+	.venv/bin/python scripts/verify_phase12_smoke.py
+
 .PHONY: argo-setup ingest reconcile phase2-smoke phase2-verify
 argo-setup:
 	uv pip install --python .venv/bin/python -r ml/requirements-argo.lock -e ./ml
