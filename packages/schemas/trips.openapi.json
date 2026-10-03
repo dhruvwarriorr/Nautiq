@@ -1,0 +1,355 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq deterministic trip evidence",
+    "version": "1.0.0",
+    "description": "Private frozen diagnostic receipts. Numeric thresholds and operational marine inputs remain unapproved; actual trips cannot be favorable."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/trip-policy": {
+      "get": {
+        "description": "Embedded unapproved policy, bounds, runtime/source fingerprint and clock.",
+        "responses": {
+          "400": {
+            "description": "Invalid, unknown or duplicate body/query fields; timing/budget/version/preference refusal"
+          },
+          "404": {
+            "description": "Unknown or inaccessible receipt"
+          },
+          "409": {
+            "description": "Advisory snapshot changed during acquisition, or replay requires the original pinned serving release"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "429": {
+            "description": "Bounded query capacity"
+          },
+          "503": {
+            "description": "Storage, immutable projection, dependency or replay verification unavailable"
+          },
+          "200": {
+            "description": "Verified policy/evidence. Creation returns calculation_id, manifest_sha256, verdict and access_token once; evidence/replay never returns the token."
+          }
+        }
+      }
+    },
+    "/trips": {
+      "post": {
+        "description": "Create a private frozen diagnostic calculation from a timed route. At most 24 hours/1000 km/512 samples; stops/returns must be explicit. Missing required evidence is retained. Whole route segments intersect official validity/geometry.",
+        "responses": {
+          "400": {
+            "description": "Invalid, unknown or duplicate body/query fields; timing/budget/version/preference refusal"
+          },
+          "404": {
+            "description": "Unknown or inaccessible receipt"
+          },
+          "409": {
+            "description": "Advisory snapshot changed during acquisition, or replay requires the original pinned serving release"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "429": {
+            "description": "Bounded query capacity"
+          },
+          "503": {
+            "description": "Storage, immutable projection, dependency or replay verification unavailable"
+          },
+          "201": {
+            "description": "Verified policy/evidence. Creation returns calculation_id, manifest_sha256, verdict and access_token once; evidence/replay never returns the token."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trips/{id}": {
+      "get": {
+        "description": "Verify and inspect immutable private receipt bytes and SQL mirrors.",
+        "responses": {
+          "400": {
+            "description": "Invalid, unknown or duplicate body/query fields; timing/budget/version/preference refusal"
+          },
+          "404": {
+            "description": "Unknown or inaccessible receipt"
+          },
+          "409": {
+            "description": "Advisory snapshot changed during acquisition, or replay requires the original pinned serving release"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "429": {
+            "description": "Bounded query capacity"
+          },
+          "503": {
+            "description": "Storage, immutable projection, dependency or replay verification unavailable"
+          },
+          "200": {
+            "description": "Verified policy/evidence. Creation returns calculation_id, manifest_sha256, verdict and access_token once; evidence/replay never returns the token."
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "receiptAccess": []
+          }
+        ]
+      }
+    },
+    "/trips/{id}/replay": {
+      "post": {
+        "description": "Reconstruct fields/advisory state and repeat deterministic rules against captured inputs. No request body, external refresh or freshness renewal. Requires original code/runtime.",
+        "responses": {
+          "400": {
+            "description": "Invalid, unknown or duplicate body/query fields; timing/budget/version/preference refusal"
+          },
+          "404": {
+            "description": "Unknown or inaccessible receipt"
+          },
+          "409": {
+            "description": "Advisory snapshot changed during acquisition, or replay requires the original pinned serving release"
+          },
+          "415": {
+            "description": "application/json required"
+          },
+          "429": {
+            "description": "Bounded query capacity"
+          },
+          "503": {
+            "description": "Storage, immutable projection, dependency or replay verification unavailable"
+          },
+          "200": {
+            "description": "Verified policy/evidence. Creation returns calculation_id, manifest_sha256, verdict and access_token once; evidence/replay never returns the token."
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "security": [
+          {
+            "receiptAccess": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "receiptAccess": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Random 256-bit per-receipt token returned once at creation. No query tokens."
+      }
+    },
+    "schemas": {
+      "TimedWaypoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "latitude",
+          "longitude",
+          "time"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -85,
+            "maximum": 85
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TripRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "activity",
+          "threshold_version",
+          "waypoints",
+          "spacing_km",
+          "step_minutes"
+        ],
+        "properties": {
+          "activity": {
+            "enum": [
+              "fishing",
+              "boating"
+            ]
+          },
+          "threshold_version": {
+            "const": "marine-trip-policy-unreleased-v1"
+          },
+          "waypoints": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/components/schemas/TimedWaypoint"
+            }
+          },
+          "spacing_km": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 5
+          },
+          "step_minutes": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "fields": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": [
+                "variable",
+                "release_id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "variable": {
+                  "enum": [
+                    "wave_height_m",
+                    "wind_speed_m_s",
+                    "current_speed_m_s"
+                  ]
+                },
+                "release_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "preferences": {
+            "type": "object",
+            "description": "Only tightening limits under an approved release. Current unapproved policy rejects any preference."
+          }
+        }
+      },
+      "TripVerdict": {
+        "type": "object",
+        "required": [
+          "status",
+          "engine_available",
+          "rules_fired",
+          "worst_samples",
+          "missing_inputs",
+          "source_cycles",
+          "threshold_version",
+          "method_version",
+          "as_of",
+          "sampling",
+          "limitations",
+          "wording",
+          "production_approved"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "official_warning",
+              "insufficient_data",
+              "unfavorable",
+              "caution",
+              "favorable"
+            ]
+          },
+          "engine_available": {
+            "type": "boolean"
+          },
+          "rules_fired": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "worst_samples": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "missing_inputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_cycles": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "threshold_version": {
+            "type": "string"
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sampling": {
+            "type": "object"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "wording": {
+            "type": "string"
+          },
+          "production_approved": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

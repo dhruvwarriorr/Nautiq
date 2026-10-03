@@ -1,4 +1,4 @@
-// Package science serves durable audit evidence, not model or trip predictions.
+// Package science serves durable audit evidence and deterministic trip diagnostics.
 package science
 
 import (
@@ -35,6 +35,10 @@ func New(db *pgxpool.Pool, storage *minio.Client) *Server {
 	return &Server{DB: db, Storage: storage, slots: make(chan struct{}, 8), downloads: make(chan struct{}, 2)}
 }
 func (s *Server) Register(mux *http.ServeMux) {
+	mux.Handle("GET /api/v1/trip-policy", s.bound(s.tripPolicy))
+	mux.Handle("POST /api/v1/trips", s.bound(s.assessTrip))
+	mux.Handle("GET /api/v1/trips/{id}", s.bound(s.tripEvidence))
+	mux.Handle("POST /api/v1/trips/{id}/replay", s.bound(s.replayTrip))
 	mux.Handle("GET /api/v1/advisories", s.bound(s.advisoryCatalog))
 	mux.Handle("GET /api/v1/advisories/state", s.bound(s.advisoryState))
 	mux.Handle("GET /api/v1/advisories/{id}", s.bound(s.advisoryDetail))
@@ -232,7 +236,7 @@ func (s *Server) calculation(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	s.serve(w, r, `SELECT json_build_object('calculation_id',calculation_id,'kind',kind,'state',state,'created_at',created_at,'manifest_sha256',manifest_sha256,'superseded_by',superseded_by,'manifest',manifest) FROM calculations WHERE calculation_id=$1`, id)
+	s.serve(w, r, `SELECT json_build_object('calculation_id',calculation_id,'kind',kind,'state',state,'created_at',created_at,'manifest_sha256',manifest_sha256,'superseded_by',superseded_by,'manifest',manifest) FROM calculations WHERE calculation_id=$1 AND kind<>'trip_assessment'`, id)
 }
 func (s *Server) snapshots(w http.ResponseWriter, r *http.Request) {
 	q, ok := query(w, r, "limit")

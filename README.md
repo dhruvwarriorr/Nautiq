@@ -242,3 +242,16 @@ make phase10-verify phase10-reliability phase10-smoke
 ```
 
 Default startup does not poll advisory sources. For an explicit local continuous poll, run `docker compose run --rm advisory-worker python -m nautiq_ml.advisories.pipeline refresh --watch`. Feed transport health never establishes an absence of relevant official warnings. Diagnostic evidence availability and official operational approval are distinct capabilities.
+
+## Timed trip evidence
+
+Open http://localhost:3000/trips to inspect a complete timed outward/return route and stops against exact forecast releases and retained official advisory evidence. The deterministic Go engine records every rule, missing input, worst sampled value/time/location, source cycle, threshold version and calculation identity. See [implementation and validation](docs/20-Phase-11-Delivery.md) and [API contract](packages/schemas/trips.openapi.json).
+
+```sh
+make migrate
+make phase11-verify
+docker compose build trip-verifier
+make phase11-reliability phase11-smoke
+```
+
+Numeric decision thresholds are unapproved and remain null. Marine completeness and operational forecast approval remain unverified; current trips cannot receive favorable assessments. Relevant known official warnings still take precedence. Trip receipts are private: creation returns a random access token, and evidence/replay requires its Bearer header. Public calculation pages exclude trip inputs. The browser keeps access in page memory and clears obsolete results when inputs change; saved authenticated trips are separate work. Frozen replay never renews freshness.

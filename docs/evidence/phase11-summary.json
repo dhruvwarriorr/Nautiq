@@ -1,0 +1,51 @@
+{
+  "calculation_id": "5b81e9e4-69ac-5351-a389-da18e42c78a8",
+  "manifest_sha256": "6d77aadbe4099e725429c32492f6e9e3b956e95197a69449a1fc3e8a8da27ae2",
+  "status": "insufficient_data",
+  "as_of": "2026-10-02T19:55:15.217791596Z",
+  "threshold_version": "marine-trip-policy-unreleased-v1",
+  "sample_count": 5,
+  "worst_variable_count": 2,
+  "source_cycles": [
+    {
+      "variable": "wave_height_m",
+      "release_id": "bffa17c3-2a53-53d8-a547-d37bdbddca5c",
+      "cycle": "2026-10-02T06:00:00Z",
+      "manifest_sha256": "255d31c6c18519a47804245c9703c58abc20bdb529409287ec104351f390f015",
+      "evidence_sha256": "8105af275e1d22fdb00eb93f4e36251e8b6e8fbccdb16687f95904be10980a39"
+    },
+    {
+      "variable": "wind_speed_m_s",
+      "release_id": "1c68666b-7777-59fc-82ec-9bfbfea0f87d",
+      "cycle": "2026-10-02T06:00:00Z",
+      "manifest_sha256": "1123dbcbce8180a5d89bfe860eb5c3916401a257be5e3a214a5003d07ec1d70d",
+      "evidence_sha256": "536fd549bdd876dbc16d5529d7a0af70cab4b132026b4436fa32ba15e863c1e3"
+    }
+  ],
+  "engine_available": false,
+  "production_approved": false,
+  "validation": [
+    "real NOAA wave and wind route samples",
+    "registered NDMA CAP source and unknown INCOIS/completeness",
+    "private header access and public calculation exclusion",
+    "frozen replay without renewed freshness",
+    "strict input bounds and web proxy",
+    "race-enabled Go contracts for all five verdicts, inclusive thresholds, missing/warning precedence, tightened preferences, combinations, deterioration, stops and route budgets",
+    "disposable SQL and real object-storage private access, projection/object corruption refusal and recovery, warning between forecast samples, validity clipping, acquisition race and transaction rollback",
+    "lint, Go race tests, Python/web tests, builds and fresh/repeat/legacy/checksum/rollback migration checks",
+    "platform dependency checks and real field, event and advisory API regressions",
+    "rebuilt web desktop/mobile submission, grouped missing evidence, header-only private inspection, frozen replay, keyboard tables, result clearing and no browser errors or page overflow",
+    "empty coordinate and sampling-value edits immediately clear the obsolete verdict and receipt access"
+  ],
+  "method": "timed-route-precedence-v1",
+  "evidence_scope": "Local diagnostic validation; the receipt freezes the stated as_of time and does not establish current freshness or operational approval.",
+  "browser_checked_date": "2026-10-03",
+  "browser_observation": "Retained NOAA wave and wind cycles had aged to stale. The page kept adverse samples visible and returned insufficient_data without renewing freshness.",
+  "limitations": [
+    "No approved activity/vessel numeric thresholds or domain/safety review",
+    "Marine advisory completeness and INCOIS machine access remain unverified or unconfigured",
+    "Operational forecast/coastal accuracy, cadence and source-rights review remain incomplete",
+    "Frozen verdict replay uses captured forecast responses; independent original-grid reconstruction belongs to the Field Service replay workflow",
+    "Receipt access is a private per-calculation token; authenticated saved routes and public operational release are later work"
+  ]
+}

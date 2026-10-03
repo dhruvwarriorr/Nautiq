@@ -31,6 +31,8 @@ export default function Home() {
         <Link href="/advisories">
           Inspect official bulletins and feed health →
         </Link>
+        <br />
+        <Link href="/trips">Inspect timed trip evidence →</Link>
       </p>
     </main>
   );

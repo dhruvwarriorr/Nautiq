@@ -255,3 +255,12 @@ advisory-replay:
 	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline replay '$(RUN_ID)'
 advisory-maintain:
 	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline maintain
+
+.PHONY: phase11-verify phase11-reliability phase11-smoke
+phase11-verify:
+	cd services/api && go run -race ./cmd/verify-trips
+	.venv/bin/python scripts/verify_phase11.py
+phase11-reliability:
+	.venv/bin/python scripts/verify_phase11_reliability.py
+phase11-smoke:
+	.venv/bin/python scripts/verify_phase11_smoke.py

@@ -2,6 +2,9 @@
 package advisories
 
 import (
+	"crypto/sha256"
+	_ "embed"
+	"encoding/hex"
 	"encoding/json"
 	"math"
 	"sort"
@@ -199,6 +202,14 @@ func Evaluate(s Snapshot, start, end time.Time, intersects map[string]map[int]bo
 		if !m.Operational {
 			continue
 		}
+		potential := len(m.Infos) == 0 || m.Type == "Cancel"
+		for _, info := range m.Infos {
+			potential = potential || !info.Effective.After(end) && (info.Expires == nil || info.Expires.After(start))
+		}
+		if !potential {
+			continue
+		}
+
 		if len(l.Issues) > 0 {
 			out.Unknown = append(out.Unknown, m.RevisionID+":revision_ambiguity")
 		}
@@ -251,3 +262,8 @@ func Evaluate(s Snapshot, start, end time.Time, intersects map[string]map[int]bo
 func FiniteCoordinate(lon, lat float64) bool {
 	return !math.IsNaN(lon+lat) && !math.IsInf(lon+lat, 0) && lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90
 }
+
+//go:embed state.go
+var codeSource []byte
+
+func CodeSHA() string { hash := sha256.Sum256(codeSource); return hex.EncodeToString(hash[:]) }

@@ -820,3 +820,7 @@ The [event implementation report](18-Phase-9-Delivery.md), [OpenAPI contract](..
 ## Official advisory implementation evidence
 
 The [advisory delivery](19-Phase-10-Delivery.md), [API contract](../packages/schemas/advisories.openapi.json) and [retained real-source summary](evidence/phase10-summary.json) implement section 13's source adapter, geometry/validity, health/revisions and UI. The registered NDMA CAP source uses mandatory conditional ETags and immutable evidence. Unknown marine coverage, missing geometry/expiry, unresolved references and stale feeds remain explicit. Official warning precedence is implemented independently from scientific events; complete operational marine coverage and approved trip policy remain release gates.
+
+## Deterministic trip implementation evidence
+
+The [trip delivery](20-Phase-11-Delivery.md), [API contract](../packages/schemas/trips.openapi.json) and [real-source summary](evidence/phase11-summary.json) implement section 14's deterministic Go engine and frozen verdict receipts. All five rule branches and wording are verified with isolated synthetic policies; the actual policy has no approved numeric limits. Whole timed routes, official warning precedence, missing input refusal, exact forecast cycles, private receipt access, source publication races and replay are implemented. Complete operational marine coverage, approved activity limits and public safety/domain release review remain gates, independent from local code completion.
