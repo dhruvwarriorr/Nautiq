@@ -78,7 +78,7 @@ func main() {
 	defer db.Close()
 	files, e := filepath.Glob("/migrations/*.sql")
 	must(e)
-	check(len(files) == 16, "migration chain")
+	check(len(files) == 17, "migration chain")
 	_, e = db.Exec(ctx, "CREATE TABLE platform_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz DEFAULT now())")
 	must(e)
 	for i, file := range files {

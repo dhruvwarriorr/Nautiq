@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { ModelSummary } from "../../lib/expected";
+import ModelBrief from "../components/ModelBrief";
 export const dynamic = "force-dynamic";
 export default async function Models() {
   const [selected, models] = await Promise.all([
@@ -15,6 +16,7 @@ export default async function Models() {
         <Link href="/climatology">Historical normal</Link>
         <Link href="/anomalies">Profile magnitude and shape</Link> <Link href="/uncertainty">Predictive intervals</Link>
         <Link href="/data">Data quality</Link>
+        <Link href="/models/monitoring">Monitoring</Link>
       </nav>
       <p className="eyebrow">EXPECTED STATE / FROZEN MODEL COMPARISONS</p>
       <h1>The reference, and the model to beat it.</h1>
@@ -23,6 +25,7 @@ export default async function Models() {
         mean. Compare LightGBM with HGBR and climatology using fixed training
         inputs and separate evaluation blocks.
       </p>
+      <ModelBrief />
       <p className="notice">
         Local prototype. Candidate performance does not establish scientific
         release approval. Unqualified candidates retain climatology as the

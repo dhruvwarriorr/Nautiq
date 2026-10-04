@@ -1,0 +1,431 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq question planning and structured answers",
+    "version": "2.0.0",
+    "description": "A question becomes a validated Frame (closed vocabularies, optional language-model labelling, deterministic grammar fallback). A Frame becomes an explicit UTC plan and then a template-assembled answer from existing typed evidence. No free text, model-written sentence, SQL, URL, measurement, forecast, advisory status or safety verdict passes through."
+  },
+  "paths": {
+    "/api/v1/query": {
+      "post": {
+        "summary": "Plan a question",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "time_zone": {
+                    "type": "string",
+                    "description": "IANA zone; default UTC"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Plan, never executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/answer": {
+      "post": {
+        "summary": "Answer a validated frame",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "frame"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "frame": {
+                    "$ref": "#/components/schemas/Frame"
+                  },
+                  "time_zone": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Plan and answer (answer is null while clarification is required)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Bounded structured error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Frame": {
+        "type": "object",
+        "required": [
+          "intent"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "enum": [
+              "conditions",
+              "warnings",
+              "events",
+              "research",
+              "trip",
+              "explain",
+              "unsupported"
+            ]
+          },
+          "place": {
+            "type": "string"
+          },
+          "variable": {
+            "enum": [
+              "temperature_c",
+              "practical_salinity"
+            ]
+          },
+          "when": {
+            "type": "string",
+            "description": "Closed vocabulary: now, today, this_morning, tonight, tomorrow, tomorrow_morning|afternoon|evening, this_week, last_week, last_7_days, last_30_days, this_month, last_month, month_1..month_12."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "topic": {
+            "enum": [
+              "caution",
+              "insufficient",
+              "unusual",
+              "expected",
+              "interval",
+              "advisory",
+              "freshness",
+              "model",
+              "evidence",
+              "personal_limits"
+            ]
+          },
+          "unusual": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Window": {
+        "type": "object",
+        "required": [
+          "phrase",
+          "start",
+          "end",
+          "time_zone",
+          "kind"
+        ],
+        "properties": {
+          "phrase": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "time_zone": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "past",
+              "current",
+              "future"
+            ]
+          }
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "required": [
+          "version",
+          "parser",
+          "intent",
+          "state",
+          "clarifications",
+          "frame",
+          "explanation"
+        ],
+        "properties": {
+          "version": {
+            "const": "bounded-intent-grammar-v2"
+          },
+          "parser": {
+            "enum": [
+              "grammar",
+              "language_model",
+              "validated_frame"
+            ]
+          },
+          "intent": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "clarification_required",
+              "unsupported"
+            ]
+          },
+          "clarifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "frame": {
+            "$ref": "#/components/schemas/Frame"
+          },
+          "window": {
+            "$ref": "#/components/schemas/Window"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
+      "PlanResponse": {
+        "type": "object",
+        "required": [
+          "plan",
+          "executed",
+          "limitations",
+          "language_model_enabled"
+        ],
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "executed": {
+            "const": false
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "language_model_enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Fact": {
+        "type": "object",
+        "required": [
+          "label",
+          "value",
+          "status"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "stale",
+              "unknown",
+              "unavailable",
+              "warning"
+            ]
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "Answer": {
+        "type": "object",
+        "required": [
+          "version",
+          "state",
+          "headline",
+          "facts",
+          "cannot_tell_you",
+          "links",
+          "as_of"
+        ],
+        "properties": {
+          "version": {
+            "const": "structured-answer-v1"
+          },
+          "state": {
+            "enum": [
+              "answered",
+              "partial",
+              "handoff",
+              "unavailable"
+            ]
+          },
+          "headline": {
+            "type": "string"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fact"
+            }
+          },
+          "cannot_tell_you": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "label",
+                "href"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "href": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AnswerResponse": {
+        "type": "object",
+        "required": [
+          "plan",
+          "answer"
+        ],
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "answer": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Answer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

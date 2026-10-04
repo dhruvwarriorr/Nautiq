@@ -828,3 +828,7 @@ The [advisory delivery](19-Phase-10-Delivery.md), [API contract](../packages/sch
 ## Deterministic trip implementation evidence
 
 The [trip delivery](20-Phase-11-Delivery.md), [API contract](../packages/schemas/trips.openapi.json) and [real-source summary](evidence/phase11-summary.json) implement section 14's deterministic Go engine and frozen verdict receipts. All five rule branches and wording are verified with isolated synthetic policies; the actual policy has no approved numeric limits. Whole timed routes, official warning precedence, missing input refusal, exact forecast cycles, private receipt access, source publication races and replay are implemented. Complete operational marine coverage, approved activity limits and public safety/domain release review remain gates, independent from local code completion.
+
+## Completion update — 2026-10-04
+
+Sections 15 (natural-language layer, onboarding and navigation) and the remaining ML tasks (unified monitoring, combined profile evidence, static-feature evaluation) are implemented locally; see [27-Product-Completion-Delivery.md](27-Product-Completion-Delivery.md) and the gap register [26-Gap-Analysis.md](26-Gap-Analysis.md). External gates are unchanged.

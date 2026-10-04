@@ -163,3 +163,7 @@ Schema 16 and `packages/source-catalog/production.json` define bounded incident 
 Production requires exact HTTPS origin, mounted secret files and restricted SQL/storage roles. The `__Host-` session cookie is Secure/HttpOnly/SameSite=Lax with Path=/ and no Domain. Only the gateway exposes a host listener. Private service networking assumes a trusted single host; it does not provide cross-host mTLS.
 
 Authenticated backups preserve exported SQL snapshots, migration pins and verified complete object inventory, capped at 50,000 objects/2 GiB. Decryption authentication finishes before extraction or restore. Only new isolated target names are allowed, with sessions/grants revoked and restored serving/delivery paused. Model rollback validates retained current-compatible lineage, atomically switches selections under the canonical lock and never refits/resumes. See [delivery and measured acceptance](23-Phase-14-Delivery.md) for scope and external sign-offs.
+
+## 11. Question answering, monitoring and schema 17
+
+The question planner is `bounded-intent-grammar-v2`; answers use `structured-answer-v1` (`packages/schemas/ask.openapi.json`). Free text may reach only the planner. A language model may only fill a closed-vocabulary frame, never an answer, and its output is revalidated; the answer endpoint accepts a validated frame, not text. Model monitoring is `unified-model-monitoring-v1` (`packages/schemas/monitoring.openapi.json`) and has no mutating endpoint. Schema 17 adds `model_monitoring_reports`; `/health/ready` and API diagnostics require version 17.

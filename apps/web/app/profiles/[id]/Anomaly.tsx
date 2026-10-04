@@ -1,10 +1,21 @@
 import Link from "next/link";
-import {labels, n, title, type AnomalyProfile} from "../../../lib/anomaly";
+import {categoryIcon, labels, n, title, type AnomalyProfile, type CombinedEvidence} from "../../../lib/anomaly";
 import DepthCurve from "../../anomalies/DepthCurve";
 
+export function CategorySummary({value}: {value: CombinedEvidence}) {
+  return <div className="category-summary" data-category={value.category}>
+    <p className="category-line"><span className="category-chip" data-category={value.category}><span aria-hidden="true">{categoryIcon[value.category]}</span> {value.label}</span>{value.driving_variable ? <> driven by {title(value.driving_variable).toLowerCase()}</> : null}</p>
+    <p>{value.interpretation} Bands (percentile lower bounds): elevated {value.band_lower_bounds_percentile.elevated}, unusual {value.band_lower_bounds_percentile.unusual}, strongly unusual {value.band_lower_bounds_percentile.strongly_unusual}. Policy {value.policy_version} is an unreviewed engineering choice.</p>
+    <div className="table-scroll"><table><caption>Components behind the category</caption><thead><tr><th>Variable</th><th>Category</th>{value.variables[Object.keys(value.variables)[0]]?.components.map(c => <th key={c.key}>{c.label}</th>)}<th>Reference profiles</th></tr></thead><tbody>
+      {Object.entries(value.variables).map(([v, c]) => <tr key={v}><td>{title(v)}</td><td>{categoryIcon[c.category]} {c.label}</td>{c.components.map(k => <td key={k.key}>{k.percentile == null ? "Unavailable" : `${n(k.percentile)}th`}</td>)}<td>{c.reference_profiles}{c.resolution_percent != null ? ` (±${n(c.resolution_percent)} pts)` : ""}</td></tr>)}
+    </tbody></table></div>
+    <ul>{Object.entries(value.variables).flatMap(([v, c]) => c.notes.map(note => <li key={v + note}>{title(v)}: {note}</li>))}</ul>
+  </div>;
+}
 export default function Anomaly({value, revision}: {value: AnomalyProfile | null; revision: string}) {
   if (!value || value.revision_sha256 !== revision || !value.result || !value.calculation_id) return <section><h2>Profile magnitude and shape</h2><p>{!value ? "Anomaly evidence is unavailable. Refresh to retry." : value.revision_sha256 !== revision ? "The profile changed while loading. Refresh for matching evidence." : `Comparison ${value.status.replaceAll("_"," ")}. ${value.pending_reason?.replaceAll("_"," ") ?? ""}`}</p><Link href="/anomalies">Profile model references</Link></section>;
   return <section><h2>Profile magnitude and shape</h2><p className="notice">Diagnostic evidence only. Historical ranks do not establish an unusual event or a trip verdict. The interval parent has no scientific coverage approval.</p>
+    {value.combined_evidence ? <CategorySummary value={value.combined_evidence}/> : null}
     <p><Link href={`/anomalies/${value.release_id}`}>Pinned profile model</Link> · <Link href={`/calculations/${value.calculation_id}`}>Comparison calculation</Link> · <Link href={`/uncertainty/${value.uncertainty_id}`}>Predictive interval parent</Link></p>
     <p>Complete 10–500 m vectors are scored independently for each variable. Residuals use the expected conditional mean and the train-fitted q10–q90 half-width, floored in physical units. The scale is not a Gaussian standard deviation. Covariance and PCA use training-centered residuals.</p>
     {Object.entries(value.result.variables).map(([v,info]) => <section key={v}><h3>{title(v)}</h3><p>{info.status.replaceAll("_"," ")} · {info.points.filter(p=>p.covered).length}/{info.points.length} supported depths. {info.reason?.replaceAll("_"," ")}</p>

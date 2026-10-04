@@ -192,15 +192,7 @@ export type MapOverview = {
   unavailable_layers: string[];
   limitations: string[];
 };
-export type QueryPlan = {
-  version: string;
-  intent: string;
-  state: string;
-  clarifications: string[];
-  research?: ResearchFilter;
-  place?: Place;
-  explanation: string;
-};
+export type { AskPlan as QueryPlan } from "./ask-types";
 export async function publicQuery<T>(
   action: string,
   body: unknown,

@@ -1,0 +1,422 @@
+{
+  "computed_at": "2026-10-04T03:49:15.929626+00:00",
+  "feature_ranges": {
+    "bathymetry_m": [
+      193.467788888844,
+      5147.466088311109
+    ],
+    "distance_to_coast_km": [
+      13.265051341473203,
+      1407.5073364984257
+    ]
+  },
+  "inputs": {
+    "code_sha256": "63831a2001a0c8bb2224f92fa2aaa3c790bcd3e58dd1ac54678ac1f27b576b7e",
+    "distinct_positions": 177,
+    "grid_sha256": "e46ff2ad4bb12b957c5a2b9acd2dd9fbb8c5f4d791cd43f55963f770a94c2311",
+    "policy_sha256": "6672fff87c847a60774670acf1cb8848377a1d232030b2ab4bdc0e4f24a77b2f",
+    "reference_id": "dd46a816-fa5b-5d4f-a296-9c2025d10c61",
+    "rows": 2940,
+    "rows_dropped_not_open_water_at_source_resolution": 0,
+    "snapshot_id": "3b606239-35ae-53ae-938d-5c0935385a00"
+  },
+  "limitations": [
+    "Same frozen grid and splits as the v1 release; the 2022-2024 test block was inspected before and cannot approve anything.",
+    "A 0.05-degree bathymetry grid cannot resolve coastal shelves, reefs or channels; points that fall on land at source resolution were dropped from both runs.",
+    "Distance to coast is measured to the nearest land cell centre of the same grid, so it is quantised to about 5 km.",
+    "Profile-bootstrap intervals do not remove serial float dependence.",
+    "Bathymetry and coast distance describe where a float is, not what the water is doing; gains may reflect sampling geography rather than skill."
+  ],
+  "method_version": "static-coastal-feature-experiment-v1",
+  "release_approved": false,
+  "schema_version": 1,
+  "serving_effect": "none: no release is created, selected or served",
+  "source": {
+    "attribution": "NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model (60 arc-second bedrock product).",
+    "doi": "10.25921/fd45-gt74",
+    "grid_shape": [
+      720,
+      1220
+    ],
+    "id": "noaa_ncei_etopo_2022_60s_bed",
+    "indices": {
+      "lat_index": [
+        5220,
+        3,
+        7379
+      ],
+      "lon_index": [
+        13320,
+        3,
+        16979
+      ]
+    },
+    "land_cells": 407337,
+    "licence_state": "Terms and redistribution have not been reviewed by Nautiq. Use is limited to this offline experiment until they are.",
+    "object_key": "lake/static/etopo2022-60s/567d4469097a4e721b40eededec11e90f4b51c3d9f3cde304e7483eb76215d03.ascii",
+    "raw_bytes": 9475073,
+    "raw_sha256": "567d4469097a4e721b40eededec11e90f4b51c3d9f3cde304e7483eb76215d03",
+    "request_url": "https://www.ngdc.noaa.gov/thredds/dodsC/global/ETOPO2022/60s/60s_bed_elev_netcdf/ETOPO_2022_v1_60s_N90W180_bed.nc.ascii?z%5B5220:3:7379%5D%5B13320:3:16979%5D",
+    "resolution_degrees": 0.05,
+    "stride_cells": 3,
+    "url": "https://www.ngdc.noaa.gov/thredds/dodsC/global/ETOPO2022/60s/60s_bed_elev_netcdf/ETOPO_2022_v1_60s_N90W180_bed.nc",
+    "vertical_datum": "EGM2008 height; positive up"
+  },
+  "v1": {
+    "practical_salinity": {
+      "calibration": {
+        "climatology_profile_mae": 0.1872315687201185,
+        "hgbr_profile_mae": 0.1955714077659053,
+        "lightgbm_profile_mae": 0.17474612646917298,
+        "profiles": 23
+      },
+      "profile_counts": {
+        "calibration": 23,
+        "test": 37,
+        "train": 42,
+        "tune": 36
+      },
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "bias_gate_failed",
+        "subgroup_regression:depth:1000m",
+        "subgroup_regression:depth:1500m"
+      ],
+      "status": "trained",
+      "subgroup_regressions": [
+        "depth:1000m",
+        "depth:1500m"
+      ],
+      "test": {
+        "climatology_profile_mae": 0.40499507894541137,
+        "hgbr_profile_mae": 0.3854733219386004,
+        "lightgbm_profile_mae": 0.39743515229672793,
+        "profiles": 37
+      },
+      "tune": {
+        "climatology_profile_mae": 0.2367497873897084,
+        "hgbr_profile_mae": 0.23297865706755522,
+        "lightgbm_profile_mae": 0.22158207556670062,
+        "profiles": 36
+      }
+    },
+    "temperature_c": {
+      "calibration": {
+        "climatology_profile_mae": 0.9377766387552509,
+        "hgbr_profile_mae": 0.8764240232879121,
+        "lightgbm_profile_mae": 0.8899744949814856,
+        "profiles": 35
+      },
+      "profile_counts": {
+        "calibration": 35,
+        "test": 41,
+        "train": 45,
+        "tune": 39
+      },
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "subgroup_regression:depth:100m",
+        "subgroup_regression:depth:1500m",
+        "subgroup_regression:depth:500m"
+      ],
+      "status": "trained",
+      "subgroup_regressions": [
+        "depth:100m",
+        "depth:1500m",
+        "depth:500m"
+      ],
+      "test": {
+        "climatology_profile_mae": 1.2479730089785321,
+        "hgbr_profile_mae": 1.1650418851941993,
+        "lightgbm_profile_mae": 1.2317372219702962,
+        "profiles": 41
+      },
+      "tune": {
+        "climatology_profile_mae": 0.8710192030131296,
+        "hgbr_profile_mae": 0.8338279188873168,
+        "lightgbm_profile_mae": 0.8624693105925584,
+        "profiles": 39
+      }
+    }
+  },
+  "v1_audits": {
+    "platform:practical_salinity": [
+      {
+        "complement_profiles": 98,
+        "fold": "platform-0",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      },
+      {
+        "complement_profiles": 98,
+        "fold": "platform-1",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "platform:temperature_c": [
+      {
+        "complement_profiles": 98,
+        "fold": "platform-0",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      },
+      {
+        "complement_profiles": 98,
+        "fold": "platform-1",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "spatial:practical_salinity": [
+      {
+        "climatology_profile_mae": 0.3570344478017484,
+        "complement_profiles": 102,
+        "fold": "spatial-0",
+        "held_profiles": 61,
+        "hgbr_profile_mae": 0.2898375075250021,
+        "lightgbm_profile_mae": 0.30063834241275156
+      },
+      {
+        "complement_profiles": 41,
+        "fold": "spatial-1",
+        "held_profiles": 135,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "spatial:temperature_c": [
+      {
+        "climatology_profile_mae": 2.087093171545726,
+        "complement_profiles": 102,
+        "fold": "spatial-0",
+        "held_profiles": 61,
+        "hgbr_profile_mae": 1.9400099558281596,
+        "lightgbm_profile_mae": 1.9323023603709866
+      },
+      {
+        "complement_profiles": 41,
+        "fold": "spatial-1",
+        "held_profiles": 135,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ]
+  },
+  "v1_features": [
+    "latitude",
+    "longitude",
+    "depth_m",
+    "season_sin",
+    "season_cos",
+    "season_sin2",
+    "season_cos2",
+    "basin_id"
+  ],
+  "v2": {
+    "practical_salinity": {
+      "calibration": {
+        "climatology_profile_mae": 0.1872315687201185,
+        "hgbr_profile_mae": 0.1872743687666669,
+        "lightgbm_profile_mae": 0.17351046439957254,
+        "profiles": 23
+      },
+      "profile_counts": {
+        "calibration": 23,
+        "test": 37,
+        "train": 42,
+        "tune": 36
+      },
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "bias_gate_failed",
+        "subgroup_regression:depth:1500m"
+      ],
+      "status": "trained",
+      "subgroup_regressions": [
+        "depth:1500m"
+      ],
+      "test": {
+        "climatology_profile_mae": 0.40499507894541137,
+        "hgbr_profile_mae": 0.3701905507732323,
+        "lightgbm_profile_mae": 0.39225272227664487,
+        "profiles": 37
+      },
+      "tune": {
+        "climatology_profile_mae": 0.2367497873897084,
+        "hgbr_profile_mae": 0.23160338667455344,
+        "lightgbm_profile_mae": 0.22370949927385642,
+        "profiles": 36
+      }
+    },
+    "temperature_c": {
+      "calibration": {
+        "climatology_profile_mae": 0.9377766387552509,
+        "hgbr_profile_mae": 0.8202564236416623,
+        "lightgbm_profile_mae": 0.9006046363194733,
+        "profiles": 35
+      },
+      "profile_counts": {
+        "calibration": 35,
+        "test": 41,
+        "train": 45,
+        "tune": 39
+      },
+      "promotion_reasons": [
+        "promotion_thresholds_not_reviewed",
+        "test_block_previously_inspected",
+        "spatial_platform_audits_not_approved",
+        "source_coverage_not_approved",
+        "insufficient_material_improvement",
+        "subgroup_regression:depth:1000m",
+        "subgroup_regression:depth:1500m",
+        "subgroup_regression:depth:400m",
+        "subgroup_regression:depth:500m",
+        "subgroup_regression:depth:750m",
+        "subgroup_regression:depth_band:500-2000m"
+      ],
+      "status": "trained",
+      "subgroup_regressions": [
+        "depth:1000m",
+        "depth:1500m",
+        "depth:400m",
+        "depth:500m",
+        "depth:750m",
+        "depth_band:500-2000m"
+      ],
+      "test": {
+        "climatology_profile_mae": 1.2479730089785321,
+        "hgbr_profile_mae": 1.1746890490306123,
+        "lightgbm_profile_mae": 1.2217669793462285,
+        "profiles": 41
+      },
+      "tune": {
+        "climatology_profile_mae": 0.8710192030131296,
+        "hgbr_profile_mae": 0.8218922943463366,
+        "lightgbm_profile_mae": 0.8635313522892583,
+        "profiles": 39
+      }
+    }
+  },
+  "v2_audits": {
+    "platform:practical_salinity": [
+      {
+        "complement_profiles": 98,
+        "fold": "platform-0",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      },
+      {
+        "complement_profiles": 98,
+        "fold": "platform-1",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "platform:temperature_c": [
+      {
+        "complement_profiles": 98,
+        "fold": "platform-0",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      },
+      {
+        "complement_profiles": 98,
+        "fold": "platform-1",
+        "held_profiles": 98,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "spatial:practical_salinity": [
+      {
+        "climatology_profile_mae": 0.3570344478017484,
+        "complement_profiles": 102,
+        "fold": "spatial-0",
+        "held_profiles": 61,
+        "hgbr_profile_mae": 0.28808110613368043,
+        "lightgbm_profile_mae": 0.2968678437156028
+      },
+      {
+        "complement_profiles": 41,
+        "fold": "spatial-1",
+        "held_profiles": 135,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ],
+    "spatial:temperature_c": [
+      {
+        "climatology_profile_mae": 2.087093171545726,
+        "complement_profiles": 102,
+        "fold": "spatial-0",
+        "held_profiles": 61,
+        "hgbr_profile_mae": 1.894620465168063,
+        "lightgbm_profile_mae": 1.9303296839251471
+      },
+      {
+        "complement_profiles": 41,
+        "fold": "spatial-1",
+        "held_profiles": 135,
+        "reason": "insufficient_training_or_tuning_profiles",
+        "status": "unsupported"
+      }
+    ]
+  },
+  "v2_features": [
+    "latitude",
+    "longitude",
+    "depth_m",
+    "season_sin",
+    "season_cos",
+    "season_sin2",
+    "season_cos2",
+    "basin_id",
+    "bathymetry_m",
+    "distance_to_coast_km"
+  ],
+  "v2_static_feature_gain_share": {
+    "practical_salinity": {
+      "bathymetry_m": 0.015515414569127308,
+      "distance_to_coast_km": 0.08669582495732062
+    },
+    "temperature_c": {
+      "bathymetry_m": 0.0,
+      "distance_to_coast_km": 0.014006579278493506
+    }
+  },
+  "verdict": {
+    "conclusion": "not_supported_by_pilot_evidence",
+    "criteria": {
+      "max_subgroup_regressions_allowed": 0,
+      "min_relative_test_improvement_over_v1": 0.02,
+      "note": "Engineering criteria for whether a new release proposal is worth reviewing. They are not promotion gates.",
+      "version": "static-coastal-feature-experiment-v1"
+    },
+    "interpretation": "Test years were inspected before. Even a positive result cannot approve a release; it can only justify a new proposal with an untouched audit block.",
+    "notes": [
+      "temperature_c: test profile MAE change +0.8%, tuning change -0.1% versus the v1 feature set",
+      "temperature_c: more subgroup regressions than v1",
+      "practical_salinity: test profile MAE change +1.3%, tuning change -1.0% versus the v1 feature set"
+    ]
+  }
+}

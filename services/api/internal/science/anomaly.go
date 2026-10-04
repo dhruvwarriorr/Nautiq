@@ -39,7 +39,7 @@ func (s *Server) selectedAnomaly(w http.ResponseWriter, r *http.Request) {
 	}
 	s.serve(w, r, `SELECT json_build_object('release_id',u.release_id,'selected_at',s.selected_at,'uncertainty_id',u.uncertainty_id,'expected_id',u.expected_id,'reference_id',u.reference_id,'status',u.status,'release_approved',false,'calculation_id',u.calculation_id,'depths_m',u.report->'depths_m','coverage_policy',u.report->'coverage_policy','scale_estimator',u.report->'scale_estimator') FROM anomaly_selection s JOIN anomaly_releases u USING(release_id) WHERE s.singleton`)
 }
-func (s *Server) profileAnomaly(w http.ResponseWriter, r *http.Request) {
+func (s *Server) profileAnomalyStored(w http.ResponseWriter, r *http.Request) {
 	if _, ok := query(w, r); !ok {
 		return
 	}

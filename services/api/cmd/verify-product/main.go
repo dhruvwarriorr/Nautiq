@@ -88,8 +88,10 @@ func main() {
 	check(product.Strict([]byte(`{"name":"a","owner_id":"spoof","data":{}}`), &input) != nil, "owner spoof")
 	var missingDepth product.ResearchFilter
 	check(product.Strict([]byte(`{"bbox":[45,0,77,25],"start":"2026-09-01T00:00:00Z","end":"2026-10-01T00:00:00Z","min_depth_m":0,"max_depth_m":null,"variable":"temperature_c","source":"argo_gdac","qc":"accepted","limit":10}`), &missingDepth) != nil, "unknown depth cannot become zero")
-	check(product.ParseQuery("is fishing safe tomorrow near Goa?", "UTC").State == "clarification_required", "relative time clarification")
-	check(product.ParseQuery("temperature profiles in Arabian Sea from 2026-09-01 to 2026-10-01", "UTC").State == "ready", "typed research grammar")
+	var language *product.Extractor
+	trip := language.Plan(context.Background(), "is fishing safe tomorrow near Goa?", "UTC", time.Now())
+	check(trip.Intent == "trip" && trip.Trip != nil && trip.Window != nil && trip.Window.Kind == "future", "relative trip wording resolves to an explicit window and hands off without a verdict")
+	check(language.Plan(context.Background(), "temperature profiles in Arabian Sea from 2026-09-01 to 2026-10-01", "UTC", time.Now()).State == "ready", "typed research grammar")
 	now := time.Now().UTC()
 	route := trips.Request{Activity: "fishing", ThresholdVersion: trips.DefaultPolicy().Version, Waypoints: []trips.Point{{Latitude: 12, Longitude: 72, Time: now.Add(time.Hour)}, {Latitude: 12.02, Longitude: 72.02, Time: now.Add(2 * time.Hour)}}, Fields: []trips.Binding{}, SpacingKM: 5, StepMinutes: 30, Preferences: map[string]trips.Preference{}}
 	check(product.ValidateObject("routes", product.ObjectInput{Name: "valid", Data: raw(route)}) == nil, "valid timed route")
@@ -128,7 +130,7 @@ func main() {
 	}()
 	files, e := filepath.Glob("/migrations/*.sql")
 	must(e)
-	check(len(files) == 16, "complete migration chain")
+	check(len(files) == 17, "complete migration chain")
 	for _, f := range files {
 		b, e := os.ReadFile(f)
 		must(e)

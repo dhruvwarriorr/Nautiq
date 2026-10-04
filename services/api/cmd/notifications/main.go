@@ -76,7 +76,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health/ready", func(w http.ResponseWriter, r *http.Request) {
 		var good bool
-		e := db.QueryRow(r.Context(), `SELECT EXISTS(SELECT 1 FROM notification_worker_health WHERE worker_id=$1 AND success_at>now()-interval '90 seconds') AND (SELECT max(version)=16 FROM platform_schema_version)`, worker.ID).Scan(&good)
+		e := db.QueryRow(r.Context(), `SELECT EXISTS(SELECT 1 FROM notification_worker_health WHERE worker_id=$1 AND success_at>now()-interval '90 seconds') AND (SELECT max(version)=17 FROM platform_schema_version)`, worker.ID).Scan(&good)
 		if e != nil || !good {
 			http.Error(w, "unavailable", 503)
 			return

@@ -36,3 +36,13 @@ Operator-owned evidence can be supplied to `scripts/production_gate.py --evidenc
 | Incident ownership/response | Runbooks supplied; named on-call ownership, alert routing and response exercises pending |
 
 Until all applicable reviews authorize an explicit policy change, operate as a private diagnostic product. Public deployment is not implied by completing this implementation.
+
+## Additional wording review — question answers, categories, monitoring
+
+| Surface | Required interpretation | Release limitation |
+| --- | --- | --- |
+| Ask answers | Fixed templates over retained evidence with an explicit window and limits list. | Not a forecast service or a safety statement; official warning completeness unverified. Needs the same independent wording review as trips. |
+| Language-model labelling | Optional, off by default; labels only. | Sends question text to a third party when enabled: privacy notice, provider terms and egress approval are release decisions. |
+| Evidence category | Descriptive rank band with components. | Not an event, probability or alert; band cut-offs are unreviewed. |
+| Model monitoring | Starts investigations. | Thresholds unreviewed; "not enough evidence" is expected until trusted delayed-mode outcomes exist. |
+| ETOPO bathymetry | Offline experiment input. | Terms and redistribution review pending before any serving or export use. |

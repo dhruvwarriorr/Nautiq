@@ -21,6 +21,7 @@ func (s *Server) RegisterSurfaces(mux *http.ServeMux) {
 	mux.Handle("GET /api/v1/conditions/point", s.bound(s.conditions))
 	mux.Handle("GET /api/v1/conditions/region/{slug}", s.bound(s.regionConditions))
 	mux.Handle("GET /api/v1/map/overview", s.bound(s.mapOverview))
+	mux.Handle("POST /api/v1/answer", s.bound(s.answer))
 }
 
 type collected struct {

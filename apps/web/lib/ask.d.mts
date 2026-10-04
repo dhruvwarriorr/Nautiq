@@ -1,0 +1,11 @@
+export const intentLabels: Record<string, string>;
+export const whenOptions: [string, string][];
+export const topicOptions: [string, string][];
+export const statusLabels: Record<string, [string, string]>;
+export const exampleQuestions: string[];
+export function describeWindow(window: { start: string; end: string; time_zone: string } | null | undefined): string;
+export function withWhen<T extends object>(frame: T, when: string): T;
+export function withDates<T extends object>(frame: T, start: string, end: string): T;
+export function withPlace<T extends object>(frame: T, place: string): T;
+export function ageText(iso: string, now?: number): string;
+export function browserZone(): string;

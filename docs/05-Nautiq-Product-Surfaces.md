@@ -728,3 +728,7 @@ The `/trips` surface edits timed outward/return routes and stops, pins forecast 
 ## Delivered alert monitoring
 
 [Alerts delivery](22-Phase-13-Delivery.md) implements owned enabled rules, per-rule/worker health, in-app evidence, verified-recipient email settings and delivery status. Empty inboxes are not an all-clear; unknown inputs preserve active alerts. Recovery/correction wording retains the difference between personal preference, authority references and approved safety advice. Email verification does not provide login recovery. Public production and scientific release gates remain independent.
+
+## Implemented guided entry, question answering and model summaries
+
+The home page, `/start`, grouped navigation and footer implement the first-use path in section 1 and the mobile priority in section 20 (search → conditions → trip → alerts → evidence). `/ask` implements section 10: a question becomes a validated query frame with an explicit, correctable UTC window, executes through typed backend evidence, and is answered with fixed templates; the language model, if configured, only labels the question. Location pages open with a plain-language conditions summary built the same way. Trip questions hand off to the timed-route form and never receive a verdict. Model output appears as a plain-language brief with its limits, and profile pages show a combined evidence category with its components. Details and limits: [27-Product-Completion-Delivery.md](27-Product-Completion-Delivery.md).

@@ -296,3 +296,16 @@ phase14-restore:
 	.venv/bin/python scripts/verify_phase14_restore.py
 production-gate:
 	.venv/bin/python scripts/production_gate.py
+
+.PHONY: model-monitor
+# Read-only: summarizes input drift, outcomes, profile ranks and calibration into an immutable report.
+# A flag starts an investigation; nothing is retrained, recalibrated, selected or promoted.
+model-monitor:
+	docker compose exec -T ml-inference python -m nautiq_ml.monitoring.pipeline $(if $(WINDOW_DAYS),--window-days $(WINDOW_DAYS),)
+
+.PHONY: static-features-experiment
+# Offline and unreleased: acquires ETOPO 2022 bathymetry, refits the expected-mean pipeline with and without
+# bathymetry/distance-to-coast on identical rows and prints the measured comparison. Creates no release.
+static-features-experiment:
+	@test -n "$(REFERENCE_ID)" || (echo 'Supply REFERENCE_ID'; exit 2)
+	docker compose exec -T ml-inference python -m nautiq_ml.expected_state.static_features --reference-id '$(REFERENCE_ID)'

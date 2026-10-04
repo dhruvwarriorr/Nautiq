@@ -1,0 +1,288 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nautiq unified model monitoring API",
+    "version": "1.0.0",
+    "description": "Read-only newest unified monitoring report: input availability and drift, expected-state outcomes with verification lag, profile-detector rank shares and calibration. A flag starts an investigation; no endpoint retrains, recalibrates, selects or promotes a model."
+  },
+  "paths": {
+    "/api/v1/model-monitoring": {
+      "get": {
+        "summary": "Latest monitoring report",
+        "parameters": [
+          {
+            "name": "history",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest report (null before the first run) and history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Monitoring"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bounded structured error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bounded structured error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "request_id"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Status": {
+        "type": "string",
+        "enum": [
+          "reference_unavailable",
+          "insufficient_evidence",
+          "within_expectation",
+          "investigate"
+        ]
+      },
+      "Flag": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "section"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "section": {
+            "type": "string"
+          }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "method_version",
+          "checked_at",
+          "status",
+          "sections",
+          "flags",
+          "pins",
+          "policy",
+          "release_approved"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": 1
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "window_start": {
+            "type": "string"
+          },
+          "window_end": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "pins": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "policy": {
+            "type": "object",
+            "description": "Unreviewed engineering thresholds recorded with every report (thresholds_reviewed is false)."
+          },
+          "sections": {
+            "type": "object",
+            "required": [
+              "inputs",
+              "expected_state_outcomes",
+              "profile_detector",
+              "calibration"
+            ],
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Flag"
+            }
+          },
+          "actions": {
+            "type": "string"
+          },
+          "release_approved": {
+            "const": false
+          }
+        }
+      },
+      "Row": {
+        "type": "object",
+        "required": [
+          "report_id",
+          "checked_at",
+          "status",
+          "report",
+          "age_seconds",
+          "pins_current",
+          "release_approved"
+        ],
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "report": {
+            "$ref": "#/components/schemas/Report"
+          },
+          "report_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "age_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pins_current": {
+            "type": "boolean",
+            "description": "False when any pinned release is no longer the selected one."
+          },
+          "release_approved": {
+            "const": false
+          }
+        }
+      },
+      "Monitoring": {
+        "type": "object",
+        "required": [
+          "latest",
+          "history",
+          "method",
+          "actions"
+        ],
+        "properties": {
+          "latest": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Row"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "report_id",
+                "checked_at",
+                "status"
+              ],
+              "properties": {
+                "report_id": {
+                  "type": "string"
+                },
+                "checked_at": {
+                  "type": "string"
+                },
+                "status": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "method": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

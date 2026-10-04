@@ -105,3 +105,9 @@ Copy only encrypted archives to protected offsite storage and verify archive SHA
 Rotate DB/storage/SMTP credentials through their administrator or secret manager, update only each service's mounted file, recreate affected containers and verify restricted access before revoking old credentials. File replacement alone does not reload process environments. Retain protected change evidence and investigate any credential printed in logs as a leak. Do not reuse the initial provisioner to overwrite existing roles. Rotate certificates before expiry and reverify hostname/trust chain; keep public/private keys matched. Keep prior backup keys until their retained archives expire.
 
 `operations_audit` is append-only to app/worker/operator roles; the administrator can still alter it, so export protected audit evidence to independent retention for production. Record incident owner, times, request IDs, control revisions, immutable source/model/calculation IDs and corrective action. Omit private source contents, routes, addresses, credentials and session proofs from tickets and checked-in evidence.
+
+## Question parsing and model monitoring
+
+* **Model monitoring:** run `make model-monitor` (optional `WINDOW_DAYS`). It is read-only. A flag starts an investigation; do not retrain or recalibrate in response. Rerun after any release selection change; `/models/monitoring` warns when pins differ.
+* **Optional language-model parsing:** disabled unless `NAUTIQ_LLM_API_KEY` (or `NAUTIQ_LLM_API_KEY_FILE` in production) is set. Question text is sent to the provider while enabled. To disable during an incident, unset the key and recreate the API; questions fall back to the built-in grammar automatically. The production overlay blanks these variables, so enabling is a deliberate act.
+* **Static-feature experiment:** `make static-features-experiment REFERENCE_ID=...` reaches NOAA over HTTPS from the ML runtime and creates no release.

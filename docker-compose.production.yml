@@ -8,6 +8,11 @@ services:
       SMTP_FROM: ''
       SMTP_USERNAME: ''
       SMTP_PASSWORD: ''
+      # Optional language-model question parsing stays off unless an operator mounts NAUTIQ_LLM_API_KEY_FILE.
+      NAUTIQ_LLM_API_KEY: ''
+      NAUTIQ_LLM_MODEL: ''
+      NAUTIQ_LLM_BASE_URL: ''
+      NAUTIQ_LLM_RATE_PER_MINUTE: ''
       NAUTIQ_DEPLOYMENT: production
       PRODUCT_WEB_ORIGIN: https://${PUBLIC_DOMAIN:?Set PUBLIC_DOMAIN}
       DATABASE_URL: ''

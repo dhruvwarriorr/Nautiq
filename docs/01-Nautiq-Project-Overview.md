@@ -40,6 +40,8 @@ The six documents define the target product. Execution contracts in `08-Executio
 | `23-Phase-14-Delivery.md` | HTTPS/private deployment, mounted secrets, incident controls, observability and recovery acceptance |
 | `24-Operations-Runbook.md` | Deployment, containment, retained model rollback, backup recovery and credential rotation |
 | `25-Release-Review.md` | Product wording, redistribution boundaries and pending external release sign-offs |
+| `26-Gap-Analysis.md` | What the product is meant to do, what exists, and the gap register split by product, science, data access, security and release gates |
+| `27-Product-Completion-Delivery.md` | Guided entry, question answering, model monitoring, profile categories and the static-feature measurement |
 
 If a detail belongs to another document, this file references it instead of duplicating it.
 

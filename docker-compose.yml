@@ -189,6 +189,10 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       SMTP_USERNAME: ${SMTP_USERNAME:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      NAUTIQ_LLM_API_KEY: ${NAUTIQ_LLM_API_KEY:-}
+      NAUTIQ_LLM_MODEL: ${NAUTIQ_LLM_MODEL:-}
+      NAUTIQ_LLM_BASE_URL: ${NAUTIQ_LLM_BASE_URL:-}
+      NAUTIQ_LLM_RATE_PER_MINUTE: ${NAUTIQ_LLM_RATE_PER_MINUTE:-}
     ports: ['127.0.0.1:${API_PORT:-8080}:8080']
     depends_on:
       postgres: {condition: service_healthy}

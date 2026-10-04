@@ -1,9 +1,35 @@
-import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { TripPolicy } from "../../lib/trips";
 import { TripForm } from "./TripForm";
 export const dynamic = "force-dynamic";
-export default async function Trips() {
+function prefillFrom(q: Record<string, string | string[] | undefined>) {
+  const one = (k: string) => (typeof q[k] === "string" ? (q[k] as string) : "");
+  const lat = Number(one("lat"));
+  const lon = Number(one("lon"));
+  if (
+    !one("lat") ||
+    !one("lon") ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    Math.abs(lat) > 85 ||
+    Math.abs(lon) > 180
+  )
+    return undefined;
+  const depart = one("depart");
+  const time = Date.parse(depart);
+  return {
+    latitude: lat,
+    longitude: lon,
+    departure: Number.isFinite(time) ? new Date(time).toISOString() : undefined,
+    place: /^[a-z-]{1,40}$/.test(one("place")) ? one("place") : "",
+  };
+}
+export default async function Trips({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const prefill = prefillFrom(await searchParams);
   const [policy, fields] = await Promise.all([
     evidence<TripPolicy>("/trip-policy"),
     evidence<{
@@ -19,11 +45,6 @@ export default async function Trips() {
   ]);
   return (
     <main className="explorer">
-      <nav>
-        <Link href="/">Nautiq</Link>
-        <Link href="/fields">Forecast fields</Link>
-        <Link href="/advisories">Official advisories</Link>
-      </nav>
       <p className="eyebrow">TRIP EVIDENCE / TIMED ROUTE AND DECISION RULES</p>
       <h1>Inspect the evidence for the whole trip.</h1>
       <p className="intro">
@@ -36,8 +57,14 @@ export default async function Trips() {
         completeness and forecast operational approval remain unverified.
         Current trips cannot receive a favorable assessment.
       </p>
+      {prefill ? (
+        <p className="notice" role="status">
+          Starting point{prefill.place ? ` (${prefill.place.replaceAll("-", " ")})` : ""} and departure time were taken from
+          your question. The other waypoints are placeholders: replace them with your real timed route before assessing.
+        </p>
+      ) : null}
       {policy ? (
-        <TripForm policy={policy} releases={fields?.items ?? []} />
+        <TripForm policy={policy} releases={fields?.items ?? []} prefill={prefill} />
       ) : (
         <p>The decision policy is unavailable. The trip cannot be assessed.</p>
       )}

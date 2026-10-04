@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ProductNav from "./components/ProductNav";
+import SiteFooter from "./components/SiteFooter";
 export const metadata: Metadata = {
   title: "Nautiq · Ocean evidence",
   description:
@@ -19,6 +20,7 @@ export default function Layout({
         <div id="content" tabIndex={-1}>
           {children}
         </div>
+        <SiteFooter />
       </body>
     </html>
   );

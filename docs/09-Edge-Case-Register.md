@@ -245,3 +245,19 @@ See [notification acceptance](22-Phase-13-Delivery.md). Synthetic SMTP/field/CAP
 | Unproven legal/security/scientific release record | Public/scientific approval false; gate exits 2 | Production gate |
 
 [Operational delivery](23-Phase-14-Delivery.md) and [runbooks](24-Operations-Runbook.md) record local evidence and exact containment limits. Actual host ingress, public identity security, offsite/key escrow recovery, on-call ownership and independent scientific/legal review remain pending external acceptance.
+
+## Additions — question answering and monitoring (implemented 2026-10-04, tested locally)
+
+| ID | Edge/failure | Required response | Owner / state |
+| --- | --- | --- | --- |
+| N01 | Language model returns prose, extra fields, an unknown place or an invented date | Reject and fall back to the grammar; never execute model output | Tested against a stub provider |
+| N02 | Instruction hidden in the question text | The model can only fill closed-vocabulary fields; unsupported becomes "not supported" | Tested (frame validation) |
+| N03 | Provider outage, timeout, rate limit | Grammar answers the question; provider calls are bounded (5 s, default 20 per minute) | Tested |
+| N04 | "May" read as a month; relative phrase ambiguity | Month only after in/during/of/for; resolved window always shown and editable | Tested |
+| N05 | Future window for observed profiles; advisory window over 96 h | Clarification, not a silent query | Tested |
+| N06 | Stale forecast cycle in an answer | Label STALE; values described as history | Implemented, live-checked |
+| N07 | Unknown official state in a summary | "Unknown. This is not an all-clear." with counted reasons, never raw identifiers | Tested |
+| N08 | Trip phrasing asks for a verdict | Hand-off to the timed form; no verdict text | Tested |
+| M16 | Rank band finer than the reference resolves | Report but do not test; never flag | Tested; found by the first real report |
+| M17 | Monitoring has no trusted labels | "Not enough evidence", never healthy | Tested |
+| M18 | Monitoring report describes superseded releases | `pins_current` false and the page says to rerun | Implemented |

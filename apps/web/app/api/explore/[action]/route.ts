@@ -6,6 +6,7 @@ const actions: Record<string, { path: string; method: string }> = {
   map: { path: "map/overview", method: "GET" },
   research: { path: "research", method: "POST" },
   query: { path: "query", method: "POST" },
+  answer: { path: "answer", method: "POST" },
 };
 async function proxy(
   request: Request,

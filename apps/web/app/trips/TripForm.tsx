@@ -58,12 +58,14 @@ export function TripForm({
   policy,
   releases,
   initialRequest,
+  prefill,
   onSaveRoute,
   onSaveTrip,
 }: {
   policy: TripPolicy;
   releases: Release[];
   initialRequest?: TripRequest;
+  prefill?: { latitude: number; longitude: number; departure?: string };
   onSaveRoute?: (request: TripRequest) => Promise<void>;
   onSaveTrip?: (result: TripResult) => Promise<void>;
 }) {
@@ -73,13 +75,18 @@ export function TripForm({
       longitude: String(p.longitude),
       time: p.time,
     })) ??
-    [0, 1, 2].map((i) => ({
-      latitude: i === 1 ? "12.05" : "12",
-      longitude: i === 1 ? "72.05" : "72",
-      time: new Date(
-        Date.parse(policy.as_of) + (i + 1) * 3600000,
-      ).toISOString(),
-    }));
+    [0, 1, 2].map((i) => {
+      const base = prefill ?? { latitude: 12, longitude: 72 };
+      const out = i === 1 ? 0.05 : 0;
+      const t0 = prefill?.departure
+        ? Date.parse(prefill.departure)
+        : Date.parse(policy.as_of) + 3600000;
+      return {
+        latitude: String(Number((base.latitude + out).toFixed(4))),
+        longitude: String(Number((base.longitude + out).toFixed(4))),
+        time: new Date(t0 + i * 3600000).toISOString(),
+      };
+    });
   const [points, setPoints] =
     useState<{ latitude: string; longitude: string; time: string }[]>(initial);
   const [activity, setActivity] = useState(

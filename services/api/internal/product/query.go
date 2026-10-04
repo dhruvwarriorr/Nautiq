@@ -10,7 +10,6 @@ import (
 	"errors"
 	"github.com/jackc/pgx/v5"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -259,86 +258,6 @@ func (s *Server) research(w http.ResponseWriter, r *http.Request) {
 	write(w, 200, map[string]any{"items": items, "query": f, "snapshot_at": f.Snapshot, "next_cursor": next, "units": units, "method_version": "bounded-original-levels-v1", "limitations": []string{"Each profile retains its actual instrument position, time and depth; no surface or point extrapolation.", "Preview shows at most 200 levels per profile; extrema cover all matching levels. Exact original levels remain in profile detail.", "Anomaly percentiles are diagnostic ranks, not probabilities or alert approvals.", "Temporal coverage and observation age must be compared before interpreting differences."}})
 }
 
-type QueryPlan struct {
-	Version        string          `json:"version"`
-	Intent         string          `json:"intent"`
-	State          string          `json:"state"`
-	Clarifications []string        `json:"clarifications"`
-	Research       *ResearchFilter `json:"research,omitempty"`
-	Place          *Location       `json:"place,omitempty"`
-	Explanation    string          `json:"explanation"`
-}
-
-var dates = regexp.MustCompile(`\b\d{4}-\d{2}-\d{2}\b`)
-
-func ParseQuery(text, zone string) QueryPlan {
-	out := QueryPlan{Version: "bounded-intent-grammar-v1", State: "clarification_required", Clarifications: []string{}}
-	text = strings.ToLower(strings.TrimSpace(text))
-	if len(text) == 0 || len(text) > 512 {
-		out.Clarifications = append(out.Clarifications, "Enter a question of 1–512 characters.")
-		return out
-	}
-	if zone != "" {
-		if _, e := time.LoadLocation(zone); e != nil {
-			out.Clarifications = append(out.Clarifications, "Choose a valid IANA time zone.")
-			return out
-		}
-	}
-	relative := strings.Contains(text, "tomorrow") || strings.Contains(text, "today") || strings.Contains(text, "this week") || strings.Contains(text, "morning")
-	if relative {
-		out.Clarifications = append(out.Clarifications, "Resolve relative wording into explicit UTC dates/times before execution.")
-	}
-	for _, p := range Catalog().Locations {
-		if strings.Contains(text, strings.ToLower(p.Name)) || strings.Contains(text, strings.ReplaceAll(p.Slug, "-", " ")) || strings.Contains(text, strings.Split(p.Slug, "-")[0]) {
-			copy := p
-			out.Place = &copy
-			break
-		}
-	}
-	if out.Place == nil {
-		out.Clarifications = append(out.Clarifications, "Choose Mumbai Offshore, Goa Offshore, Kerala Offshore, Arabian Sea or Bay of Bengal.")
-	}
-	switch {
-	case strings.Contains(text, "profile") || strings.Contains(text, "salinity") || strings.Contains(text, "temperature"):
-		out.Intent = "research"
-		d := dates.FindAllString(text, -1)
-		if len(d) != 2 {
-			out.Clarifications = append(out.Clarifications, "Provide a start and exclusive end date as YYYY-MM-DD.")
-		} else if out.Place != nil {
-			variable := "temperature_c"
-			if strings.Contains(text, "salinity") {
-				variable = "practical_salinity"
-			}
-			filter := ResearchFilter{BBox: out.Place.BBox, Start: d[0] + "T00:00:00Z", End: d[1] + "T00:00:00Z", MinDepth: 0, MaxDepth: 2000, Variable: variable, Source: "argo_gdac", QC: "accepted", Limit: 50}
-			if strings.Contains(text, "unusual") {
-				out.Clarifications = append(out.Clarifications, "Choose a diagnostic anomaly percentile explicitly in the research filters.")
-			}
-			if filter.Validate() != nil {
-				out.Clarifications = append(out.Clarifications, "Use a valid interval of at most 366 days.")
-			} else {
-				out.Research = &filter
-			}
-		}
-		out.Explanation = "The plan queries accepted Argo profiles at their recorded positions and depths. Values are returned only after the typed research API executes."
-	case strings.Contains(text, "warning") || strings.Contains(text, "advisory") || strings.Contains(text, "conditions"):
-		out.Intent = "conditions"
-		out.Explanation = "Open the named location and choose an explicit observation/forecast time. Official state stays unknown unless retained authority evidence supports it."
-	case strings.Contains(text, "event"):
-		out.Intent = "events"
-		out.Explanation = "Open retained diagnostic event runs; historical results do not establish live event absence."
-	case strings.Contains(text, "fish") || strings.Contains(text, "trip") || strings.Contains(text, "route") || strings.Contains(text, "waves"):
-		out.Intent = "trip"
-		out.Clarifications = append(out.Clarifications, "Supply timed outward/return waypoints and review the trip policy. This text cannot choose a safety verdict.")
-		out.Explanation = "Use the typed timed-route form and pinned forecasts. No best window is inferred from a single calm sample."
-	default:
-		out.Intent = "unsupported"
-		out.Clarifications = append(out.Clarifications, "Use a profile, location conditions, official warning, event or timed-trip question.")
-	}
-	if len(out.Clarifications) == 0 {
-		out.State = "ready"
-	}
-	return out
-}
 func (s *Server) query(w http.ResponseWriter, r *http.Request) {
 	if !noQuery(w, r) {
 		return
@@ -350,6 +269,10 @@ func (s *Server) query(w http.ResponseWriter, r *http.Request) {
 	if !body(w, r, &v) {
 		return
 	}
-	plan := ParseQuery(v.Text, v.Zone)
-	write(w, 200, map[string]any{"plan": plan, "executed": false, "limitations": []string{"A bounded parser builds a typed preview. It does not issue SQL, call an arbitrary endpoint or invent measurements or verdicts."}})
+	plan := s.Language.Plan(r.Context(), v.Text, v.Zone, time.Now())
+	notes := []string{"A bounded parser builds a typed preview. It does not issue SQL, call an arbitrary endpoint or invent measurements or verdicts."}
+	if plan.Parser == "language_model" {
+		notes = append(notes, "A language model only labelled the question; the plan was rebuilt and validated by Nautiq before this preview.")
+	}
+	write(w, 200, map[string]any{"plan": plan, "executed": false, "limitations": notes, "language_model_enabled": s.Language.Enabled()})
 }

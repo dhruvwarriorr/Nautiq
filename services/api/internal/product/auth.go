@@ -33,6 +33,7 @@ type Server struct {
 	hashSlots chan struct{}
 	cursorKey []byte
 	Mailer    notifications.Mailer
+	Language  *Extractor
 }
 type Identity struct {
 	ID            string    `json:"account_id"`
@@ -60,7 +61,7 @@ func New(db *pgxpool.Pool, storage *minio.Client, origin string) (*Server, error
 	if e != nil {
 		return nil, e
 	}
-	server := &Server{DB: db, Storage: storage, Origin: origin, slots: make(chan struct{}, 12), hashSlots: make(chan struct{}, 2), cursorKey: key}
+	server := &Server{DB: db, Storage: storage, Origin: origin, slots: make(chan struct{}, 12), hashSlots: make(chan struct{}, 2), cursorKey: key, Language: NewExtractorFromEnv()}
 	if mailer != nil {
 		server.Mailer = mailer
 	}
@@ -74,7 +75,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 			fail(w, 400, "unknown_query")
 			return
 		}
-		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "notification_delivery_available": s.notificationAvailable(r), "as_of": time.Now().UTC()})
+		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "notification_delivery_available": s.notificationAvailable(r), "language_model_parsing": s.Language.Enabled(), "as_of": time.Now().UTC()})
 	}))
 	mux.Handle("POST /api/v1/auth/register", s.bound(s.register))
 	mux.Handle("POST /api/v1/auth/login", s.bound(s.login))
