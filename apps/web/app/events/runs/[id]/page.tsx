@@ -2,6 +2,8 @@ import Link from "next/link";
 import { evidence } from "../../../../lib/science";
 import { eventLabel, type EventRun } from "../../../../lib/events";
 import EventMap from "../../EventMap";
+import { PageHead } from "../../../components/ui/Bits";
+import { when } from "../../../../lib/humanize";
 export const dynamic = "force-dynamic";
 export default async function RunPage({
   params,
@@ -14,32 +16,14 @@ export default async function RunPage({
     : null;
   if (!run)
     return (
-      <main>
-        <Link href="/events">← Event evidence</Link>
-        <h1>Event run unavailable.</h1>
-        <p>
-          The retained report is absent or its integrity could not be verified.
-        </p>
-      </main>
+      <main><PageHead back={{ href: "/events", label: "Event evidence" }} title="Event run unavailable" lede={"The retained report is absent or its integrity could not be verified."} /></main>
     );
   const report = run.report;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/events">← Event evidence</Link>
-        <Link href={`/calculations/${run.calculation_id}`}>
-          Calculation evidence
-        </Link>
-      </nav>
-      <p className="eyebrow">{eventLabel(run.kind).toUpperCase()}</p>
-      <h1>
-        {report.start} to {report.end}
-      </h1>
-      <p className="intro">
-        {report.events.length} retained components · {run.input_state}. The
+    <main>
+      <PageHead back={{ href: "/events", label: "Regional events" }} title={<>{report.start} to {report.end}</>} lede={<>{report.events.length} retained components · {run.input_state}. The
         detector describes this exact source window; it does not certify current
-        conditions.
-      </p>
+        conditions.</>} />
       <p className="notice">
         Scientific release approval is false. Isolated profile evidence remains
         separate from regional candidates. Missing coverage cannot establish
@@ -54,7 +38,7 @@ export default async function RunPage({
           <dt>Input state</dt>
           <dd>
             {run.input_state}
-            {report.as_of ? ` · ${report.as_of}` : ""}
+            {report.as_of ? ` · ${when(report.as_of)}` : ""}
           </dd>
         </div>
         <div>

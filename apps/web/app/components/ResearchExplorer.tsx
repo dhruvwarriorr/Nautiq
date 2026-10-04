@@ -10,6 +10,8 @@ import {
 import AccountGate from "./AccountGate";
 import PrivateJobs from "./PrivateJobs";
 import ProfilePanels from "./ProfilePanels";
+import { coords, reading, when } from "../../lib/humanize";
+import Icon from "./ui/Icon";
 export default function ResearchExplorer({
   initial,
   session = null,
@@ -84,175 +86,172 @@ export default function ResearchExplorer({
       if (!c.signal.aborted) setBusy(false);
     }
   }
+  const areas: [string, string][] = [
+    ["45,0,100,30", "All of India’s seas"],
+    ["45,0,77,25", "Arabian Sea"],
+    ["78,0,100,25", "Bay of Bengal"],
+    ["72,8,78,16", "Off Kerala and Goa"],
+  ];
+  const periods: [number, string][] = [
+    [7, "Last 7 days"],
+    [30, "Last 30 days"],
+    [90, "Last 3 months"],
+    [365, "Last 12 months"],
+  ];
+  const depths: [number, number, string][] = [
+    [0, 50, "Near the surface (0–50 m)"],
+    [0, 200, "Upper ocean (0–200 m)"],
+    [0, 1000, "Down to 1,000 m"],
+    [0, 2000, "Full depth (0–2,000 m)"],
+  ];
+  const span = Math.round((Date.parse(filter.end) - Date.parse(filter.start)) / 86400000);
+  const period = periods.find(([d]) => Math.abs(d - span) <= 1)?.[0] ?? 0;
+  const depthKey = `${filter.min_depth_m}-${filter.max_depth_m}`;
   return (
     <>
       <form
+        className="explore-form"
         onSubmit={(e) => {
           e.preventDefault();
           void search();
         }}
       >
-        <div className="field-controls">
+        <div className="explore-main">
           <label>
-            Bounding box: west,south,east,north
-            <input
-              required
-              value={bbox}
+            Area
+            <select
+              value={areas.some(([v]) => v === bbox) ? bbox : "custom"}
               onChange={(e) => {
                 invalidate();
-                setBBox(e.target.value);
+                if (e.target.value !== "custom") setBBox(e.target.value);
               }}
-            />
-          </label>
-          <label>
-            Start (UTC ISO)
-            <input
-              required
-              value={filter.start}
-              onChange={(e) => change("start", e.target.value)}
-            />
-          </label>
-          <label>
-            End, exclusive (UTC ISO)
-            <input
-              required
-              value={filter.end}
-              onChange={(e) => change("end", e.target.value)}
-            />
-          </label>
-          <label>
-            Variable
-            <select
-              value={filter.variable}
-              onChange={(e) =>
-                change("variable", e.target.value as ResearchFilter["variable"])
-              }
             >
-              <option value="temperature_c">Temperature · °C</option>
-              <option value="practical_salinity">
-                Practical salinity · PSS-78
-              </option>
-            </select>
-          </label>
-          <label>
-            Minimum depth (m)
-            <input
-              type="number"
-              min={0}
-              max={6000}
-              required
-              value={filter.min_depth_m}
-              onInput={(e) =>
-                change("min_depth_m", Number(e.currentTarget.value))
-              }
-            />
-          </label>
-          <label>
-            Maximum depth (m)
-            <input
-              type="number"
-              min={0}
-              max={6000}
-              required
-              value={filter.max_depth_m}
-              onInput={(e) =>
-                change("max_depth_m", Number(e.currentTarget.value))
-              }
-            />
-          </label>
-          <label>
-            Quality
-            <select
-              value={filter.qc}
-              onChange={(e) =>
-                change("qc", e.target.value as ResearchFilter["qc"])
-              }
-            >
-              <option value="accepted">QC accepted</option>
-              <option value="science_ready">Science ready</option>
-            </select>
-          </label>
-          <label>
-            Argo data mode
-            <select
-              value={filter.data_mode ?? ""}
-              onChange={(e) => change("data_mode", e.target.value)}
-            >
-              <option value="">Any</option>
-              {["R", "A", "D"].map((m) => (
-                <option key={m}>{m}</option>
+              {areas.map(([v, t]) => (
+                <option key={v} value={v}>{t}</option>
               ))}
+              <option value="custom">Custom area (below)</option>
             </select>
           </label>
           <label>
-            Page / export profile limit
-            <input
-              required
-              type="number"
-              min={1}
-              max={100}
-              value={filter.limit}
-              onInput={(e) => change("limit", Number(e.currentTarget.value))}
-            />
-          </label>
-          <label>
-            Minimum diagnostic percentile (optional)
-            <input
-              type="number"
-              min={0}
-              max={100}
-              value={percentile}
-              onInput={(e) => {
-                invalidate();
-                setPercentile(e.currentTarget.value);
-              }}
-            />
-          </label>
-          <label>
-            Exact event membership ID (optional)
-            <input
-              value={event}
+            Period
+            <select
+              value={period || "custom"}
               onChange={(e) => {
+                if (e.target.value === "custom") return;
+                const end = new Date();
                 invalidate();
-                setEvent(e.target.value);
+                setFilter({ ...filter, end: end.toISOString(), start: new Date(end.getTime() - Number(e.target.value) * 86400000).toISOString() });
               }}
-            />
+            >
+              {periods.map(([d, t]) => (
+                <option key={d} value={d}>{t}</option>
+              ))}
+              <option value="custom">Custom dates (below)</option>
+            </select>
           </label>
+          <label>
+            Measure
+            <select value={filter.variable} onChange={(e) => change("variable", e.target.value as ResearchFilter["variable"])}>
+              <option value="temperature_c">Temperature (°C)</option>
+              <option value="practical_salinity">Salinity</option>
+            </select>
+          </label>
+          <label>
+            Depth
+            <select
+              value={depths.some(([a, b]) => `${a}-${b}` === depthKey) ? depthKey : "custom"}
+              onChange={(e) => {
+                if (e.target.value === "custom") return;
+                const [a, b] = e.target.value.split("-").map(Number);
+                invalidate();
+                setFilter({ ...filter, min_depth_m: a, max_depth_m: b });
+              }}
+            >
+              {depths.map(([a, b, t]) => (
+                <option key={t} value={`${a}-${b}`}>{t}</option>
+              ))}
+              <option value="custom">Custom depths (below)</option>
+            </select>
+          </label>
+          <button className="btn" disabled={busy}>
+            <Icon name="spyglass" size={18} /> {busy ? "Searching…" : "Find readings"}
+          </button>
         </div>
-        <label className="wide-label">
-          Optional closed polygon as longitude, latitude pairs
-          <textarea
-            rows={3}
-            value={polygon}
-            onChange={(e) => {
-              invalidate();
-              setPolygon(e.target.value);
-            }}
-            placeholder="[[65,10],[66,10],[66,11],[65,10]]"
-          />
-        </label>
-        <p>
-          Source: Argo GDAC. Bounds span at most 366 days. Original instrument
-          depths and positions are retained; percentile filtering applies only
-          to current diagnostic calculations.
-        </p>
-        <button disabled={busy}>
-          {busy ? "Loading original observations…" : "Search observations"}
-        </button>
+        <details className="tech">
+          <summary>
+            <Icon name="sounding" size={18} />
+            <span>More filters</span>
+            <Icon name="down" size={18} className="icon tech-chevron" />
+          </summary>
+          <div className="tech-body">
+            <div className="form-grid">
+              <label>
+                Area (west, south, east, north)
+                <input required value={bbox} onChange={(e) => { invalidate(); setBBox(e.target.value); }} />
+              </label>
+              <label>
+                From
+                <input type="date" required value={filter.start.slice(0, 10)} onChange={(e) => change("start", `${e.target.value}T00:00:00Z`)} />
+              </label>
+              <label>
+                Until (not included)
+                <input type="date" required value={filter.end.slice(0, 10)} onChange={(e) => change("end", `${e.target.value}T00:00:00Z`)} />
+              </label>
+              <label>
+                Shallowest (m)
+                <input type="number" min={0} max={6000} required value={filter.min_depth_m} onChange={(e) => change("min_depth_m", Number(e.target.value))} />
+              </label>
+              <label>
+                Deepest (m)
+                <input type="number" min={0} max={6000} required value={filter.max_depth_m} onChange={(e) => change("max_depth_m", Number(e.target.value))} />
+              </label>
+              <label>
+                Quality
+                <select value={filter.qc} onChange={(e) => change("qc", e.target.value as ResearchFilter["qc"])}>
+                  <option value="accepted">Passed quality checks</option>
+                  <option value="science_ready">Science-ready only</option>
+                </select>
+              </label>
+              <label>
+                Processing
+                <select value={filter.data_mode ?? ""} onChange={(e) => change("data_mode", e.target.value)}>
+                  <option value="">Any</option>
+                  <option value="R">Real-time</option>
+                  <option value="A">Adjusted</option>
+                  <option value="D">Delayed (expert-checked)</option>
+                </select>
+              </label>
+              <label>
+                Readings per page
+                <input required type="number" min={1} max={100} value={filter.limit} onChange={(e) => change("limit", Number(e.target.value))} />
+              </label>
+              <label>
+                Only unusual (minimum rank %)
+                <input type="number" min={0} max={100} value={percentile} placeholder="e.g. 95" onChange={(e) => { invalidate(); setPercentile(e.target.value); }} />
+              </label>
+              <label>
+                Belongs to event (ID)
+                <input value={event} onChange={(e) => { invalidate(); setEvent(e.target.value); }} />
+              </label>
+            </div>
+            <label className="wide-label">
+              Custom shape (longitude, latitude pairs, closed)
+              <textarea rows={2} value={polygon} onChange={(e) => { invalidate(); setPolygon(e.target.value); }} placeholder="[[65,10],[66,10],[66,11],[65,10]]" />
+            </label>
+            <p className="footnote">Source: Argo floats. Up to 366 days at a time. Readings keep their true depth and position.</p>
+          </div>
+        </details>
       </form>
-      <p role="status">{error.replaceAll("_", " ")}</p>
+      <p role="status" className="ask-status">{error ? `That search didn’t work: ${error.replaceAll("_", " ")}.` : ""}</p>
       {result ? (
         <section>
-          <h2>{result.items.length} matching profiles</h2>
-          <p>
-            Selection snapshot {result.snapshot_at}. {result.units}. Each row’s
-            extrema use all matched original levels; charts preview up to 200
-            levels per instrument.
-          </p>
+          <div className="section-head" style={{ marginTop: 36 }}>
+            <h2 style={{ margin: 0 }}>{result.items.length} float readings</h2>
+            <p>Found {when(result.snapshot_at)}</p>
+          </div>
           {result.items.length === 0 ? (
             <p>
-              No accepted observations match these bounds. Widen the area or
-              dates to explore retained data.
+              No float readings match. Try a wider area or a longer period.
             </p>
           ) : (
             <>
@@ -265,42 +264,31 @@ export default function ResearchExplorer({
                 <table>
                   <thead>
                     <tr>
-                      <th>Instrument / original position</th>
-                      <th>Observation time</th>
-                      <th>Depth records</th>
-                      <th>Minimum / maximum</th>
-                      <th>Diagnostic percentile</th>
-                      <th>Inspect</th>
+                      <th>Float</th>
+                      <th>When</th>
+                      <th>Range</th>
+                      <th>Unusual?</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {result.items.map((r) => (
                       <tr key={`${r.id}:${r.revision_sha256}`}>
                         <td>
-                          {r.platform_id}
-                          <small>
-                            {r.latitude.toFixed(4)}, {r.longitude.toFixed(4)} ·{" "}
-                            {r.data_mode}
-                          </small>
+                          <Link href={`/profiles/${r.id}`}>Float {r.platform_id}</Link>
+                          <small>{coords(r.latitude, r.longitude)} · {r.level_count} depths</small>
                         </td>
-                        <td>{r.observed_at}</td>
-                        <td>{r.level_count}</td>
+                        <td>{when(r.observed_at)}</td>
                         <td>
-                          {r.minimum ?? "unknown"} / {r.maximum ?? "unknown"}
+                          {r.minimum == null || r.maximum == null ? "—" : `${reading(r.minimum, 1)}–${reading(r.maximum, 1)} ${filter.variable === "temperature_c" ? "°C" : ""}`}
                         </td>
                         <td>
-                          {r.anomaly_percentile ?? "unavailable"}
-                          <small>{r.anomaly_state ?? "no diagnostic"}</small>
+                          {r.anomaly_percentile == null ? <span className="muted">Not ranked</span> : r.anomaly_percentile >= 95 ? <b>Top {Math.max(1, Math.round(100 - r.anomaly_percentile))}%</b> : "Typical"}
                         </td>
                         <td>
-                          <button onClick={() => setSelected(r.id)}>
-                            View depth and residuals
+                          <button aria-pressed={selected === r.id} onClick={() => setSelected(r.id)}>
+                            Show by depth
                           </button>
-                          <small>
-                            <Link href={`/profiles/${r.id}`}>
-                              Original profile and QC
-                            </Link>
-                          </small>
                         </td>
                       </tr>
                     ))}
@@ -331,29 +319,22 @@ export default function ResearchExplorer({
                       150 - ((v - lo) / (hi - lo || 1)) * 120;
                     return r.minimum !== null && r.maximum !== null ? (
                       <g key={r.id}>
-                        <title>
-                          {r.observed_at}: {r.minimum} to {r.maximum}{" "}
-                          {result.units} at {r.latitude}, {r.longitude}
-                        </title>
+                        <title>{`${when(r.observed_at)}: ${r.minimum} to ${r.maximum} ${result.units} at ${r.latitude}, ${r.longitude}`}</title>
                         <line
                           x1={x}
                           x2={x}
                           y1={y(r.minimum)}
                           y2={y(r.maximum)}
-                          stroke="#1c8491"
+                          stroke="#123f6b"
                           strokeWidth={3}
                         />
-                        <circle cx={x} cy={y(r.minimum)} r={3} fill="#163c40" />
+                        <circle cx={x} cy={y(r.minimum)} r={3} fill="#0b2341" />
                       </g>
                     ) : null;
                   })}
                 </svg>
                 <figcaption>
-                  UTC time runs left to right. Vertical spans show each
-                  instrument’s minimum and maximum within the selected depths.
-                  Instruments are at different positions; this is an observation
-                  series, with no spatial interpolation. Exact values appear in
-                  the table.
+                  Time runs left to right. Each line spans one float’s lowest to highest reading in the chosen depths. Floats are in different places; nothing is smoothed between them.
                 </figcaption>
               </figure>
               {selected ? <ProfilePanels key={selected} id={selected} /> : null}
@@ -364,14 +345,17 @@ export default function ResearchExplorer({
               disabled={busy}
               onClick={() => void search(result.next_cursor!)}
             >
-              Load next snapshot page
+              Load more
             </button>
           ) : null}
-          <ul>
-            {result.limitations.map((l) => (
-              <li key={l}>{l}</li>
-            ))}
-          </ul>
+          <details>
+            <summary>Limits of this search</summary>
+            <ul>
+              {result.limitations.map((l) => (
+                <li key={l}>{l}</li>
+              ))}
+            </ul>
+          </details>
           <AccountGate initial={session}>
             {(account) => (
               <PrivateJobs
@@ -384,10 +368,8 @@ export default function ResearchExplorer({
               />
             )}
           </AccountGate>
-          <p>
-            Export requires a query fitting one page and at most 10,000 original
-            levels. Refine bounds if the server asks. Argo attribution, source
-            revisions, QC and units travel with each file.
+          <p className="footnote">
+            Downloads hold one page (up to 10,000 depth readings) and carry Argo credit, quality flags and units.
           </p>
         </section>
       ) : null}

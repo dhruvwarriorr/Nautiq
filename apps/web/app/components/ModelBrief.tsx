@@ -2,6 +2,8 @@ import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { ModelReport, ModelSummary } from "../../lib/expected";
 import { statusWords, type MonitoringResponse } from "../../lib/monitoring";
+import { Signal } from "./ui/Signal";
+import { when, type Status } from "../../lib/humanize";
 const reasonText: Record<string, string> = {
   promotion_thresholds_not_reviewed: "the promotion thresholds have not been reviewed",
   test_block_previously_inspected: "the 2022–2024 test years were already looked at, so they cannot approve a release",
@@ -27,10 +29,10 @@ export default async function ModelBrief({ compact = false }: { compact?: boolea
   const allClimatology = selected ? Object.values(methods).every((m) => m === "climatology") : false;
   const why = new Set<string>();
   for (const v of Object.values(detail?.report?.variables ?? {})) for (const r of reasons(v.promotion?.reasons ?? [])) why.add(r);
-  const [icon, word, tone] = statusWords[monitoring?.latest?.status ?? "reference_unavailable"] ?? ["", "", "unavailable"];
+  const [, word, tone] = statusWords[monitoring?.latest?.status ?? "reference_unavailable"] ?? ["", "", "unavailable"];
   return (
     <section className="model-brief" aria-labelledby="model-brief-title">
-      <h2 id="model-brief-title">What Nautiq’s models are doing today</h2>
+      <h2 id="model-brief-title">What the models are doing today</h2>
       <ul className="brief-list">
         <li>
           <strong>Expected normal.</strong>{" "}
@@ -50,8 +52,8 @@ export default async function ModelBrief({ compact = false }: { compact?: boolea
           {anomalies ? "Each complete profile gets descriptive ranks and a category (typical, elevated, unusual, strongly unusual) with its components. These are ranks against history, not event probabilities." : "No profile-ranking release is selected."}
         </li>
         <li>
-          <strong>Monitoring.</strong> <span className="status-chip" data-status={tone}><span aria-hidden="true">{icon}</span> {word}</span>{" "}
-          {monitoring?.latest ? <>checked {monitoring.latest.checked_at.slice(0, 10)}.</> : "has not been run yet."} <Link href="/models/monitoring">Details</Link>
+          <strong>Monitoring.</strong> <Signal status={tone as Status}>{word}</Signal>{" "}
+          {monitoring?.latest ? <>checked {when(monitoring.latest.checked_at)}.</> : "has not been run yet."} <Link href="/models/monitoring">Details</Link>
         </li>
       </ul>
       <p className="footnote">

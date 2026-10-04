@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import { eventLabel, eventNumber, type EventDetail } from "../../../lib/events";
 import EventMap from "../EventMap";
+import { PageHead } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function EventPage({
   params,
@@ -14,11 +15,7 @@ export default async function EventPage({
     : null;
   if (!result)
     return (
-      <main>
-        <Link href="/events">← Event evidence</Link>
-        <h1>Component evidence unavailable.</h1>
-        <p>Its retained source/report integrity could not be verified.</p>
-      </main>
+      <main><PageHead back={{ href: "/events", label: "Event evidence" }} title="Component evidence unavailable" lede={"Its retained source/report integrity could not be verified."} /></main>
     );
   const e = result.event;
   const positions =
@@ -35,19 +32,9 @@ export default async function EventPage({
       ]
     : null;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href={`/events/runs/${result.run_id}`}>← Detection run</Link>
-        <Link href={`/calculations/${result.calculation_id}`}>
-          Calculation evidence
-        </Link>
-      </nav>
-      <p className="eyebrow">{e.support_kind.toUpperCase()}</p>
-      <h1>{eventLabel(e.kind)}</h1>
-      <p className="intro">
-        {e.variable} · {e.start} to {e.end}. {e.persistence_days} supported
-        days; {e.duration_days} calendar days. {result.input_state}.
-      </p>
+    <main>
+      <PageHead back={{ href: "/events", label: "Regional events" }} title={<>{eventLabel(e.kind)}</>} lede={<>{e.variable} · {e.start} to {e.end}. {e.persistence_days} supported
+        days; {e.duration_days} calendar days. {result.input_state}.</>} />
       <p className="notice">
         Diagnostic evidence only.{" "}
         {thermal

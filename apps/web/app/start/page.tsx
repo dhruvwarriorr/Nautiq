@@ -1,83 +1,63 @@
 import Link from "next/link";
-import { statusLabels, topicOptions } from "../../lib/ask.mjs";
+import { topicOptions } from "../../lib/ask.mjs";
+import { PageHead } from "../components/ui/Bits";
+import Icon, { type IconName } from "../components/ui/Icon";
+import { Signal } from "../components/ui/Signal";
 export const metadata = {
-  title: "Start here · Nautiq",
-  description: "A two-minute guide to reading Nautiq: what the labels mean and what it cannot tell you.",
+  title: "Two-minute guide · Nautiq",
+  description: "How to read Nautiq: what the signals mean and what it will never tell you.",
 };
-const steps = [
-  {
-    title: "Ask, or pick a place",
-    body: "Type a question on the Ask page, or choose a named place under Conditions. Nautiq shows how it understood you (place, time, kind of question) and lets you change any of it before you rely on the answer.",
-    href: "/ask",
-    link: "Try the Ask page",
-  },
-  {
-    title: "Read the labels before the numbers",
-    body: "Each value is Available, Stale, Unknown, Unavailable, or an Official warning. Stale values are history, not now. Unknown never means clear.",
-    href: "/",
-    link: "See the label guide on the home page",
-  },
-  {
-    title: "Check where a number came from",
-    body: "Every result has evidence: the source, the observation or forecast time, the method version and a calculation identifier. Observations are shown at the instrument’s own position and depth, never moved to your location.",
-    href: "/research",
-    link: "Browse real observations",
-  },
-  {
-    title: "Plan a trip properly",
-    body: "A trip needs timed waypoints out and back. Nautiq checks forecasts and official warnings along the whole route. It reports what it could not check and does not say a trip is safe.",
-    href: "/trips",
-    link: "Open the trip form",
-  },
-  {
-    title: "Keep your places and alerts",
-    body: "Create a free private account to save routes, watchlists and personal alert limits. Personal limits are your preferences, not safety thresholds, and never override an official warning.",
-    href: "/app",
-    link: "Open your workspace",
-  },
+const steps: { title: string; body: string; href: string; link: string; icon: IconName }[] = [
+  { title: "Ask, or pick a place", body: "Type a question in your own words, or choose a place. Nautiq shows how it understood you (place, time, kind of question) and lets you change any of it.", href: "/ask", link: "Try asking", icon: "hailer" },
+  { title: "Read the signal before the number", body: "Every value carries a shape and a word. Out-of-date values are history, not now. Unknown never means clear.", href: "/", link: "See the signals", icon: "pennant" },
+  { title: "See where a number came from", body: "Open “Technical detail” on any page to see the source, the time it was measured or forecast, and how it was worked out. Float readings stay at the float’s own position and depth.", href: "/research", link: "Browse float readings", icon: "sounding" },
+  { title: "Plan a trip properly", body: "Add your stops out and back with times. Nautiq checks the forecast and official warnings along the whole route, and lists what it couldn’t check. It never says a trip is safe.", href: "/trips", link: "Plan a trip", icon: "voyage" },
+  { title: "Keep your places and alerts", body: "A free private workspace saves routes, places and your own alert limits. Your limits are preferences, not safety rules, and never override an official warning.", href: "/app", link: "Open your workspace", icon: "logbook" },
 ];
 const glossary = [
-  ["Expected normal", "What an Argo profile would typically read at that place, depth and time of year, from a fixed 2005–2016 historical baseline. It is not a forecast."],
-  ["Expected interval", "The range where an ordinary profile would fall around the expected normal. It describes natural variability, not measurement error."],
-  ["Unusual profile", "A profile whose differences from normal rank high against retained history. A descriptive rank, not a probability and not an event."],
-  ["Regional event", "A persistent, spatially coherent departure (for example a sea-surface warm spell) found by a fixed detector. One unusual profile is never an event."],
-  ["Official warning", "A bulletin from an agency such as NDMA. Nautiq shows it as issued, with its validity and revisions, and always gives it priority."],
-  ["Insufficient data", "At least one needed input could not be checked. It is not a mild form of “fine”."],
+  ["Historical normal", "What the sea usually reads at a place, depth and time of year, from a fixed 2005–2016 float record. It is not a forecast."],
+  ["Expected range", "Where an ordinary reading would fall around the normal. It describes natural variation, not measurement error."],
+  ["Unusual float", "A float reading that ranks high against history. It is a rank, not a probability, and not an event."],
+  ["Regional event", "A lasting patch of unusual water, such as a warm spell, found by a fixed method. One unusual float is never an event."],
+  ["Official warning", "A bulletin from an Indian agency such as NDMA or IMD, shown as issued, with its start and end. It always comes first."],
+  ["Not enough data", "At least one thing needed couldn’t be checked. It is never a mild form of “fine”."],
 ];
 export default function Page() {
   return (
-    <main className="explorer start-page">
-      <p className="eyebrow">START HERE</p>
-      <h1>Two minutes to read Nautiq well.</h1>
-      <p className="intro">
-        Nautiq is built to be honest about what it knows. These five steps and a short glossary cover everything you need.
-      </p>
+    <main>
+      <PageHead icon="compass" title="The two-minute guide" lede="Nautiq is built to be honest about what it knows. Five steps and a short glossary cover everything." />
       <ol className="steps">
-        {steps.map((s, i) => (
+        {steps.map((s) => (
           <li key={s.title}>
-            <span className="step-number" aria-hidden="true">{i + 1}</span>
+            <span className="step-mark" aria-hidden="true">
+              <Icon name={s.icon} size={24} />
+            </span>
             <div>
               <h2>{s.title}</h2>
               <p>{s.body}</p>
-              <Link href={s.href}>{s.link} →</Link>
+              <Link className="text-link" href={s.href}>
+                {s.link} <Icon name="arrow" size={16} />
+              </Link>
             </div>
           </li>
         ))}
       </ol>
-      <section>
-        <h2>The five labels</h2>
-        <ul className="legend">
-          {Object.entries(statusLabels).map(([key, [icon, word]]) => (
-            <li key={key}>
-              <span className="status-chip" data-status={key}>
-                <span aria-hidden="true">{icon}</span> {word}
-              </span>
-            </li>
-          ))}
+      <section className="section">
+        <div className="section-head">
+          <h2>The five signals</h2>
+        </div>
+        <ul className="signal-key">
+          <li><Signal status="available" /><p>Current, checked and within its allowed age.</p></li>
+          <li><Signal status="stale" /><p>Older than it should be. Shown as history.</p></li>
+          <li><Signal status="unknown" /><p>Couldn’t be confirmed. Never an all-clear.</p></li>
+          <li><Signal status="unavailable" /><p>No data here. Nothing is filled in.</p></li>
+          <li><Signal status="warning" /><p>An agency bulletin applies. Always first.</p></li>
         </ul>
       </section>
-      <section>
-        <h2>Words you will meet</h2>
+      <section className="section">
+        <div className="section-head">
+          <h2>Words you’ll meet</h2>
+        </div>
         <dl className="glossary">
           {glossary.map(([term, text]) => (
             <div key={term}>
@@ -87,21 +67,23 @@ export default function Page() {
           ))}
         </dl>
       </section>
-      <section>
-        <h2>You can ask Nautiq to explain itself</h2>
-        <ul>
-          {topicOptions.slice(0, 6).map(([topic, label]: string[]) => (
+      <section className="section">
+        <div className="section-head">
+          <h2>Ask Nautiq to explain itself</h2>
+        </div>
+        <ul className="suggestions">
+          {topicOptions.slice(0, 6).map(([topic, text]: string[]) => (
             <li key={topic}>
-              <Link href={`/ask?q=${encodeURIComponent(label.replace("Why a trip shows caution or insufficient data", "Why is Nautiq showing caution?"))}`}>
-                {label}
+              <Link className="suggestion" href={`/ask?q=${encodeURIComponent(text.replace("Why a trip shows caution or insufficient data", "Why is Nautiq showing caution?"))}`}>
+                {text}
               </Link>
             </li>
           ))}
         </ul>
       </section>
-      <p className="notice">
-        Nautiq is a private diagnostic product. Scientific and public release approvals are still pending, and it must not be used as your only source for decisions at sea.
-      </p>
+      <div className="section">
+        <p className="notice">Nautiq is still awaiting scientific and public release approval. Never use it as your only source for decisions at sea.</p>
+      </div>
     </main>
   );
 }

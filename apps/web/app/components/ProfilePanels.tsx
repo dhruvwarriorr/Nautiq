@@ -7,6 +7,7 @@ import Climatology from "../profiles/[id]/Climatology";
 import Expected from "../profiles/[id]/ExpectedState";
 import Uncertainty from "../profiles/[id]/Uncertainty";
 import Anomaly from "../profiles/[id]/Anomaly";
+import { when } from "../../lib/humanize";
 export default function ProfilePanels({ id }: { id: string }) {
   const [value, setValue] = useState<ProfileBundle | null>(null);
   const [busy, setBusy] = useState(false);
@@ -38,13 +39,13 @@ export default function ProfilePanels({ id }: { id: string }) {
   }
   const p = value?.profile;
   return (
-    <section className="field-viewer">
+    <section className="profile-panels">
       <button disabled={busy} onClick={() => void load()}>
         {busy
-          ? "Loading profile evidence…"
+          ? "Loading…"
           : value
-            ? "Reload measured profile and references"
-            : "Load measured profile and references"}
+            ? "Reload readings by depth"
+            : "Show readings by depth"}
       </button>
       {error ? (
         <p role="status" className="notice">
@@ -53,29 +54,30 @@ export default function ProfilePanels({ id }: { id: string }) {
       ) : null}
       {p ? (
         <>
-          <p>
-            Argo {p.platform_id} · {p.latitude.toFixed(4)},{" "}
-            {p.longitude.toFixed(4)} · observed {p.observed_at}. These values
-            belong to this instrument position and recorded depths.
+          <p className="muted">
+            Float {p.platform_id} · {when(p.observed_at)}. These readings belong to this float’s own position and depths.
           </p>
           <div className="charts">
             <ProfileChart
               levels={p.levels}
               variable="temperature_c"
-              label="Observed temperature"
+              label="Temperature"
               unit="°C"
             />
             <ProfileChart
               levels={p.levels}
               variable="practical_salinity"
-              label="Observed practical salinity"
+              label="Salinity"
               unit="PSS-78"
             />
           </div>
+          <Anomaly value={value.anomaly} revision={p.revision_sha256} />
+          <details className="tech">
+            <summary><span>Normal, expected range and residuals</span></summary>
+            <div className="tech-body">
           <Climatology value={value.climatology} revision={p.revision_sha256} />
           <Expected value={value.expected} revision={p.revision_sha256} />
           <Uncertainty value={value.uncertainty} revision={p.revision_sha256} />
-          <Anomaly value={value.anomaly} revision={p.revision_sha256} />
           {value.anomaly?.revision_sha256 === p.revision_sha256 &&
           value.anomaly.result ? (
             <>
@@ -136,8 +138,10 @@ export default function ProfilePanels({ id }: { id: string }) {
               </div>
             </>
           ) : null}
-          <Link href={`/profiles/${p.id}`}>
-            Original levels, QC, source and exact calculation evidence →
+            </div>
+          </details>
+          <Link className="text-link" href={`/profiles/${p.id}`}>
+            Open this float’s full page
           </Link>
         </>
       ) : value ? (

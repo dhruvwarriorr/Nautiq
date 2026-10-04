@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { apiURL, observationWindow, type Page } from "../../lib/profiles";
+import { PageHead } from "../components/ui/Bits";
+import { when } from "../../lib/humanize";
 export const dynamic = "force-dynamic";
 type Search = { [key: string]: string | string[] | undefined };
 function date(value: string | undefined, fallback: string) {
@@ -49,22 +51,8 @@ export default async function Profiles({
     box[0] < box[2] &&
     box[1] < box[3];
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/">Nautiq</Link>
-        <Link href="/climatology">Historical normal</Link>
-        <Link href="/models">Expected-state models</Link>
-        <Link href="/anomalies">Profile magnitude and shape</Link> <Link href="/uncertainty">Predictive intervals</Link>
-        <Link href="/data">Data quality</Link>
-        <Link href="/models">Expected-state models</Link>
-        <Link href="/status">Platform health</Link>
-      </nav>
-      <p className="eyebrow">ARGO / OBSERVATION EXPLORER</p>
-      <h1>A view into the water column.</h1>
-      <p className="intro">
-        Measured profiles from the International Argo Program. Each point is an
-        instrument observation at its recorded position and time.
-      </p>
+    <main>
+      <PageHead icon="float" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Float readings"} lede={"Every stored reading from Argo floats, at the position and time it was taken."} />
       <form className="filters" action="/profiles" method="get">
         <label>
           Bounding box (west, south, east, north)
@@ -94,7 +82,7 @@ export default async function Profiles({
             <span>
               {page.items.length} profiles on this page · All times UTC
             </span>
-            <span>Snapshot: {page.snapshot_at}</span>
+            <span>Snapshot: {when(page.snapshot_at)}</span>
           </div>
           {validBox ? (
             <section aria-label="Profile location map" className="profile-map">
@@ -149,9 +137,7 @@ export default async function Profiles({
                       stroke="white"
                       strokeWidth="2"
                     >
-                      <title>
-                        {p.platform_id} · {p.observed_at}
-                      </title>
+                      <title>{`Float ${p.platform_id} · ${when(p.observed_at)}`}</title>
                     </circle>
                   </a>
                 ))}

@@ -5,6 +5,8 @@ import {
   type Rejection,
   type SnapshotSummary,
 } from "../../lib/science";
+import { PageHead } from "../components/ui/Bits";
+import { when } from "../../lib/humanize";
 export const dynamic = "force-dynamic";
 export default async function Data() {
   const [sources, rejections, snapshots] = await Promise.all([
@@ -13,20 +15,8 @@ export default async function Data() {
     evidence<{ items: SnapshotSummary[] }>("/training-snapshots?limit=50"),
   ]);
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/">Nautiq</Link>
-        <Link href="/profiles">Argo profiles</Link>
-        <Link href="/climatology">Historical normal</Link>
-        <Link href="/models">Expected-state models</Link>
-        <Link href="/status">Platform health</Link>
-      </nav>
-      <p className="eyebrow">DATA / QUALITY & REPRODUCIBILITY</p>
-      <h1>Know the evidence.</h1>
-      <p className="intro">
-        Review source timing, rejected measurements and frozen training inputs.
-        Runtime health and scientific release approval are separate.
-      </p>
+    <main>
+      <PageHead icon="layers" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Datasets and quality"} lede={"How fresh each source is, what failed quality checks, and the fixed datasets models were trained on."} />
       <section>
         <h2>Source monitoring</h2>
         {sources ? (
@@ -105,7 +95,7 @@ export default async function Data() {
                         {s.profile_count} / {s.row_count}
                       </td>
                       <td>{s.status}</td>
-                      <td>{s.created_at}</td>
+                      <td>{when(s.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -157,7 +147,7 @@ export default async function Data() {
                     </td>
                     <td>{r.reason_code.replaceAll("_", " ")}</td>
                     <td>{r.qc_version}</td>
-                    <td>{r.created_at}</td>
+                    <td>{when(r.created_at)}</td>
                   </tr>
                 ))}
               </tbody>

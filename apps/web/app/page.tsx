@@ -1,175 +1,207 @@
 import Link from "next/link";
 import { evidence } from "../lib/science";
-import { exampleQuestions } from "../lib/ask.mjs";
-import Welcome from "./components/Welcome";
+import type { MapOverview, Place, ProductPolicy } from "../lib/product";
+import { ago, when, type Status } from "../lib/humanize";
+import Icon from "./components/ui/Icon";
+import { Hoist, Signal, SignalShape, type HoistMark } from "./components/ui/Signal";
+import { DoorLink } from "./components/ui/Bits";
+import HeroChart from "./components/HeroChart";
 export const dynamic = "force-dynamic";
+
 type Operations = {
+  as_of: string;
   sources: {
-    fields: { product_id: string; fresh: boolean; cycle: string | null; status: string }[];
+    fields: { product_id: string; fresh: boolean; cycle: string | null; valid_time_end: string | null; status: string }[];
     advisories: { source_id: string; transport: string; checked_at: string | null }[];
   };
-  scientific_approved: boolean;
 };
-const productNames: Record<string, string> = {
-  noaa_oisst: "Sea surface temperature (NOAA OISST)",
-  noaa_gfs_wave: "Wave forecast (NOAA GFS-Wave)",
-  noaa_gfs_weather: "Wind and weather (NOAA GFS)",
-  hycom_espc: "Surface currents (HYCOM)",
-};
-const paths = [
-  {
-    href: "/locations",
-    title: "Check the sea near a place",
-    text: "Waves, wind, currents and surface temperature at a named place, with official-warning state and the nearest real observation.",
-  },
-  {
-    href: "/trips",
-    title: "Plan a trip",
-    text: "Enter a timed route out and back. Nautiq checks every leg against forecasts and official warnings and shows what it could not check.",
-  },
-  {
-    href: "/advisories",
-    title: "See official warnings",
-    text: "Original agency bulletins with validity and feed health. An unknown state is shown as unknown, never as clear.",
-  },
-  {
-    href: "/research",
-    title: "Explore observations",
-    text: "Real Argo float profiles of temperature and salinity at their true positions and depths, with quality flags and the source file.",
-  },
+
+const fallbackPlaces: Place[] = [
+  { slug: "mumbai-offshore", name: "Mumbai Offshore", latitude: 19, longitude: 72.3, bbox: [] },
+  { slug: "goa-offshore", name: "Goa Offshore", latitude: 15.4, longitude: 73.3, bbox: [] },
+  { slug: "kerala-offshore", name: "Kerala Offshore", latitude: 10, longitude: 75.5, bbox: [] },
+  { slug: "arabian-sea", name: "Arabian Sea", latitude: 15, longitude: 65, bbox: [] },
+  { slug: "bay-of-bengal", name: "Bay of Bengal", latitude: 15, longitude: 87, bbox: [] },
 ];
-const states = [
-  ["✓", "Available", "Current, checked, and within its allowed age."],
-  ["⏱", "Stale", "Older than its allowed age. Shown as history, never as now."],
-  ["?", "Unknown", "Could not be confirmed. This is never an all-clear."],
-  ["–", "Unavailable", "No data for this place or time. Nothing is filled in."],
-  ["⚠", "Official warning", "An agency bulletin applies. It always takes priority."],
+
+const suggestions = [
+  "How are the waves near Goa tomorrow morning?",
+  "Is there an official warning near Kerala?",
+  "Is it a good time to go fishing near Mumbai tomorrow?",
 ];
+
+function marks(ops: Operations | null, floats: MapOverview | null): HoistMark[] {
+  const now = new Date();
+  let warnings: HoistMark = {
+    key: "warnings", label: "Official warnings", status: "unknown", word: "Unknown",
+    note: "Feed status unavailable. Never read this as an all-clear.", href: "/advisories",
+  };
+  let forecasts: HoistMark = {
+    key: "forecasts", label: "Forecasts", status: "unknown", word: "Unknown", note: "Forecast status unavailable.", href: "/map",
+  };
+  if (ops) {
+    const off = ops.sources.advisories.filter((a) => a.transport !== "healthy");
+    warnings = {
+      ...warnings,
+      note: off.length
+        ? `${off.length === ops.sources.advisories.length ? "No alert feed" : "One alert feed"} is fully connected. Check your place; this is not an all-clear.`
+        : "Feeds are connected, but marine coverage isn’t verified. Check your place.",
+    };
+    const fresh = ops.sources.fields.filter((f) => f.fresh).length;
+    const total = ops.sources.fields.length;
+    const latest = ops.sources.fields.map((f) => f.cycle).filter(Boolean).sort().at(-1);
+    const status: Status = fresh === total && total ? "available" : fresh ? "stale" : "unavailable";
+    forecasts = {
+      ...forecasts,
+      status,
+      word: status === "available" ? "Up to date" : status === "stale" ? "Partly out of date" : "Not available",
+      note: `${fresh} of ${total} layers fresh${latest ? ` · issued ${when(latest, now)}` : ""}`,
+    };
+  }
+  const newest = floats?.profiles.map((p) => p.observed_at).sort().at(-1);
+  const obs: HoistMark = newest
+    ? { key: "floats", label: "Float readings", status: "available", word: "Reporting", note: `Newest reading ${ago(newest, now)}`, href: "/research" }
+    : { key: "floats", label: "Float readings", status: "unavailable", word: "None recent", note: "No float readings in the last 30 days.", href: "/research" };
+  return [warnings, forecasts, obs];
+}
+
 export default async function Home() {
-  const ops = await evidence<Operations>("/operations/status");
+  const end = new Date();
+  const start = new Date(end.getTime() - 30 * 86400000);
+  const q = new URLSearchParams({ bbox: "45,0,100,30", start: start.toISOString().slice(0, 10) + "T00:00:00Z", end: new Date(end.getTime() + 86400000).toISOString().slice(0, 10) + "T00:00:00Z" });
+  const [ops, policy, floats] = await Promise.all([
+    evidence<Operations>("/operations/status"),
+    evidence<ProductPolicy>("/product-policy"),
+    evidence<MapOverview>(`/map/overview?${q}`),
+  ]);
+  const places = policy?.policy.locations.length ? policy.policy.locations : fallbackPlaces;
   return (
     <main className="home">
-      <Welcome />
-      <section className="hero">
-        <p className="eyebrow">NAUTIQ / OCEAN EVIDENCE FOR INDIA’S COASTAL WATERS</p>
-        <h1>
-          What is the sea doing,
-          <br />
-          and how sure are we?
-        </h1>
-        <p className="intro">
-          Nautiq brings together real ocean observations, forecasts and
-          official warnings, shows how unusual conditions are against a fixed
-          historical normal, and tells you plainly what it does not know.
-        </p>
-        <form className="hero-ask" action="/ask" method="get">
-          <label htmlFor="home-q">Ask in your own words</label>
-          <div className="ask-row">
-            <input
-              id="home-q"
-              name="q"
-              required
-              maxLength={512}
-              placeholder="How are the waves near Goa tomorrow morning?"
-              autoComplete="off"
-            />
-            <button className="ask-submit">Ask</button>
+      <section className="hero" aria-labelledby="hero-title">
+        <HeroChart places={places} />
+        <div className="hero-inner">
+          <Hoist
+            marks={marks(ops, floats)}
+            caption={ops ? <>Today on India&apos;s seas · checked {when(ops.as_of)}</> : "Live status unavailable right now"}
+          />
+          <div className="hero-main">
+            <h1 id="hero-title">
+              What is <span>the sea doing?</span>
+            </h1>
+            <p className="hero-sub">
+              Plain answers for India&apos;s coast: waves, wind, currents and official warnings, with the gaps shown
+              honestly.
+            </p>
+            <form action="/ask" method="get" role="search" aria-label="Ask Nautiq">
+              <label htmlFor="home-q" className="visually-hidden">
+                Ask in your own words
+              </label>
+              <div className="ask-field">
+                <span className="ask-icon">
+                  <Icon name="hailer" size={24} />
+                </span>
+                <input id="home-q" name="q" required maxLength={512} autoComplete="off" placeholder="Ask about waves, wind or warnings" />
+                <button className="ask-go">
+                  Ask <Icon name="arrow" size={18} />
+                </button>
+              </div>
+            </form>
+            <p className="hero-or">or pick a place</p>
+            <ul className="place-board" aria-label="Places">
+              {places.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/locations/${p.slug}`} data-place={p.slug}>
+                    <Icon name="buoy" size={24} className="icon pb-icon" />
+                    <span className="pb-name">{p.name.replace(/ Offshore$/, "")}</span>
+                    <span className="pb-kind">{/Offshore$/.test(p.name) ? "Offshore" : "Open sea"}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="hero-try">
+              Try asking:{" "}
+              {suggestions.slice(0, 2).map((q, i) => (
+                <span key={q}>
+                  {i ? " · " : ""}
+                  <Link href={`/ask?q=${encodeURIComponent(q)}`}>{q}</Link>
+                </span>
+              ))}
+            </p>
           </div>
-        </form>
-        <div className="chips" role="group" aria-label="Example questions">
-          {exampleQuestions.slice(0, 4).map((q: string) => (
-            <Link key={q} className="chip" href={`/ask?q=${encodeURIComponent(q)}`}>
-              {q}
-            </Link>
-          ))}
         </div>
       </section>
 
-      <section aria-labelledby="start-heading" className="section">
-        <h2 id="start-heading">Or start with what you need</h2>
-        <div className="path-grid">
-          {paths.map((p) => (
-            <Link key={p.href} href={p.href} className="path-card">
-              <h3>{p.title}</h3>
-              <p>{p.text}</p>
-              <span aria-hidden="true">Open →</span>
-            </Link>
-          ))}
+      <section className="section" aria-labelledby="ways">
+        <div className="section-head">
+          <h2 id="ways">Three more ways in</h2>
         </div>
-        <p>
-          <Link href="/map">Open the ocean map</Link> ·{" "}
-          <Link href="/start">First time? Read the two-minute guide</Link>
-        </p>
+        <div className="doors">
+          <DoorLink href="/map" icon="chart" title="Ocean map" text="See waves, wind and currents across the whole coast, with floats and official areas." />
+          <DoorLink href="/trips" icon="voyage" title="Plan a trip" text="Enter your route out and back. Nautiq checks every leg and lists what it couldn’t check." />
+          <DoorLink href="/advisories" icon="pennant" title="Official warnings" text="Bulletins from Indian agencies, in their own words, with when they start and end." />
+        </div>
       </section>
 
-      <section aria-labelledby="read-heading" className="section">
-        <h2 id="read-heading">How to read what you see</h2>
-        <p className="lead">
-          Every value in Nautiq carries one of these labels. They use words and
-          symbols, not just colour.
-        </p>
-        <ul className="legend">
-          {states.map(([icon, word, text]) => (
-            <li key={word}>
-              <span className="status-chip" data-status={word.toLowerCase().split(" ")[0]}>
-                <span aria-hidden="true">{icon}</span> {word}
-              </span>
-              <span>{text}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section aria-labelledby="live-heading" className="section">
-        <h2 id="live-heading">The data right now</h2>
-        {ops ? (
-          <ul className="legend">
-            {ops.sources.fields.map((f) => (
-              <li key={f.product_id}>
-                <span className="status-chip" data-status={f.fresh ? "available" : "stale"}>
-                  <span aria-hidden="true">{f.fresh ? "✓" : "⏱"}</span> {f.fresh ? "Fresh" : "Stale"}
-                </span>
-                <span>
-                  {productNames[f.product_id] ?? f.product_id}
-                  {f.cycle ? `, cycle ${f.cycle.slice(0, 16).replace("T", " ")} UTC` : ""}
-                </span>
-              </li>
-            ))}
-            {ops.sources.advisories.map((a) => (
-              <li key={a.source_id}>
-                <span className="status-chip" data-status={a.transport === "healthy" ? "available" : "unknown"}>
-                  <span aria-hidden="true">{a.transport === "healthy" ? "✓" : "?"}</span>{" "}
-                  {a.transport === "healthy" ? "Reachable" : a.transport === "unconfigured" ? "Not connected" : "Not recent"}
-                </span>
-                <span>
-                  Official bulletins: {a.source_id === "ndma_cap_rss" ? "NDMA CAP feed" : "INCOIS advisories"}
-                  {a.checked_at ? `, last checked ${a.checked_at.slice(0, 16).replace("T", " ")} UTC` : ""}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="notice">
-            Live source status is unavailable right now. Nothing below should be treated as current until it returns.
-          </p>
-        )}
-        <p>
-          <Link href="/status">Full system status</Link>
-        </p>
-      </section>
-
-      <section aria-labelledby="not-heading" className="section honest">
-        <h2 id="not-heading">What Nautiq will not do</h2>
-        <ul>
-          <li>It will not tell you a trip is safe. Numeric trip limits are not yet approved by marine and legal reviewers, so real trips return “insufficient data” unless an official warning applies.</li>
-          <li>It will not treat a missing warning as no warning. Official coverage of marine areas is not yet verified.</li>
-          <li>It will not invent a number. Where evidence is missing, you see “unavailable”, not a guess.</li>
+      <section className="section" aria-labelledby="signals">
+        <div className="section-head">
+          <h2 id="signals">Read the signals</h2>
+          <p>Every answer carries one of these marks: a shape and a word, never colour alone.</p>
+        </div>
+        <ul className="signal-key">
           <li>
-            Its machine-learning models are tested, not trusted: today a
-            historical seasonal normal is used because neither learned model
-            beat it convincingly. <Link href="/models">See the evidence</Link>.
+            <Signal status="available">Available</Signal>
+            <p>Current, checked and within its allowed age.</p>
+          </li>
+          <li>
+            <Signal status="stale">Out of date</Signal>
+            <p>Older than it should be. Shown as history, never as now.</p>
+          </li>
+          <li>
+            <Signal status="unknown">Unknown</Signal>
+            <p>Couldn’t be confirmed. Never an all-clear.</p>
+          </li>
+          <li>
+            <Signal status="unavailable">Not available</Signal>
+            <p>No data for this place or time. Nothing is filled in.</p>
+          </li>
+          <li>
+            <Signal status="warning">Official warning</Signal>
+            <p>An agency bulletin applies. It always comes first.</p>
           </li>
         </ul>
+      </section>
+
+      <section className="promise" aria-labelledby="promise">
+        <div className="promise-inner">
+          <div>
+            <h2 id="promise">What Nautiq won&apos;t do</h2>
+            <p className="lead">Honesty is the feature. These limits are on purpose.</p>
+            <Link className="text-link" href="/start">
+              Read the two-minute guide <Icon name="arrow" size={18} />
+            </Link>
+          </div>
+          <ol>
+            <li>
+              <SignalShape status="warning" size={20} />
+              <span>It won&apos;t call a trip safe. Trip limits are still being reviewed by marine and legal experts.</span>
+            </li>
+            <li>
+              <SignalShape status="unknown" size={20} />
+              <span>It won&apos;t treat a missing warning as no warning. Official marine coverage isn&apos;t verified yet.</span>
+            </li>
+            <li>
+              <SignalShape status="unavailable" size={20} />
+              <span>It won&apos;t invent a number. Where data is missing, you see that it&apos;s missing.</span>
+            </li>
+            <li>
+              <SignalShape status="available" size={20} />
+              <span>
+                It won&apos;t oversell its models. A simple seasonal normal is used because the learned models didn&apos;t
+                beat it. <Link href="/models">See why</Link>.
+              </span>
+            </li>
+          </ol>
+        </div>
       </section>
     </main>
   );

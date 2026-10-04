@@ -1,56 +1,26 @@
 import type { Bulletin } from "../../lib/advisories";
-// A static inspection layer, with identical bulletin access in the keyboard table.
+import { chartBounds, landPath } from "../../lib/chart-land";
+import { project } from "../components/HeroChart";
+import { sender, label } from "../../lib/humanize";
+
+/** Mapped bulletin areas drawn on Nautiq's chart of India's seas. Place-name-only areas are never guessed onto it. */
 export function AdvisoryMap({ items }: { items: Bulletin[] }) {
-  const shapes = items.flatMap((b) =>
-    b.message.infos.flatMap((i) =>
-      i.areas.flatMap((a) => a.polygons.map((p) => ({ b, p }))),
-    ),
-  );
-  const project = ([lon, lat]: number[]) => [
-    20 + (lon + 180) * 2,
-    20 + (90 - lat) * 2,
-  ];
+  const shapes = items.flatMap((b) => b.message.infos.flatMap((i) => i.areas.flatMap((a) => a.polygons.map((p) => ({ b, p })))));
+  const d = (rings: number[][][]) =>
+    rings.map((r) => r.map(([lon, lat], i) => `${i ? "L" : "M"}${project(lon, lat).map((v) => v.toFixed(1)).join(" ")}`).join("") + "Z").join("");
   return (
-    <figure className="event-map">
-      <svg
-        viewBox="0 0 760 400"
-        role="img"
-        aria-label="Official CAP polygon inspection layer. Text-only areas have no mapped geometry."
-      >
-        <rect
-          x="20"
-          y="20"
-          width="720"
-          height="360"
-          fill="#f3f1ea"
-          stroke="#bbb"
-        />
+    <figure className="event-map advisory-chart">
+      <svg viewBox={`0 0 ${chartBounds.width} ${chartBounds.height}`} role="img" aria-label={`${shapes.length} mapped official warning areas on a chart of India's seas.`}>
+        <rect width={chartBounds.width} height={chartBounds.height} fill="#123f6b" />
+        <path d={landPath} fill="#eef2f3" stroke="#8fb1cc" strokeWidth="0.8" />
         {shapes.map(({ b, p }, idx) => (
-          <path
-            key={`${b.message.revision_id}-${idx}`}
-            d={p.coordinates
-              .map(
-                (r) =>
-                  r
-                    .map(
-                      (point, i) =>
-                        `${i ? "L" : "M"}${project(point).join(",")}`,
-                    )
-                    .join(" ") + " Z",
-              )
-              .join(" ")}
-            fill={b.lifecycle.state === "active" ? "#b05f37" : "#999"}
-            fillOpacity=".35"
-            stroke="#865035"
-          >
-            <title>{`${b.message.sender}: ${b.message.identifier} (${b.lifecycle.state})`}</title>
+          <path key={`${b.message.revision_id}-${idx}`} d={d(p.coordinates)} fill={b.lifecycle.state === "active" ? "#d23f2a" : "#8a98a6"} fillOpacity=".35" stroke={b.lifecycle.state === "active" ? "#a8301d" : "#6b7a88"} strokeWidth="1">
+            <title>{`${sender(b.message.sender)}: ${b.message.infos[0]?.event ?? ""} (${label(b.lifecycle.state)})`}</title>
           </path>
         ))}
       </svg>
       <figcaption>
-        Original CAP polygons in WGS84. Circles are retained as exact geodesic
-        center/radius evidence on bulletin pages. Place names and geocodes are
-        not guessed into map areas.
+        {shapes.length ? `${shapes.length} mapped areas.` : "No bulletin in this set has a mapped area."} Bulletins that only name places aren’t drawn, because guessing their outline could mislead.
       </figcaption>
     </figure>
   );

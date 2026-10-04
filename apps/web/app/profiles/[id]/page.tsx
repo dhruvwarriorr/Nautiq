@@ -11,6 +11,8 @@ import type { ProfileClimatology } from "../../../lib/climatology";
 import { notFound } from "next/navigation";
 import { evidence, type Revision, type Statistics } from "../../../lib/science";
 import { apiURL, type Profile } from "../../../lib/profiles";
+import { PageHead, TechDetail } from "../../components/ui/Bits";
+import { ago, coords, reading, when } from "../../../lib/humanize";
 export const dynamic = "force-dynamic";
 export default async function Detail({
   params,
@@ -45,11 +47,7 @@ export default async function Detail({
   if (absent) notFound();
   if (!profile)
     return (
-      <main>
-        <Link href="/profiles">← Profiles</Link>
-        <h1>Profile unavailable.</h1>
-        <p>The observation service is unavailable. Refresh to retry.</p>
-      </main>
+      <main><PageHead back={{ href: "/profiles", label: "Profiles" }} title="Profile unavailable" lede={"The observation service is unavailable. Refresh to retry."} /></main>
     );
   const [history, stats, climatology, expected, uncertainty, anomaly] = await Promise.all([
     revisionRequest,
@@ -61,27 +59,35 @@ export default async function Detail({
   ]);
   const p = profile,
     pr = p.provenance;
+  const surface = p.levels.find((l) => l.temperature_c != null || l.practical_salinity != null);
+  const deepest = Math.max(0, ...p.levels.map((l) => l.depth_m));
+  const modeName: Record<string, string> = { R: "Real-time", A: "Adjusted", D: "Expert-checked" };
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/profiles">← Argo profiles</Link>
-        <Link href="/status">Platform health</Link>
-      </nav>
-      <p className="eyebrow">
-        ARGO {p.platform_id} / CYCLE {pr.cycle_number}
-      </p>
-      <h1>The observed profile.</h1>
-      <p className="intro">
-        {p.latitude.toFixed(4)}° latitude · {p.longitude.toFixed(4)}° longitude
-        <br />
-        Observed {p.observed_at} · {pr.sampling_scheme}
-      </p>
-      <div className="summary">
-        <span>
-          Mode {p.data_mode} · {p.levels.length} accepted pressure levels
-        </span>
-        <span>Original levels · no interpolation</span>
-      </div>
+    <main>
+      <PageHead
+        icon="float"
+        back={{ href: "/profiles", label: "Float readings" }}
+        title={`Float ${p.platform_id}`}
+        lede={`Reading taken ${ago(p.observed_at)} (${when(p.observed_at)}) at ${coords(p.latitude, p.longitude)}.`}
+      />
+      <ul className="float-facts">
+        <li>
+          <span>Surface temperature</span>
+          <b>{surface?.temperature_c != null ? `${reading(surface.temperature_c, 1)} °C` : "—"}</b>
+        </li>
+        <li>
+          <span>Surface salinity</span>
+          <b>{surface?.practical_salinity != null ? reading(surface.practical_salinity, 2) : "—"}</b>
+        </li>
+        <li>
+          <span>Measured down to</span>
+          <b>{deepest ? `${reading(deepest, 0)} m` : "—"}</b>
+        </li>
+        <li>
+          <span>Processing</span>
+          <b>{modeName[p.data_mode] ?? p.data_mode}</b>
+        </li>
+      </ul>
       <div className="charts">
         <Chart
           levels={p.levels}
@@ -92,16 +98,21 @@ export default async function Detail({
         <Chart
           levels={p.levels}
           variable="practical_salinity"
-          label="Practical salinity"
+          label="Salinity"
           unit="PSS-78"
         />
       </div>
       <p className="footnote">
-        Points are original accepted measurements. Connecting lines are visual
-        guides and break at missing values or depth gaps over 250 m. Depth is
-        converted from pressure using TEOS-10.
+        Each dot is a real measurement; lines only guide the eye and break where readings are missing.
       </p>
-      <section className="evidence">
+      <Anomaly value={anomaly} revision={p.revision_sha256} />
+      <TechDetail summary="Compared with the historical normal">
+        <Climatology value={climatology} revision={p.revision_sha256} />
+        <ExpectedState value={expected} revision={p.revision_sha256} />
+        <Uncertainty value={uncertainty} revision={p.revision_sha256} />
+      </TechDetail>
+      <TechDetail summary="Source, quality checks and files">
+      <section>
         <h2>Source, QC and provenance</h2>
         <dl>
           <dt>Calculation evidence</dt>
@@ -120,10 +131,10 @@ export default async function Detail({
           </dd>
           <dt>Observed / received</dt>
           <dd>
-            {p.observed_at} / {p.received_at}
+            {when(p.observed_at)} / {when(p.received_at)}
           </dd>
           <dt>Provider update</dt>
-          <dd>{pr.source_updated_at}</dd>
+          <dd>{when(pr.source_updated_at)}</dd>
           <dt>QC policy</dt>
           <dd>
             {p.qc_version} · only source QC 1 is displayed; values for each
@@ -153,10 +164,10 @@ export default async function Detail({
             className="button"
             href={`/profiles/${p.id}/raw?revision_sha256=${p.revision_sha256}`}
           >
-            Download exact raw NetCDF ↓
+            Download the original file
           </a>
           <a href={pr.source_url} target="_blank" rel="noreferrer">
-            Original GDAC file ↗
+            Original on the Argo server
           </a>
         </div>
         <p className="footnote">
@@ -165,12 +176,8 @@ export default async function Detail({
           establishes current local sea conditions or a trip verdict.
         </p>
       </section>
-      <Climatology value={climatology} revision={p.revision_sha256} />
-      <ExpectedState value={expected} revision={p.revision_sha256} />
-      <Uncertainty value={uncertainty} revision={p.revision_sha256} />
-      <Anomaly value={anomaly} revision={p.revision_sha256} />
       <section>
-        <h2>Descriptive profile summary</h2>
+        <h2>Summary statistics</h2>
         {stats?.status === "ready" &&
         stats.revision_sha256 === p.revision_sha256 &&
         stats.calculation_id ? (
@@ -211,7 +218,7 @@ export default async function Detail({
                     <td>
                       {r.data_mode} / {r.selection_state}
                     </td>
-                    <td>{r.source_updated_at}</td>
+                    <td>{when(r.source_updated_at)}</td>
                     <td>
                       {r.calculation_id ? (
                         <Link href={`/calculations/${r.calculation_id}`}>
@@ -265,6 +272,7 @@ export default async function Detail({
           </table>
         </div>
       </details>
+      </TechDetail>
     </main>
   );
 }

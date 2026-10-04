@@ -2,31 +2,38 @@
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import type { Conditions, Place } from "../../lib/product";
-import { fieldNumber } from "../../lib/fields";
+import { coords, humanizeText, label, reading, unit, when, sourceName } from "../../lib/humanize";
 import ProfilePanels from "./ProfilePanels";
+import { Signal } from "./ui/Signal";
+
+const variableName: Record<string, string> = {
+  sst_c: "Sea temperature",
+  wave_height_m: "Wave height",
+  wind_speed_m_s: "Wind speed",
+  current_speed_m_s: "Current speed",
+};
+const statusOf = (s: string | undefined) =>
+  s === "available" || s === "supported" ? "available" : s === "stale" ? "stale" : s === "unknown" ? "unknown" : "unavailable";
+
+/** India Standard Time ↔ ISO helpers for the time input. */
+const toLocalInput = (iso: string) => {
+  const d = new Date(Date.parse(iso) + 330 * 60000);
+  return d.toISOString().slice(0, 16);
+};
+const fromLocalInput = (v: string) => new Date(Date.parse(`${v}:00+05:30`)).toISOString();
+
 export function ConditionSummary({ value }: { value: Conditions }) {
   return (
     <>
-      <p>
-        Requested {value.requested_point.latitude.toFixed(4)},{" "}
-        {value.requested_point.longitude.toFixed(4)} · {value.requested_time}.
-        Evidence inspected {value.as_of}.
-      </p>
-      <h2>Retained forecast timeline</h2>
-      <div
-        className="table-scroll"
-        role="region"
-        aria-label="Location forecast evidence"
-        tabIndex={0}
-      >
+      <h3>Forecast timeline at this point</h3>
+      <div className="table-scroll" role="region" aria-label="Forecast timeline" tabIndex={0}>
         <table>
           <thead>
             <tr>
-              <th>Variable / cycle</th>
-              <th>Requested UTC time</th>
-              <th>Value</th>
-              <th>Support / freshness</th>
-              <th>Evidence</th>
+              <th>Measure</th>
+              <th>For</th>
+              <th>Reading</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -34,94 +41,61 @@ export function ConditionSummary({ value }: { value: Conditions }) {
               f.timeline.length
                 ? f.timeline.map((entry, i) => {
                     const sample = "result" in entry ? entry.result : null;
+                    const t = sample?.requested_time ?? ("requested_time" in entry ? entry.requested_time : null);
+                    const reason = sample?.reason ?? ("reason" in entry ? entry.reason : "");
                     return (
                       <tr key={`${f.variable}-${i}`}>
                         <td>
-                          {f.variable}
-                          <small>{f.cycle ?? "No forecast cycle"}</small>
+                          {variableName[f.variable] ?? label(f.variable)}
+                          <small>{sourceName(f.product_id)}{f.cycle ? `, issued ${when(f.cycle)}` : ""}</small>
                         </td>
+                        <td>{t ? when(t) : "—"}</td>
+                        <td>{sample?.value == null ? "—" : `${reading(sample.value, 2)} ${unit(sample.units)}`}</td>
                         <td>
-                          {sample?.requested_time ??
-                            ("requested_time" in entry
-                              ? entry.requested_time
-                              : "Unavailable")}
-                        </td>
-                        <td>
-                          {sample?.value == null
-                            ? "Unavailable"
-                            : `${fieldNumber(sample.value)} ${sample.units}`}
-                        </td>
-                        <td>
-                          {sample?.status ?? "unavailable"} · {f.state}
-                          <small>
-                            {sample?.reason ??
-                              ("reason" in entry ? entry.reason : "")}
-                          </small>
-                        </td>
-                        <td>
-                          {f.release_id ? (
-                            <Link href={`/fields/${f.release_id}`}>
-                              Pinned release
-                            </Link>
-                          ) : (
-                            "Unavailable"
-                          )}
+                          <Signal status={statusOf(sample?.status ?? f.state)} size={13} />
+                          {reason ? <small>{humanizeText(reason)}</small> : null}
                         </td>
                       </tr>
                     );
                   })
                 : [
                     <tr key={f.variable}>
-                      <td>{f.variable}</td>
-                      <td colSpan={4}>
-                        No retained field evidence is available.
-                      </td>
+                      <td>{variableName[f.variable] ?? label(f.variable)}</td>
+                      <td colSpan={3}>No forecast stored for this point.</td>
                     </tr>,
                   ],
             )}
           </tbody>
         </table>
       </div>
-      <h2>Official advisory state</h2>
-      <p className="notice">
-        {value.advisory.status.replaceAll("_", " ")}. Missing coverage and
-        unresolved official areas cannot establish an all-clear.
+      <h3>Official warning state</h3>
+      <p>
+        <Signal status={value.advisory.status === "official_warning" ? "warning" : value.advisory.status === "known_none_intersecting" ? "available" : "unknown"}>
+          {label(value.advisory.status)}
+        </Signal>
       </p>
+      {value.advisory.unknown_reasons?.length ? (
+        <ul className="muted">
+          {value.advisory.unknown_reasons.slice(0, 6).map((r) => (
+            <li key={r}>{humanizeText(r.replaceAll("_", " "))}</li>
+          ))}
+        </ul>
+      ) : null}
       {value.advisory.warnings?.map((w) => (
         <p key={w.revision_id}>
           <Link href={`/advisories/${w.revision_id}`}>
-            Official {w.event} · {w.severity} · expires {w.expires ?? "unknown"}
+            {w.event} · {label(w.severity)} · until {w.expires ? when(w.expires) : "unknown"}
           </Link>
         </p>
       ))}
-      <Link href="/advisories">
-        Inspect original bulletins, validity and source health →
-      </Link>
-      <h2>Observed versus expected at this point</h2>
-      <p>
-        A collocated observed profile and expected interval at the requested
-        point are unavailable. Nearby instrument comparisons keep their measured
-        positions, times and depths.
-      </p>
-      <p>
-        Confidence: unavailable pending a validated policy. Source coverage and
-        freshness above remain factual labels.
-      </p>
     </>
   );
 }
-export default function LocationView({
-  place,
-  initial,
-  asOf,
-}: {
-  place: Place;
-  initial: Conditions | null;
-  asOf: string;
-}) {
+
+export default function LocationView({ place, initial, asOf }: { place: Place; initial: Conditions | null; asOf: string }) {
   const [lat, setLat] = useState(String(place.latitude));
   const [lon, setLon] = useState(String(place.longitude));
-  const [time, setTime] = useState(asOf);
+  const [time, setTime] = useState(toLocalInput(asOf));
   const [value, setValue] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -129,7 +103,6 @@ export default function LocationView({
   useEffect(() => () => request.current?.abort(), []);
   function clear() {
     request.current?.abort();
-    setValue(null);
     setError("");
     setBusy(false);
   }
@@ -140,139 +113,88 @@ export default function LocationView({
     request.current = c;
     setBusy(true);
     try {
-      const q = new URLSearchParams({ latitude: lat, longitude: lon, time });
-      const r = await fetch(`/api/explore/conditions?${q}`, {
-        signal: c.signal,
-        cache: "no-store",
-      });
+      const q = new URLSearchParams({ latitude: lat, longitude: lon, time: fromLocalInput(time) });
+      const r = await fetch(`/api/explore/conditions?${q}`, { signal: c.signal, cache: "no-store" });
       const data = await r.json();
       if (!r.ok) throw Error(data.code ?? "conditions_unavailable");
       if (!c.signal.aborted) setValue(data);
     } catch (e) {
-      if (!c.signal.aborted)
-        setError(e instanceof Error ? e.message : "conditions_unavailable");
+      if (!c.signal.aborted) setError(e instanceof Error ? e.message : "conditions_unavailable");
     } finally {
       if (!c.signal.aborted) setBusy(false);
     }
   }
   return (
-    <div className="field-viewer">
-      <form className="field-controls" onSubmit={load}>
+    <div>
+      <p>
+        Every value below is the stored source reading at the exact point and time, with nothing averaged. Change the point
+        or time to check something else.
+      </p>
+      <form className="form-grid" onSubmit={load}>
         <label>
-          Requested latitude
-          <input
-            required
-            type="number"
-            min="-85"
-            max="85"
-            step="any"
-            value={lat}
-            onInput={(e) => {
-              clear();
-              setLat(e.currentTarget.value);
-            }}
-          />
+          Latitude (°N)
+          <input required type="number" min="-85" max="85" step="any" value={lat} onChange={(e) => setLat(e.target.value)} />
         </label>
         <label>
-          Requested longitude
-          <input
-            required
-            type="number"
-            min="-180"
-            max="180"
-            step="any"
-            value={lon}
-            onInput={(e) => {
-              clear();
-              setLon(e.currentTarget.value);
-            }}
-          />
+          Longitude (°E)
+          <input required type="number" min="-180" max="180" step="any" value={lon} onChange={(e) => setLon(e.target.value)} />
         </label>
         <label>
-          Requested UTC time (ISO with offset)
-          <input
-            required
-            value={time}
-            onChange={(e) => {
-              clear();
-              setTime(e.target.value);
-            }}
-          />
+          Time (IST)
+          <input required type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
         </label>
-        <button disabled={busy}>
-          {busy ? "Loading evidence…" : "Inspect location evidence"}
+        <button className="btn" disabled={busy}>
+          {busy ? "Checking…" : "Check this point"}
         </button>
       </form>
       <div aria-live="polite">
-        {error ? (
-          <p className="notice">
-            Query unavailable: {error.replaceAll("_", " ")}.
-          </p>
-        ) : null}
+        {error ? <p className="notice">That check didn’t work: {label(error)}. Try a nearby point or another time.</p> : null}
         {value ? (
           <>
-            <ConditionSummary value={value} />
-            <h2>Nearby instruments and recent observations</h2>
-            <p>
-              Within 100 km, ordered by observed time. Distance and age describe
-              source support; they do not authorize interpolation to this
-              location.
+            <p className="footnote">
+              Point {coords(value.requested_point.latitude, value.requested_point.longitude, 3)} · for {when(value.requested_time)} · checked {when(value.as_of)}
             </p>
+            <ConditionSummary value={value} />
+            <h3>Floats within 100 km</h3>
             {!value.nearby_profiles.length ? (
-              <p>
-                No matching nearby accepted profiles were retained for the
-                selected time.
-              </p>
-            ) : null}
-            <div
-              className="table-scroll"
-              tabIndex={0}
-              role="region"
-              aria-label="Nearby observation evidence"
-            >
-              <table>
-                <thead>
-                  <tr>
-                    <th>Instrument</th>
-                    <th>Actual position</th>
-                    <th>Observed UTC</th>
-                    <th>Distance</th>
-                    <th>QC</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {value.nearby_profiles.map((p) => (
-                    <tr key={p.profile_id}>
-                      <td>
-                        <Link href={`/profiles/${p.profile_id}`}>
-                          Argo {p.platform_id}
-                        </Link>
-                      </td>
-                      <td>
-                        {p.latitude.toFixed(3)}, {p.longitude.toFixed(3)}
-                      </td>
-                      <td>{p.observed_at}</td>
-                      <td>{p.distance_km.toFixed(1)} km</td>
-                      <td>{p.qc_version}</td>
+              <p className="muted">No float readings within 100 km for this time.</p>
+            ) : (
+              <div className="table-scroll" tabIndex={0} role="region" aria-label="Nearby floats">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Float</th>
+                      <th>Where</th>
+                      <th>When</th>
+                      <th>Distance</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {value.nearby_profiles.map((p) => (
+                      <tr key={p.profile_id}>
+                        <td>
+                          <Link href={`/profiles/${p.profile_id}`}>Float {p.platform_id}</Link>
+                        </td>
+                        <td>{coords(p.latitude, p.longitude)}</td>
+                        <td>{when(p.observed_at)}</td>
+                        <td>{reading(p.distance_km, 0)} km</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {value.nearby_profiles[0] ? (
               <>
-                <h2>Vertical profile and matching references</h2>
-                <ProfilePanels
-                  key={value.nearby_profiles[0].profile_id}
-                  id={value.nearby_profiles[0].profile_id}
-                />
+                <h3>Nearest float, by depth</h3>
+                <ProfilePanels key={value.nearby_profiles[0].profile_id} id={value.nearby_profiles[0].profile_id} />
               </>
             ) : null}
             <details>
-              <summary>How this view was assembled</summary>
+              <summary>How this view was put together</summary>
               <ul>
                 {value.limitations.map((v) => (
-                  <li key={v}>{v}</li>
+                  <li key={v}>{humanizeText(v)}</li>
                 ))}
               </ul>
               <pre className="audit-json">
@@ -281,21 +203,7 @@ export default function LocationView({
                     requested_point: value.requested_point,
                     requested_time: value.requested_time,
                     as_of: value.as_of,
-                    source_cycles: value.fields.map(
-                      ({
-                        variable,
-                        release_id,
-                        manifest_sha256,
-                        cycle,
-                        state,
-                      }) => ({
-                        variable,
-                        release_id,
-                        manifest_sha256,
-                        cycle,
-                        state,
-                      }),
-                    ),
+                    source_cycles: value.fields.map(({ variable, release_id, manifest_sha256, cycle, state }) => ({ variable, release_id, manifest_sha256, cycle, state })),
                   },
                   null,
                   2,
@@ -304,21 +212,17 @@ export default function LocationView({
             </details>
           </>
         ) : busy ? (
-          <p role="status">Loading independent evidence layers…</p>
+          <p role="status">Checking…</p>
         ) : (
-          <p className="notice">
-            Submit the point and UTC time to load evidence. Unavailable evidence
-            does not mean calm or normal conditions.
-          </p>
+          <p className="notice">Choose a point and time to load the evidence. Missing evidence doesn’t mean calm or normal conditions.</p>
         )}
       </div>
-      <p>
-        <Link href={`/regions/${place.slug}`}>
-          Explore the surrounding region →
-        </Link>{" "}
-        ·{" "}
-        <Link href={`/compare?left=${place.slug}`}>
-          Compare another location →
+      <p className="evidence-links">
+        <Link className="text-link" href={`/regions/${place.slug}`}>
+          The surrounding region
+        </Link>
+        <Link className="text-link" href={`/compare?left=${place.slug}`}>
+          Compare with another place
         </Link>
       </p>
     </div>

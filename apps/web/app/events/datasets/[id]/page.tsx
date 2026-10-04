@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../../../lib/science";
 import type { EventDataset } from "../../../../lib/events";
+import { PageHead } from "../../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function Dataset({
   params,
@@ -13,22 +14,12 @@ export default async function Dataset({
     : null;
   if (!data?.manifest)
     return (
-      <main>
-        <Link href="/events">← Event evidence</Link>
-        <h1>Dataset evidence unavailable.</h1>
-      </main>
+      <main><PageHead back={{ href: "/events", label: "Event evidence" }} title="Dataset evidence unavailable" /></main>
     );
   const m = data.manifest;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/events">← Event evidence</Link>
-        <Link href={`/calculations/${data.calculation_id}`}>
-          Calculation evidence
-        </Link>
-      </nav>
-      <h1>Frozen {data.kind} dataset.</h1>
-      <p className="intro">{m.metadata.source.attribution}</p>
+    <main>
+      <PageHead back={{ href: "/events", label: "Regional events" }} title={<>Frozen {data.kind} dataset.</>} lede={<>{m.metadata.source.attribution}</>} />
       <p>
         {data.status} · shape {m.metadata.shape.join(" × ")} ·{" "}
         {m.arrays_bytes.toLocaleString("en")} compressed bytes.

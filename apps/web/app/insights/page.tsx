@@ -1,35 +1,20 @@
-import Link from "next/link";
+import { PageHead, DoorLink } from "../components/ui/Bits";
+export const metadata = { title: "Insights · Nautiq" };
 export default function Page() {
   return (
-    <main className="explorer">
-      <p className="eyebrow">RETAINED DIAGNOSTIC INSIGHTS</p>
-      <h1>Inspect change with its support.</h1>
-      <p className="intro">
-        Historical diagnostics keep their event run, source window, methodology
-        and confidence limitations. An empty catalog does not establish live
-        event absence.
-      </p>
-      <div className="place-grid">
-        <article>
-          <h2>
-            <Link href="/events">Regional events</Link>
-          </h2>
-          <p>Retained coherent supports and original member evidence.</p>
-        </article>
-        <article>
-          <h2>
-            <Link href="/anomalies">Profile anomaly diagnostics</Link>
-          </h2>
-          <p>Instrument depth residuals and diagnostic ranks.</p>
-        </article>
-        <article>
-          <h2>
-            <Link href="/research">Observation series</Link>
-          </h2>
-          <p>Exact observed positions, times, depths and source revisions.</p>
-        </article>
+    <main>
+      <PageHead
+        icon="ripple"
+        back={{ href: "/behind-the-data", label: "Behind the data" }}
+        title="Insights"
+        lede="How the sea has changed, with the evidence behind each change. An empty list never means nothing is happening."
+      />
+      <div className="door-list">
+        <DoorLink href="/events" icon="ripple" title="Regional events" text="Lasting patches of unusual water found in past data." />
+        <DoorLink href="/anomalies" icon="pin" title="Unusual floats" text="Float readings that stand out from the historical normal." />
+        <DoorLink href="/research" icon="float" title="Float observations" text="Every reading at its true position, time and depth." />
+        <DoorLink href="/methodology" icon="sounding" title="How it works" text="Methods and what still awaits approval." />
       </div>
-      <Link href="/methodology">Methods and approval boundaries</Link>
     </main>
   );
 }

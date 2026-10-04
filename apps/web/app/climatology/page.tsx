@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { ReferenceSummary } from "../../lib/climatology";
+import { PageHead } from "../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function References() {
   const [selected, releases] = await Promise.all([
@@ -8,21 +9,8 @@ export default async function References() {
     evidence<{ items: ReferenceSummary[] }>("/climatology-releases?limit=50"),
   ]);
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/">Nautiq</Link>
-        <Link href="/profiles">Argo profiles</Link>
-        <Link href="/uncertainty">Predictive intervals</Link>
-        <Link href="/data">Data quality</Link>
-        <Link href="/models">Expected-state models</Link>
-      </nav>
-      <p className="eyebrow">HISTORICAL / SEASONAL REFERENCE</p>
-      <h1>Normal, with its evidence.</h1>
-      <p className="intro">
-        A fixed harmonic reference describes historical seasonal means. Compare
-        observations at their own location, time and depth, with supported
-        coverage and explicit pooled fallbacks.
-      </p>
+    <main>
+      <PageHead icon="waves" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Historical normal"} lede={"What the sea is usually like at each place, depth and season, from 2005–2016 float data."} />
       <p className="notice">
         Local scientific prototype. Spatial and platform independence, coastal
         coverage and production approval remain unverified. Spread is training

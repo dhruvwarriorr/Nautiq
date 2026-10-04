@@ -1,20 +1,15 @@
 import { evidence } from "../../lib/science";
 import type { TripPolicy } from "../../lib/trips";
+import type { ProductPolicy } from "../../lib/product";
 import { TripForm } from "./TripForm";
+import { PageHead, Notice } from "../components/ui/Bits";
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Plan a trip · Nautiq" };
 function prefillFrom(q: Record<string, string | string[] | undefined>) {
   const one = (k: string) => (typeof q[k] === "string" ? (q[k] as string) : "");
   const lat = Number(one("lat"));
   const lon = Number(one("lon"));
-  if (
-    !one("lat") ||
-    !one("lon") ||
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lon) ||
-    Math.abs(lat) > 85 ||
-    Math.abs(lon) > 180
-  )
-    return undefined;
+  if (!one("lat") || !one("lon") || !Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 85 || Math.abs(lon) > 180) return undefined;
   const depart = one("depart");
   const time = Date.parse(depart);
   return {
@@ -24,62 +19,37 @@ function prefillFrom(q: Record<string, string | string[] | undefined>) {
     place: /^[a-z-]{1,40}$/.test(one("place")) ? one("place") : "",
   };
 }
-export default async function Trips({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default async function Trips({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const prefill = prefillFrom(await searchParams);
-  const [policy, fields] = await Promise.all([
+  const [policy, fields, catalog] = await Promise.all([
     evidence<TripPolicy>("/trip-policy"),
-    evidence<{
-      items: {
-        release_id: string;
-        product_id: string;
-        cycle: string | null;
-        selected: boolean;
-        status: string;
-        freshness: string;
-      }[];
-    }>("/fields?limit=200"),
+    evidence<{ items: { release_id: string; product_id: string; cycle: string | null; selected: boolean; status: string; freshness: string }[] }>("/fields?limit=200"),
+    evidence<ProductPolicy>("/product-policy"),
   ]);
   return (
-    <main className="explorer">
-      <p className="eyebrow">TRIP EVIDENCE / TIMED ROUTE AND DECISION RULES</p>
-      <h1>Inspect the evidence for the whole trip.</h1>
-      <p className="intro">
-        Supply timed outward and return legs, including stops. Review official
-        warning state, retained forecast samples and every missing input in one
-        reproducible calculation.
-      </p>
-      <p className="notice">
-        Decision thresholds are awaiting domain review. Marine advisory
-        completeness and forecast operational approval remain unverified.
-        Current trips cannot receive a favorable assessment.
-      </p>
+    <main>
+      <PageHead
+        icon="voyage"
+        title="Plan a trip"
+        lede="Enter your stops and times, out and back. Nautiq checks every leg against the forecast and official warnings, and lists what it couldn’t check."
+      />
+      <Notice tone="caution" title="Nautiq won’t call a trip safe">
+        <p>Trip limits are still being reviewed by marine and legal experts, so trips come back as “not enough data” unless an official warning applies. Use this to see the conditions, not to decide.</p>
+      </Notice>
       {prefill ? (
-        <p className="notice" role="status">
-          Starting point{prefill.place ? ` (${prefill.place.replaceAll("-", " ")})` : ""} and departure time were taken from
-          your question. The other waypoints are placeholders: replace them with your real timed route before assessing.
-        </p>
+        <Notice title="We started your route for you">
+          <p>
+            The first stop{prefill.place ? ` (${prefill.place.replaceAll("-", " ")})` : ""} came from where you were. The other stops are placeholders: change them to your real route.
+          </p>
+        </Notice>
       ) : null}
       {policy ? (
-        <TripForm policy={policy} releases={fields?.items ?? []} prefill={prefill} />
+        <TripForm policy={policy} releases={fields?.items ?? []} prefill={prefill} places={catalog?.policy.locations ?? []} />
       ) : (
-        <p>The decision policy is unavailable. The trip cannot be assessed.</p>
+        <Notice tone="caution" title="Trip checks are unavailable">
+          <p>The rule service didn’t respond. Try again shortly.</p>
+        </Notice>
       )}
-      <h2>What a calculation preserves</h2>
-      <p>
-        Source cycles and immutable release hashes, the exact route and sample
-        positions, official advisory state, rule version, missing inputs and
-        worst retained samples. A new request creates a new calculation; replay
-        uses the original as-of time.
-      </p>
-      <p>
-        Private evidence uses an access token held in this browser page&apos;s
-        memory. Reloading clears that access. Authenticated saved trips and
-        alerts are separate future capabilities.
-      </p>
     </main>
   );
 }

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { evidence, type Calculation } from "../../../lib/science";
+import { PageHead } from "../../components/ui/Bits";
+import { when } from "../../../lib/humanize";
 export const dynamic = "force-dynamic";
 export default async function CalculationPage({
   params,
@@ -12,21 +14,12 @@ export default async function CalculationPage({
   );
   if (!value)
     return (
-      <main>
-        <Link href="/data">← Data quality</Link>
-        <h1>Evidence unavailable.</h1>
-        <p>The calculation is absent or its evidence service is unavailable.</p>
-      </main>
+      <main><PageHead back={{ href: "/data", label: "Data quality" }} title="Evidence unavailable" lede={"The calculation is absent or its evidence service is unavailable."} /></main>
     );
   const m = value.manifest;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/data">← Data quality</Link>
-        <Link href="/profiles">Argo profiles</Link>
-      </nav>
-      <p className="eyebrow">CALCULATION / DURABLE EVIDENCE</p>
-      <h1>Reproduce the result.</h1>
+    <main>
+      <PageHead back={{ href: "/data", label: "Datasets and quality" }} title={"Calculation record"} lede={"Everything needed to reproduce this result exactly."} />
       <dl className="evidence">
         <dt>Calculation ID</dt>
         <dd className="digest">{value.calculation_id}</dd>
@@ -39,7 +32,7 @@ export default async function CalculationPage({
           {m.evaluation_time ?? "Frozen input window; no live evaluation clock"}
         </dd>
         <dt>Calculated (UTC)</dt>
-        <dd>{value.created_at}</dd>
+        <dd>{when(value.created_at)}</dd>
         <dt>Manifest SHA-256</dt>
         <dd className="digest">{value.manifest_sha256}</dd>
         <dt>Code SHA-256</dt>

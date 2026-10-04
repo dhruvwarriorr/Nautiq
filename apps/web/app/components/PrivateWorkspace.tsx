@@ -21,6 +21,10 @@ import ResearchExplorer from "./ResearchExplorer";
 import RouteDiagram from "./RouteDiagram";
 import { NotificationEmail, NotificationStatus } from "./NotificationControls";
 import { TripForm } from "../trips/TripForm";
+import { when } from "../../lib/humanize";
+import Icon, { type IconName } from "./ui/Icon";
+const surfaceNames: Record<string, string> = { map: "Map", routes: "Routes", watchlists: "Places", alerts: "Alerts", explorer: "Research", reports: "Reports", exports: "Downloads", settings: "Settings" };
+const surfaceIcons: Record<string, IconName> = { map: "chart", routes: "voyage", watchlists: "anchorline", alerts: "bell", explorer: "float", reports: "logbook", exports: "export", settings: "compass" };
 const surfaces = [
   "map",
   "routes",
@@ -42,14 +46,13 @@ export default function PrivateWorkspace(props: {
   return (
     <>
       <nav className="workspace-nav" aria-label="Private workspace">
-        <Link href="/app">Overview</Link>
+        <Link href="/app" aria-current={props.surface === "overview" ? "page" : undefined}>
+          <Icon name="logbook" size={17} /> Overview
+        </Link>
         {surfaces.map((s) => (
-          <Link
-            key={s}
-            href={`/app/${s}`}
-            aria-current={s === props.surface ? "page" : undefined}
-          >
-            {s === "explorer" ? "Research" : s[0].toUpperCase() + s.slice(1)}
+          <Link key={s} href={`/app/${s}`} aria-current={s === props.surface ? "page" : undefined}>
+            <Icon name={surfaceIcons[s] ?? "info"} size={17} />
+            {surfaceNames[s] ?? s[0].toUpperCase() + s.slice(1)}
           </Link>
         ))}
       </nav>
@@ -372,7 +375,7 @@ function Routes({
           {trips.map((t) => (
             <li key={t.calculation_id}>
               <span>
-                {t.name} · {t.status} · {t.as_of}
+                {t.name} · {t.status} · {when(t.as_of)}
               </span>
               <button
                 disabled={busy}
@@ -419,7 +422,7 @@ function Routes({
         <section>
           <h2>{receipt.output.wording}</h2>
           <p>
-            Historical as of {receipt.output.as_of}; source freshness has not
+            Historical as of {when(receipt.output.as_of)}; source freshness has not
             been renewed.
           </p>
           <RouteDiagram
@@ -820,7 +823,7 @@ function AlertInbox({ account }: { account: AccountContext }) {
             <h3>{i.state}</h3>
             <p>{i.state === "recovered" ? "Two distinct fresh confirmations resolved this rule's condition. Other inputs and safety remain unresolved." : i.state === "corrected" ? "Earlier authority evidence was revised or withdrawn. This correction is not an all-clear." : "Retained trigger evidence; current conditions may differ. Inspect source age and unresolved inputs."}</p>
             <p>
-              {i.created_at} · rule version {i.rule_version} · event revision{" "}
+              {when(i.created_at)} · rule version {i.rule_version} · event revision{" "}
               <span className="digest">{i.event_revision}</span>
             </p>
             {i.supersedes ? <p className="digest">Follows retained alert {i.supersedes}. Earlier evidence is preserved.</p> : null}

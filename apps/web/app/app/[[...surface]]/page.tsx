@@ -5,8 +5,29 @@ import type { ProductPolicy, ResearchFilter } from "../../../lib/product";
 import type { TripPolicy } from "../../../lib/trips";
 import type { FieldRelease } from "../../../lib/fields";
 import PrivateWorkspace from "../../components/PrivateWorkspace";
-import SurfaceMap from "../../components/SurfaceMap";
+import OceanMap from "../../map/OceanMap";
 import type { MapOverview } from "../../../lib/product";
+import { PageHead } from "../../components/ui/Bits";
+const titles: Record<string, string> = {
+  overview: "Your workspace",
+  map: "Your map",
+  routes: "Saved routes",
+  watchlists: "Watched places",
+  alerts: "Alerts",
+  explorer: "Research",
+  reports: "Reports",
+  exports: "Downloads",
+  settings: "Settings",
+};
+const ledes: Record<string, string> = {
+  overview: "Your private routes, places, alerts and downloads, in one place.",
+  routes: "Timed routes you saved, ready to check again.",
+  watchlists: "Places you keep an eye on.",
+  alerts: "Your own alert limits. They never override an official warning.",
+  reports: "Private reports of trips and readings.",
+  exports: "Files you asked for. They expire after 72 hours.",
+  settings: "Your account and notification choices.",
+};
 export default async function Page({
   params,
 }: {
@@ -58,15 +79,13 @@ export default async function Page({
         )
       : null;
   return (
-    <main className="explorer">
-      <p className="eyebrow">PRIVATE EVIDENCE WORKSPACE</p>
-      <h1>
-        {surface === "overview"
-          ? "Your Nautiq"
-          : surface === "explorer"
-            ? "Research explorer"
-            : surface[0].toUpperCase() + surface.slice(1)}
-      </h1>
+    <main>
+      <PageHead
+        icon="logbook"
+        title={titles[surface] ?? "Your workspace"}
+        lede={ledes[surface] ?? "Your private routes, places, alerts and downloads."}
+        compact
+      />
       <PrivateWorkspace
         surface={surface}
         initial={initial}
@@ -77,9 +96,11 @@ export default async function Page({
       />
       {surface === "map" ? (
         map ? (
-          <SurfaceMap value={map} />
+          <div className="workspace-map">
+            <OceanMap value={map} />
+          </div>
         ) : (
-          <p className="notice">Map evidence is unavailable.</p>
+          <p className="notice">The map data is unavailable right now.</p>
         )
       ) : null}
     </main>

@@ -1,7 +1,11 @@
 "use client";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import RouteDiagram from "../components/RouteDiagram";
+import RoutePicker from "./RoutePicker";
+import Icon from "../components/ui/Icon";
+import { SignalShape } from "../components/ui/Signal";
+import { beaufort, coords, knots, label, reading, seaState, short, when } from "../../lib/humanize";
 import type {
   TripPolicy,
   TripPoint,
@@ -19,16 +23,16 @@ type Release = {
 function missingSummaries(codes: string[]): string[] {
   const labels: Record<string, string> = {
     threshold_release_unapproved_or_invalid:
-      "Decision thresholds are awaiting domain review",
-    advisory_coverage_unknown: "Marine advisory coverage is unknown",
-    unresolved_geometry: "Official bulletin areas are unresolved",
+      "Trip limits are still being reviewed by marine experts",
+    advisory_coverage_unknown: "We can’t confirm official warnings cover this stretch of sea",
+    unresolved_geometry: "Some official bulletins name places we can’t map",
     revision_ambiguity:
-      "Official bulletin references or identities are unresolved",
+      "Some official bulletins have unclear revisions",
     unknown_validity_or_classification:
-      "Official bulletin validity or classification is unresolved",
-    "ndma_cap_rss:unverified": "NDMA marine coverage is unverified",
-    "ndma_cap_rss:stale_or_incomplete": "NDMA transport is stale or incomplete",
-    "incois_advisories:unconfigured": "INCOIS machine access is unconfigured",
+      "Some official bulletins have unclear start or end times",
+    "ndma_cap_rss:unverified": "NDMA alerts aren’t verified to cover the sea",
+    "ndma_cap_rss:stale_or_incomplete": "NDMA alerts haven’t been checked recently",
+    "incois_advisories:unconfigured": "INCOIS ocean advisories aren’t connected yet",
   };
   const counts = new Map<string, number>();
   for (const code of codes) {
@@ -38,13 +42,13 @@ function missingSummaries(codes: string[]): string[] {
       text =
         labels[reason] ??
         labels[reason.split(":").at(-1) ?? ""] ??
-        "Official advisory evidence has an unresolved condition";
+        "Some official warning evidence is unresolved";
     }
     if (!text) {
       text = code
-        .replace("wave_height_m:", "Wave forecast: ")
-        .replace("wind_speed_m_s:", "Wind forecast: ")
-        .replace("current_speed_m_s:", "Surface current forecast: ")
+        .replace("wave_height_m:", "Waves: ")
+        .replace("wind_speed_m_s:", "Wind: ")
+        .replace("current_speed_m_s:", "Current: ")
         .replaceAll("_", " ");
     }
     counts.set(text, (counts.get(text) ?? 0) + 1);
@@ -61,7 +65,9 @@ export function TripForm({
   prefill,
   onSaveRoute,
   onSaveTrip,
+  places = [],
 }: {
+  places?: { slug: string; name: string; latitude: number; longitude: number }[];
   policy: TripPolicy;
   releases: Release[];
   initialRequest?: TripRequest;
@@ -114,19 +120,11 @@ export function TripForm({
         ),
   );
   const [result, setResult] = useState<TripResult | null>(null);
+  const [active, setActive] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [evidence, setEvidence] = useState<unknown>(null);
   const [replayed, setReplayed] = useState(false);
-  const previewPoints = points.every(
-    (p) => p.latitude.trim() && p.longitude.trim(),
-  )
-    ? points.map((p) => ({
-        latitude: Number(p.latitude),
-        longitude: Number(p.longitude),
-        time: p.time,
-      }))
-    : [];
   function clear() {
     setResult(null);
     setEvidence(null);
@@ -218,358 +216,329 @@ export function TripForm({
       setBusy(false);
     }
   }
+  const toIST = (iso: string) => {
+    const t = Date.parse(iso);
+    return Number.isFinite(t) ? new Date(t + 330 * 60000).toISOString().slice(0, 16) : "";
+  };
+  const fromIST = (v: string) => (v ? new Date(Date.parse(`${v}:00+05:30`)).toISOString() : "");
+  const status = result?.verdict.status ?? "";
+  const tone = status === "official_warning" || status === "critical" ? "warning" : status === "caution" ? "stale" : status === "insufficient_data" ? "unknown" : "available";
   return (
-    <div className="field-viewer">
-      <form onSubmit={submit}>
-        <div className="field-controls">
-          <label>
-            Activity
-            <select
-              value={activity}
-              disabled={busy}
-              onChange={(e) => {
-                clear();
-                setActivity(e.target.value);
-              }}
-            >
-              {policy.policy.activities.map((a) => (
-                <option key={a}>{a}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Sample spacing (km)
-            <input
-              type="number"
-              min="0.5"
-              max="5"
-              step="0.5"
-              value={spacing}
-              disabled={busy}
-              onInput={(e) => {
-                clear();
-                setSpacing(e.currentTarget.value);
-              }}
-            />
-          </label>
-          <label>
-            Time step (minutes)
-            <input
-              type="number"
-              min="1"
-              max="30"
-              value={step}
-              disabled={busy}
-              onInput={(e) => {
-                clear();
-                setStep(e.currentTarget.value);
-              }}
-            />
-          </label>
-        </div>
-        <p>
-          Threshold release:{" "}
-          <span className="digest">{policy.policy.version}</span> ·{" "}
-          {policy.engine_available ? "reviewed" : "unavailable pending review"}.
-          No numeric limits are approved.
-        </p>
-        <h2>Timed waypoints</h2>
-        <RouteDiagram points={previewPoints} />
-        <p>
-          Include outward and return legs. A stop uses the same position at two
-          increasing times. All times require a UTC offset; duration is at most
-          24 hours.
-        </p>
-        <div
-          className="table-scroll"
-          tabIndex={0}
-          role="region"
-          aria-label="Timed trip waypoints"
-        >
-          <table>
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Arrival / departure (UTC ISO)</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {points.map((p, i) => (
-                <tr key={i}>
-                  <td>{i + 1}</td>
-                  <td>
-                    <input
-                      aria-label={`Latitude ${i + 1}`}
-                      type="number"
-                      min="-85"
-                      max="85"
-                      step="any"
-                      required
-                      value={p.latitude}
-                      disabled={busy}
-                      onInput={(e) =>
-                        update(i, "latitude", e.currentTarget.value)
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      aria-label={`Longitude ${i + 1}`}
-                      type="number"
-                      min="-180"
-                      max="180"
-                      step="any"
-                      required
-                      value={p.longitude}
-                      disabled={busy}
-                      onInput={(e) =>
-                        update(i, "longitude", e.currentTarget.value)
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      aria-label={`Time ${i + 1}`}
-                      required
-                      value={p.time}
-                      disabled={busy}
-                      onChange={(e) => update(i, "time", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      disabled={busy || points.length <= 2}
-                      onClick={() => {
-                        clear();
-                        setPoints(points.filter((_, j) => j !== i));
-                      }}
-                    >
-                      Remove {i + 1}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <button
-          type="button"
-          disabled={busy || points.length >= 32}
-          onClick={() => {
-            clear();
-            const last = points[points.length - 1];
-            if (!Number.isFinite(Date.parse(last.time))) {
-              setError("invalid_waypoint_time");
-              return;
-            }
-            setPoints([
-              ...points,
-              {
-                ...last,
-                time: new Date(Date.parse(last.time) + 3600000).toISOString(),
-              },
-            ]);
-          }}
-        >
-          Add timed stop / waypoint
-        </button>{" "}
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => {
-            clear();
-            const first = Date.parse(points[0].time);
-            if (
-              !Number.isFinite(first) ||
-              points.some((p) => !Number.isFinite(Date.parse(p.time)))
-            ) {
-              setError("invalid_waypoint_time");
-              return;
-            }
-            const shift = Date.now() + 3600000 - first;
-            setPoints(
-              points.map((p) => ({
-                ...p,
-                time: new Date(Date.parse(p.time) + shift).toISOString(),
-              })),
-            );
-          }}
-        >
-          Move departure to one hour from now
-        </button>
-        <h2>Pinned forecast releases</h2>
-        <div className="field-controls">
-          {policy.policy.inputs.map((s) => (
-            <label key={s.variable}>
-              {s.variable} (
-              {s.required ? "required evidence" : "optional evidence"})
-              <select
+    <div className="trip">
+      <form onSubmit={submit} className="trip-form">
+        <section className="trip-step" aria-labelledby="t-activity">
+          <h2 id="t-activity"><span className="step-dot">1</span> What are you doing?</h2>
+          <div className="choice-row" role="radiogroup" aria-label="Activity">
+            {policy.policy.activities.map((a) => (
+              <button
+                type="button"
+                key={a}
+                role="radio"
+                aria-checked={activity === a}
+                className="choice"
                 disabled={busy}
-                value={bindings[s.variable] ?? ""}
-                onChange={(e) => {
+                onClick={() => {
                   clear();
-                  setBindings({ ...bindings, [s.variable]: e.target.value });
+                  setActivity(a);
                 }}
               >
-                <option value="">Missing / not supplied</option>
-                {releases
-                  .filter(
-                    (r) =>
-                      r.product_id === s.product_id && r.status === "ready",
-                  )
-                  .map((r) => (
-                    <option key={r.release_id} value={r.release_id}>
-                      {r.cycle ?? "no cycle"} · {r.freshness} ·{" "}
-                      {r.release_id.slice(0, 8)}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          ))}
-        </div>
-        <button type="submit" disabled={busy}>
-          {busy ? "Retaining trip evidence…" : "Inspect trip evidence"}
-        </button>
-        {onSaveRoute ? (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void save(false)}
-          >
-            Save timed route
-          </button>
-        ) : null}
-      </form>
-      <div aria-live="polite">
-        {error && (
-          <p className="notice">
-            The request could not be completed: {error.replaceAll("_", " ")}.
-          </p>
-        )}
-        {result && (
-          <section>
-            <p className="eyebrow">
-              {result.verdict.status.replaceAll("_", " ")}
-            </p>
-            <h2>{result.verdict.wording}</h2>
-            <RouteDiagram
-              points={points.map((p) => ({
-                latitude: Number(p.latitude),
-                longitude: Number(p.longitude),
-                time: p.time,
-              }))}
-              verdict={result.verdict}
-            />
-            {onSaveTrip ? (
-              <button disabled={busy} onClick={() => void save(true)}>
-                Save private trip receipt to account
+                <Icon name={a === "fishing" ? "buoy" : "voyage"} size={22} />
+                {a.charAt(0).toUpperCase() + a.slice(1)}
               </button>
-            ) : null}
-            <p>
-              As of {result.verdict.as_of} ·{" "}
-              {result.verdict.sampling.sample_count} timed samples ·{" "}
-              {result.verdict.sampling.distance_km.toFixed(2)} km
-            </p>
-            <p className="digest">
-              Calculation {result.calculation_id}
-              <br />
-              Manifest SHA-256 {result.manifest_sha256}
-            </p>
-            <h3>Missing or unverified inputs</h3>
-            <ul>
-              {missingSummaries(result.verdict.missing_inputs).map((m) => (
-                <li key={m}>{m}</li>
-              ))}
-            </ul>
-            <h3>Worst retained samples</h3>
-            <div
-              className="table-scroll"
-              tabIndex={0}
-              role="region"
-              aria-label="Worst trip samples"
-            >
-              <table>
-                <thead>
-                  <tr>
-                    <th>Variable</th>
-                    <th>Value / unit</th>
-                    <th>UTC time</th>
-                    <th>Position</th>
-                    <th>Support</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.verdict.worst_samples.map((w) => (
-                    <tr key={w.variable}>
-                      <td>{w.variable}</td>
-                      <td>
-                        {w.value.toFixed(3)} {w.units}
-                      </td>
-                      <td>{w.point.time}</td>
-                      <td>
-                        {w.point.latitude.toFixed(4)},{" "}
-                        {w.point.longitude.toFixed(4)}
-                      </td>
-                      <td>{w.sample_status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {result.verdict.rules_fired.length > 0 && (
-              <>
-                <h3>All fired rules</h3>
-                {result.verdict.rules_fired.map((r, i) => (
-                  <p key={i}>
-                    {r.verdict} · {r.rule_id} · {r.origin} ·{" "}
-                    {r.value !== null ? `${r.value} ${r.units}` : r.evidence}
-                  </p>
-                ))}
-              </>
-            )}
-            <h3>Source cycles</h3>
-            {result.verdict.source_cycles.map((c) => (
-              <p className="digest" key={c.variable}>
-                {c.variable}: {c.cycle ?? "missing cycle"}
-                <br />
-                <Link href={`/fields/${c.release_id}`}>{c.release_id}</Link>
-                <br />
-                Manifest {c.manifest_sha256}
-              </p>
             ))}
+          </div>
+        </section>
+
+        <section className="trip-step" aria-labelledby="t-route">
+          <h2 id="t-route"><span className="step-dot">2</span> Your route, out and back</h2>
+          <p className="muted">Add each stop with the time you expect to be there (India time). A stop where you wait uses the same spot twice. Up to 24 hours.</p>
+          {places.length ? (
+            <div className="start-from">
+              <span>Start from</span>
+              {places.map((pl) => (
+                <button
+                  type="button"
+                  key={pl.slug}
+                  className="suggestion"
+                  disabled={busy}
+                  onClick={() => {
+                    clear();
+                    const base = Date.parse(points[0].time);
+                    const t0 = Number.isFinite(base) ? base : Date.now() + 3600000;
+                    setPoints([
+                      { latitude: String(pl.latitude), longitude: String(pl.longitude), time: new Date(t0).toISOString() },
+                      { latitude: String(Number((pl.latitude + 0.08).toFixed(4))), longitude: String(Number((pl.longitude - 0.08).toFixed(4))), time: new Date(t0 + 2 * 3600000).toISOString() },
+                      { latitude: String(pl.latitude), longitude: String(pl.longitude), time: new Date(t0 + 4 * 3600000).toISOString() },
+                    ]);
+                  }}
+                >
+                  <Icon name="buoy" size={16} /> {pl.name}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          <div className="trip-route">
+            <ol className="stops">
+              {points.map((p, i) => (
+                <li key={i} className="stop" data-active={active === i || undefined}>
+                  <span className="stop-mark" aria-hidden="true">{i + 1}</span>
+                  <div className="stop-fields">
+                    <div className="stop-head">
+                      <p className="stop-name">{i === 0 ? "Leave from" : i === points.length - 1 ? "Arrive back" : `Stop ${i}`}</p>
+                      <button type="button" className="stop-place" aria-pressed={active === i} onClick={() => setActive(i)} disabled={busy}>
+                        <Icon name="pin" size={16} /> {active === i ? "Tap the chart" : "Place on chart"}
+                      </button>
+                    </div>
+                    <p className="stop-where">
+                      {Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude)) && p.latitude !== "" && p.longitude !== ""
+                        ? coords(Number(p.latitude), Number(p.longitude))
+                        : "Not placed yet"}
+                    </p>
+                    <label className="stop-time">
+                      Time (IST)
+                      <input aria-label={`Stop ${i + 1} time`} type="datetime-local" required value={toIST(p.time)} disabled={busy} onChange={(e) => update(i, "time", fromIST(e.target.value))} />
+                    </label>
+                    <details className="stop-coords">
+                      <summary>Type coordinates instead</summary>
+                      <div className="stop-coords-grid">
+                        <label>
+                          Latitude
+                          <input aria-label={`Stop ${i + 1} latitude`} type="number" min="-85" max="85" step="any" required value={p.latitude} disabled={busy} onChange={(e) => update(i, "latitude", e.target.value)} />
+                        </label>
+                        <label>
+                          Longitude
+                          <input aria-label={`Stop ${i + 1} longitude`} type="number" min="-180" max="180" step="any" required value={p.longitude} disabled={busy} onChange={(e) => update(i, "longitude", e.target.value)} />
+                        </label>
+                      </div>
+                    </details>
+                  </div>
+                  <button
+                    type="button"
+                    className="stop-remove"
+                    aria-label={`Remove stop ${i + 1}`}
+                    disabled={busy || points.length <= 2}
+                    onClick={() => {
+                      clear();
+                      setPoints(points.filter((_, j) => j !== i));
+                      setActive((a) => Math.max(0, Math.min(a, points.length - 2)));
+                    }}
+                  >
+                    <Icon name="close" size={18} />
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <div className="trip-preview">
+              <RoutePicker
+                stops={points.map((p) => ({ latitude: p.latitude === "" ? NaN : Number(p.latitude), longitude: p.longitude === "" ? NaN : Number(p.longitude) }))}
+                active={Math.min(active, points.length - 1)}
+                onPick={(lat, lon) => {
+                  clear();
+                  setPoints((ps) => ps.map((p, j) => (j === Math.min(active, ps.length - 1) ? { ...p, latitude: String(lat), longitude: String(lon) } : p)));
+                  setActive((a) => Math.min(a + 1, points.length - 1));
+                }}
+              />
+            </div>
+          </div>
+          <div className="trip-actions">
+            <button
+              type="button"
+              disabled={busy || points.length >= 32}
+              onClick={() => {
+                clear();
+                const last = points[points.length - 1];
+                if (!Number.isFinite(Date.parse(last.time))) {
+                  setError("invalid_waypoint_time");
+                  return;
+                }
+                setPoints([...points, { ...last, time: new Date(Date.parse(last.time) + 3600000).toISOString() }]);
+                setActive(points.length);
+              }}
+            >
+              <Icon name="plus" size={18} /> Add a stop
+            </button>
             <button
               type="button"
               disabled={busy}
-              onClick={() => inspect(false)}
+              onClick={() => {
+                clear();
+                const first = Date.parse(points[0].time);
+                if (!Number.isFinite(first) || points.some((p) => !Number.isFinite(Date.parse(p.time)))) {
+                  setError("invalid_waypoint_time");
+                  return;
+                }
+                const shift = Date.now() + 3600000 - first;
+                setPoints(points.map((p) => ({ ...p, time: new Date(Date.parse(p.time) + shift).toISOString() })));
+              }}
             >
-              Inspect private calculation receipt
-            </button>{" "}
-            <button type="button" disabled={busy} onClick={() => inspect(true)}>
-              Replay frozen calculation
+              <Icon name="clock" size={18} /> Leave in one hour
             </button>
-            {replayed && (
-              <p>
-                Replay matched the stored verdict. Freshness was not renewed.
-              </p>
-            )}
-            {evidence !== null && (
-              <details open>
-                <summary>Private retained inputs and output</summary>
-                <pre className="audit-json">
-                  {JSON.stringify(evidence, null, 2)}
-                </pre>
-              </details>
-            )}
-            <h3>Limitations</h3>
-            <ul>
-              {result.verdict.limitations.map((l) => (
-                <li key={l}>{l}</li>
+          </div>
+        </section>
+
+        <details className="tech">
+          <summary>
+            <Icon name="sounding" size={18} />
+            <span>Advanced settings</span>
+            <Icon name="down" size={18} className="icon tech-chevron" />
+          </summary>
+          <div className="tech-body">
+            <div className="form-grid">
+              <label>
+                Check every (km)
+                <input type="number" min="0.5" max="5" step="0.5" value={spacing} disabled={busy} onChange={(e) => { clear(); setSpacing(e.target.value); }} />
+              </label>
+              <label>
+                Check every (minutes)
+                <input type="number" min="1" max="30" value={step} disabled={busy} onChange={(e) => { clear(); setStep(e.target.value); }} />
+              </label>
+              {policy.policy.inputs.map((s) => (
+                <label key={s.variable}>
+                  {s.variable.startsWith("wave") ? "Wave forecast" : s.variable.startsWith("wind") ? "Wind forecast" : "Current forecast"} {s.required ? "" : "(optional)"}
+                  <select
+                    disabled={busy}
+                    value={bindings[s.variable] ?? ""}
+                    onChange={(e) => {
+                      clear();
+                      setBindings({ ...bindings, [s.variable]: e.target.value });
+                    }}
+                  >
+                    <option value="">Don’t use</option>
+                    {releases
+                      .filter((r) => r.product_id === s.product_id && r.status === "ready")
+                      .map((r) => (
+                        <option key={r.release_id} value={r.release_id}>
+                          {r.cycle ? `Issued ${when(r.cycle)}` : "Daily analysis"} · {label(r.freshness)}
+                        </option>
+                      ))}
+                  </select>
+                </label>
               ))}
+            </div>
+            <p className="footnote">
+              Rule set <span className="digest">{policy.policy.version}</span> · {policy.engine_available ? "reviewed" : "awaiting expert review"}. No numeric limits are approved yet.
+            </p>
+          </div>
+        </details>
+
+        <div className="trip-submit">
+          <button type="submit" className="btn" disabled={busy}>
+            {busy ? "Checking every leg…" : "Check my trip"} <Icon name="arrow" size={18} />
+          </button>
+          {onSaveRoute ? (
+            <button type="button" className="btn-ghost" disabled={busy} onClick={() => void save(false)}>
+              <Icon name="anchorline" size={18} /> Save this route
+            </button>
+          ) : null}
+        </div>
+      </form>
+
+      <div aria-live="polite">
+        {error && <p className="notice">That didn’t work: {label(error)}. Check every stop has a position and a later time than the one before.</p>}
+        {result && (
+          <section className="trip-result" aria-label="Trip result">
+            <div className="verdict" data-status={tone}>
+              <span className="verdict-shape">
+                <SignalShape status={tone as "available"} size={30} />
+              </span>
+              <div>
+                <p className="verdict-title">{label(result.verdict.status)}</p>
+                <p className="verdict-text">{result.verdict.wording}</p>
+              </div>
+              {onSaveTrip ? (
+                <button className="btn-ghost" disabled={busy} onClick={() => void save(true)}>
+                  <Icon name="logbook" size={18} /> Save receipt
+                </button>
+              ) : null}
+            </div>
+            <ul className="stat-line">
+              <li><b>{result.verdict.sampling.sample_count}</b><span>checks along the route</span></li>
+              <li><b>{reading(result.verdict.sampling.distance_km, 1)} km</b><span>total distance</span></li>
+              <li><b>{points.length}</b><span>stops</span></li>
             </ul>
+            <div className="split">
+              <div>
+                <h3>Toughest conditions on the way</h3>
+                {result.verdict.worst_samples.length ? (
+                  <ul className="rows">
+                    {result.verdict.worst_samples.map((w) => (
+                      <li key={w.variable} className="row">
+                        <span className="row-icon"><Icon name={w.variable.startsWith("wave") ? "waves" : w.variable.startsWith("wind") ? "windsock" : "current"} size={22} /></span>
+                        <span>
+                          <span className="row-title">
+                            {w.variable.startsWith("wave")
+                              ? `${reading(w.value, 1)} m waves · ${seaState(w.value)}`
+                              : w.variable.startsWith("wind")
+                                ? `${reading(knots(w.value), 0)} kn wind · ${beaufort(w.value)}`
+                                : `${reading(knots(w.value), 1)} kn current`}
+                          </span>
+                          <span className="row-sub" style={{ display: "block" }}>At {when(w.point.time)} · {coords(w.point.latitude, w.point.longitude)}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="muted">No forecast readings could be taken along this route.</p>
+                )}
+                <h3 style={{ marginTop: 28 }}>What couldn’t be checked</h3>
+                <ul className="plain-list">
+                  {missingSummaries(result.verdict.missing_inputs).map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
+              <RouteDiagram points={points.map((p) => ({ latitude: Number(p.latitude), longitude: Number(p.longitude), time: p.time }))} verdict={result.verdict} />
+            </div>
+            <details className="tech">
+              <summary>
+                <Icon name="sounding" size={18} />
+                <span>Receipt and technical detail</span>
+                <Icon name="down" size={18} className="icon tech-chevron" />
+              </summary>
+              <div className="tech-body">
+                <p>
+                  Checked {when(result.verdict.as_of)}. This calculation is frozen: replaying it gives the same answer and never refreshes the data.
+                </p>
+                <div className="evidence-links">
+                  <button type="button" disabled={busy} onClick={() => inspect(false)}>Open private receipt</button>
+                  <button type="button" disabled={busy} onClick={() => inspect(true)}>Replay calculation</button>
+                </div>
+                {replayed && <p>Replay matched the stored result. The data was not refreshed.</p>}
+                <dl>
+                  <dt>Calculation</dt>
+                  <dd className="digest">{result.calculation_id}</dd>
+                  <dt>Fingerprint</dt>
+                  <dd className="digest">{short(result.manifest_sha256, 16)}…</dd>
+                  {result.verdict.source_cycles.map((c) => (
+                    <Fragment key={c.variable}>
+                      <dt>{label(c.variable)}</dt>
+                      <dd>
+                        {c.cycle ? `Issued ${when(c.cycle)}` : "No forecast cycle"} · <Link href={`/fields/${c.release_id}`}>layer</Link>
+                      </dd>
+                    </Fragment>
+                  ))}
+                </dl>
+                {result.verdict.rules_fired.length > 0 && (
+                  <>
+                    <h3>Rules that applied</h3>
+                    <ul>
+                      {result.verdict.rules_fired.map((r, i) => (
+                        <li key={i}>
+                          {label(r.verdict)} · {r.rule_id} · {r.value !== null ? `${r.value} ${r.units}` : r.evidence}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                <h3>Limits</h3>
+                <ul>
+                  {result.verdict.limitations.map((l) => (
+                    <li key={l}>{l}</li>
+                  ))}
+                </ul>
+                {evidence !== null && <pre className="audit-json">{JSON.stringify(evidence, null, 2)}</pre>}
+              </div>
+            </details>
           </section>
         )}
       </div>

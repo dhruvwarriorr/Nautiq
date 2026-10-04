@@ -88,10 +88,7 @@ function Overlay({
               stroke="#a2a9b9"
               strokeWidth="2"
             >
-              <title>
-                Training residual spread ±{p.spread.toFixed(3)} {unit};
-                uncalibrated
-              </title>
+              <title>{`Training residual spread ±${p.spread.toFixed(3)} ${unit}; uncalibrated`}</title>
             </path>
           );
         })}
@@ -123,9 +120,7 @@ function Overlay({
               r="3"
               fill="#236443"
             >
-              <title>
-                {row.depth_m} m observed: {row[variable].observed} {unit}
-              </title>
+              <title>{`${row.depth_m} m observed: ${row[variable].observed} ${unit}`}</title>
             </circle>
           ),
         )}

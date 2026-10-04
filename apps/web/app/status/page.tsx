@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { dependencyNames, validateReport } from "../../lib/health.mjs";
+import { ago, label, sourceName, when } from "../../lib/humanize";
+import { PageHead, TechDetail, Notice } from "../components/ui/Bits";
+import Icon from "../components/ui/Icon";
+import { Signal } from "../components/ui/Signal";
 export const dynamic = "force-dynamic";
 type Report = {
   status: string;
@@ -30,16 +34,16 @@ type Operations = {
   workers: { notifications: boolean; email_configured: boolean };
 };
 const labels: Record<string, string> = {
-  postgresql: "PostgreSQL",
-  postgis: "PostGIS",
-  timescaledb: "TimescaleDB",
-  schema: "Database schema",
-  minio: "Object storage",
-  redis: "Redis cache",
-  nats_jetstream: "NATS JetStream",
-  ml_inference: "Python ML runtime",
-  field_service: "Python field runtime",
-  web: "Next.js web",
+  postgresql: "Database",
+  postgis: "Map database",
+  timescaledb: "Time-series store",
+  schema: "Database structure",
+  minio: "File storage",
+  redis: "Cache",
+  nats_jetstream: "Message queue",
+  ml_inference: "Model service",
+  field_service: "Forecast service",
+  web: "Website",
 };
 async function operations(): Promise<Operations | null> {
   try {
@@ -108,6 +112,12 @@ async function health(): Promise<Report | null> {
   }
   return null;
 }
+const productNames: Record<string, string> = {
+  noaa_oisst: "Sea temperature (NOAA, daily)",
+  noaa_gfs_wave: "Wave forecast (NOAA)",
+  noaa_gfs_weather: "Wind forecast (NOAA)",
+  hycom_espc: "Current forecast (HYCOM)",
+};
 export default async function Status() {
   const [report, ops] = await Promise.all([health(), operations()]);
   const paused = ops
@@ -115,150 +125,114 @@ export default async function Status() {
         .filter(([, value]) => value)
         .map(([scope]) => scope)
     : [];
+  const healthy = report?.status === "healthy";
   return (
     <main>
-      <nav aria-label="Status navigation">
-        <Link href="/">Nautiq</Link>
-        <Link href="/data-sources">Sources and limitations</Link>
-        <form action="/status" method="get">
-          <button type="submit">Refresh checks</button>
+      <PageHead
+        icon="clock"
+        back={{ href: "/behind-the-data", label: "Behind the data" }}
+        title={healthy ? "All services running" : report ? "Some services need attention" : "Status unavailable"}
+        lede={report ? `Checked ${when(report.checked_at)}. A running service doesn’t mean the sea is safe.` : "The status service didn’t answer. Treat every feed as unknown until it returns."}
+      >
+        <form action="/status" method="get" className="head-actions">
+          <button type="submit" className="btn">
+            <Icon name="clock" size={18} /> Check again
+          </button>
         </form>
-      </nav>
-      <p className="eyebrow">SERVICE AND SOURCE STATUS</p>
-      <h1>
-        {report?.status === "healthy"
-          ? "Services are connected."
-          : "Services need attention."}
-      </h1>
-      <p className="intro">
-        Connectivity, source freshness and scientific approval are separate
-        checks. A responding service does not establish safe marine conditions.
-      </p>
-      <div className="summary" role="status">
-        Core API: {report ? "reachable" : "unavailable"}
-        {report && (
-          <span>Checked {new Date(report.checked_at).toISOString()}</span>
+      </PageHead>
+
+      <section aria-labelledby="feeds">
+        <div className="section-head">
+          <h2 id="feeds">Data feeds</h2>
+          <p>Is each source recent enough to use?</p>
+        </div>
+        {ops ? (
+          <ul className="rows">
+            {ops.sources.fields.map((f) => (
+              <li key={f.product_id} className="row">
+                <span className="row-icon">
+                  <Icon name={f.product_id.includes("wave") ? "waves" : f.product_id.includes("weather") ? "windsock" : f.product_id.includes("hycom") ? "current" : "thermo"} size={22} />
+                </span>
+                <span>
+                  <span className="row-title">{productNames[f.product_id] ?? label(f.product_id)}</span>
+                  <span className="row-sub" style={{ display: "block" }}>
+                    {f.cycle ? `Issued ${when(f.cycle)}` : f.valid_time_end ? `Covers until ${when(f.valid_time_end)}` : "No issue time"}
+                  </span>
+                </span>
+                <Signal status={f.fresh ? "available" : "stale"}>{f.fresh ? "Up to date" : "Out of date"}</Signal>
+              </li>
+            ))}
+            {ops.sources.advisories.map((a) => (
+              <li key={a.source_id} className="row">
+                <span className="row-icon">
+                  <Icon name="pennant" size={22} />
+                </span>
+                <span>
+                  <span className="row-title">{sourceName(a.source_id)}</span>
+                  <span className="row-sub" style={{ display: "block" }}>
+                    {a.transport === "unconfigured" ? "Not connected yet" : a.checked_at ? `Last checked ${ago(a.checked_at)}` : "Never checked"}
+                  </span>
+                </span>
+                <Signal status={a.transport === "healthy" ? "available" : a.transport === "stale" ? "stale" : "unavailable"}>
+                  {a.transport === "healthy" ? "Up to date" : a.transport === "stale" ? "Not recent" : "Not connected"}
+                </Signal>
+              </li>
+            ))}
+            <li className="row">
+              <span className="row-icon">
+                <Icon name="bell" size={22} />
+              </span>
+              <span>
+                <span className="row-title">Alerts and email</span>
+                <span className="row-sub" style={{ display: "block" }}>
+                  Alert worker {ops.workers.notifications ? "responding" : "not responding"} · email {ops.workers.email_configured ? "set up" : "not set up"}
+                </span>
+              </span>
+              <Signal status={ops.workers.notifications ? "available" : "unavailable"}>{ops.workers.notifications ? "Running" : "Down"}</Signal>
+            </li>
+          </ul>
+        ) : (
+          <Notice tone="caution" title="Feed status unavailable">
+            <p>Treat every source as unknown until this returns.</p>
+          </Notice>
         )}
+        {paused.length ? (
+          <Notice tone="caution" title="Some updates are paused">
+            <p>Paused: {paused.map((x) => label(x).toLowerCase()).join(", ")}. What’s already stored is shown as history.</p>
+          </Notice>
+        ) : null}
+      </section>
+
+      <section className="section" aria-labelledby="services">
+        <div className="section-head">
+          <h2 id="services">Services</h2>
+          <p>The parts that keep Nautiq running.</p>
+        </div>
+        <ul className="service-grid">
+          {dependencyNames.map((name: string) => {
+            const ok = report?.dependencies[name]?.status === "healthy";
+            return (
+              <li key={name}>
+                <span>{labels[name]}</span>
+                <Signal status={report ? (ok ? "available" : "unavailable") : "unknown"}>{report ? (ok ? "Running" : label(report.dependencies[name]?.status)) : "Unknown"}</Signal>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <div className="section">
+        <Notice tone="caution" title="Not yet approved for public release">
+          <p>Scientific calibration, source schedules, warning coverage of the sea, data rights, trip wording and security still need separate sign-off.</p>
+        </Notice>
       </div>
-      <h2>Service connectivity</h2>
-      <ul className="checks">
-        {dependencyNames.map((name: string) => (
-          <li key={name}>
-            <span>{labels[name]}</span>
-            <strong
-              className={
-                report?.dependencies[name]?.status === "healthy"
-                  ? "healthy"
-                  : "unavailable"
-              }
-            >
-              {report ? report.dependencies[name].status : "unknown"}
-            </strong>
-          </li>
-        ))}
-      </ul>
-      <h2>Incident controls</h2>
-      <p>
-        {ops
-          ? paused.length
-            ? `Paused: ${paused.join(", ").replaceAll("_", " ")}. Existing evidence stays historical.`
-            : `No scopes paused. Control revision ${ops.controls.revision}.`
-          : "Control state unavailable. Scientific serving fails closed when incident controls cannot be read."}
-      </p>
-      <h2>Source health</h2>
-      {ops ? (
-        <>
-          <p>
-            Checked {ops.as_of}. Native cycles are evaluated against their
-            source-age budgets. Transport health does not establish complete
-            marine-warning coverage.
-          </p>
-          <div
-            className="table-scroll"
-            tabIndex={0}
-            role="region"
-            aria-label="Native field cycles"
-          >
-            <table>
-              <caption>Retained native field cycles</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Source</th>
-                  <th scope="col">Integrity</th>
-                  <th scope="col">Cycle / valid end (UTC)</th>
-                  <th scope="col">Source age</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ops.sources.fields.map((field) => (
-                  <tr key={field.product_id}>
-                    <th scope="row">{field.product_id}</th>
-                    <td>{field.status}</td>
-                    <td>{field.cycle ?? field.valid_time_end ?? "Unknown"}</td>
-                    <td>
-                      {field.fresh
-                        ? "Within source-age budget"
-                        : "Stale or unavailable"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div
-            className="table-scroll"
-            tabIndex={0}
-            role="region"
-            aria-label="Official feed health"
-          >
-            <table>
-              <caption>Official feed transport and retained integrity</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Source</th>
-                  <th scope="col">Transport</th>
-                  <th scope="col">Integrity</th>
-                  <th scope="col">Last checked (UTC)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ops.sources.advisories.map((source) => (
-                  <tr key={source.source_id}>
-                    <th scope="row">{source.source_id}</th>
-                    <td>{source.transport}</td>
-                    <td>{source.integrity}</td>
-                    <td>{source.checked_at ?? "Unknown"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p>
-            Notification worker:{" "}
-            {ops.workers.notifications
-              ? "responding"
-              : "unavailable or delayed"}
-            . Email transport:{" "}
-            {ops.workers.email_configured ? "configured" : "unconfigured"}.
-          </p>
-        </>
-      ) : (
+
+      <TechDetail>
+        <p>Control revision {ops?.controls.revision ?? "unknown"}. Scientific serving stops if incident controls can’t be read.</p>
         <p>
-          Source and worker health are unknown while the operational status
-          service is unavailable.
+          <Link href="/methodology">How it works</Link> · <Link href="/app/alerts">Your alert monitoring</Link>
         </p>
-      )}
-      <h2>Release approval</h2>
-      <p className="notice">
-        Public production and scientific approval remain unavailable.
-        Calibration, source cadence, marine advisory completeness, source
-        rights, reviewed trip wording and security sign-off require separate
-        evidence.
-      </p>
-      <p>
-        <Link href="/methodology">Review the methods</Link> ·{" "}
-        <Link href="/app/alerts">Private monitoring status</Link>
-      </p>
+      </TechDetail>
     </main>
   );
 }

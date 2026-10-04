@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { evidence, type Snapshot } from "../../../lib/science";
+import { PageHead } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function SnapshotPage({
   params,
@@ -12,27 +12,13 @@ export default async function SnapshotPage({
   );
   if (!value)
     return (
-      <main>
-        <Link href="/data">← Data quality</Link>
-        <h1>Snapshot unavailable.</h1>
-        <p>The snapshot is absent or its evidence service is unavailable.</p>
-      </main>
+      <main><PageHead back={{ href: "/data", label: "Data quality" }} title="Snapshot unavailable" lede={"The snapshot is absent or its evidence service is unavailable."} /></main>
     );
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/data">← Data quality</Link>
-        <Link href={`/calculations/${value.calculation_id}`}>
-          Calculation evidence
-        </Link>
-      </nav>
-      <p className="eyebrow">TRAINING / FROZEN ORIGINAL LEVELS</p>
-      <h1>A dataset that stays fixed.</h1>
-      <p className="intro">
-        {value.profile_count} delayed-mode profiles · {value.row_count} original
+    <main>
+      <PageHead back={{ href: "/data", label: "Datasets and quality" }} title={"Training snapshot"} lede={<>{value.profile_count} delayed-mode profiles · {value.row_count} original
         levels. Upstream revisions create new evidence; this snapshot retains
-        its original input versions.
-      </p>
+        its original input versions.</>} />
       <dl className="evidence">
         <dt>Snapshot ID</dt>
         <dd className="digest">{value.snapshot_id}</dd>

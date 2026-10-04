@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { ModelRelease, ModelMetric } from "../../../lib/expected";
+import { PageHead } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 const number = (n: number | null) =>
   n === null ? "Unavailable" : n.toFixed(3);
@@ -30,24 +31,12 @@ export default async function Model({
   );
   if (!model)
     return (
-      <main>
-        <Link href="/models">← Models</Link>
-        <h1>Model evidence unavailable.</h1>
-        <p>This release is absent or its evidence service is unavailable.</p>
-      </main>
+      <main><PageHead back={{ href: "/models", label: "Models" }} title="Model evidence unavailable" lede={"This release is absent or its evidence service is unavailable."} /></main>
     );
   const out = model.manifest.output;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/models">← Model references</Link>
-        <Link href="/profiles">Argo profiles</Link>
-        <Link href={`/climatology/${model.reference_id}`}>
-          Historical reference
-        </Link>
-      </nav>
-      <p className="eyebrow">RESIDUAL MEAN / VERSIONED EVALUATION</p>
-      <h1>An expected mean, with its evidence.</h1>
+    <main>
+      <PageHead back={{ href: "/models", label: "Models" }} title={"Model release"} lede={"How this learned model compared with the seasonal normal, step by step."} />
       <p className="notice">
         Scientific production approval is unavailable. The inspected historical
         test block remains diagnostic; promotion requires reviewed thresholds, a

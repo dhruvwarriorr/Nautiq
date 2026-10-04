@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { Reference, Metric } from "../../../lib/climatology";
+import { PageHead } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 const number = (value: number | null) =>
   value == null ? "Unavailable" : value.toFixed(3);
@@ -28,23 +29,13 @@ export default async function ReferencePage({
   );
   if (!release)
     return (
-      <main>
-        <Link href="/climatology">← References</Link>
-        <h1>Reference unavailable.</h1>
-        <p>The reference is absent or its evidence service is unavailable.</p>
-      </main>
+      <main><PageHead back={{ href: "/climatology", label: "References" }} title="Reference unavailable" lede={"The reference is absent or its evidence service is unavailable."} /></main>
     );
   const out = release.manifest.output,
     policy = release.manifest.policy.climatology_policy;
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/climatology">← Historical references</Link>
-        <Link href="/profiles">Argo profiles</Link>
-        <Link href="/data">Data quality</Link>
-      </nav>
-      <p className="eyebrow">CLIMATOLOGY / FROZEN REFERENCE</p>
-      <h1>A seasonal mean, with limits.</h1>
+    <main>
+      <PageHead back={{ href: "/climatology", label: "Historical normal" }} title={"Seasonal normal release"} lede={"How this baseline was built and where it holds up."} />
       <dl className="evidence">
         <dt>Reference</dt>
         <dd className="digest">{release.release_id}</dd>

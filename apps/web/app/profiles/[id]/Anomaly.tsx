@@ -1,21 +1,40 @@
 import Link from "next/link";
-import {categoryIcon, labels, n, title, type AnomalyProfile, type CombinedEvidence} from "../../../lib/anomaly";
+import {labels, n, title, type AnomalyProfile, type CombinedEvidence} from "../../../lib/anomaly";
 import DepthCurve from "../../anomalies/DepthCurve";
 
 export function CategorySummary({value}: {value: CombinedEvidence}) {
   return <div className="category-summary" data-category={value.category}>
-    <p className="category-line"><span className="category-chip" data-category={value.category}><span aria-hidden="true">{categoryIcon[value.category]}</span> {value.label}</span>{value.driving_variable ? <> driven by {title(value.driving_variable).toLowerCase()}</> : null}</p>
+    <p className="category-line"><span className="category-chip" data-category={value.category}>{value.label}</span>{value.driving_variable ? <> driven by {title(value.driving_variable).toLowerCase()}</> : null}</p>
     <p>{value.interpretation} Bands (percentile lower bounds): elevated {value.band_lower_bounds_percentile.elevated}, unusual {value.band_lower_bounds_percentile.unusual}, strongly unusual {value.band_lower_bounds_percentile.strongly_unusual}. Policy {value.policy_version} is an unreviewed engineering choice.</p>
     <div className="table-scroll"><table><caption>Components behind the category</caption><thead><tr><th>Variable</th><th>Category</th>{value.variables[Object.keys(value.variables)[0]]?.components.map(c => <th key={c.key}>{c.label}</th>)}<th>Reference profiles</th></tr></thead><tbody>
-      {Object.entries(value.variables).map(([v, c]) => <tr key={v}><td>{title(v)}</td><td>{categoryIcon[c.category]} {c.label}</td>{c.components.map(k => <td key={k.key}>{k.percentile == null ? "Unavailable" : `${n(k.percentile)}th`}</td>)}<td>{c.reference_profiles}{c.resolution_percent != null ? ` (±${n(c.resolution_percent)} pts)` : ""}</td></tr>)}
+      {Object.entries(value.variables).map(([v, c]) => <tr key={v}><td>{title(v)}</td><td>{c.label}</td>{c.components.map(k => <td key={k.key}>{k.percentile == null ? "Unavailable" : `${n(k.percentile)}th`}</td>)}<td>{c.reference_profiles}{c.resolution_percent != null ? ` (±${n(c.resolution_percent)} pts)` : ""}</td></tr>)}
     </tbody></table></div>
     <ul>{Object.entries(value.variables).flatMap(([v, c]) => c.notes.map(note => <li key={v + note}>{title(v)}: {note}</li>))}</ul>
   </div>;
 }
+const steps = [
+  ["typical", "Typical"],
+  ["elevated", "Slightly unusual"],
+  ["unusual", "Unusual"],
+  ["strongly_unusual", "Strongly unusual"],
+];
+function Scale({value}: {value: CombinedEvidence}) {
+  const at = steps.findIndex(([k]) => k === value.category);
+  return <div className="history-scale" role="img" aria-label={`Compared with history: ${value.label}`}>
+    {steps.map(([k, label], i) => <span key={k} data-on={i === at || undefined} data-past={i < at || undefined}>{label}</span>)}
+  </div>;
+}
 export default function Anomaly({value, revision}: {value: AnomalyProfile | null; revision: string}) {
-  if (!value || value.revision_sha256 !== revision || !value.result || !value.calculation_id) return <section><h2>Profile magnitude and shape</h2><p>{!value ? "Anomaly evidence is unavailable. Refresh to retry." : value.revision_sha256 !== revision ? "The profile changed while loading. Refresh for matching evidence." : `Comparison ${value.status.replaceAll("_"," ")}. ${value.pending_reason?.replaceAll("_"," ") ?? ""}`}</p><Link href="/anomalies">Profile model references</Link></section>;
-  return <section><h2>Profile magnitude and shape</h2><p className="notice">Diagnostic evidence only. Historical ranks do not establish an unusual event or a trip verdict. The interval parent has no scientific coverage approval.</p>
-    {value.combined_evidence ? <CategorySummary value={value.combined_evidence}/> : null}
+  if (!value || value.revision_sha256 !== revision || !value.result || !value.calculation_id) return <section className="history-card"><h2>Compared with history</h2><p className="muted">{!value ? "This comparison isn’t available right now." : value.revision_sha256 !== revision ? "The reading changed while loading. Refresh to see the matching comparison." : "This reading hasn’t been compared with history yet."}</p></section>;
+  const c = value.combined_evidence;
+  return <section className="history-card"><h2>Compared with history</h2>
+    {c ? <>
+      <p className="history-line">{c.category === "not_assessable" ? "This reading can’t be ranked against history." : <>This reading is <b>{c.label.toLowerCase()}</b> for this place and season{c.driving_variable ? <>, mostly because of its {title(c.driving_variable).toLowerCase()}</> : null}.</>}</p>
+      {c.category !== "not_assessable" ? <Scale value={c}/> : null}
+    </> : <p className="muted">No overall comparison for this reading.</p>}
+    <p className="footnote">A rank against past readings, not a probability, a warning or an event.</p>
+    <details className="tech"><summary><span>How this was worked out</span></summary><div className="tech-body">
+    {c ? <CategorySummary value={c}/> : null}
     <p><Link href={`/anomalies/${value.release_id}`}>Pinned profile model</Link> · <Link href={`/calculations/${value.calculation_id}`}>Comparison calculation</Link> · <Link href={`/uncertainty/${value.uncertainty_id}`}>Predictive interval parent</Link></p>
     <p>Complete 10–500 m vectors are scored independently for each variable. Residuals use the expected conditional mean and the train-fitted q10–q90 half-width, floored in physical units. The scale is not a Gaussian standard deviation. Covariance and PCA use training-centered residuals.</p>
     {Object.entries(value.result.variables).map(([v,info]) => <section key={v}><h3>{title(v)}</h3><p>{info.status.replaceAll("_"," ")} · {info.points.filter(p=>p.covered).length}/{info.points.length} supported depths. {info.reason?.replaceAll("_"," ")}</p>
@@ -30,5 +49,6 @@ export default function Anomaly({value, revision}: {value: AnomalyProfile | null
       <div className="table-scroll"><table><thead><tr><th>Depth (m)</th><th>Observed</th><th>Expected mean</th><th>Signed residual</th><th>Half-width scale</th><th>Standardized</th><th>Weighted contribution</th><th>Covariance contribution</th><th>Reconstruction error</th><th>Coverage</th></tr></thead><tbody>{info.points.map(p=><tr key={p.depth_m}><td>{p.depth_m}</td><td>{n(p.observed)}</td><td>{n(p.expected_mean)}</td><td>{n(p.residual)}</td><td>{n(p.scale)}{p.scale_floored?" (floor)":""}</td><td>{n(p.standardized_residual)}</td><td>{n(p.weighted_contribution)}</td><td>{n(p.mahalanobis_contribution)}</td><td>{n(p.reconstruction_error)}</td><td>{p.covered?"Supported":p.reason?.replaceAll("_"," ")}</td></tr>)}</tbody></table></div>
       <p className="footnote">Signed covariance contributions may be negative because depths interact; their sum is the nonnegative squared Mahalanobis distance. PCA error is a weighted curve error. Baseline Z-scores and Isolation Forest are comparison experiments. Missing layers receive no numeric imputation and no aggregate score.</p>
     </section>)}
+  </div></details>
   </section>;
 }

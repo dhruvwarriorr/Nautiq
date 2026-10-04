@@ -5,6 +5,7 @@ import {
   type EventRunSummary,
   type EventDataset,
 } from "../../lib/events";
+import { PageHead } from "../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function Events() {
   const [runs, baselines] = await Promise.all([
@@ -14,19 +15,8 @@ export default async function Events() {
     ),
   ]);
   return (
-    <main className="explorer">
-      <nav>
-        <Link href="/">Nautiq</Link>
-        <Link href="/fields">Surface fields</Link>
-        <Link href="/anomalies">Profile diagnostics</Link>
-      </nav>
-      <p className="eyebrow">REGIONAL EVENTS / PERSISTENCE AND SUPPORT</p>
-      <h1>Separate a departure from a persistent event.</h1>
-      <p className="intro">
-        Inspect fixed seasonal SST thresholds, consecutive-day persistence and
-        spatial support. Profile anomalies are grouped separately using their
-        actual observed positions, dates and platforms.
-      </p>
+    <main>
+      <PageHead icon="ripple" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Regional events"} lede={"Lasting patches of unusual water found in past data. One odd reading is never an event, and none of this is a live warning."} />
       <p className="notice">
         One unusual profile is not a regional heatwave. These are retained
         diagnostic candidates; scientific event approval and live alerting

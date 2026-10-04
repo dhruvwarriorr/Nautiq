@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { privateQuery, type Job } from "../../lib/product";
 import type { AccountContext } from "./AccountGate";
+import { when } from "../../lib/humanize";
 export default function PrivateJobs({
   account,
   kind,
@@ -160,8 +161,8 @@ export default function PrivateJobs({
                   </td>
                   <td>{j.format}</td>
                   <td>
-                    {j.created_at}
-                    <small>{j.expires_at}</small>
+                    {when(j.created_at)}
+                    <small>{when(j.expires_at)}</small>
                   </td>
                   <td>
                     {j.state === "ready" ? (

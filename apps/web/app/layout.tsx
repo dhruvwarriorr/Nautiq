@@ -1,17 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Big_Shoulders, Overpass, Overpass_Mono } from "next/font/google";
 import "./globals.css";
 import ProductNav from "./components/ProductNav";
 import SiteFooter from "./components/SiteFooter";
+
+const shoulders = Big_Shoulders({ subsets: ["latin"], variable: "--font-shoulders", display: "swap", axes: ["opsz"] });
+const overpass = Overpass({ subsets: ["latin"], variable: "--font-overpass", display: "swap" });
+const overpassMono = Overpass_Mono({ subsets: ["latin"], variable: "--font-overpass-mono", display: "swap" });
+
 export const metadata: Metadata = {
-  title: "Nautiq · Ocean evidence",
+  title: "Nautiq · What is the sea doing?",
   description:
-    "Explore original observations, native forecasts and private timed trip evidence with source and scientific limitations.",
+    "Plain answers about the sea near India's coast: waves, wind, currents, sea temperature and official warnings, with honest limits.",
 };
-export default function Layout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export const viewport: Viewport = { themeColor: "#0a2747" };
+
+export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${shoulders.variable} ${overpass.variable} ${overpassMono.variable}`}>
       <body>
         <a className="skip-link" href="#content">
           Skip to content

@@ -431,8 +431,10 @@ def tile(grid, variable, time, z, x, y, check=lambda: None):
             values[py, px] = value
     low, high = POLICY["variables"][variable]["colors"]
     t = np.clip(np.nan_to_num((values - low) / (high - low)), 0, 1)
+    # Sequential sea ramp: calm reads as the deep chart sea, higher values brighten towards
+    # foam white. No red or orange end, so a forecast field never mimics an official warning.
     anchors = np.array(
-        [[24, 55, 89], [28, 132, 145], [225, 218, 149], [218, 117, 58], [151, 48, 52]]
+        [[14, 52, 92], [22, 92, 140], [46, 140, 176], [126, 196, 214], [226, 244, 247]]
     )
     rgba = np.zeros((256, 256, 4), dtype="uint8")
     for c in range(3):

@@ -1,4 +1,5 @@
 import SignIn from "./SignIn";
+import { PageHead } from "../components/ui/Bits";
 export default async function SignInPage({
   searchParams,
 }: {
@@ -7,12 +8,7 @@ export default async function SignInPage({
   const { next } = await searchParams;
   return (
     <main>
-      <p className="eyebrow">PRIVATE WORKSPACE / ACCOUNT ACCESS</p>
-      <h1>Your saved ocean evidence.</h1>
-      <p className="intro">
-        Use an account for saved routes, watchlists, alert rules and private
-        reports. Public maps and measured profiles remain open.
-      </p>
+      <PageHead icon="logbook" title={"Your workspace"} lede={"Sign in to save routes, places and alerts. Everything public stays open without an account."} />
       <SignIn next={next ?? "/app"} />
     </main>
   );

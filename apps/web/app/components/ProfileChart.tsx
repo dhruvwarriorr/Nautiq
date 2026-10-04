@@ -14,8 +14,8 @@ export default function Chart({
   if (!valid.length)
     return (
       <section>
-        <h2>{label}</h2>
-        <p>No QC accepted values for this variable.</p>
+        <h3>{label}</h3>
+        <p className="muted">No accepted readings for this measure.</p>
       </section>
     );
   const values = valid.map((p) => p[variable] as number),
@@ -46,7 +46,7 @@ export default function Chart({
   if (path) paths.push(path);
   return (
     <section className="chart">
-      <h2>{label}</h2>
+      <h3>{label}</h3>
       <svg
         viewBox="0 0 450 420"
         role="img"
@@ -54,7 +54,7 @@ export default function Chart({
       >
         {[0, 1, 2, 3, 4].map((i) => (
           <g key={i}>
-            <path d={`M 75 ${35 + i * 82.5} H 385`} stroke="#ccd8d4" />
+            <path d={`M 75 ${35 + i * 82.5} H 385`} stroke="#d3dde3" />
             <text x="63" y={39 + i * 82.5} textAnchor="end" fontSize="12">
               {((depth * i) / 4).toFixed(0)}
             </text>
@@ -76,7 +76,7 @@ export default function Chart({
           Depth (m)
         </text>
         {paths.map((d, i) => (
-          <path key={i} d={d} fill="none" stroke="#236443" strokeWidth="2" />
+          <path key={i} d={d} fill="none" stroke="#123f6b" strokeWidth="2.5" strokeLinejoin="round" />
         ))}
         {valid.map((p, i) => (
           <circle
@@ -84,11 +84,9 @@ export default function Chart({
             cx={x(p[variable] as number)}
             cy={y(p.depth_m)}
             r="2"
-            fill="#163c40"
+            fill="#0b2341"
           >
-            <title>
-              {p.depth_m.toFixed(2)} m: {p[variable]} {unit}
-            </title>
+            <title>{`${p.depth_m.toFixed(2)} m: ${p[variable]} ${unit}`}</title>
           </circle>
         ))}
       </svg>

@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { IntervalSummary } from "../../lib/uncertainty";
+import { PageHead } from "../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export default async function Intervals() {
   const [selected, releases] = await Promise.all([
     evidence<IntervalSummary>("/uncertainty-releases/selected"),
     evidence<{items: IntervalSummary[]}>("/uncertainty-releases?limit=50"),
   ]);
-  return <main className="explorer">
-    <nav><Link href="/anomalies">Profile magnitude and shape</Link><Link href="/">Nautiq</Link><Link href="/profiles">Argo profiles</Link><Link href="/models">Expected mean</Link><Link href="/data">Data quality</Link></nav>
-    <p className="eyebrow">PREDICTIVE VARIABILITY / FROZEN CALIBRATION</p>
-    <h1>A range, with its coverage evidence.</h1>
-    <p className="intro">Compare LightGBM quantile models with CatBoost MultiQuantile. Separate the expected mean from the median and inspect profile-based calibration, subgroup coverage and fallback support.</p>
+  return <main>
+      <PageHead icon="compass" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Expected ranges"} lede={"How much the sea normally varies around its usual state, and how well that range holds up."} />
     <p className="notice">Local diagnostic intervals. The nominal 80% target concerns a profile within a region and depth group. It does not establish full-profile joint or conditional coverage. Scientific release approval requires reviewed gates and an untouched test.</p>
     <p>{selected ? <>Selected interval release: <Link href={`/uncertainty/${selected.release_id}`}>{selected.release_id}</Link></> : "No interval release selected, or evidence unavailable."}</p>
     <h2>Frozen interval releases</h2>

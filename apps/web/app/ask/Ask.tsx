@@ -10,7 +10,6 @@ import {
   describeWindow,
   exampleQuestions,
   intentLabels,
-  statusLabels,
   topicOptions,
   whenOptions,
   withDates,
@@ -18,6 +17,10 @@ import {
   withWhen,
 } from "../../lib/ask.mjs";
 import ResearchExplorer from "../components/ResearchExplorer";
+import { toReading, headline, reasons, when as whenText, humanizeText } from "../../lib/humanize";
+import Icon from "../components/ui/Icon";
+import { Signal } from "../components/ui/Signal";
+import { measureIcon } from "../components/readingIcons";
 
 const saveKey = "nautiq.lastAnswer.v1";
 type Saved = { saved_at: string; plan: AskPlan; answer: Answer };
@@ -30,19 +33,44 @@ export function FactList({ answer }: { answer: Answer }) {
   return (
     <ul className="fact-list">
       {answer.facts.map((f, i) => {
-        const [icon, word] = statusLabels[f.status] ?? ["", f.status];
+        const r = toReading(f);
         return (
           <li key={i} data-status={f.status}>
-            <span className="status-chip" data-status={f.status}>
-              <span aria-hidden="true">{icon}</span> {word}
+            <span className="fact-icon">
+              <Icon name={measureIcon[r.measure]} size={22} />
             </span>
-            <div>
-              <strong>{f.label}</strong>
-              <p>{f.value}</p>
-              {f.detail ? <small>{f.detail}</small> : null}
+            <span className="fact-name">{r.title}</span>
+            <div className="fact-main">
+              {r.value ? (
+                <p className="fact-big" style={{ margin: 0 }}>
+                  {r.value}
+                  {r.descriptor ? <small>{r.descriptor}</small> : null}
+                </p>
+              ) : r.descriptor ? (
+                <p className="fact-plain">{r.descriptor}</p>
+              ) : null}
+              {r.value && (r.time || r.outlook) ? <span className="fact-sub">{[r.time, r.outlook].filter(Boolean).join(" · ")}</span> : null}
+              {r.measure === "warnings" && reasons(r.note).length ? (
+                <>
+                  <span className="fact-sub">We can’t confirm warnings here. Check IMD and INCOIS before you go.</span>
+                  <details className="why">
+                    <summary>Why it’s unknown</summary>
+                    <ul>
+                      {reasons(r.note).map((x) => (
+                        <li key={x}>{x}</li>
+                      ))}
+                    </ul>
+                  </details>
+                </>
+              ) : r.note ? (
+                <span className="fact-sub">{r.note}</span>
+              ) : null}
+            </div>
+            <div style={{ display: "grid", gap: 6, justifyItems: "end" }}>
+              <Signal status={f.status} size={14} />
               {f.href ? (
                 <Link className="fact-link" href={f.href}>
-                  See the evidence →
+                  Evidence <Icon name="arrow" size={14} />
                 </Link>
               ) : null}
             </div>
@@ -84,11 +112,15 @@ export default function Ask({
   const auto = useRef(false);
 
   useEffect(() => {
+    // Safe under StrictMode's mount–unmount–mount: the aborted first run is simply replaced.
     if (initialQuestion && !auto.current) {
       auto.current = true;
       void ask(initialQuestion, browserZone());
     }
-    return () => control.current?.abort();
+    return () => {
+      control.current?.abort();
+      auto.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -176,20 +208,24 @@ export default function Ask({
     <>
       <form
         className="ask-form"
+        role="search"
         onSubmit={(e) => {
           e.preventDefault();
           if (text.trim()) void ask(text.trim());
         }}
       >
-        <label htmlFor="question" className="ask-label">
+        <label htmlFor="question" className="visually-hidden">
           Your question
         </label>
-        <div className="ask-row">
+        <div className="ask-field">
+          <span className="ask-icon">
+            <Icon name="hailer" size={24} />
+          </span>
           <textarea
             id="question"
             required
             maxLength={512}
-            rows={2}
+            rows={1}
             value={text}
             placeholder="e.g. How are the waves near Goa tomorrow morning?"
             onChange={(e) => {
@@ -203,231 +239,223 @@ export default function Ask({
               }
             }}
           />
-          <button className="ask-submit" disabled={busy || !text.trim()}>
-            {busy ? "Working…" : "Ask"}
+          <button className="ask-go" disabled={busy || !text.trim()}>
+            {busy ? "Working…" : "Ask"} <Icon name="arrow" size={18} />
           </button>
         </div>
-        <div className="chips" role="group" aria-label="Example questions">
+        <ul className="suggestions" aria-label="Example questions">
           {exampleQuestions.map((q: string) => (
-            <button
-              type="button"
-              className="chip"
-              key={q}
-              onClick={() => {
-                setText(q);
-                void ask(q);
-              }}
-            >
-              {q}
-            </button>
+            <li key={q}>
+              <button
+                type="button"
+                className="suggestion"
+                onClick={() => {
+                  setText(q);
+                  void ask(q);
+                }}
+              >
+                {q}
+              </button>
+            </li>
           ))}
-        </div>
-        <p className="ask-privacy">
-          {languageModel
-            ? "A language model labels your question’s intent, place and time; Nautiq then rebuilds and validates every query itself. Your question text is sent to that provider and is not saved by Nautiq."
-            : "Your question is read by Nautiq’s built-in rules on this server. It is not saved, and no language model is involved."}{" "}
-          Times use your device zone ({zone}).
-        </p>
+        </ul>
       </form>
 
-      <div aria-live="polite" role="status" className="ask-status">
-        {busy ? "Finding the evidence…" : ""}
-        {error ? `Could not complete: ${error.replaceAll("_", " ")}.` : ""}
-      </div>
+      <div className="wrap-ask">
+        <div aria-live="polite" role="status" className="ask-status" data-busy={busy}>
+          {busy ? "Finding the evidence…" : ""}
+          {error ? `That didn’t work: ${error.replaceAll("_", " ")}. Try rephrasing, or pick a place below.` : ""}
+        </div>
 
-      {plan && frame ? (
-        <section className="understood" aria-label="How Nautiq understood the question">
-          <h2 ref={heading} tabIndex={-1}>
-            {plan.state === "unsupported"
-              ? "I can’t answer that yet"
-              : answer
-                ? answer.headline
-                : "I need a little more"}
-          </h2>
-          <div className="understood-controls">
-            <span className="chip-static">
-              {intentLabels[plan.intent] ?? plan.intent}
-            </span>
-            {plan.intent !== "explain" && plan.intent !== "unsupported" ? (
-              <label>
-                Place
-                <select
-                  value={frame.place ?? ""}
-                  onChange={(e) =>
-                    void run(withPlace(frame, e.target.value))
-                  }
-                >
-                  <option value="">Choose…</option>
-                  {places.map((p) => (
-                    <option key={p.slug} value={p.slug}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
-            {needsTime ? (
-              <label>
-                When
-                <select
-                  value={custom ? "custom" : (frame.when ?? "now")}
-                  onChange={(e) => {
-                    if (e.target.value === "custom") {
-                      const t = new Date().toISOString().slice(0, 10);
-                      setDates({ start: dates.start || t, end: dates.end || t });
-                      void run({ ...frame, when: undefined, start: dates.start || t, end: dates.end || t });
-                    } else void run(withWhen(frame, e.target.value));
+        {plan && frame ? (
+          <section className="answer-card" aria-label="Answer">
+            <div className="answer-head">
+              <h2 ref={heading} tabIndex={-1}>
+                {plan.state === "unsupported"
+                  ? "I can’t answer that yet"
+                  : answer
+                    ? headline(answer.headline)
+                    : "I need a little more"}
+              </h2>
+              <div className="understood-bar" aria-label="How Nautiq understood your question">
+                <span className="intent-tag">
+                  <Icon name="hailer" size={16} />
+                  {intentLabels[plan.intent] ?? plan.intent}
+                </span>
+                {plan.intent !== "explain" && plan.intent !== "unsupported" ? (
+                  <label>
+                    Place
+                    <select value={frame.place ?? ""} onChange={(e) => void run(withPlace(frame, e.target.value))}>
+                      <option value="">Choose…</option>
+                      {places.map((p) => (
+                        <option key={p.slug} value={p.slug}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+                {needsTime ? (
+                  <label>
+                    When
+                    <select
+                      value={custom ? "custom" : (frame.when ?? "now")}
+                      onChange={(e) => {
+                        if (e.target.value === "custom") {
+                          const t = new Date().toISOString().slice(0, 10);
+                          setDates({ start: dates.start || t, end: dates.end || t });
+                          void run({ ...frame, when: undefined, start: dates.start || t, end: dates.end || t });
+                        } else void run(withWhen(frame, e.target.value));
+                      }}
+                    >
+                      {options.map((o) => (
+                        <option key={o[0]} value={o[0]}>
+                          {o[1]}
+                        </option>
+                      ))}
+                      <option value="custom">Specific dates…</option>
+                    </select>
+                  </label>
+                ) : null}
+                {plan.intent === "research" ? (
+                  <>
+                    <label>
+                      Measure
+                      <select value={frame.variable ?? "temperature_c"} onChange={(e) => void run({ ...frame, variable: e.target.value })}>
+                        <option value="temperature_c">Temperature</option>
+                        <option value="practical_salinity">Salinity</option>
+                      </select>
+                    </label>
+                    <label className="inline-check">
+                      <input type="checkbox" checked={Boolean(frame.unusual)} onChange={(e) => void run({ ...frame, unusual: e.target.checked })} />
+                      Unusual only
+                    </label>
+                  </>
+                ) : null}
+                {plan.intent === "explain" ? (
+                  <label>
+                    Topic
+                    <select value={frame.topic ?? ""} onChange={(e) => void run({ ...frame, topic: e.target.value })}>
+                      <option value="">Choose…</option>
+                      {topicOptions.map((o: string[]) => (
+                        <option key={o[0]} value={o[0]}>
+                          {o[1]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+              </div>
+              {custom ? (
+                <form
+                  className="form-grid"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void run(withDates(frame, dates.start, dates.end));
                   }}
                 >
-                  {options.map((o) => (
-                    <option key={o[0]} value={o[0]}>
-                      {o[1]}
-                    </option>
+                  <label>
+                    From
+                    <input type="date" value={dates.start || frame.start?.slice(0, 10) || ""} onChange={(e) => setDates({ ...dates, start: e.target.value })} />
+                  </label>
+                  <label>
+                    Until (not included)
+                    <input type="date" value={dates.end || frame.end?.slice(0, 10) || ""} onChange={(e) => setDates({ ...dates, end: e.target.value })} />
+                  </label>
+                  <button className="btn">Apply dates</button>
+                </form>
+              ) : null}
+              {plan.clarifications.length ? (
+                <ul className="clarifications">
+                  {plan.clarifications.map((c) => (
+                    <li key={c}>{c}</li>
                   ))}
-                  <option value="custom">Specific dates…</option>
-                </select>
-              </label>
-            ) : null}
-            {plan.intent === "research" ? (
+                </ul>
+              ) : null}
+            </div>
+
+            {answer ? (
               <>
-                <label>
-                  Measure
-                  <select
-                    value={frame.variable ?? "temperature_c"}
-                    onChange={(e) => void run({ ...frame, variable: e.target.value })}
-                  >
-                    <option value="temperature_c">Temperature</option>
-                    <option value="practical_salinity">Salinity</option>
-                  </select>
-                </label>
-                <label className="inline-check">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(frame.unusual)}
-                    onChange={(e) => void run({ ...frame, unusual: e.target.checked })}
-                  />
-                  Unusual only
-                </label>
+                <FactList answer={answer} />
+                {answer.research ? (
+                  showRows ? (
+                    <ResearchExplorer key={JSON.stringify(answer.research)} initial={answer.research} />
+                  ) : (
+                    <button className="btn-ghost" style={{ marginTop: 18 }} onClick={() => setShowRows(true)}>
+                      <Icon name="float" size={18} /> Show the float readings and charts
+                    </button>
+                  )
+                ) : null}
+                <div className="answer-links">
+                  {answer.links.map((l) => (
+                    <Link key={l.href} className={answer.state === "handoff" && l.label.startsWith("Open the trip") ? "btn" : "btn-ghost"} href={l.href}>
+                      {l.label} <Icon name="arrow" size={16} />
+                    </Link>
+                  ))}
+                </div>
+                {answer.cannot_tell_you.length ? (
+                  <aside className="limits">
+                    <h3>What this can’t tell you</h3>
+                    <ul>
+                      {answer.cannot_tell_you.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </aside>
+                ) : null}
               </>
             ) : null}
-            {plan.intent === "explain" ? (
-              <label>
-                Topic
-                <select
-                  value={frame.topic ?? ""}
-                  onChange={(e) => void run({ ...frame, topic: e.target.value })}
-                >
-                  <option value="">Choose…</option>
-                  {topicOptions.map((o: string[]) => (
-                    <option key={o[0]} value={o[0]}>
-                      {o[1]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
-          </div>
-          {custom ? (
-            <form
-              className="understood-dates"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void run(withDates(frame, dates.start, dates.end));
-              }}
-            >
-              <label>
-                From (UTC date)
-                <input type="date" value={dates.start || frame.start?.slice(0, 10) || ""} onChange={(e) => setDates({ ...dates, start: e.target.value })} />
-              </label>
-              <label>
-                Until, not included
-                <input type="date" value={dates.end || frame.end?.slice(0, 10) || ""} onChange={(e) => setDates({ ...dates, end: e.target.value })} />
-              </label>
-              <button>Apply dates</button>
-            </form>
-          ) : null}
-          {plan.window ? (
-            <p className="window-line">
-              <strong>Time understood:</strong> {describeWindow(plan.window)}
-              {plan.window.kind === "past" ? " · in the past" : plan.window.kind === "future" ? " · in the future" : ""}
+            <details className="tech">
+              <summary>
+                <Icon name="sounding" size={18} />
+                <span>How Nautiq read your question</span>
+                <Icon name="down" size={18} className="icon tech-chevron" />
+              </summary>
+              <div className="tech-body">
+                {plan.window ? (
+                  <p>
+                    <strong>Time understood:</strong> {describeWindow(plan.window)}
+                    {plan.window.kind === "past" ? " · in the past" : plan.window.kind === "future" ? " · in the future" : ""}
+                  </p>
+                ) : null}
+                <p>
+                  {plan.parser === "language_model"
+                    ? "Labelled by a language model, then rebuilt and checked by Nautiq."
+                    : plan.parser === "grammar"
+                      ? "Matched by Nautiq’s built-in rules."
+                      : "Adjusted by you; checked by Nautiq."}{" "}
+                  {humanizeText(plan.explanation)}
+                </p>
+                <p>
+                  {languageModel
+                    ? "Your question text goes to a language-model provider to label it; Nautiq doesn’t save it."
+                    : "Your question is read by rules on Nautiq’s server. It isn’t saved and no language model is involved."}{" "}
+                  Times use your device zone ({zone}).
+                </p>
+                {answer ? (
+                  <p className="footnote">
+                    Answer put together {whenText(answer.as_of)} from stored evidence using fixed templates ({answer.version}). No language model wrote it.
+                  </p>
+                ) : null}
+              </div>
+            </details>
+          </section>
+        ) : null}
+
+        {!plan && saved ? (
+          <section className="saved-answer" aria-label="Last answer on this device">
+            <div className="section-head">
+              <h2>Your last answer</h2>
+              <button onClick={() => setStored(saveKey, null)}>Forget it</button>
+            </div>
+            <p className="muted">
+              Saved {ageText(saved.saved_at)} on this device. It won’t update by itself; ask again for the latest.
             </p>
-          ) : null}
-          <p className="parser-note">
-            {plan.parser === "language_model"
-              ? "Question labelled by a language model, then rebuilt and validated by Nautiq."
-              : plan.parser === "grammar"
-                ? "Question matched by Nautiq’s built-in rules."
-                : "Adjusted by you; validated by Nautiq."}{" "}
-            {plan.explanation}
-          </p>
-          {plan.clarifications.length ? (
-            <ul className="clarifications">
-              {plan.clarifications.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
-          ) : null}
-        </section>
-      ) : null}
-
-      {answer && plan ? (
-        <section className="answer" aria-label="Answer">
-          <FactList answer={answer} />
-          {answer.research ? (
-            <>
-              {showRows ? (
-                <ResearchExplorer key={JSON.stringify(answer.research)} initial={answer.research} />
-              ) : (
-                <button className="button-secondary" onClick={() => setShowRows(true)}>
-                  Show the profiles and charts
-                </button>
-              )}
-            </>
-          ) : null}
-          <div className="answer-links">
-            {answer.links.map((l) => (
-              <Link
-                key={l.href}
-                className={answer.state === "handoff" && l.label.startsWith("Open the trip") ? "button" : ""}
-                href={l.href}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
-          {answer.cannot_tell_you.length ? (
-            <aside className="cannot">
-              <h3>What this does not tell you</h3>
-              <ul>
-                {answer.cannot_tell_you.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
-              </ul>
-            </aside>
-          ) : null}
-          <p className="answer-meta">
-            Answer assembled {new Date(answer.as_of).toISOString().replace("T", " ").slice(0, 16)} UTC from retained evidence using
-            fixed templates ({answer.version}). No language model wrote it.
-          </p>
-        </section>
-      ) : null}
-
-      {!plan && saved ? (
-        <section className="saved-answer" aria-label="Last answer on this device">
-          <h2>Last answer on this device</h2>
-          <p className="notice">
-            Saved copy from {ageText(saved.saved_at)}. It is historical and is never refreshed automatically; ask again for
-            current evidence.
-          </p>
-          <h3>{saved.answer.headline}</h3>
-          <FactList answer={saved.answer} />
-          <button
-            onClick={() => setStored(saveKey, null)}
-          >
-            Clear saved copy
-          </button>
-        </section>
-      ) : null}
+            <h3>{headline(saved.answer.headline)}</h3>
+            <FactList answer={saved.answer} />
+          </section>
+        ) : null}
+      </div>
     </>
   );
 }

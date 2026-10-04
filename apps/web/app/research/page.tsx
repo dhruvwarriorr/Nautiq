@@ -1,6 +1,8 @@
 import ResearchExplorer from "../components/ResearchExplorer";
 import { session } from "../../lib/product-server";
 import type { ResearchFilter } from "../../lib/product";
+import { PageHead } from "../components/ui/Bits";
+export const metadata = { title: "Float observations · Nautiq" };
 export default async function Page() {
   const end = new Date();
   const initial: ResearchFilter = {
@@ -15,13 +17,13 @@ export default async function Page() {
     limit: 50,
   };
   return (
-    <main className="explorer">
-      <p className="eyebrow">ORIGINAL OBSERVATIONS</p>
-      <h1>Research explorer</h1>
-      <p className="intro">
-        Inspect instrument depth curves, expected state, diagnostic residuals
-        and uncertainty with their exact source and calculation references.
-      </p>
+    <main>
+      <PageHead
+        icon="float"
+        back={{ href: "/behind-the-data", label: "Behind the data" }}
+        title="Float observations"
+        lede="Real temperature and salinity readings from Argo floats, by depth, at the positions where they were taken."
+      />
       <ResearchExplorer initial={initial} session={await session()} />
     </main>
   );

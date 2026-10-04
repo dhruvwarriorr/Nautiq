@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { IntervalRelease, IntervalMetric, Coverage } from "../../../lib/uncertainty";
+import { PageHead } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
 const n = (v: number | null | undefined) => v == null ? "Unavailable" : v.toFixed(3);
 const title = (v: string) => v === "temperature_c" ? "Temperature (°C)" : "Practical salinity (PSS-78)";
@@ -12,12 +13,10 @@ export default async function Interval({params}: {params: Promise<{id: string}>}
     evidence<IntervalRelease>(`/uncertainty-releases/${encodeURIComponent(id)}`),
     evidence<Coverage>(`/uncertainty-releases/${encodeURIComponent(id)}/coverage`),
   ]);
-  if (!release) return <main><Link href="/uncertainty">← Interval references</Link><h1>Interval evidence unavailable.</h1><p>The release is absent or its evidence service is unavailable.</p></main>;
+  if (!release) return <main><PageHead back={{ href: "/uncertainty", label: "Interval references" }} title="Interval evidence unavailable" lede={"The release is absent or its evidence service is unavailable."} /></main>;
   const report = release.report;
-  return <main className="explorer">
-    <nav><Link href="/uncertainty">← Interval references</Link><Link href="/profiles">Argo profiles</Link><Link href={`/models/${release.expected_id}`}>Expected mean</Link><Link href={`/climatology/${release.reference_id}`}>Historical reference</Link></nav>
-    <p className="eyebrow">QUANTILE MODELS / PROFILE MONDRIAN CQR</p><h1>The interval, and the evidence behind it.</h1>
-    <p className="intro">Benchmark LightGBM q10/q50/q90 against CatBoost MultiQuantile, then inspect frozen calibration and empirical coverage.</p>
+  return <main>
+      <PageHead back={{ href: "/uncertainty", label: "Expected ranges" }} title={"Range release"} lede={"How this range was built and checked."} />
     <p className="notice">Scientific release approval is unavailable. The historical test has already been inspected. All intervals remain diagnostic until coverage criteria, independence, exchangeability and source support receive review against a new untouched test.</p>
     <dl className="evidence"><dt>Release</dt><dd className="digest">{release.release_id}</dd><dt>State</dt><dd>{release.selected ? "Selected" : "Retained"} · {release.status}</dd><dt>Fit calculation</dt><dd><Link href={`/calculations/${release.calculation_id}`}>{release.calculation_id}</Link></dd><dt>Snapshot</dt><dd><Link href={`/training-snapshots/${release.snapshot_id}`}>{release.snapshot_id}</Link></dd><dt>Bundle SHA-256</dt><dd className="digest">{release.manifest.output.bundle_sha256}</dd><dt>Code SHA-256</dt><dd className="digest">{report.code_sha256}</dd><dt>Feature schema</dt><dd>{report.feature_schema.version}: {report.feature_schema.names.join(", ")}</dd><dt>MLflow registry</dt><dd>{release.tracking ? `${release.tracking.registered_model} version ${release.tracking.model_version}; run ${release.tracking.run_id}` : "Logging pending"}</dd></dl>
     <p>{report.interval_interpretation} The conditional mean and q50 median are separate estimates. Bounds use reordered q10/q90 plus a nonnegative conformal correction; they are not clipped. Raw crossings remain in the diagnostics.</p>

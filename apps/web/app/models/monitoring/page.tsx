@@ -1,16 +1,15 @@
 import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import { num, pct, statusWords, type MonitoringResponse } from "../../../lib/monitoring";
+import { PageHead } from "../../components/ui/Bits";
+import { Signal } from "../../components/ui/Signal";
+import type { Status } from "../../../lib/humanize";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Model monitoring · Nautiq" };
 const names: Record<string, string> = { temperature_c: "Temperature", practical_salinity: "Salinity" };
 function Chip({ status }: { status: string }) {
-  const [icon, word, tone] = statusWords[status] ?? ["", status, "unavailable"];
-  return (
-    <span className="status-chip" data-status={tone}>
-      <span aria-hidden="true">{icon}</span> {word}
-    </span>
-  );
+  const [, word, tone] = statusWords[status] ?? ["", status, "unavailable"];
+  return <Signal status={tone as Status}>{word}</Signal>;
 }
 export default async function Page() {
   const data = await evidence<MonitoringResponse>("/model-monitoring");
@@ -18,12 +17,8 @@ export default async function Page() {
   const r = latest?.report;
   const old = latest ? latest.age_seconds > 48 * 3600 : false;
   return (
-    <main className="explorer">
-      <p className="eyebrow">MODELS / MONITORING</p>
-      <h1>Is the model still behaving as expected?</h1>
-      <p className="intro">
-        Nautiq watches four things: whether new profiles look like the data the models were built on, how far expected values are from real outcomes, whether the profile-ranking system flags more profiles than it should, and whether the intervals still cover what they promise.
-      </p>
+    <main>
+      <PageHead icon="bell" back={{ href: "/behind-the-data", label: "Behind the data" }} title={"Model monitoring"} lede="Regular checks that the models still behave the way they did when tested. A flag starts an investigation; nothing changes automatically." />
       <p className="notice">
         A flag here starts an investigation. Nautiq never retrains, recalibrates or promotes a model on its own. Delayed-mode labels arrive one to two years after observation, so “not enough evidence” is expected today and is not a sign of good or bad health.
       </p>
