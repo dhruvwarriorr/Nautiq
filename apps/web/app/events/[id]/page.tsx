@@ -3,6 +3,7 @@ import { evidence } from "../../../lib/science";
 import { eventLabel, eventNumber, type EventDetail } from "../../../lib/events";
 import EventMap from "../EventMap";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Regional event · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function EventPage({
   params,

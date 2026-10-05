@@ -4,6 +4,11 @@ import type { ProductPolicy } from "../../../lib/product";
 import { coords } from "../../../lib/humanize";
 import { PageHead, DoorLink } from "../../components/ui/Bits";
 export const dynamic = "force-dynamic";
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const name = slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  return { title: `${name} · Nautiq` };
+}
 export default async function Region({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const policy = await evidence<ProductPolicy>("/product-policy");

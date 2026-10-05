@@ -333,6 +333,14 @@ export function toReading(fact: Fact, now = new Date()): Reading {
     }
     return base;
   }
+  const latest = /^(-?[\d.]+)\s*(°C|degree_Celsius)\s+on\s+(\d{4}-\d{2}-\d{2})\s+\(latest daily analysis\)/.exec(fact.value);
+  if (latest) {
+    const at = instant(`${latest[3]} 12:00 UTC`);
+    base.value = `${reading(Number(latest[1]), 1)} ${unit(latest[2])}`;
+    // A daily analysis has no meaningful time of day, so show only its date.
+    base.time = `Latest daily analysis, ${at ? at.toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }) : latest[3]}`;
+    return base;
+  }
   if (fact.status === "unavailable" && /^unavailable$/i.test(fact.value.trim())) return base;
   base.descriptor = humanizeText(
     fact.value

@@ -347,7 +347,10 @@ def main():
                     break
                 try:
                     with connection() as db:
-                        result = ingest(db, store(), product)
+                        # HYCOM runs arrive about a day late, so currents need 72 h to cover
+                        # tomorrow; 48 h does the same for the six-hourly GFS cycles.
+                        hours = 72 if product == "hycom_espc" else 48
+                        result = ingest(db, store(), product, hours=hours)
                     print(
                         json.dumps(
                             {

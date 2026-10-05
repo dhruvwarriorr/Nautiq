@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { ModelRelease, ModelMetric } from "../../../lib/expected";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Model · Nautiq" };
 export const dynamic = "force-dynamic";
 const number = (n: number | null) =>
   n === null ? "Unavailable" : n.toFixed(3);

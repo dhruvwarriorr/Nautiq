@@ -7,6 +7,7 @@ import {
 } from "../../lib/science";
 import { PageHead } from "../components/ui/Bits";
 import { when } from "../../lib/humanize";
+export const metadata = { title: "Data · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Data() {
   const [sources, rejections, snapshots] = await Promise.all([

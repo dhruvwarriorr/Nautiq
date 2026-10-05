@@ -148,7 +148,7 @@ Profile pages now summarise their stored ranks as Typical / Elevated / Unusual /
 | Python ML runtime | Pinned native residual candidates and historical fallback via typed gRPC |
 | MLflow | Persistent experiment metrics, exact native bundles and registry versions |
 | Python field runtime | Independent read-only Zarr sampling and native raster tiles |
-| Optional field ingestion | Bounded hourly provider refresh, enabled with the `fields-live` profile |
+| Field ingestion | Bounded hourly provider refresh (`field-ingestion`), started by default |
 | PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
 | MinIO | Private `nautiq` S3 bucket, initialized idempotently |
 | Redis | Cache runtime |
@@ -222,7 +222,7 @@ make phase8-verify phase8-reliability phase8-smoke
 
 Forecasts default to nine valid times across 24 hours. Point/route interpolation preserves masked support and rejects out-of-horizon queries; tiles retain transparent land. Wind/current speed and directions derive from components. NOAA PERPW is primary wave mean period. OISST is a daily blended analysis, not an independent satellite validation of Argo. Source-age budgets and sampled extrema remain prototype evidence, without event or trip verdicts.
 
-`field-refresh` performs one explicit acquisition. An optional separate hourly worker is enabled with `SOURCE_GIT_COMMIT=$(git rev-parse HEAD) docker compose --profile fields-live up -d --build field-ingestion`. Default startup leaves it off. A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.
+`field-refresh` performs one explicit acquisition. The separate hourly `field-ingestion` worker starts with the default stack and keeps 48 h of GFS and 72 h of HYCOM forecast. A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.
 
 ## Persistent event evidence
 
@@ -257,7 +257,7 @@ make advisory-maintain
 make phase10-verify phase10-reliability phase10-smoke
 ```
 
-Default startup does not poll advisory sources. For an explicit local continuous poll, run `docker compose run --rm advisory-worker python -m nautiq_ml.advisories.pipeline refresh --watch`. Feed transport health never establishes an absence of relevant official warnings. Diagnostic evidence availability and official operational approval are distinct capabilities.
+Default startup runs `advisory-poller`, which polls the registered advisory sources continuously. Feed transport health never establishes an absence of relevant official warnings. Diagnostic evidence availability and official operational approval are distinct capabilities.
 
 ## Timed trip evidence
 

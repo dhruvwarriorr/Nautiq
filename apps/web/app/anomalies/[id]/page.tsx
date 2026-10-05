@@ -3,6 +3,7 @@ import {evidence} from "../../../lib/science";
 import {labels,n,title,type AnomalyRelease} from "../../../lib/anomaly";
 import DepthCurve from "../DepthCurve";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Unusual reading · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Model({params}: {params: Promise<{id: string}>}) {
  const {id} = await params;

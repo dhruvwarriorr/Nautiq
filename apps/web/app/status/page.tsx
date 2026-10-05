@@ -4,6 +4,7 @@ import { ago, label, sourceName, when } from "../../lib/humanize";
 import { PageHead, TechDetail, Notice } from "../components/ui/Bits";
 import Icon from "../components/ui/Icon";
 import { Signal } from "../components/ui/Signal";
+export const metadata = { title: "System status · Nautiq" };
 export const dynamic = "force-dynamic";
 type Report = {
   status: string;

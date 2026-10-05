@@ -50,6 +50,7 @@ type Config struct {
 	MaxExpanded     int64                                      `json:"max_expanded_index_bytes"`
 	MaxLine         int                                        `json:"max_index_line_bytes"`
 	Deadline        int                                        `json:"request_deadline_seconds"`
+	IndexDeadline   int                                        `json:"index_deadline_seconds"`
 	Overlap         int                                        `json:"overlap_hours"`
 	InitialDays     int                                        `json:"initial_update_lookback_days"`
 	ObservationDays int                                        `json:"observation_lookback_days"`
@@ -104,7 +105,7 @@ func main() {
 		panic("source configuration unavailable")
 	}
 	var cfg Config
-	if json.Unmarshal(cfgBytes, &cfg) != nil || cfg.SourceID != "argo_gdac" || cfg.IndexURL != "https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz" || cfg.BaseURL != "https://data-argo.ifremer.fr/dac/" || cfg.Workers < 1 || cfg.Workers > 4 || cfg.MaxProfiles < 1 || cfg.MaxProfiles > 200 || cfg.MaxCandidates < cfg.MaxProfiles || cfg.MaxCandidates > 10000 || cfg.MaxBytes < 1 || cfg.MaxBytes > 67108864 || cfg.MaxExpanded > 536870912 || cfg.MaxExpanded < 1 || cfg.Deadline < 1 || cfg.Deadline > 120 || cfg.Poll < 60 || cfg.Reconcile < cfg.Poll || cfg.MaxLine < 128 || cfg.MaxLine > 4096 || cfg.Domain.West >= cfg.Domain.East || cfg.Domain.South >= cfg.Domain.North {
+	if json.Unmarshal(cfgBytes, &cfg) != nil || cfg.SourceID != "argo_gdac" || cfg.IndexURL != "https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz" || cfg.BaseURL != "https://data-argo.ifremer.fr/dac/" || cfg.Workers < 1 || cfg.Workers > 4 || cfg.MaxProfiles < 1 || cfg.MaxProfiles > 200 || cfg.MaxCandidates < cfg.MaxProfiles || cfg.MaxCandidates > 10000 || cfg.MaxBytes < 1 || cfg.MaxBytes > 67108864 || cfg.MaxExpanded > 536870912 || cfg.MaxExpanded < 1 || cfg.Deadline < 1 || cfg.Deadline > 120 || cfg.IndexDeadline != 0 && (cfg.IndexDeadline < cfg.Deadline || cfg.IndexDeadline > 3600) || cfg.Poll < 60 || cfg.Reconcile < cfg.Poll || cfg.MaxLine < 128 || cfg.MaxLine > 4096 || cfg.Domain.West >= cfg.Domain.East || cfg.Domain.South >= cfg.Domain.North {
 		panic("invalid source configuration")
 	}
 	db, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
@@ -205,6 +206,90 @@ func secureClient() *http.Client {
 			return nil, errors.New("connect_failed")
 		}}
 	return &http.Client{Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("redirect_denied") }}
+}
+
+// fetchIndex downloads the large global index. Slow links cannot finish it inside the per-object
+// deadline, so it gets its own deadline and resumes an interrupted body with a validated Range request.
+func (a *App) fetchIndex(ctx context.Context, headers map[string]string) ([]byte, http.Header, int, error) {
+	deadline := a.cfg.IndexDeadline
+	if deadline == 0 {
+		return a.fetch(ctx, a.cfg.IndexURL, headers)
+	}
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(deadline)*time.Second)
+	defer cancel()
+	var buf []byte
+	var first http.Header
+	var total int64 = -1
+	for attempt := 0; attempt < 8; attempt++ {
+		select {
+		case <-ctx.Done():
+			return nil, nil, 0, errors.New("fetch_deadline")
+		case <-a.gate:
+		}
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, a.cfg.IndexURL, nil)
+		req.Header.Set("User-Agent", "Nautiq-Argo/0.1")
+		req.Header.Set("Accept-Encoding", "identity")
+		if len(buf) == 0 {
+			for k, v := range headers {
+				req.Header.Set(k, v)
+			}
+		} else {
+			// If-Range makes the server send the whole new object if it changed mid-download.
+			req.Header.Set("Range", "bytes="+strconv.Itoa(len(buf))+"-")
+			req.Header.Set("If-Range", first.Get("ETag"))
+		}
+		resp, err := a.http.Do(req)
+		if err != nil {
+			if !a.backoff(ctx, attempt) {
+				return nil, nil, 0, errors.New("fetch_deadline")
+			}
+			continue
+		}
+		switch {
+		case resp.StatusCode == 304 && len(buf) == 0:
+			resp.Body.Close()
+			return nil, resp.Header, 304, nil
+		case resp.StatusCode == 200:
+			if resp.ContentLength > a.cfg.MaxBytes {
+				resp.Body.Close()
+				return nil, nil, 0, errors.New("object_too_large")
+			}
+			buf, first, total = buf[:0], resp.Header, resp.ContentLength
+		case resp.StatusCode == 206 && len(buf) > 0 && strings.HasPrefix(resp.Header.Get("Content-Range"), "bytes "+strconv.Itoa(len(buf))+"-"):
+		case resp.StatusCode == 429 || resp.StatusCode >= 500:
+			resp.Body.Close()
+			if !a.backoff(ctx, attempt) {
+				return nil, nil, 0, errors.New("fetch_deadline")
+			}
+			continue
+		default:
+			resp.Body.Close()
+			return nil, nil, 0, fmt.Errorf("provider_http_%d", resp.StatusCode)
+		}
+		chunk, readErr := io.ReadAll(io.LimitReader(resp.Body, a.cfg.MaxBytes+1-int64(len(buf))))
+		resp.Body.Close()
+		buf = append(buf, chunk...)
+		if int64(len(buf)) > a.cfg.MaxBytes {
+			return nil, nil, 0, errors.New("object_too_large")
+		}
+		if readErr == nil && len(buf) > 0 && (total < 0 || int64(len(buf)) == total) {
+			return buf, first, 200, nil
+		}
+		if first.Get("ETag") == "" {
+			buf = buf[:0] // cannot resume safely without a validator
+		}
+		slog.Warn("index download interrupted; resuming", "received_bytes", len(buf), "total_bytes", total)
+	}
+	return nil, nil, 0, errors.New("transport_retries_exhausted")
+}
+
+func (a *App) backoff(ctx context.Context, attempt int) bool {
+	select {
+	case <-ctx.Done():
+		return false
+	case <-time.After(time.Duration(1<<min(attempt, 5)) * time.Second):
+		return true
+	}
 }
 
 func (a *App) fetch(ctx context.Context, uri string, headers map[string]string) ([]byte, http.Header, int, error) {
@@ -365,7 +450,7 @@ func (a *App) register(ctx context.Context, run string, c Candidate, kind string
 }
 
 func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute+time.Duration(original.cfg.IndexDeadline)*time.Second)
 	defer cancel()
 	copy := *original
 	a := &copy
@@ -448,7 +533,7 @@ func (original *App) ingest(ctx context.Context, full bool) (runErr error) {
 		headers["If-None-Match"] = etag
 		headers["If-Modified-Since"] = modified
 	}
-	data, h, status, err := a.fetch(ctx, a.cfg.IndexURL, headers)
+	data, h, status, err := a.fetchIndex(ctx, headers)
 	if err != nil {
 		return err
 	}

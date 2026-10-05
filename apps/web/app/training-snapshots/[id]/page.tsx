@@ -1,5 +1,6 @@
 import { evidence, type Snapshot } from "../../../lib/science";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Training snapshot · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function SnapshotPage({
   params,

@@ -3,6 +3,7 @@ import {evidence} from "../../lib/science";
 import type {FieldRelease} from "../../lib/fields";
 import { PageHead } from "../components/ui/Bits";
 import { when } from "../../lib/humanize";
+export const metadata = { title: "Forecasts and analyses · Nautiq" };
 export const dynamic = "force-dynamic";
 const productNames: Record<string,string> = {noaa_oisst: "SST analysis", noaa_gfs_wave: "Wave forecasts", noaa_gfs_weather: "Wind and weather", hycom_espc: "Surface currents"};
 export default async function Fields() {

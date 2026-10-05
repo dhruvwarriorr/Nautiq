@@ -3,6 +3,7 @@ import {evidence} from "../../lib/science";
 import {title, type AnomalySummary} from "../../lib/anomaly";
 import { PageHead } from "../components/ui/Bits";
 import { when } from "../../lib/humanize";
+export const metadata = { title: "Unusual readings · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Anomalies() {
   const data = await evidence<{items: AnomalySummary[]}>("/anomaly-releases?limit=50");

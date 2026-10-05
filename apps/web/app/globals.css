@@ -861,7 +861,7 @@ main.map-main { max-width: none; padding: 0 0 80px; }
 .trip-preview .route-diagram { margin: 0; }
 .stops { list-style: none; margin: 0; padding: 0; position: relative; }
 .stops::before { content: ""; position: absolute; left: 19px; top: 24px; bottom: 24px; border-left: 2px dashed var(--line-2); }
-.stop { position: relative; display: grid; grid-template-columns: 40px 1fr 40px; gap: 14px; align-items: start; padding: 10px 0; }
+.stop { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 14px; align-items: start; padding: 10px 0; }
 .stop-mark { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); font-weight: 800; margin-top: 30px; }
 .stop:first-child .stop-mark { background: var(--ink); color: var(--paper); box-shadow: none; }
 .stop-fields { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 10px; padding: 14px 16px; background: var(--paper); border-radius: var(--radius-lg); box-shadow: inset 0 0 0 1px var(--line); }
@@ -879,7 +879,8 @@ main.map-main { max-width: none; padding: 0 0 80px; }
   .trip-route, .trip-result .split { grid-template-columns: 1fr; }
   .trip-preview { position: static; order: -1; }
 }
-@media (max-width: 640px) { .stop-fields { grid-template-columns: 1fr 1fr; } .stop-fields label:last-child { grid-column: 1 / -1; } }
+@media (max-width: 640px) { .stop-fields { grid-template-columns: 1fr 1fr; } .stop-fields label:last-child { grid-column: 1 / -1; } .stop { gap: 8px; } }
+.stop-fields input { min-width: 0; max-width: 100%; }
 .method { padding: 30px 0 8px; border-bottom: 1px solid var(--line); }
 .method h2 { font-size: 34px; margin-bottom: 10px; }
 .method p { color: var(--ink-2); font-size: 18px; margin: 0 0 6px; }

@@ -26,8 +26,9 @@ class Acquisition:
         self.store = Store(
             Path(directory),
             {
-                "request_deadline_seconds": 60,
-                "timeout_seconds": 20,
+                # HYCOM's subset service builds the file before it answers; 60 s was too short.
+                "request_deadline_seconds": 300,
+                "timeout_seconds": 150,
                 "attempts": 2,
                 "max_object_bytes": POLICY["limits"]["raw_bytes"],
                 "max_total_download_bytes": POLICY["limits"]["total_download_bytes"],
@@ -386,7 +387,8 @@ def hycom(acquire, cycle, leads, bbox):
             "south": south,
             "west": west,
             "east": east,
-            "horizStride": 1,
+            # Every second point (~1/6°) keeps a 72 h current horizon inside the grid budget.
+            "horizStride": 2,
             "time_start": iso(start.timestamp()),
             "time_end": iso(end.timestamp()),
             "timeStride": 1,

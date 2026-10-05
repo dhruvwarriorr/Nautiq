@@ -205,6 +205,42 @@ func advisoryFact(v advisoryView, href string) Fact {
 	return Fact{Label: "Official warnings", Value: "Unknown. This is not an all-clear.", Detail: "Why: " + summarizeReasons(v.Unknown) + ".", Status: "unknown", Href: href}
 }
 
+// latestAnalysis samples a daily-analysis variable at the most recent days it can cover.
+func (s *Server) latestAnalysis(r *http.Request, plan product.QueryPlan, variable string) (float64, time.Time, bool) {
+	day := time.Now().UTC().Truncate(24 * time.Hour)
+	for back := 0; back <= 3; back++ {
+		at := day.AddDate(0, 0, -back).Add(12 * time.Hour)
+		if at.After(time.Now()) {
+			continue
+		}
+		raw, status := compose(r, s.conditions, url.Values{"latitude": {fstr(plan.Place.Latitude)}, "longitude": {fstr(plan.Place.Longitude)}, "time": {at.Format(time.RFC3339)}})
+		if status != 200 {
+			return 0, time.Time{}, false
+		}
+		var c struct {
+			Fields []condField `json:"fields"`
+		}
+		if json.Unmarshal(raw, &c) != nil {
+			return 0, time.Time{}, false
+		}
+		for _, f := range c.Fields {
+			if f.Variable != variable || f.Cycle != nil {
+				continue
+			}
+			for _, t := range f.Timeline {
+				if t.Result != nil && t.Result.Value != nil {
+					when, e := time.Parse(time.RFC3339Nano, t.Result.At)
+					if e != nil {
+						when = at
+					}
+					return *t.Result.Value, when, true
+				}
+			}
+		}
+	}
+	return 0, time.Time{}, false
+}
+
 func (s *Server) conditionsAnswer(r *http.Request, plan product.QueryPlan, a *Answer) {
 	start := plan.Window.Start
 	raw, status := compose(r, s.conditions, url.Values{"latitude": {fstr(plan.Place.Latitude)}, "longitude": {fstr(plan.Place.Longitude)}, "time": {start}})
@@ -273,6 +309,14 @@ func (s *Server) conditionsAnswer(r *http.Request, plan product.QueryPlan, a *An
 		cycle := "no forecast cycle (analysis)"
 		if f.Cycle != nil {
 			cycle = "forecast cycle " + f.Cycle.UTC().Format("2006-01-02 15:04 UTC")
+		}
+		if first == nil && f.Cycle == nil {
+			// Daily analyses arrive a day late; show the newest one, clearly dated, instead of nothing.
+			if v, at, ok := s.latestAnalysis(r, plan, v); ok {
+				valued++
+				a.Facts = append(a.Facts, Fact{Label: meta[0], Value: fmt.Sprintf("%s %s on %s (latest daily analysis)", number(v), meta[1], at.UTC().Format("2006-01-02")), Detail: "Daily analyses are published about a day late, so this is the most recent one, not a forecast for your time. Sampled at the place’s catalog point.", Status: "stale", Href: "/fields"})
+				continue
+			}
 		}
 		if first == nil {
 			if f.Cycle == nil && strings.Contains(reason, "retained forecast") {

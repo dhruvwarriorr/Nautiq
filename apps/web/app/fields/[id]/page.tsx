@@ -3,6 +3,7 @@ import type {FieldRelease} from "../../../lib/fields";
 import FieldViewer from "../FieldViewer";
 import { PageHead } from "../../components/ui/Bits";
 import { when } from "../../../lib/humanize";
+export const metadata = { title: "Forecast release · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function FieldPage({params}: {params: Promise<{id: string}>}) {
   const {id} = await params;

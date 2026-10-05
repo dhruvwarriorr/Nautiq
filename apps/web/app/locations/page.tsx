@@ -7,6 +7,7 @@ import { toReading, when, type Reading } from "../../lib/humanize";
 import { PageHead, Empty } from "../components/ui/Bits";
 import Icon from "../components/ui/Icon";
 import { Signal } from "../components/ui/Signal";
+export const metadata = { title: "Places · Nautiq" };
 export const dynamic = "force-dynamic";
 
 async function answer(slug: string): Promise<AnswerResponse | null> {

@@ -6,6 +6,7 @@ import { coords, label, sender, short, when } from "../../../lib/humanize";
 import { PageHead, TechDetail, Notice } from "../../components/ui/Bits";
 import Icon from "../../components/ui/Icon";
 import { Signal } from "../../components/ui/Signal";
+export const metadata = { title: "Warning bulletin · Nautiq" };
 const currentTime = () => Date.now();
 export const dynamic = "force-dynamic";
 

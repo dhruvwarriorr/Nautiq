@@ -42,6 +42,11 @@ async function summary(slug: string): Promise<AnswerResponse | null> {
   }
 }
 export const dynamic = "force-dynamic";
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const name = slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  return { title: `${name} · Nautiq` };
+}
 export default async function Location({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const catalog = await evidence<ProductPolicy>("/product-policy");

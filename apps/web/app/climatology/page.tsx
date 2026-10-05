@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../lib/science";
 import type { ReferenceSummary } from "../../lib/climatology";
 import { PageHead } from "../components/ui/Bits";
+export const metadata = { title: "Normal conditions · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function References() {
   const [selected, releases] = await Promise.all([

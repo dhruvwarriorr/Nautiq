@@ -5,7 +5,7 @@
  "domain":{"west":45,"south":0,"east":100,"north":30},
  "workers":3,"max_profiles_per_run":20,"max_discovery_candidates":512,
  "max_object_bytes":67108864,"max_expanded_index_bytes":536870912,
- "max_index_line_bytes":4096,"request_deadline_seconds":120,
+ "max_index_line_bytes":4096,"request_deadline_seconds":120,"index_deadline_seconds":3000,
  "overlap_hours":24,"initial_update_lookback_days":7,"observation_lookback_days":366,
  "poll_seconds":21600,"reconciliation_seconds":86400,
  "qc_version":"argo-display-1-v1","production_approved":false

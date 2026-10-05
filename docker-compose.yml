@@ -102,7 +102,6 @@ services:
     depends_on:
       postgres: {condition: service_healthy}
       storage-init: {condition: service_completed_successfully}
-    profiles: [fields-live]
     read_only: true
     tmpfs: ['/tmp:size=256m,mode=1777']
     mem_limit: 1g
@@ -123,6 +122,20 @@ services:
     depends_on:
       postgres: {condition: service_healthy}
       storage-init: {condition: service_completed_successfully}
+  advisory-poller:
+    build: {context: ., dockerfile: ml/Advisories.Dockerfile}
+    environment: *field_environment
+    command: [python, -m, nautiq_ml.advisories.pipeline, refresh, --watch]
+    read_only: true
+    tmpfs: ['/tmp:size=128m,mode=1777']
+    mem_limit: 512m
+    cpus: 1
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres: {condition: service_healthy}
+      storage-init: {condition: service_completed_successfully}
+    restart: unless-stopped
   event-worker:
     build: {context: ., dockerfile: ml/Events.Dockerfile}
     environment: *field_environment
@@ -192,6 +205,7 @@ services:
       NAUTIQ_LLM_API_KEY: ${NAUTIQ_LLM_API_KEY:-}
       NAUTIQ_LLM_MODEL: ${NAUTIQ_LLM_MODEL:-}
       NAUTIQ_LLM_BASE_URL: ${NAUTIQ_LLM_BASE_URL:-}
+      NAUTIQ_LLM_API_FORMAT: ${NAUTIQ_LLM_API_FORMAT:-}
       NAUTIQ_LLM_RATE_PER_MINUTE: ${NAUTIQ_LLM_RATE_PER_MINUTE:-}
     ports: ['127.0.0.1:${API_PORT:-8080}:8080']
     depends_on:

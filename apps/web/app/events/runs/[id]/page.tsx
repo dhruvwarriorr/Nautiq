@@ -4,6 +4,7 @@ import { eventLabel, type EventRun } from "../../../../lib/events";
 import EventMap from "../../EventMap";
 import { PageHead } from "../../../components/ui/Bits";
 import { when } from "../../../../lib/humanize";
+export const metadata = { title: "Event detection run · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function RunPage({
   params,

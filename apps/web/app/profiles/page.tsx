@@ -2,6 +2,7 @@ import Link from "next/link";
 import { apiURL, observationWindow, type Page } from "../../lib/profiles";
 import { PageHead } from "../components/ui/Bits";
 import { when } from "../../lib/humanize";
+export const metadata = { title: "Float profiles · Nautiq" };
 export const dynamic = "force-dynamic";
 type Search = { [key: string]: string | string[] | undefined };
 function date(value: string | undefined, fallback: string) {

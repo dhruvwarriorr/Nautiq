@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { IntervalRelease, IntervalMetric, Coverage } from "../../../lib/uncertainty";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Uncertainty release · Nautiq" };
 export const dynamic = "force-dynamic";
 const n = (v: number | null | undefined) => v == null ? "Unavailable" : v.toFixed(3);
 const title = (v: string) => v === "temperature_c" ? "Temperature (°C)" : "Practical salinity (PSS-78)";

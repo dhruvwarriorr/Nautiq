@@ -6,6 +6,7 @@ import {
   type EventDataset,
 } from "../../lib/events";
 import { PageHead } from "../components/ui/Bits";
+export const metadata = { title: "Regional events · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Events() {
   const [runs, baselines] = await Promise.all([

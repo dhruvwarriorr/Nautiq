@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../../../lib/science";
 import type { EventDataset } from "../../../../lib/events";
 import { PageHead } from "../../../components/ui/Bits";
+export const metadata = { title: "Event dataset · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Dataset({
   params,

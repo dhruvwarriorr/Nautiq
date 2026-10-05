@@ -1,5 +1,6 @@
 import SignIn from "./SignIn";
 import { PageHead } from "../components/ui/Bits";
+export const metadata = { title: "Sign in · Nautiq" };
 export default async function SignInPage({
   searchParams,
 }: {

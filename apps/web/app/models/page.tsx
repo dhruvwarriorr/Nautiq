@@ -3,6 +3,7 @@ import { evidence } from "../../lib/science";
 import type { ModelSummary } from "../../lib/expected";
 import ModelBrief from "../components/ModelBrief";
 import { PageHead } from "../components/ui/Bits";
+export const metadata = { title: "Models · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Models() {
   const [selected, models] = await Promise.all([

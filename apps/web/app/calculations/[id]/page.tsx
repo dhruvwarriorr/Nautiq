@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence, type Calculation } from "../../../lib/science";
 import { PageHead } from "../../components/ui/Bits";
 import { when } from "../../../lib/humanize";
+export const metadata = { title: "Calculation · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function CalculationPage({
   params,

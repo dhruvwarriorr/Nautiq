@@ -2,6 +2,7 @@ import Link from "next/link";
 import { evidence } from "../../../lib/science";
 import type { Reference, Metric } from "../../../lib/climatology";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "Normal conditions · Nautiq" };
 export const dynamic = "force-dynamic";
 const number = (value: number | null) =>
   value == null ? "Unavailable" : value.toFixed(3);

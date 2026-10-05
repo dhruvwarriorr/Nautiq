@@ -13,6 +13,7 @@ import { evidence, type Revision, type Statistics } from "../../../lib/science";
 import { apiURL, type Profile } from "../../../lib/profiles";
 import { PageHead, TechDetail } from "../../components/ui/Bits";
 import { ago, coords, reading, when } from "../../../lib/humanize";
+export const metadata = { title: "Float profile · Nautiq" };
 export const dynamic = "force-dynamic";
 export default async function Detail({
   params,

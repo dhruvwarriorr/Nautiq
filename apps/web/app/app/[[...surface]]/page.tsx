@@ -8,6 +8,7 @@ import PrivateWorkspace from "../../components/PrivateWorkspace";
 import OceanMap from "../../map/OceanMap";
 import type { MapOverview } from "../../../lib/product";
 import { PageHead } from "../../components/ui/Bits";
+export const metadata = { title: "My workspace · Nautiq" };
 const titles: Record<string, string> = {
   overview: "Your workspace",
   map: "Your map",
