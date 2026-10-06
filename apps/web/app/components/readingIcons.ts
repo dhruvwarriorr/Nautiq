@@ -5,7 +5,6 @@ export const measureIcon: Record<Measure, IconName> = {
   wind: "windsock",
   current: "current",
   sst: "thermo",
-  warnings: "pennant",
   float: "float",
   normal: "compass",
   other: "info",

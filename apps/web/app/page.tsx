@@ -12,7 +12,6 @@ type Operations = {
   as_of: string;
   sources: {
     fields: { product_id: string; fresh: boolean; cycle: string | null; valid_time_end: string | null; status: string }[];
-    advisories: { source_id: string; transport: string; checked_at: string | null }[];
   };
 };
 
@@ -26,43 +25,45 @@ const fallbackPlaces: Place[] = [
 
 const suggestions = [
   "How are the waves near Goa tomorrow morning?",
-  "Is there an official warning near Kerala?",
+  "What is the wind near Kerala tonight?",
   "Is it a good time to go fishing near Mumbai tomorrow?",
 ];
 
 function marks(ops: Operations | null, floats: MapOverview | null): HoistMark[] {
   const now = new Date();
-  let warnings: HoistMark = {
-    key: "warnings", label: "Official warnings", status: "unknown", word: "Unknown",
-    note: "Feed status unavailable. Never read this as an all-clear.", href: "/advisories",
-  };
   let forecasts: HoistMark = {
     key: "forecasts", label: "Forecasts", status: "unknown", word: "Unknown", note: "Forecast status unavailable.", href: "/map",
   };
+  let sst: HoistMark = {
+    key: "sst", label: "Sea temperature", status: "unknown", word: "Unknown", note: "Sea temperature status unavailable.", href: "/map",
+  };
   if (ops) {
-    const off = ops.sources.advisories.filter((a) => a.transport !== "healthy");
-    warnings = {
-      ...warnings,
-      note: off.length
-        ? `${off.length === ops.sources.advisories.length ? "No alert feed" : "One alert feed"} is fully connected. Check your place; this is not an all-clear.`
-        : "Feeds are connected, but marine coverage isn’t verified. Check your place.",
-    };
-    const fresh = ops.sources.fields.filter((f) => f.fresh).length;
-    const total = ops.sources.fields.length;
-    const latest = ops.sources.fields.map((f) => f.cycle).filter(Boolean).sort().at(-1);
-    const status: Status = fresh === total && total ? "available" : fresh ? "stale" : "unavailable";
+    const layers = ops.sources.fields.filter((f) => f.product_id !== "cmems_sst");
+    const fresh = layers.filter((f) => f.fresh).length;
+    const latest = layers.map((f) => f.cycle).filter(Boolean).sort().at(-1);
+    const status: Status = fresh === layers.length && layers.length ? "available" : fresh ? "stale" : "unavailable";
     forecasts = {
       ...forecasts,
       status,
       word: status === "available" ? "Up to date" : status === "stale" ? "Partly out of date" : "Not available",
-      note: `${fresh} of ${total} layers fresh${latest ? ` · issued ${when(latest, now)}` : ""}`,
+      note: `${fresh} of ${layers.length} layers fresh${latest ? ` · issued ${when(latest, now)}` : ""}`,
     };
+    const temp = ops.sources.fields.find((f) => f.product_id === "cmems_sst");
+    if (temp) {
+      const ok = temp.status === "ready" && temp.fresh;
+      sst = {
+        ...sst,
+        status: ok ? "available" : "stale",
+        word: ok ? "Up to date" : "Out of date",
+        note: `Copernicus forecast${temp.cycle ? ` · updated ${when(temp.cycle, now)}` : ""}`,
+      };
+    }
   }
   const newest = floats?.profiles.map((p) => p.observed_at).sort().at(-1);
   const obs: HoistMark = newest
     ? { key: "floats", label: "Float readings", status: "available", word: "Reporting", note: `Newest reading ${ago(newest, now)}`, href: "/research" }
     : { key: "floats", label: "Float readings", status: "unavailable", word: "None recent", note: "No float readings in the last 30 days.", href: "/research" };
-  return [warnings, forecasts, obs];
+  return [forecasts, sst, obs];
 }
 
 export default async function Home() {
@@ -89,7 +90,7 @@ export default async function Home() {
               What is <span>the sea doing?</span>
             </h1>
             <p className="hero-sub">
-              Plain answers for India&apos;s coast: waves, wind, currents and official warnings, with the gaps shown
+              Plain answers for India&apos;s coast: waves, wind, currents and sea temperature, with the gaps shown
               honestly.
             </p>
             <form action="/ask" method="get" role="search" aria-label="Ask Nautiq">
@@ -100,7 +101,7 @@ export default async function Home() {
                 <span className="ask-icon">
                   <Icon name="hailer" size={24} />
                 </span>
-                <input id="home-q" name="q" required maxLength={512} autoComplete="off" placeholder="Ask about waves, wind or warnings" />
+                <input id="home-q" name="q" required maxLength={512} autoComplete="off" placeholder="Ask about waves, wind or a trip" />
                 <button className="ask-go">
                   Ask <Icon name="arrow" size={18} />
                 </button>
@@ -136,9 +137,9 @@ export default async function Home() {
           <h2 id="ways">Three more ways in</h2>
         </div>
         <div className="doors">
-          <DoorLink href="/map" icon="chart" title="Ocean map" text="See waves, wind and currents across the whole coast, with floats and official areas." />
+          <DoorLink href="/map" icon="chart" title="Ocean map" text="See waves, wind and currents across the whole coast, with float readings." />
           <DoorLink href="/trips" icon="voyage" title="Plan a trip" text="Enter your route out and back. Nautiq checks every leg and lists what it couldn’t check." />
-          <DoorLink href="/advisories" icon="pennant" title="Official warnings" text="Bulletins from Indian agencies, in their own words, with when they start and end." />
+          <DoorLink href="/compare" icon="buoy" title="Compare places" text="Put two places side by side before you choose where to go." />
         </div>
       </section>
 
@@ -165,8 +166,8 @@ export default async function Home() {
             <p>No data for this place or time. Nothing is filled in.</p>
           </li>
           <li>
-            <Signal status="warning">Official warning</Signal>
-            <p>An agency bulletin applies. It always comes first.</p>
+            <Signal status="warning">Too rough</Signal>
+            <p>A trip goes past your limits somewhere on the route.</p>
           </li>
         </ul>
       </section>
@@ -183,11 +184,11 @@ export default async function Home() {
           <ol>
             <li>
               <SignalShape status="warning" size={20} />
-              <span>It won&apos;t call a trip safe. Trip limits are still being reviewed by marine and legal experts.</span>
+              <span>It won&apos;t call a trip safe. It checks the forecast against your limits; you still decide.</span>
             </li>
             <li>
               <SignalShape status="unknown" size={20} />
-              <span>It won&apos;t treat a missing warning as no warning. Official marine coverage isn&apos;t verified yet.</span>
+              <span>It doesn&apos;t track official warnings. Check INCOIS and IMD before you go.</span>
             </li>
             <li>
               <SignalShape status="unavailable" size={20} />

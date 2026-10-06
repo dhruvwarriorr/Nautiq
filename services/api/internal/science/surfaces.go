@@ -119,7 +119,7 @@ func (s *Server) conditions(w http.ResponseWriter, r *http.Request) {
 		State    string            `json:"state"`
 		Timeline []json.RawMessage `json:"timeline"`
 	}
-	specifications := [][2]string{{"noaa_oisst", "sst_c"}, {"noaa_gfs_wave", "wave_height_m"}, {"noaa_gfs_weather", "wind_speed_m_s"}, {"hycom_espc", "current_speed_m_s"}}
+	specifications := [][2]string{{"cmems_sst", "sst_c"}, {"cmems_wave", "wave_height_m"}, {"noaa_gfs_weather", "wind_speed_m_s"}, {"cmems_currents", "current_speed_m_s"}}
 	results := make([]field, len(specifications))
 	var wg sync.WaitGroup
 	for i, spec := range specifications {
@@ -143,14 +143,10 @@ func (s *Server) conditions(w http.ResponseWriter, r *http.Request) {
 			results[i] = item
 		}(i, spec)
 	}
-	advisory, advisoryStatus := compose(r, s.advisoryState, url.Values{"latitude": {fstr(lat)}, "longitude": {fstr(lon)}, "start": {at.Format(time.RFC3339Nano)}, "end": {at.Add(24 * time.Hour).Format(time.RFC3339Nano)}})
 	wg.Wait()
-	if advisoryStatus != 200 {
-		advisory = product.JSON(map[string]any{"status": "unknown", "as_of": asOf, "unknown_reasons": []string{"advisory_evidence_unavailable"}})
-	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-store")
-	json.NewEncoder(w).Encode(map[string]any{"requested_point": map[string]float64{"latitude": lat, "longitude": lon}, "requested_time": at, "as_of": asOf, "nearby_profiles": json.RawMessage(nearby), "fields": results, "advisory": advisory, "expected_at_point": map[string]any{"state": "unavailable", "reason": "no_validated_profile_collocation"}, "confidence": map[string]any{"state": "unavailable", "reason": "confidence_policy_unvalidated"}, "limitations": []string{"Nearby observations are shown at their actual positions, times and depths; none is a surface value or observation at the requested point.", "Four retained forecast samples are a timeline preview, not a best-window or trip assessment.", "Field support, stale cycles, masks and horizons remain explicit; no numeric value is substituted for missing data.", "Official marine completeness and operational science/trip approvals remain unproven."}})
+	json.NewEncoder(w).Encode(map[string]any{"requested_point": map[string]float64{"latitude": lat, "longitude": lon}, "requested_time": at, "as_of": asOf, "nearby_profiles": json.RawMessage(nearby), "fields": results, "expected_at_point": map[string]any{"state": "unavailable", "reason": "no_validated_profile_collocation"}, "confidence": map[string]any{"state": "unavailable", "reason": "confidence_policy_unvalidated"}, "limitations": []string{"Nearby observations are shown at their actual positions, times and depths; none is a surface value or observation at the requested point.", "Four retained forecast samples are a timeline preview, not a best-window or trip assessment.", "Field support, stale cycles, masks and horizons remain explicit; no numeric value is substituted for missing data."}})
 }
 func (s *Server) mapOverview(w http.ResponseWriter, r *http.Request) {
 	q, ok := query(w, r, "bbox", "start", "end")
@@ -290,37 +286,7 @@ func (s *Server) mapOverview(w http.ResponseWriter, r *http.Request) {
 		eventState = "unavailable"
 		events = []map[string]any{}
 	}
-	snapshot, e := s.advisorySnapshot(r)
-	advisoryState := "unknown"
-	polygons := []map[string]any{}
-	circles := []map[string]any{}
-	if e == nil {
-		for _, bulletin := range snapshot.Items {
-			if !bulletin.Message.Operational || bulletin.Lifecycle.State == "superseded" || bulletin.Lifecycle.State == "cancelled" {
-				continue
-			}
-			for _, info := range bulletin.Message.Infos {
-				if info.Effective.After(end) || info.Expires != nil && !info.Expires.After(start) {
-					continue
-				}
-				for _, area := range info.Areas {
-					for _, circle := range area.Circles {
-						if len(circles) >= 100 {
-							break
-						}
-						circles = append(circles, map[string]any{"revision_id": bulletin.Message.RevisionID, "event": info.Event, "severity": info.Severity, "effective": info.Effective, "expires": info.Expires, "circle": circle})
-					}
-					for _, geometry := range area.Polygons {
-						if len(polygons) >= 100 {
-							break
-						}
-						polygons = append(polygons, map[string]any{"revision_id": bulletin.Message.RevisionID, "event": info.Event, "severity": info.Severity, "effective": info.Effective, "expires": info.Expires, "geometry": geometry})
-					}
-				}
-			}
-		}
-	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-store")
-	json.NewEncoder(w).Encode(map[string]any{"as_of": time.Now().UTC(), "bbox": bounds, "start": start, "end": end, "profiles": json.RawMessage(profiles), "fields": json.RawMessage(fields), "events": events, "event_state": eventState, "advisory_polygons": polygons, "advisory_circles": circles, "advisory_sources": snapshot.Sources, "advisory_state": advisoryState, "unavailable_layers": product.Catalog().Unavailable, "limitations": []string{"At most 200 profiles, 100 retained event components and 100 advisory polygons/circles are plotted. Tables and exact evidence links remain available.", "Events are frozen diagnostic report candidates. No live event absence or operational warning completeness is inferred.", "Unknown/missing/text-only advisory areas remain in the authority explorer; polygons alone never establish an all-clear.", "Raster controls use original native cells and field release masks. No unsupported map confidence or interpolated profile surface is drawn."}})
+	json.NewEncoder(w).Encode(map[string]any{"as_of": time.Now().UTC(), "bbox": bounds, "start": start, "end": end, "profiles": json.RawMessage(profiles), "fields": json.RawMessage(fields), "events": events, "event_state": eventState, "unavailable_layers": product.Catalog().Unavailable, "limitations": []string{"At most 200 profiles and 100 retained event components are plotted. Tables and exact evidence links remain available.", "Events are frozen diagnostic report candidates. No live event absence is inferred.", "Raster controls use original native cells and field release masks. No unsupported map confidence or interpolated profile surface is drawn."}})
 }

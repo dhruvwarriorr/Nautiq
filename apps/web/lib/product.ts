@@ -1,5 +1,4 @@
 import type { FieldRelease, FieldEvidence, FieldSample } from "./fields";
-import type { AdvisoryState, AdvisorySource } from "./advisories";
 import type { Level, Profile } from "./profiles";
 import type { ExpectedProfile } from "./expected";
 import type { IntervalProfile } from "./uncertainty";
@@ -22,12 +21,10 @@ export type ProductPolicy = {
     export_permissions: Record<string, boolean>;
   };
   accounts_available: boolean;
-  notification_delivery_available: boolean;
 };
 export type Session = {
   account_id: string;
   handle: string;
-  notifications_enabled: boolean;
   version: number;
   csrf_token: string;
   expires_at: string;
@@ -140,7 +137,6 @@ export type Conditions = {
       | { status: string; requested_time: string; reason: string }
     )[];
   }[];
-  advisory: AdvisoryState;
   limitations: string[];
   confidence: { state: string; reason: string };
   expected_at_point: { state: string; reason: string };
@@ -171,24 +167,6 @@ export type MapOverview = {
   fields: FieldRelease[];
   events: MapEvent[];
   event_state: string;
-  advisory_polygons: {
-    revision_id: string;
-    event: string;
-    severity: string;
-    effective: string;
-    expires: string | null;
-    geometry: { type: string; coordinates: unknown };
-  }[];
-  advisory_sources: AdvisorySource[];
-  advisory_circles?: {
-    revision_id: string;
-    event: string;
-    severity: string;
-    effective: string;
-    expires: string | null;
-    circle: { center: number[]; radius_km: number };
-  }[];
-  advisory_state: string;
   unavailable_layers: string[];
   limitations: string[];
 };

@@ -11,15 +11,15 @@ const steps: { title: string; body: string; href: string; link: string; icon: Ic
   { title: "Ask, or pick a place", body: "Type a question in your own words, or choose a place. Nautiq shows how it understood you (place, time, kind of question) and lets you change any of it.", href: "/ask", link: "Try asking", icon: "hailer" },
   { title: "Read the signal before the number", body: "Every value carries a shape and a word. Out-of-date values are history, not now. Unknown never means clear.", href: "/", link: "See the signals", icon: "pennant" },
   { title: "See where a number came from", body: "Open “Technical detail” on any page to see the source, the time it was measured or forecast, and how it was worked out. Float readings stay at the float’s own position and depth.", href: "/research", link: "Browse float readings", icon: "sounding" },
-  { title: "Plan a trip properly", body: "Add your stops out and back with times. Nautiq checks the forecast and official warnings along the whole route, and lists what it couldn’t check. It never says a trip is safe.", href: "/trips", link: "Plan a trip", icon: "voyage" },
-  { title: "Keep your places and alerts", body: "A free private workspace saves routes, places and your own alert limits. Your limits are preferences, not safety rules, and never override an official warning.", href: "/app", link: "Open your workspace", icon: "logbook" },
+  { title: "Plan a trip properly", body: "Add your stops out and back with times. Nautiq checks the forecast against your limits along the whole route, and lists what it couldn’t check. It never says a trip is safe, and it doesn’t read official warnings.", href: "/trips", link: "Plan a trip", icon: "voyage" },
+  { title: "Keep your routes and places", body: "A free private workspace saves your routes, places and trip receipts so you can check them again.", href: "/app", link: "Open your workspace", icon: "logbook" },
 ];
 const glossary = [
   ["Historical normal", "What the sea usually reads at a place, depth and time of year, from a fixed 2005–2016 float record. It is not a forecast."],
   ["Expected range", "Where an ordinary reading would fall around the normal. It describes natural variation, not measurement error."],
   ["Unusual float", "A float reading that ranks high against history. It is a rank, not a probability, and not an event."],
   ["Regional event", "A lasting patch of unusual water, such as a warm spell, found by a fixed method. One unusual float is never an event."],
-  ["Official warning", "A bulletin from an Indian agency such as NDMA or IMD, shown as issued, with its start and end. It always comes first."],
+  ["Too rough", "Somewhere on your route the forecast reaches a trip limit. The defaults suit small open boats; you can set stricter ones."],
   ["Not enough data", "At least one thing needed couldn’t be checked. It is never a mild form of “fine”."],
 ];
 export default function Page() {
@@ -51,7 +51,7 @@ export default function Page() {
           <li><Signal status="stale" /><p>Older than it should be. Shown as history.</p></li>
           <li><Signal status="unknown" /><p>Couldn’t be confirmed. Never an all-clear.</p></li>
           <li><Signal status="unavailable" /><p>No data here. Nothing is filled in.</p></li>
-          <li><Signal status="warning" /><p>An agency bulletin applies. Always first.</p></li>
+          <li><Signal status="warning" /><p>A trip reaches your limits somewhere on the route.</p></li>
         </ul>
       </section>
       <section className="section">

@@ -98,7 +98,7 @@ func (s *Server) objects(w http.ResponseWriter, r *http.Request, u Identity) {
 		items = items[:limit]
 		next = &items[len(items)-1].ID
 	}
-	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": time.Now().UTC(), "notification_delivery_available": s.notificationAvailable(r)})
+	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": time.Now().UTC()})
 }
 func (s *Server) object(w http.ResponseWriter, r *http.Request, u Identity) {
 	if !noQuery(w, r) {
@@ -210,11 +210,6 @@ func (s *Server) references(r *http.Request, tx pgx.Tx, u Identity, kind string,
 				return refusal{400, "invalid_or_over_budget_polygon"}
 			}
 		}
-	}
-	if kind == "alert-rules" {
-		var v AlertRule
-		json.Unmarshal(data, &v)
-		id, expected = v.WatchlistID, "watchlists"
 	}
 	if id != "" {
 		if !identifier(id) {
@@ -460,66 +455,5 @@ func (s *Server) forgetTrip(w http.ResponseWriter, r *http.Request, u Identity) 
 			return 0, nil, refusal{404, "not_found"}
 		}
 		return 200, map[string]bool{"unlinked": true}, e
-	})
-}
-func (s *Server) alerts(w http.ResponseWriter, r *http.Request, u Identity) {
-	limit, cursor, ok := s.inboxPage(w, r, u.ID)
-	if !ok {
-		return
-	}
-	rows, e := s.DB.Query(r.Context(), `SELECT json_build_object('alert_id',a.alert_id,'rule_id',a.rule_id,'rule_version',a.rule_version,'event_revision',a.event_revision,'state',a.state,'evidence',a.evidence,'evidence_sha256',a.evidence_sha256,'created_at',a.created_at,'acknowledged_at',a.acknowledged_at,'supersedes',a.supersedes,'deliveries',COALESCE((SELECT json_agg(json_build_object('channel',d.channel,'state',d.state,'attempts',d.attempts,'reason',d.reason,'sent_at',d.sent_at)) FROM notification_deliveries d WHERE d.alert_id=a.alert_id),'[]')),a.evidence_bytes,a.evidence_sha256 FROM product_alerts a WHERE a.owner_id=$1 AND a.created_at<=$2 AND ($3::timestamptz IS NULL OR (a.created_at,a.alert_id)<($3::timestamptz,$4::uuid)) ORDER BY a.created_at DESC,a.alert_id DESC LIMIT $5`, u.ID, cursor.Snapshot, cursor.Before, cursor.ID, limit+1)
-	if e != nil {
-		fail(w, 503, "alert_inbox_unavailable")
-		return
-	}
-	defer rows.Close()
-	items := []map[string]any{}
-	for rows.Next() {
-		var projection, raw []byte
-		var sha string
-		if rows.Scan(&projection, &raw, &sha) != nil {
-			fail(w, 503, "alert_inbox_unavailable")
-			return
-		}
-		var item map[string]any
-		var evidence any
-		if json.Unmarshal(projection, &item) != nil || json.Unmarshal(raw, &evidence) != nil || Hash(raw) != sha || !reflect.DeepEqual(evidence, item["evidence"]) {
-			fail(w, 503, "alert_evidence_integrity")
-			return
-		}
-		items = append(items, item)
-	}
-	if rows.Err() != nil {
-		fail(w, 503, "alert_inbox_unavailable")
-		return
-	}
-	var next any
-	if len(items) > limit {
-		items = items[:limit]
-		last := items[len(items)-1]
-		before, e := time.Parse(time.RFC3339Nano, last["created_at"].(string))
-		if e != nil {
-			fail(w, 503, "alert_cursor_integrity")
-			return
-		}
-		cursor.Before = &before
-		cursor.ID = last["alert_id"].(string)
-		next = s.signInbox(cursor)
-	}
-	available := s.notificationAvailable(r)
-	write(w, 200, map[string]any{"items": items, "next_cursor": next, "snapshot_at": cursor.Snapshot, "evaluation_available": available, "delivery_available": available})
-}
-func (s *Server) acknowledge(w http.ResponseWriter, r *http.Request, u Identity) {
-	if r.ContentLength > 0 || !identifier(r.PathValue("id")) {
-		fail(w, 400, "invalid_alert_acknowledgement")
-		return
-	}
-	s.mutation(w, r, u, nil, func(tx pgx.Tx) (int, any, error) {
-		var data []byte
-		e := tx.QueryRow(r.Context(), `UPDATE product_alerts SET acknowledged_at=COALESCE(acknowledged_at,now()) WHERE alert_id=$1 AND owner_id=$2 RETURNING json_build_object('alert_id',alert_id,'acknowledged_at',acknowledged_at,'state',state)`, r.PathValue("id"), u.ID).Scan(&data)
-		if missing(e) {
-			return 0, nil, refusal{404, "not_found"}
-		}
-		return 200, json.RawMessage(data), e
 	})
 }

@@ -9,7 +9,7 @@ export default async function SignInPage({
   const { next } = await searchParams;
   return (
     <main>
-      <PageHead icon="logbook" title={"Your workspace"} lede={"Sign in to save routes, places and alerts. Everything public stays open without an account."} />
+      <PageHead icon="logbook" title={"Your workspace"} lede={"Sign in to save routes and places. Everything public stays open without an account."} />
       <SignIn next={next ?? "/app"} />
     </main>
   );

@@ -30,7 +30,7 @@ export default async function Region({ params }: { params: Promise<{ slug: strin
         lede={`The wider area from ${coords(s, w, 0)} to ${coords(n, e, 0)}. Float readings stay at their own positions; nothing is smoothed into a surface.`}
       />
       <div className="door-list">
-        <DoorLink href={`/locations/${place.slug}`} icon="buoy" title="Conditions at the point" text="Waves, wind, currents and warnings right now." />
+        <DoorLink href={`/locations/${place.slug}`} icon="buoy" title="Conditions at the point" text="Waves, wind, currents and sea temperature right now." />
         <DoorLink href={`/map?bbox=${encodeURIComponent(bbox)}`} icon="chart" title="This area on the map" text="Forecast layers, floats and official areas." />
         <DoorLink href={`/research?place=${place.slug}`} icon="float" title="Float readings here" text="Temperature and salinity by date and depth." />
         <DoorLink href={`/compare?left=${place.slug}`} icon="compass" title="Compare with another place" text="Side by side, same time." />

@@ -14,7 +14,6 @@
     "user_owned_watchlists": true,
     "source_profile_rows": true,
     "source_forecast_rows": false,
-    "source_advisory_content": false,
     "scientific_event_rows": false
   },
   "query_parser": "bounded-intent-grammar-v1",
@@ -89,9 +88,8 @@
     "tides"
   ],
   "limitations": [
-    "Local handle accounts support separately verified notification email, but no MFA or identity/recovery provider; public identity operations require deployment review.",
-    "Forecast/advisory redistribution remains unreviewed. Private provenance reports omit those source measurements and bulletin content. Accepted original Argo research exports carry attribution under published unrestricted reuse terms.",
-    "Evidence alerts require a healthy notification worker. Email requires verified opt-in and configured transport; scientific alerts and operational safety approval remain gated.",
+    "Local handle accounts have no MFA or password recovery.",
+    "Forecast redistribution remains unreviewed. Private provenance reports omit those source measurements. Accepted original Argo research exports carry attribution under published unrestricted reuse terms.",
     "Natural-language parsing uses a bounded grammar and typed plans; unresolved places, relative times and unsupported intents need clarification."
   ],
   "argo_export_policy": {

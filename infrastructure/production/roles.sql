@@ -12,7 +12,7 @@ GRANT INSERT ON operations_audit TO nautiq_operator;
 GRANT INSERT,UPDATE,DELETE ON climatology_selection,expected_state_selection,uncertainty_selection,anomaly_selection TO nautiq_operator;
 GRANT INSERT,UPDATE ON climatology_jobs,expected_state_jobs,uncertainty_jobs,anomaly_jobs TO nautiq_operator;
 GRANT UPDATE ON calculations TO nautiq_operator;
-GRANT INSERT,UPDATE,DELETE ON product_accounts,product_sessions,product_objects,product_idempotency,product_rate_limits,product_alerts,product_jobs,product_download_grants,product_object_gc,product_trip_links,notification_email_challenges,notification_rule_state,notification_evaluations,notification_evidence_blobs,notification_deliveries,notification_worker_health TO nautiq_app;
+GRANT INSERT,UPDATE,DELETE ON product_accounts,product_sessions,product_objects,product_idempotency,product_rate_limits,product_jobs,product_download_grants,product_object_gc,product_trip_links TO nautiq_app;
 GRANT INSERT ON calculations,trip_calculations TO nautiq_app;
 GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA public TO nautiq_app,nautiq_worker;
 -- Passwords are supplied out of band. Reapply explicit grants after migrations.

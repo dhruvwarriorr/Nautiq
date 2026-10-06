@@ -47,7 +47,7 @@ export default async function OceanMapPage({ searchParams }: { searchParams: Pro
           {value ? (
             <>
               <p>
-                Showing {span(value.start, value.end)}. Official-warning coverage is {label(value.advisory_state).toLowerCase()}; patches are{" "}
+                Showing {span(value.start, value.end)}. Patches are{" "}
                 {label(value.event_state).toLowerCase()}.
               </p>
               <h3>Float readings</h3>
@@ -73,21 +73,14 @@ export default async function OceanMapPage({ searchParams }: { searchParams: Pro
                   </tbody>
                 </table>
               </div>
-              <h3>Patches and warning areas</h3>
+              <h3>Unusual patches</h3>
               <ul>
                 {value.events.map((e) => (
                   <li key={e.event_id}>
                     <Link href={`/events/${e.event_id}`}>{label(e.kind)} · {span(e.start, e.end)}</Link>
                   </li>
                 ))}
-                {value.advisory_polygons.map((a, i) => (
-                  <li key={`${a.revision_id}-${i}`}>
-                    <Link href={`/advisories/${a.revision_id}`}>
-                      {a.event} · {label(a.severity)} · until {a.expires ? when(a.expires) : "unknown"}
-                    </Link>
-                  </li>
-                ))}
-                {!value.events.length && !value.advisory_polygons.length ? <li className="muted">Nothing mapped for this period.</li> : null}
+                {!value.events.length ? <li className="muted">Nothing mapped for this period.</li> : null}
               </ul>
               <h3>Limits of this map</h3>
               <ul>
@@ -98,9 +91,6 @@ export default async function OceanMapPage({ searchParams }: { searchParams: Pro
                   <li key={v}>{humanizeText(v)}</li>
                 ))}
               </ul>
-              <p>
-                <Link className="text-link" href="/advisories">Text-only and unmapped official bulletins</Link>
-              </p>
             </>
           ) : null}
         </TechDetail>

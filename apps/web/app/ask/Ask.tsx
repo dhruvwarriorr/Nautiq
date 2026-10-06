@@ -17,7 +17,7 @@ import {
   withWhen,
 } from "../../lib/ask.mjs";
 import ResearchExplorer from "../components/ResearchExplorer";
-import { toReading, headline, reasons, when as whenText, humanizeText } from "../../lib/humanize";
+import { toReading, headline, when as whenText, humanizeText } from "../../lib/humanize";
 import Icon from "../components/ui/Icon";
 import { Signal } from "../components/ui/Signal";
 import { measureIcon } from "../components/readingIcons";
@@ -50,19 +50,7 @@ export function FactList({ answer }: { answer: Answer }) {
                 <p className="fact-plain">{r.descriptor}</p>
               ) : null}
               {r.value && (r.time || r.outlook) ? <span className="fact-sub">{[r.time, r.outlook].filter(Boolean).join(" · ")}</span> : null}
-              {r.measure === "warnings" && reasons(r.note).length ? (
-                <>
-                  <span className="fact-sub">We can’t confirm warnings here. Check IMD and INCOIS before you go.</span>
-                  <details className="why">
-                    <summary>Why it’s unknown</summary>
-                    <ul>
-                      {reasons(r.note).map((x) => (
-                        <li key={x}>{x}</li>
-                      ))}
-                    </ul>
-                  </details>
-                </>
-              ) : r.note ? (
+              {r.note ? (
                 <span className="fact-sub">{r.note}</span>
               ) : null}
             </div>
@@ -200,7 +188,7 @@ export default function Ask({
   if (frame?.when && !known.has(frame.when) && frame.when.startsWith("month_"))
     options.push([frame.when, `In ${monthName(frame.when)}`]);
   const custom = Boolean(frame && !frame.when && frame.start);
-  const needsTime = ["conditions", "warnings", "research", "events", "trip"].includes(
+  const needsTime = ["conditions", "research", "events", "trip"].includes(
     plan?.intent ?? "",
   );
 

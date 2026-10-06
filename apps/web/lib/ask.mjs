@@ -1,7 +1,6 @@
 // Pure helpers for the Ask experience. Kept framework-free so node --test can exercise them.
 export const intentLabels = {
   conditions: "Sea conditions",
-  warnings: "Official warnings",
   events: "Regional events",
   research: "Observed profiles",
   trip: "Trip planning",
@@ -29,22 +28,20 @@ export const topicOptions = [
   ["unusual", "What an unusual profile means"],
   ["expected", "What “expected normal” means"],
   ["interval", "What an expected interval means"],
-  ["advisory", "What an unknown official warning state means"],
   ["freshness", "What stale data means"],
   ["model", "How the model is used, and its limits"],
   ["evidence", "What the evidence shows"],
-  ["personal_limits", "Personal limits vs official warnings"],
+  ["personal_limits", "How your own trip limits work"],
 ];
 export const statusLabels = {
   available: ["✓", "Available"],
   stale: ["⏱", "Stale"],
   unknown: ["?", "Unknown"],
   unavailable: ["–", "Unavailable"],
-  warning: ["⚠", "Official warning"],
 };
 export const exampleQuestions = [
   "How are the waves near Goa tomorrow morning?",
-  "Is there an official warning near Kerala?",
+  "What is the wind near Kerala tonight?",
   "Show unusual temperature profiles in the Arabian Sea this week",
   "Compare salinity near Kerala in October",
   "Why is Nautiq showing caution?",

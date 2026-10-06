@@ -6,7 +6,7 @@ export type TripRequest = {
   fields: { variable: string; release_id: string }[];
   spacing_km: number;
   step_minutes: number;
-  preferences: Record<string, never>;
+  preferences: Record<string, { caution?: number; critical?: number }>;
 };
 export type TripPolicy = {
   policy: {

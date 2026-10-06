@@ -57,7 +57,7 @@ export default async function ModelBrief({ compact = false }: { compact?: boolea
         </li>
       </ul>
       <p className="footnote">
-        None of this is scientifically approved for release, and no model ever produces a trip verdict, an observation or an official warning.{" "}
+        None of this is scientifically approved for release, and no model ever produces a trip verdict or an observation.{" "}
         <Link href="/models">Model evidence</Link> · <Link href="/methodology">Methods</Link>
       </p>
     </section>

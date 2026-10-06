@@ -5,7 +5,7 @@ import { PageHead } from "../components/ui/Bits";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Ask · Nautiq",
-  description: "Ask about sea conditions, official warnings or floats in your own words. Every answer comes from stored evidence.",
+  description: "Ask about sea conditions, trips or floats in your own words. Every answer comes from stored evidence.",
 };
 export default async function Page({ searchParams }: { searchParams: Promise<{ q?: string | string[] }> }) {
   const value = await evidence<ProductPolicy>("/product-policy");

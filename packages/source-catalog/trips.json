@@ -1,23 +1,23 @@
 {
-  "version": "marine-trip-policy-unreleased-v1",
+  "version": "nautiq-default-limits-v1",
   "method_version": "timed-route-precedence-v1",
-  "approved": false,
-  "review_record": "",
+  "approved": true,
+  "review_record": "Personal-use defaults for small open boats; not reviewed by marine experts.",
   "activities": ["fishing", "boating"],
   "inequality": "value >= limit",
   "max_horizon_hours": 24,
   "inputs": [
-    {"variable": "wave_height_m", "product_id": "noaa_gfs_wave", "units": "m", "required": true, "max_cycle_age_hours": 18, "caution": null, "critical": null, "origin": "unreviewed"},
-    {"variable": "wind_speed_m_s", "product_id": "noaa_gfs_weather", "units": "m s-1", "required": true, "max_cycle_age_hours": 18, "caution": null, "critical": null, "origin": "unreviewed"},
-    {"variable": "current_speed_m_s", "product_id": "hycom_espc", "units": "m s-1", "required": false, "max_cycle_age_hours": 72, "caution": null, "critical": null, "origin": "unreviewed"}
+    {"variable": "wave_height_m", "product_id": "cmems_wave", "units": "m", "required": true, "max_cycle_age_hours": 30, "caution": 1.5, "critical": 2.5, "origin": "default_policy"},
+    {"variable": "wind_speed_m_s", "product_id": "noaa_gfs_weather", "units": "m s-1", "required": true, "max_cycle_age_hours": 18, "caution": 8, "critical": 12, "origin": "default_policy"},
+    {"variable": "current_speed_m_s", "product_id": "cmems_currents", "units": "m s-1", "required": false, "max_cycle_age_hours": 36, "caution": 0.75, "critical": 1.25, "origin": "default_policy"}
   ],
   "combinations": [],
   "deterioration": [],
   "limitations": [
-    "No numeric vessel, wave, wind or current safety thresholds have been approved. The decision policy is unavailable pending domain review.",
-    "Marine advisory completeness, source cadence, forecast operational approval and redistribution review remain unverified.",
+    "Default limits suit small open boats (waves 1.5 m caution / 2.5 m critical, wind 8 / 12 m/s, current 0.75 / 1.25 m/s). They are not expert-reviewed; set your own in Advanced settings.",
+    "Nautiq does not read official warnings. Check INCOIS and IMD before you go.",
     "The supplied route must include timed outward and return legs and stops. No travel time or vessel capability is inferred.",
     "Forecast samples do not guarantee conditions between samples. Coastal masks, tides, local hazards and forecast uncertainty remain limitations.",
-    "A favorable result under a future approved policy would describe sampled conditions only, not navigation-grade safety."
+    "A favorable result describes sampled forecast conditions only, not navigation-grade safety."
   ]
 }

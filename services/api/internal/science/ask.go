@@ -7,7 +7,6 @@ import (
 	"math"
 	"net/http"
 	"net/url"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -74,8 +73,6 @@ func (s *Server) answer(w http.ResponseWriter, r *http.Request) {
 	switch plan.Intent {
 	case "conditions":
 		s.conditionsAnswer(r, plan, &a)
-	case "warnings":
-		s.warningsAnswer(r, plan, &a)
 	case "events":
 		s.eventsAnswer(r, plan, &a)
 	case "research":
@@ -109,19 +106,9 @@ type condField struct {
 	State    string          `json:"state"`
 	Timeline []timelineEntry `json:"timeline"`
 }
-type advisoryView struct {
-	Status   string   `json:"status"`
-	Unknown  []string `json:"unknown_reasons"`
-	Warnings []struct {
-		Event    string  `json:"event"`
-		Severity string  `json:"severity"`
-		Expires  *string `json:"expires"`
-		Revision string  `json:"revision_id"`
-	} `json:"warnings"`
-}
 
 var fieldLabels = map[string][2]string{
-	"sst_c":             {"Sea surface temperature (daily analysis)", "°C"},
+	"sst_c":             {"Sea surface temperature (forecast)", "°C"},
 	"wave_height_m":     {"Significant wave height (forecast)", "m"},
 	"wind_speed_m_s":    {"Wind speed (forecast)", "m/s"},
 	"current_speed_m_s": {"Surface current speed (forecast)", "m/s"},
@@ -133,11 +120,6 @@ func number(v float64) string {
 }
 
 var reasonWords = map[string]string{
-	"incois_advisories:unconfigured":       "INCOIS advisories are not connected",
-	"ndma_cap_rss:stale_or_incomplete":     "the NDMA bulletin feed has not been checked recently enough",
-	"ndma_cap_rss:unconfigured":            "the NDMA bulletin feed is not connected",
-	"ndma_cap_rss:unverified":              "NDMA marine coverage has not been verified",
-	"advisory_evidence_unavailable":        "advisory evidence could not be read",
 	"no_supported_valid_time":              "the time is outside the retained forecast",
 	"outside_horizon":                      "the time is outside the retained forecast",
 	"masked_or_unsupported_source_support": "the point is on land or outside the data’s support",
@@ -148,61 +130,6 @@ func say(reason string) string {
 		return v
 	}
 	return strings.ReplaceAll(reason, "_", " ")
-}
-
-var bulletinPrefix = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:`)
-var bulletinReasons = map[string]string{
-	"unresolved_geometry":                "the area could not be mapped",
-	"revision_ambiguity":                 "the revision or reference identity is unclear",
-	"unknown_validity_or_classification": "validity or classification is unclear",
-}
-
-// summarizeReasons turns advisory reason codes into one readable clause. Per-bulletin codes are counted
-// instead of repeating raw identifiers.
-func summarizeReasons(codes []string) string {
-	source, perBulletin := []string{}, map[string]int{}
-	order := []string{}
-	for _, c := range codes {
-		if bulletinPrefix.MatchString(c) {
-			code := bulletinPrefix.ReplaceAllString(c, "")
-			if perBulletin[code] == 0 {
-				order = append(order, code)
-			}
-			perBulletin[code]++
-			continue
-		}
-		source = append(source, say(c))
-	}
-	for _, code := range order {
-		text, ok := bulletinReasons[code]
-		if !ok {
-			text = strings.ReplaceAll(code, "_", " ")
-		}
-		n := perBulletin[code]
-		noun := "bulletins"
-		if n == 1 {
-			noun = "bulletin"
-		}
-		source = append(source, fmt.Sprintf("for %d retained %s %s", n, noun, text))
-	}
-	if len(source) == 0 {
-		return "no source could confirm the state"
-	}
-	return strings.Join(source, "; ")
-}
-
-func advisoryFact(v advisoryView, href string) Fact {
-	switch v.Status {
-	case "official_warning":
-		parts := []string{}
-		for _, w := range v.Warnings {
-			parts = append(parts, strings.TrimSpace(w.Event+" ("+w.Severity+")"))
-		}
-		return Fact{Label: "Official warnings", Value: "Active official warning: " + strings.Join(parts, "; "), Detail: "Read the original bulletin before acting.", Status: "warning", Href: href}
-	case "known_none_intersecting":
-		return Fact{Label: "Official warnings", Value: "No retained official bulletin intersects this place and window.", Detail: "This covers only the configured sources and their retained evidence.", Status: "available", Href: href}
-	}
-	return Fact{Label: "Official warnings", Value: "Unknown. This is not an all-clear.", Detail: "Why: " + summarizeReasons(v.Unknown) + ".", Status: "unknown", Href: href}
 }
 
 // latestAnalysis samples a daily-analysis variable at the most recent days it can cover.
@@ -253,9 +180,8 @@ func (s *Server) conditionsAnswer(r *http.Request, plan product.QueryPlan, a *An
 		return
 	}
 	var c struct {
-		Fields   []condField  `json:"fields"`
-		Advisory advisoryView `json:"advisory"`
-		Nearby   []struct {
+		Fields []condField `json:"fields"`
+		Nearby []struct {
 			ProfileID string    `json:"profile_id"`
 			Observed  time.Time `json:"observed_at"`
 			Distance  float64   `json:"distance_km"`
@@ -338,7 +264,6 @@ func (s *Server) conditionsAnswer(r *http.Request, plan product.QueryPlan, a *An
 		}
 		a.Facts = append(a.Facts, Fact{Label: meta[0], Value: value, Detail: detail, Status: st, Href: "/fields"})
 	}
-	a.Facts = append(a.Facts, advisoryFact(c.Advisory, "/advisories"))
 	if len(c.Nearby) > 0 {
 		sort.Slice(c.Nearby, func(i, j int) bool { return c.Nearby[i].Distance < c.Nearby[j].Distance })
 		n := c.Nearby[0]
@@ -358,7 +283,7 @@ func (s *Server) conditionsAnswer(r *http.Request, plan product.QueryPlan, a *An
 	default:
 		a.Headline = "Sea state near " + plan.Place.Name + " from retained evidence."
 	}
-	a.Cannot = []string{"This is not a trip assessment or a safety judgement. Use the trip form for a timed route.", "Official warning completeness for marine areas is not verified; unknown is never an all-clear.", "Numbers are model or analysis values at a grid point, not a local measurement."}
+	a.Cannot = []string{"This is not a trip assessment or a safety judgement. Use the trip form for a timed route.", "Numbers are model or analysis values at a grid point, not a local measurement."}
 }
 
 func windowSource(w *product.ResolvedWindow) string {
@@ -378,28 +303,6 @@ func firstNonEmpty(v ...string) string {
 		}
 	}
 	return ""
-}
-
-func (s *Server) warningsAnswer(r *http.Request, plan product.QueryPlan, a *Answer) {
-	raw, status := compose(r, s.advisoryState, url.Values{"latitude": {fstr(plan.Place.Latitude)}, "longitude": {fstr(plan.Place.Longitude)}, "start": {plan.Window.Start}, "end": {plan.Window.End}})
-	a.Links = append(a.Links, AnswerLink{"Official bulletins and feed health", "/advisories"})
-	var v advisoryView
-	if status != 200 || json.Unmarshal(raw, &v) != nil {
-		v = advisoryView{Status: "unknown", Unknown: []string{"advisory_evidence_unavailable"}}
-	}
-	f := advisoryFact(v, "/advisories")
-	a.Facts = append(a.Facts, f)
-	a.Facts = append(a.Facts, Fact{Label: "Checked window", Value: parseDay(plan.Window.Start).Format("2006-01-02 15:04") + " → " + parseDay(plan.Window.End).Format("2006-01-02 15:04") + " UTC", Detail: windowSource(plan.Window), Status: "available"})
-	switch v.Status {
-	case "official_warning":
-		a.Headline = "An official warning is active near " + plan.Place.Name + "."
-	case "known_none_intersecting":
-		a.Headline = "No retained official bulletin intersects " + plan.Place.Name + " in this window."
-	default:
-		a.State = "partial"
-		a.Headline = "Official warning status near " + plan.Place.Name + " is unknown."
-	}
-	a.Cannot = []string{"Absence of a bulletin in Nautiq never means absence of hazards.", "INCOIS marine advisories are not connected; NDMA transport does not establish marine completeness."}
 }
 
 func (s *Server) eventsAnswer(r *http.Request, plan product.QueryPlan, a *Answer) {
@@ -515,19 +418,19 @@ func tripAnswer(plan product.QueryPlan, a *Answer) {
 		href = "/trips?" + v.Encode()
 	}
 	a.Facts = append(a.Facts,
-		Fact{Label: "Why a form", Value: "Every leg needs a time and place so forecasts and official warnings can be checked along the whole route, outward and back.", Status: "available"},
-		Fact{Label: "Current policy", Value: "Numeric trip thresholds are not approved, so Nautiq will report insufficient data (or an official warning) rather than a favorable result.", Status: "unknown", Href: "/methodology"},
+		Fact{Label: "Why a form", Value: "Every leg needs a time and place so the forecasts can be checked along the whole route, outward and back.", Status: "available"},
+		Fact{Label: "Current policy", Value: "Trips are checked against the wave, wind and current limits for your activity, which you can tighten in Advanced settings.", Status: "unknown", Href: "/methodology"},
 	)
 	a.Links = append(a.Links, AnswerLink{"Open the trip form with your place and time", href}, AnswerLink{"How trip results are decided", "/methodology"})
-	a.Cannot = []string{"Nautiq never says a trip is safe. It reports what could be checked, what could not, and which official warnings apply."}
+	a.Cannot = []string{"A trip check reads forecasts only; it does not know about official warnings, local hazards or your vessel."}
 }
 
 var explanations = map[string][3]string{
 	"caution": {"Why a trip shows caution, insufficient data or unfavorable",
-		"A trip result follows a fixed order: (1) a relevant official warning wins; (2) missing, stale or out-of-range inputs give “insufficient data”, never a favorable result; (3) a critical threshold gives “unfavorable”; (4) a caution threshold or worsening forecast gives “caution”; (5) only a fully checked trip can be “favorable”. All fired rules stay visible.",
-		"Today Nautiq’s numeric thresholds are not approved by marine and legal reviewers, so real trips return “insufficient data” unless an official warning applies. “Caution” appears only for rules you set yourself or an approved policy."},
+		"A trip result follows a fixed order: (1) missing, stale or out-of-range inputs give “insufficient data”, never a favorable result; (2) a critical threshold gives “unfavorable”; (3) a caution threshold or worsening forecast gives “caution”; (4) only a fully checked trip can be “favorable”. All fired rules stay visible.",
+		"The limits are general defaults for small boats, not advice for your vessel. Set your own in Advanced settings."},
 	"insufficient": {"What “insufficient data” means",
-		"At least one required input could not be checked: a forecast is stale or does not cover the whole trip, a leg crosses land, timing is unknown, or official warning coverage is unverified.",
+		"At least one required input could not be checked: a forecast is stale or does not cover the whole trip, a leg crosses land, or timing is unknown.",
 		"It is not a mild form of “fine”. Open the trip evidence to see which input is missing."},
 	"unusual": {"What an unusual profile means",
 		"Nautiq compares each Argo profile with a fixed historical normal for that place and season, scales the differences by typical variability, and ranks the result against retained history. Components are shown by depth.",
@@ -538,20 +441,17 @@ var explanations = map[string][3]string{
 	"interval": {"What an expected interval means",
 		"The interval is the range where an ordinary profile would fall around the expected normal, calibrated on separate profiles. It describes natural variability, not measurement error or uncertainty in the average.",
 		"Calibration is diagnostic: there are no trusted new outcomes yet to confirm coverage, so intervals are labelled uncalibrated for release."},
-	"advisory": {"What an unknown official advisory state means",
-		"Nautiq reads retained bulletins from configured agency feeds. If a feed is missing, stale or not verified to cover marine areas, the state is unknown.",
-		"Unknown is not “no warning”. Check the issuing authority directly before acting."},
 	"freshness": {"What stale data means",
 		"Each source has an allowed age. Beyond it, values are shown as stale and are not used to support a favorable trip result.",
 		"Stale values describe the past forecast, not now."},
 	"model": {"How the Nautiq model is used and what it cannot do",
 		"Nautiq trains boosted-tree residual models against the climatology with leakage-safe splits, calibrates intervals, and scores profile structure. Every release is pinned, versioned and documented on the Models page.",
-		"Neither residual candidate beat climatology enough to be promoted, so climatology serves. Models never produce trip verdicts, warnings or observations."},
+		"Neither residual candidate beat climatology enough to be promoted, so climatology serves. Models never produce trip verdicts or observations."},
 	"evidence": {"What the evidence drawer shows",
 		"Each result lists its source, observation or forecast time, method release and calculation identifier so it can be reproduced from stored inputs.",
 		"Evidence shows how a number was produced, not that the method has been independently validated."},
-	"personal_limits": {"How personal limits differ from official warnings",
-		"Personal limits are your own preferences. They can make results stricter but never remove an official warning or required input.",
+	"personal_limits": {"How personal limits change a trip check",
+		"Personal limits are your own preferences. They can make results stricter but never remove a required input.",
 		"A personal limit being met is not a validated safety threshold."},
 }
 

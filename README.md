@@ -123,9 +123,9 @@ MLflow is available at http://localhost:5001, with persistent local SQLite metad
 
 ## Using Nautiq: ask, navigate, learn
 
-Start at http://localhost:3000. The home page explains the five state labels (Available, Stale, Unknown, Unavailable, Official warning) and links to a two-minute guide at `/start`. Navigation groups the everyday surfaces (Ask, Conditions, Map, Plan a trip, Observations) and tucks evidence, models and methods under **More**.
+Start at http://localhost:3000. The home page explains the five state labels (Available, Stale, Unknown, Unavailable, Too rough) and links to a two-minute guide at `/start`. Navigation groups the everyday surfaces (Ask, Conditions, Map, Plan a trip, Observations) and tucks evidence, models and methods under **More**.
 
-`/ask` answers questions such as “How are the waves near Goa tomorrow morning?”, “Is there an official warning near Kerala?”, “Show unusual temperature profiles in the Arabian Sea this week” or “Why is Nautiq showing caution?”. A question becomes a validated **frame** (intent, place, time, variable) from closed vocabularies; relative times resolve to an explicit UTC window shown to you; every field can be corrected before you rely on the answer; the answer is assembled from existing typed evidence with fixed templates. Trip questions hand off to the timed-route form with place and time prefilled and never produce a verdict. The latest answer is kept on the device as a labelled, never-refreshed copy for weak connectivity.
+`/ask` answers questions such as “How are the waves near Goa tomorrow morning?”, “What is the wind near Kerala tonight?”, “Show unusual temperature profiles in the Arabian Sea this week” or “Why is Nautiq showing caution?”. A question becomes a validated **frame** (intent, place, time, variable) from closed vocabularies; relative times resolve to an explicit UTC window shown to you; every field can be corrected before you rely on the answer; the answer is assembled from existing typed evidence with fixed templates. Trip questions hand off to the timed-route form with place and time prefilled. Nautiq does not track official warnings; questions about them are answered with a pointer to INCOIS and IMD. The latest answer is kept on the device as a labelled, never-refreshed copy for weak connectivity.
 
 By default questions are read by built-in rules and never leave the server. To let a language model *label* the question (it never writes the answer), set `NAUTIQ_LLM_API_KEY` (optionally `NAUTIQ_LLM_MODEL`, `NAUTIQ_LLM_BASE_URL`, `NAUTIQ_LLM_RATE_PER_MINUTE`) in `.env` and recreate the API. Output that is not valid JSON, names an unknown place/field, contains a date the user did not write, or is rate-limited falls back to the built-in rules. Production overlays blank these settings; supply `NAUTIQ_LLM_API_KEY_FILE` deliberately if wanted. See [the product completion delivery](docs/27-Product-Completion-Delivery.md) and [question/answer contract](packages/schemas/ask.openapi.json).
 
@@ -206,7 +206,7 @@ make phase7-verify phase7-reliability phase7-smoke
 
 ## Ocean and marine weather fields
 
-Open [the field explorer](http://localhost:3000/fields) for real NOAA OISST, GFS-Wave, GFS weather and FNMOC/HYCOM surface currents. Each release exposes exact provider/cycle/valid-time metadata, masks, native resolution, source revision and immutable hashes. The map supports variable/time selection, point inspection and timed route samples with return legs and stops. Polygon summaries are also available through the API. See [delivery and provider definitions](docs/17-Phase-8-Delivery.md), [measured evidence](docs/evidence/phase8-summary.json) and [OpenAPI](packages/schemas/fields.openapi.json).
+Open [the field explorer](http://localhost:3000/fields) for Copernicus Marine (CMEMS) wave, surface-current and sea-temperature forecasts on a 1/12° grid, and NOAA GFS wind. CMEMS downloads need a free account: set `CMEMS_USERNAME` and `CMEMS_PASSWORD` in `.env`. Each toolbox call is retained as a raw receipt under a canonical `cmems://` request, so replay and verification run without network access or credentials. The earlier NOAA OISST, GFS-Wave and HYCOM adapters remain for replaying retained releases but are no longer refreshed or served. Each release exposes exact provider/cycle/valid-time metadata, masks, native resolution, source revision and immutable hashes. The map supports variable/time selection, point inspection and timed route samples with return legs and stops. Polygon summaries are also available through the API. See [delivery and provider definitions](docs/17-Phase-8-Delivery.md), [measured evidence](docs/evidence/phase8-summary.json) and [OpenAPI](packages/schemas/fields.openapi.json).
 
 ```sh
 make fields-setup
@@ -222,7 +222,7 @@ make phase8-verify phase8-reliability phase8-smoke
 
 Forecasts default to nine valid times across 24 hours. Point/route interpolation preserves masked support and rejects out-of-horizon queries; tiles retain transparent land. Wind/current speed and directions derive from components. NOAA PERPW is primary wave mean period. OISST is a daily blended analysis, not an independent satellite validation of Argo. Source-age budgets and sampled extrema remain prototype evidence, without event or trip verdicts.
 
-`field-refresh` performs one explicit acquisition. The separate hourly `field-ingestion` worker starts with the default stack and keeps 48 h of GFS and 72 h of HYCOM forecast. A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.
+`field-refresh` performs one explicit acquisition. The separate hourly `field-ingestion` worker starts with the default stack and keeps 48 h of GFS wind and CMEMS waves (3-hourly) and 72 h of CMEMS currents and sea temperature (6-hourly). A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.
 
 ## Persistent event evidence
 
@@ -244,24 +244,9 @@ make event-maintain
 
 The optional `event-worker` tool runs with readonly filesystem and locked field dependencies. Acquisition caches verified requests for restart; `REFRESH=1` explicitly fetches a new source revision without changing retained datasets. Dataset replay uses recorded raw receipts without refetching. Run replay preserves exact inputs and frozen profile snapshot time; changed code creates a distinct immutable calculation. The default bounded SST pilot is 71–73°E, 11–13°N, native 0.25° resolution. Diagnostic availability is separate from scientific event approval, live monitoring and alerting.
 
-## Official advisory evidence
-
-Open http://localhost:3000/advisories to inspect retained agency CAP bulletins, exact revisions, validity and independent source health. NDMA's registered RSS adapter uses verified conditional ETags; disappearing messages never cancel warnings. Text-only areas and missing validity remain unknown. Marine completeness, INCOIS machine access, cadence and redistribution review remain unverified. See [delivery evidence](docs/19-Phase-10-Delivery.md) and [API contract](packages/schemas/advisories.openapi.json).
-
-```sh
-docker compose build advisory-worker
-make advisory-refresh
-make advisory-verify RUN_ID=<retained-run-id>
-make advisory-replay RUN_ID=<retained-run-id>
-make advisory-maintain
-make phase10-verify phase10-reliability phase10-smoke
-```
-
-Default startup runs `advisory-poller`, which polls the registered advisory sources continuously. Feed transport health never establishes an absence of relevant official warnings. Diagnostic evidence availability and official operational approval are distinct capabilities.
-
 ## Timed trip evidence
 
-Open http://localhost:3000/trips to inspect a complete timed outward/return route and stops against exact forecast releases and retained official advisory evidence. The deterministic Go engine records every rule, missing input, worst sampled value/time/location, source cycle, threshold version and calculation identity. See [implementation and validation](docs/20-Phase-11-Delivery.md) and [API contract](packages/schemas/trips.openapi.json).
+Open http://localhost:3000/trips to inspect a complete timed outward/return route and stops against exact forecast releases. The deterministic Go engine records every rule, missing input, worst sampled value/time/location, source cycle, threshold version and calculation identity. See [implementation and validation](docs/20-Phase-11-Delivery.md) and [API contract](packages/schemas/trips.openapi.json).
 
 ```sh
 make migrate
@@ -270,11 +255,11 @@ docker compose build trip-verifier
 make phase11-reliability phase11-smoke
 ```
 
-Numeric decision thresholds are unapproved and remain null. Marine completeness and operational forecast approval remain unverified; current trips cannot receive favorable assessments. Relevant known official warnings still take precedence. Trip receipts are private: creation returns a random access token, and evidence/replay requires its Bearer header. Public calculation pages exclude trip inputs. The browser keeps access in page memory and clears obsolete results when inputs change; saved authenticated trips are separate work. Frozen replay never renews freshness.
+Default limits suit small open boats (waves 1.5 m caution / 2.5 m too rough, wind 8 / 12 m/s, current 0.75 / 1.25 m/s; see `services/api/internal/trips/policy.json`). They are not expert-reviewed. Each trip can tighten them under Advanced settings; a stricter “too rough” limit pulls the caution limit down with it. Trips do not consider official warnings. Trip receipts are private: creation returns a random access token, and evidence/replay requires its Bearer header. Public calculation pages exclude trip inputs. The browser keeps access in page memory and clears obsolete results when inputs change; saved authenticated trips are separate work. Frozen replay never renews freshness.
 
 ## Product workspace and original-observation exports
 
-The ocean map, named locations, research explorer, typed query preview and private workspace are available at `/map`, `/locations`, `/research`, `/query` and `/app`. Local handle accounts own routes, watchlists, rules, receipts and file jobs. Account proofs stay in HttpOnly cookies; writes require the configured `PRODUCT_WEB_ORIGIN` and session-bound CSRF proof.
+The ocean map, named locations, research explorer, typed query preview and private workspace are available at `/map`, `/locations`, `/research`, `/query` and `/app`. Local handle accounts own routes, saved places, receipts and file jobs. Account proofs stay in HttpOnly cookies; writes require the configured `PRODUCT_WEB_ORIGIN` and session-bound CSRF proof.
 
 ```sh
 make migrate
@@ -283,18 +268,7 @@ docker compose up --build -d
 make phase12-verify phase12-reliability phase12-smoke
 ```
 
-Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast/advisory redistribution, public identity operations, scientific promotion and public deployment retain separate gates. Notification evaluation and delivery are implemented as described below. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).
-
-## Alerts and notifications
-
-```sh
-make migrate
-docker compose build api web notifications notification-verifier export-worker
-docker compose up -d api web notifications export-worker
-make phase13-verify phase13-reliability phase13-smoke
-```
-
-Private rules now evaluate personal native-field limits, relevant official warning references and stale sources. The inbox shows immutable evidence, corrections, recovery, acknowledgement, worker status and delivery attempts. A durable worker deduplicates revisions, applies cooldown, requires positive fresh recovery evidence and retries delivery with consent/version fences. Email requires configured TLS SMTP and a separately verified recipient; defaults leave email unavailable. Personal limits and recovered alerts do not establish navigation safety. See [delivery and exact bounds](docs/22-Phase-13-Delivery.md) and [acceptance evidence](docs/evidence/phase13-summary.json).
+Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast redistribution, public identity operations, scientific promotion and public deployment retain separate gates. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).
 
 ## Production operations
 

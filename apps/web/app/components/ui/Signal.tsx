@@ -3,7 +3,7 @@
 //   stale       → ball at half-hoist (lower half filled)
 //   unknown     → diamond with a centre point
 //   unavailable → empty dashed ring (absence drawn, not hidden)
-//   warning     → red cone, point down
+//   warning     → red cone, point down (too rough for your limits)
 import { statusWord, type Status } from "../../../lib/humanize";
 
 export function SignalShape({ status, size = 18 }: { status: Status; size?: number }) {

@@ -32,8 +32,6 @@ def main():
             "NAUTIQ_SECRETS_DIR": str(root),
             "POSTGRES_USER": "nautiqadmin",
             "POSTGRES_DB": "nautiq",
-            "SMTP_HOST": "",
-            "SMTP_FROM": "",
         }
         image_override = root / "images.json"
         image_override.write_text(
@@ -44,7 +42,6 @@ def main():
                         for name in (
                             "api",
                             "web",
-                            "notifications",
                             "ml-inference",
                             "field-service",
                             "minio",
@@ -244,7 +241,6 @@ print('Restricted SQL, operator row lock and object-store IAM checks passed.')
                 "web",
                 "ml-inference",
                 "field-service",
-                "notifications",
                 "gateway",
             )
             context = ssl.create_default_context(cafile=str(root / "tls_cert"))
@@ -370,7 +366,7 @@ print('Restricted SQL, operator row lock and object-store IAM checks passed.')
             )
             # Backup the provisioned schema too: RLS role references and restricted
             # SECURITY DEFINER ACLs must survive a paused isolated restore.
-            compose("stop", "--timeout", "15", "api", "notifications", "ml-inference")
+            compose("stop", "--timeout", "15", "api", "ml-inference")
             write("restore_key", secrets.token_hex(32))
             backup_command = (
                 "run",

@@ -11,7 +11,7 @@ const overpassMono = Overpass_Mono({ subsets: ["latin"], variable: "--font-overp
 export const metadata: Metadata = {
   title: "Nautiq · What is the sea doing?",
   description:
-    "Plain answers about the sea near India's coast: waves, wind, currents, sea temperature and official warnings, with honest limits.",
+    "Plain answers about the sea near India's coast: waves, wind, currents and sea temperature, with honest limits.",
 };
 export const viewport: Viewport = { themeColor: "#0a2747" };
 

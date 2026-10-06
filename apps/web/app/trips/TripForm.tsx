@@ -22,28 +22,12 @@ type Release = {
 };
 function missingSummaries(codes: string[]): string[] {
   const labels: Record<string, string> = {
-    threshold_release_unapproved_or_invalid:
-      "Trip limits are still being reviewed by marine experts",
-    advisory_coverage_unknown: "We can’t confirm official warnings cover this stretch of sea",
-    unresolved_geometry: "Some official bulletins name places we can’t map",
-    revision_ambiguity:
-      "Some official bulletins have unclear revisions",
-    unknown_validity_or_classification:
-      "Some official bulletins have unclear start or end times",
-    "ndma_cap_rss:unverified": "NDMA alerts aren’t verified to cover the sea",
-    "ndma_cap_rss:stale_or_incomplete": "NDMA alerts haven’t been checked recently",
-    "incois_advisories:unconfigured": "INCOIS ocean advisories aren’t connected yet",
+    threshold_release_unapproved_or_invalid: "The trip limits could not be loaded",
+    preference_cannot_relax_policy: "Your own limits can only be stricter than the defaults",
   };
   const counts = new Map<string, number>();
   for (const code of codes) {
     let text = labels[code];
-    if (!text && code.startsWith("advisory:")) {
-      const reason = code.slice(9);
-      text =
-        labels[reason] ??
-        labels[reason.split(":").at(-1) ?? ""] ??
-        "Some official warning evidence is unresolved";
-    }
     if (!text) {
       text = code
         .replace("wave_height_m:", "Waves: ")
@@ -102,6 +86,11 @@ export function TripForm({
     String(initialRequest?.spacing_km ?? 5),
   );
   const [step, setStep] = useState(String(initialRequest?.step_minutes ?? 30));
+  const [limits, setLimits] = useState<Record<string, { caution: string; critical: string }>>(() =>
+    Object.fromEntries(
+      Object.entries(initialRequest?.preferences ?? {}).map(([k, v]) => [k, { caution: v.caution != null ? String(v.caution) : "", critical: v.critical != null ? String(v.critical) : "" }]),
+    ),
+  );
   const [bindings, setBindings] = useState<Record<string, string>>(() =>
     initialRequest
       ? Object.fromEntries(
@@ -159,7 +148,16 @@ export function TripForm({
         .map(([variable, release_id]) => ({ variable, release_id })),
       spacing_km: Number(spacing),
       step_minutes: Number(step),
-      preferences: {},
+      preferences: Object.fromEntries(
+        Object.entries(limits)
+          .map(([variable, v]) => {
+            const out: { caution?: number; critical?: number } = {};
+            if (v.caution.trim()) out.caution = Number(v.caution);
+            if (v.critical.trim()) out.critical = Number(v.critical);
+            return [variable, out] as const;
+          })
+          .filter(([, v]) => v.caution != null || v.critical != null),
+      ),
     };
   }
   async function save(trip: boolean) {
@@ -222,7 +220,7 @@ export function TripForm({
   };
   const fromIST = (v: string) => (v ? new Date(Date.parse(`${v}:00+05:30`)).toISOString() : "");
   const status = result?.verdict.status ?? "";
-  const tone = status === "official_warning" || status === "critical" ? "warning" : status === "caution" ? "stale" : status === "insufficient_data" ? "unknown" : "available";
+  const tone = status === "unfavorable" ? "warning" : status === "caution" ? "stale" : status === "insufficient_data" ? "unknown" : "available";
   return (
     <div className="trip">
       <form onSubmit={submit} className="trip-form">
@@ -415,8 +413,33 @@ export function TripForm({
                 </label>
               ))}
             </div>
+            <h4>Your limits</h4>
+            <p className="footnote">Leave blank to use the defaults. Your limits can only be stricter.</p>
+            <div className="form-grid">
+              {policy.policy.inputs.map((s) => {
+                const name = s.variable.startsWith("wave") ? "Waves" : s.variable.startsWith("wind") ? "Wind" : "Current";
+                const unit = s.units === "m" ? "m" : "m/s";
+                const v = limits[s.variable] ?? { caution: "", critical: "" };
+                const set = (key: "caution" | "critical", value: string) => {
+                  clear();
+                  setLimits((l) => ({ ...l, [s.variable]: { ...v, [key]: value } }));
+                };
+                return (
+                  <Fragment key={s.variable}>
+                    <label>
+                      {name}: caution at ({unit})
+                      <input type="number" min="0" step="0.1" max={s.caution ?? undefined} placeholder={s.caution != null ? String(s.caution) : ""} value={v.caution} disabled={busy} onChange={(e) => set("caution", e.target.value)} />
+                    </label>
+                    <label>
+                      {name}: too rough at ({unit})
+                      <input type="number" min="0" step="0.1" max={s.critical ?? undefined} placeholder={s.critical != null ? String(s.critical) : ""} value={v.critical} disabled={busy} onChange={(e) => set("critical", e.target.value)} />
+                    </label>
+                  </Fragment>
+                );
+              })}
+            </div>
             <p className="footnote">
-              Rule set <span className="digest">{policy.policy.version}</span> · {policy.engine_available ? "reviewed" : "awaiting expert review"}. No numeric limits are approved yet.
+              Rule set <span className="digest">{policy.policy.version}</span>. Default limits suit small open boats and are not expert-reviewed.
             </p>
           </div>
         </details>
@@ -480,12 +503,16 @@ export function TripForm({
                 ) : (
                   <p className="muted">No forecast readings could be taken along this route.</p>
                 )}
-                <h3 style={{ marginTop: 28 }}>What couldn’t be checked</h3>
-                <ul className="plain-list">
-                  {missingSummaries(result.verdict.missing_inputs).map((m) => (
-                    <li key={m}>{m}</li>
-                  ))}
-                </ul>
+                {result.verdict.missing_inputs.length ? (
+                  <>
+                    <h3 style={{ marginTop: 28 }}>What couldn’t be checked</h3>
+                    <ul className="plain-list">
+                      {missingSummaries(result.verdict.missing_inputs).map((m) => (
+                        <li key={m}>{m}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
               </div>
               <RouteDiagram points={points.map((p) => ({ latitude: Number(p.latitude), longitude: Number(p.longitude), time: p.time }))} verdict={result.verdict} />
             </div>

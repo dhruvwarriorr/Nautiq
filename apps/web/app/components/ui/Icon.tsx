@@ -52,7 +52,7 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M4 11.5c1-2.6 2.6-4.6 5-5.8" strokeDasharray="0.1 2.2" />
     </>
   ),
-  // Triangular signal pennant: official warning
+  // Triangular signal pennant
   pennant: (
     <>
       <path d="M5 21V3" />

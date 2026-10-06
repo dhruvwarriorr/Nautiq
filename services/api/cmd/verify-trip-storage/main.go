@@ -23,7 +23,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	pb "nautiq.local/api/gen/nautiq/platform/v1"
-	"nautiq.local/api/internal/advisories"
 	"nautiq.local/api/internal/science"
 	"nautiq.local/api/internal/trips"
 )
@@ -185,7 +184,7 @@ func main() {
 	}()
 	files, err := filepath.Glob("/migrations/*.sql")
 	must(err)
-	check(len(files) == 17, "all migrations present")
+	check(len(files) == 19, "all migrations present")
 	for _, file := range files {
 		raw, e := os.ReadFile(file)
 		must(e)
@@ -193,11 +192,6 @@ func main() {
 		must(err)
 	}
 	now := time.Now().UTC().Truncate(time.Second)
-	policy := map[string]any{"required": true, "marine_coverage_verified": false, "cadence_verified": false, "redistribution_reviewed": false, "transport_max_age_seconds": 1800}
-	for _, id := range []string{"ndma_cap_rss", "incois_advisories"} {
-		_, err = db.Exec(ctx, "INSERT INTO advisory_sources(source_id,policy) VALUES($1,$2)", id, data(policy))
-		must(err)
-	}
 	fake := &fakeFields{Releases: map[string]fixtureRelease{}}
 	req := trips.Request{Activity: "fishing", ThresholdVersion: trips.DefaultPolicy().Version, Waypoints: []trips.Point{{Latitude: 12, Longitude: 72, Time: now.Add(10 * time.Minute)}, {Latitude: 12.05, Longitude: 72.05, Time: now.Add(70 * time.Minute)}, {Latitude: 12, Longitude: 72, Time: now.Add(130 * time.Minute)}}, SpacingKM: 5, StepMinutes: 30, Fields: []trips.Binding{}, Preferences: map[string]trips.Preference{}}
 	for i, spec := range trips.DefaultPolicy().Inputs {
@@ -221,7 +215,7 @@ func main() {
 	server := httptest.NewServer(mux)
 	defer server.Close()
 	first := create(server, req)
-	check(first.Verdict.Status == "insufficient_data" && len(first.Verdict.Worst) == 2 && first.Verdict.Worst[0].Point.Time.Year() > 2020, "unapproved policy retains real-shaped samples")
+	check(first.Verdict.EngineAvailable && len(first.Verdict.Worst) == 2 && first.Verdict.Worst[0].Point.Time.Year() > 2020, "default limits evaluate real-shaped samples")
 	invoke(server, "GET", "/api/v1/calculations/"+first.ID, nil, "", 404)
 	invoke(server, "GET", "/api/v1/trips/"+first.ID, nil, "", 404)
 	invoke(server, "GET", "/api/v1/trips/"+first.ID, nil, strings.Repeat("0", 64), 404)
@@ -244,57 +238,6 @@ func main() {
 	invoke(server, "GET", "/api/v1/trips/"+first.ID, nil, first.Token, 503)
 	put(s3, key, original)
 	invoke(server, "GET", "/api/v1/trips/"+first.ID, nil, first.Token, 200)
-	// A thin warning polygon lies between forecast samples, but intersects the whole timed route.
-	sent := now.Add(-time.Hour)
-	expires := now.Add(4 * time.Hour)
-	revision, run, calc := uuid.NewString(), uuid.NewString(), uuid.NewString()
-	polygon := advisories.Geometry{Type: "Polygon", Coordinates: [][][]float64{{{72.0119, 12.0119}, {72.0131, 12.0119}, {72.0131, 12.0131}, {72.0119, 12.0131}, {72.0119, 12.0119}}}}
-	message := advisories.Message{Identity: advisories.Identity{Sender: "IMD", Identifier: name, Sent: sent}, Sender: "IMD", Identifier: name, Sent: sent, RevisionID: revision, SourceID: "ndma_cap_rss", Operational: true, Type: "Alert", Status: "Actual", Scope: "Public", Issues: []string{}, References: []advisories.Identity{}, Infos: []advisories.Info{{Language: "en-IN", Event: "High waves fixture", Severity: "Severe", Urgency: "Expected", Certainty: "Likely", Effective: sent, Expires: &expires, Issues: []string{}, Areas: []advisories.Area{{Description: "Isolated test warning", Polygons: []advisories.Geometry{polygon}, Circles: []advisories.Circle{}, Unresolved: []string{}}}}}}
-	capXML := []byte(fmt.Sprintf(`<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>%s</identifier><sender>IMD</sender><sent>%s</sent><status>Actual</status><msgType>Alert</msgType><scope>Public</scope><info><category>Met</category><event>High waves fixture</event><urgency>Expected</urgency><severity>Severe</severity><certainty>Likely</certainty><expires>%s</expires><area><areaDesc>Isolated test warning</areaDesc><polygon>12.0119,72.0119 12.0119,72.0131 12.0131,72.0131 12.0131,72.0119 12.0119,72.0119</polygon></area></info></alert>`, name, sent.Format(time.RFC3339), expires.Format(time.RFC3339)))
-	rawKey := prefix + "cap.xml"
-	put(s3, rawKey, capXML)
-	receipt := map[string]any{"raw_key": rawKey, "sha256": trips.HashRaw(capXML), "bytes": len(capXML), "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1"}
-	var m map[string]any
-	must(json.Unmarshal(data(message), &m))
-	m["receipt"] = receipt
-	report := data(map[string]any{"messages": []any{m}, "receipts": []any{receipt}})
-	reportKey := prefix + "report.json"
-	put(s3, reportKey, report)
-	calcData := data(map[string]any{"kind": "advisory_ingestion", "source": "isolated-verification"})
-	calcKey := prefix + "calc.json"
-	put(s3, calcKey, calcData)
-	_, err = db.Exec(ctx, "INSERT INTO calculations(calculation_id,calculation_sha256,kind,method_version,manifest,manifest_key,manifest_sha256,state) VALUES($1,$2,'advisory_ingestion','isolated-fixture',$3,$4,$2,'frozen')", calc, trips.HashRaw(calcData), calcData, calcKey)
-	must(err)
-	_, err = db.Exec(ctx, "INSERT INTO advisory_runs(run_id,source_id,checked_at,report,report_key,report_sha256,calculation_id) VALUES($1,'ndma_cap_rss',$2,$3,$4,$5,$6)", run, now, report, reportKey, trips.HashRaw(report), calc)
-	must(err)
-	_, err = db.Exec(ctx, "INSERT INTO advisory_revisions(revision_id,source_id,sender,identifier,sent,raw_sha256,raw_key,raw_bytes,document,first_run_id) VALUES($1,'ndma_cap_rss','IMD',$2,$3,$4,$5,$6,$7,$8)", revision, name, sent, trips.HashRaw(capXML), rawKey, len(capXML), data(message), run)
-	must(err)
-	_, err = db.Exec(ctx, "UPDATE advisory_sources SET latest_run_id=$1,checked_at=$2,transport='healthy' WHERE source_id='ndma_cap_rss'", run, now)
-	must(err)
-	warning := create(server, req)
-	check(warning.Verdict.Status == "official_warning" && len(warning.Verdict.Missing) > 0, "complete timed geometry warning dominates unknown inputs")
-	invoke(server, "POST", "/api/v1/trips/"+warning.ID+"/replay", nil, warning.Token, 200)
-	// Immutable warning expires before departure: it must not be counted in a later route.
-	later := req
-	later.Waypoints = append([]trips.Point{}, req.Waypoints...)
-	for i := range later.Waypoints {
-		later.Waypoints[i].Time = later.Waypoints[i].Time.Add(5 * time.Hour)
-	}
-	check(create(server, later).Verdict.Status == "insufficient_data", "validity clipped before intersections")
-	// Inject a source change during field sampling; staged work cannot publish obsolete advisory state.
-	var count int
-	must(db.QueryRow(ctx, "SELECT count(*) FROM trip_calculations").Scan(&count))
-	fake.Change = func() {
-		_, e := db.Exec(ctx, "UPDATE advisory_sources SET latest_run_id=NULL WHERE source_id='ndma_cap_rss'")
-		must(e)
-	}
-	invoke(server, "POST", "/api/v1/trips", data(req), "", 409)
-	fake.Change = nil
-	var after int
-	must(db.QueryRow(ctx, "SELECT count(*) FROM trip_calculations").Scan(&after))
-	check(after == count, "source publication race rollback")
-	_, err = db.Exec(ctx, "UPDATE advisory_sources SET latest_run_id=$1 WHERE source_id='ndma_cap_rss'", run)
-	must(err)
 	_, err = db.Exec(ctx, `CREATE FUNCTION refuse_trip() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN RAISE EXCEPTION 'isolated failure'; END$$; CREATE TRIGGER refuse_trip BEFORE INSERT ON trip_calculations FOR EACH ROW EXECUTE FUNCTION refuse_trip()`)
 	must(err)
 	var calculations int
@@ -308,5 +251,5 @@ func main() {
 	bad.Waypoints = append([]trips.Point{}, req.Waypoints...)
 	bad.Waypoints[0].Time = now.Add(-time.Hour)
 	invoke(server, "POST", "/api/v1/trips", data(bad), "", 400)
-	fmt.Println("Trip persistence passed: private token access, public-record exclusion, captured field/advisory replay, corruption refusal/recovery, whole-leg warning intersection, temporal clipping, source race and atomic rollback.")
+	fmt.Println("Trip persistence passed: private token access, public-record exclusion, captured field replay, corruption refusal/recovery and atomic rollback.")
 }

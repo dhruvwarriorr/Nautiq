@@ -46,14 +46,14 @@ export default async function Locations() {
   const answers = await Promise.all(places.map((p) => answer(p.slug)));
   return (
     <main>
-      <PageHead icon="buoy" title="Conditions" lede="Pick a place to see the sea right now: waves, wind, currents and official warnings." />
+      <PageHead icon="buoy" title="Conditions" lede="Pick a place to see the sea right now: waves, wind, currents and sea temperature." />
       {places.length ? (
         <section className="board" aria-label="Places">
           <div className="board-head" aria-hidden="true">
             <span>Place</span>
             <span>Waves</span>
             <span>Wind</span>
-            <span>Warnings</span>
+            <span>Current</span>
             <span />
           </div>
           <ul>
@@ -61,7 +61,6 @@ export default async function Locations() {
               const facts = answers[i]?.answer?.facts ?? [];
               const rs = facts.map((f) => toReading(f));
               const pick = (m: Reading["measure"]) => rs.find((r) => r.measure === m);
-              const w = pick("warnings");
               return (
                 <li key={p.slug}>
                   <Link href={`/locations/${p.slug}`} className="board-row">
@@ -74,9 +73,7 @@ export default async function Locations() {
                     </span>
                     <span data-label="Waves"><Cell r={pick("waves")} /></span>
                     <span data-label="Wind"><Cell r={pick("wind")} /></span>
-                    <span data-label="Warnings">
-                      {w ? <Signal status={w.status}>{w.status === "unknown" ? "Unknown" : undefined}</Signal> : <Signal status="unavailable" />}
-                    </span>
+                    <span data-label="Current"><Cell r={pick("current")} /></span>
                     <Icon name="arrow" size={22} className="icon board-arrow" />
                   </Link>
                 </li>
@@ -84,8 +81,8 @@ export default async function Locations() {
             })}
           </ul>
           <p className="footnote board-foot">
-            Forecast readings at each place&apos;s offshore point{answers[0]?.answer ? `, checked ${when(answers[0].answer.as_of)}` : ""}. Warnings shown as
-            unknown are never an all-clear.
+            Forecast readings at each place&apos;s offshore point{answers[0]?.answer ? `, checked ${when(answers[0].answer.as_of)}` : ""}. Nautiq does not track
+            official warnings; check INCOIS and IMD before you go.
           </p>
         </section>
       ) : (

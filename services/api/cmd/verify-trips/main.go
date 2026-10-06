@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"nautiq.local/api/internal/advisories"
 	"nautiq.local/api/internal/trips"
 	"strings"
 	"time"
@@ -27,11 +26,11 @@ func fixture() trips.Input {
 	for i := range p.Inputs {
 		p.Inputs[i].Caution = ptr(2)
 		p.Inputs[i].Critical = ptr(4)
-		p.Inputs[i].Origin = "reviewed_policy"
+		p.Inputs[i].Origin = "default_policy"
 	}
 	points, sampling, err := trips.Points(req, now)
 	check(err == nil, "fixture route")
-	input := trips.Input{AsOf: now, Request: req, Policy: p, Expected: points, Sampling: sampling, Advisory: advisories.State{Status: "known_none_intersecting", AsOf: now, Start: req.Waypoints[0].Time, End: req.Waypoints[2].Time, Warnings: []advisories.Warning{}, Unknown: []string{}, ProductionApproved: true, Sources: []advisories.Source{{ID: "synthetic", Coverage: "verified_complete"}}}, Fields: []trips.Field{}, AcquisitionIssues: []string{}}
+	input := trips.Input{AsOf: now, Request: req, Policy: p, Expected: points, Sampling: sampling, Fields: []trips.Field{}, AcquisitionIssues: []string{}}
 	cycle := now.Add(-time.Hour)
 	for _, spec := range p.Inputs {
 		if !spec.Required {
@@ -53,7 +52,7 @@ func clone(input trips.Input) trips.Input {
 }
 func main() {
 	base := fixture()
-	check(trips.DefaultPolicy().Approved == false && !trips.DefaultPolicy().Available(), "default is unavailable")
+	check(trips.DefaultPolicy().Available(), "default limits are usable")
 	check(trips.Evaluate(base).Status == "favorable", "fully supported fixture")
 	for _, entry := range []struct {
 		value  float64
@@ -69,16 +68,10 @@ func main() {
 	missing.Fields[1].Samples[0].Status = "masked"
 	v := trips.Evaluate(missing)
 	check(v.Status == "insufficient_data" && v.Worst[0].Value == 5 && v.Rules[0].Verdict == "unfavorable", "missing priority retains adverse evidence")
-	missing.Advisory.Status = "official_warning"
-	missing.Advisory.Warnings = []advisories.Warning{{RevisionID: "official", Event: "High waves"}}
-	missing.Advisory.Unknown = []string{"another_feed_stale"}
-	v = trips.Evaluate(missing)
-	check(v.Status == "official_warning" && len(v.Missing) > 0, "warning priority")
 	noPolicy := clone(base)
-	noPolicy.Policy = trips.DefaultPolicy()
-	noPolicy.Request.ThresholdVersion = noPolicy.Policy.Version
+	noPolicy.Policy.Approved = false
 	check(trips.Evaluate(noPolicy).Status == "insufficient_data" && !trips.Evaluate(noPolicy).EngineAvailable, "unapproved release")
-	for _, mutate := range []func(*trips.Input){func(i *trips.Input) { i.Advisory.Status = "unknown" }, func(i *trips.Input) { i.Fields[0].Cycle = nil }, func(i *trips.Input) { old := i.AsOf.Add(-100 * time.Hour); i.Fields[0].Cycle = &old }, func(i *trips.Input) { i.Fields[0].OperationalApproved = false }, func(i *trips.Input) { i.Fields[0].Samples = i.Fields[0].Samples[:1] }, func(i *trips.Input) { i.Fields[0].Samples[0].Units = "knots" }, func(i *trips.Input) { i.Fields[0].ValidEnd = i.AsOf }, func(i *trips.Input) { i.Fields = append(i.Fields, i.Fields[0]) }, func(i *trips.Input) { i.Advisory.Status = "official_warning" }, func(i *trips.Input) { i.Advisory.Unknown = []string{"stale"} }, func(i *trips.Input) { i.Expected[0].Longitude = 73 }} {
+	for _, mutate := range []func(*trips.Input){func(i *trips.Input) { i.Fields[0].Cycle = nil }, func(i *trips.Input) { old := i.AsOf.Add(-100 * time.Hour); i.Fields[0].Cycle = &old }, func(i *trips.Input) { i.Fields[0].Samples = i.Fields[0].Samples[:1] }, func(i *trips.Input) { i.Fields[0].Samples[0].Units = "knots" }, func(i *trips.Input) { i.Fields[0].ValidEnd = i.AsOf }, func(i *trips.Input) { i.Fields = append(i.Fields, i.Fields[0]) }, func(i *trips.Input) { i.Expected[0].Longitude = 73 }} {
 		i := clone(base)
 		mutate(&i)
 		check(trips.Evaluate(i).Status == "insufficient_data", "required evidence refusal")
@@ -88,10 +81,12 @@ func main() {
 	pref.Fields[0].Samples[0].Value = ptr(3)
 	v = trips.Evaluate(pref)
 	check(v.Status == "unfavorable" && v.Rules[0].Origin == "personal_preference", "tightening preference")
-	for _, p := range []map[string]trips.Preference{{"wave_height_m": {Critical: ptr(5)}}, {"wave_height_m": {Critical: ptr(1)}}, {"unknown": {Caution: ptr(1)}}} {
+	for _, p := range []map[string]trips.Preference{{"wave_height_m": {Critical: ptr(5)}}, {"wave_height_m": {Caution: ptr(2), Critical: ptr(1)}}, {"unknown": {Caution: ptr(1)}}} {
 		_, err := base.Policy.WithPreferences(p)
 		check(err != nil, "cannot relax or bypass")
 	}
+	tight, err := base.Policy.WithPreferences(map[string]trips.Preference{"wave_height_m": {Critical: ptr(1)}})
+	check(err == nil && *tight.Inputs[0].Caution == 1 && *tight.Inputs[0].Critical == 1, "a stricter critical limit pulls caution down")
 	combo := clone(base)
 	combo.Policy.Combinations = []trips.Combination{{ID: "combined", Verdict: "caution", All: []trips.Condition{{Variable: "wave_height_m", AtLeast: 1}, {Variable: "wind_speed_m_s", AtLeast: 1}}}}
 	check(trips.Evaluate(combo).Status == "caution", "reviewed combination")
@@ -124,5 +119,5 @@ func main() {
 		check(!strings.Contains(lower, "safe") && !strings.Contains(lower, "guarantee") && !strings.Contains(lower, "all clear"), "safety wording")
 	}
 	check(len(trips.CodeSHA()) == 64, "embedded code fingerprint")
-	fmt.Println("Trip Go contracts passed: all five verdicts, equality, warning/missing precedence, preserved adverse samples, source/route/approval refusal, preferences, combinations, deterioration, exact replay and safety wording.")
+	fmt.Println("Trip Go contracts passed: all four verdicts, equality, missing precedence, preserved adverse samples, source/route/approval refusal, preferences, combinations, deterioration, exact replay and safety wording.")
 }

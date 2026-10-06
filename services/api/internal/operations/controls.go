@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var Scopes = []string{"science", "field_sampling", "model_inference", "events", "advisories", "trips", "notification_evaluation", "email_delivery", "product_writes"}
+var Scopes = []string{"science", "field_sampling", "model_inference", "events", "trips", "product_writes"}
 
 type State struct {
 	Revision  int64           `json:"revision"`
@@ -57,7 +57,7 @@ func ValidScope(scope string) bool {
 	return false
 }
 func (s State) Allows(scope string) bool {
-	return !s.Paused[scope] && !(scope != "product_writes" && scope != "email_delivery" && s.Paused["science"])
+	return !s.Paused[scope] && !(scope != "product_writes" && s.Paused["science"])
 }
 func Allowed(ctx context.Context, q Queryer, scope string) (bool, error) {
 	s, e := Read(ctx, q, false)
@@ -65,7 +65,7 @@ func Allowed(ctx context.Context, q Queryer, scope string) (bool, error) {
 }
 func Scope(r *http.Request) string {
 	p := r.URL.Path
-	if r.Method != "GET" && (strings.HasPrefix(p, "/api/v1/auth/") || p == "/api/v1/account" || strings.HasPrefix(p, "/api/v1/routes") || strings.HasPrefix(p, "/api/v1/watchlists") || strings.HasPrefix(p, "/api/v1/alert-rules") || strings.HasPrefix(p, "/api/v1/saved-trips") || strings.HasPrefix(p, "/api/v1/exports") || strings.HasPrefix(p, "/api/v1/reports") || strings.HasPrefix(p, "/api/v1/notification-email") || (strings.HasPrefix(p, "/api/v1/alerts/") && !strings.HasSuffix(p, "/replay"))) {
+	if r.Method != "GET" && (strings.HasPrefix(p, "/api/v1/auth/") || p == "/api/v1/account" || strings.HasPrefix(p, "/api/v1/routes") || strings.HasPrefix(p, "/api/v1/watchlists") || strings.HasPrefix(p, "/api/v1/saved-trips") || strings.HasPrefix(p, "/api/v1/exports") || strings.HasPrefix(p, "/api/v1/reports")) {
 		return "product_writes"
 	}
 	if strings.HasPrefix(p, "/api/v1/fields") {
@@ -73,9 +73,6 @@ func Scope(r *http.Request) string {
 	}
 	if strings.HasPrefix(p, "/api/v1/trips") || p == "/api/v1/trip-policy" {
 		return "trips"
-	}
-	if strings.HasPrefix(p, "/api/v1/advisories") {
-		return "advisories"
 	}
 	if strings.HasPrefix(p, "/api/v1/event") {
 		return "events"
@@ -99,7 +96,7 @@ func Guard(db *pgxpool.Pool, next http.Handler) http.Handler {
 			state, e := Read(ctx, db, false)
 			ok := e == nil && state.Allows(scope)
 			if ok && (scope == "science" || scope == "trips") {
-				for _, dependency := range []string{"field_sampling", "advisories", "model_inference"} {
+				for _, dependency := range []string{"field_sampling", "model_inference"} {
 					ok = state.Allows(dependency)
 					if !ok {
 						break

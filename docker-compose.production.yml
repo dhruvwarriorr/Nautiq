@@ -4,10 +4,6 @@ services:
   api:
     ports: !reset []
     environment: &app_environment
-      SMTP_HOST: ''
-      SMTP_FROM: ''
-      SMTP_USERNAME: ''
-      SMTP_PASSWORD: ''
       # Optional language-model question parsing stays off unless an operator mounts NAUTIQ_LLM_API_KEY_FILE.
       NAUTIQ_LLM_API_KEY: ''
       NAUTIQ_LLM_MODEL: ''
@@ -29,10 +25,6 @@ services:
     mem_limit: 512m
     cpus: 1
     restart: unless-stopped
-    networks: [default, egress]
-  notifications:
-    environment: *app_environment
-    secrets: [app_database_url, storage_app_user, storage_app_password]
     networks: [default, egress]
   web:
     ports: !reset []
@@ -110,10 +102,6 @@ services:
   export-worker:
     environment: *worker_environment
     secrets: [worker_database_url, storage_worker_user, storage_worker_password]
-  advisory-worker:
-    environment: *worker_environment
-    secrets: [worker_database_url, storage_worker_user, storage_worker_password]
-    networks: [default, egress]
   event-worker:
     environment: *worker_environment
     secrets: [worker_database_url, storage_worker_user, storage_worker_password]

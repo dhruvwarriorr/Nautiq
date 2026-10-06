@@ -22,7 +22,6 @@ export default function SiteFooter() {
             <li><Link href="/locations">Conditions by place</Link></li>
             <li><Link href="/map">Ocean map</Link></li>
             <li><Link href="/trips">Plan a trip</Link></li>
-            <li><Link href="/advisories">Official warnings</Link></li>
           </ul>
         </div>
         <div>
@@ -45,7 +44,7 @@ export default function SiteFooter() {
         </div>
       </div>
       <div className="site-footer-base">
-        <p>An unknown warning state is never an all-clear. Missing data is shown as missing, never filled in.</p>
+        <p>Nautiq does not track official warnings. Check INCOIS and IMD before you go. Missing data is shown as missing, never filled in.</p>
         <p>Times shown in India Standard Time.</p>
       </div>
     </footer>

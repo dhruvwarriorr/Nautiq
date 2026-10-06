@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   privateQuery,
@@ -19,17 +19,15 @@ import AccountGate, { type AccountContext } from "./AccountGate";
 import PrivateJobs from "./PrivateJobs";
 import ResearchExplorer from "./ResearchExplorer";
 import RouteDiagram from "./RouteDiagram";
-import { NotificationEmail, NotificationStatus } from "./NotificationControls";
 import { TripForm } from "../trips/TripForm";
 import { when } from "../../lib/humanize";
 import Icon, { type IconName } from "./ui/Icon";
-const surfaceNames: Record<string, string> = { map: "Map", routes: "Routes", watchlists: "Places", alerts: "Alerts", explorer: "Research", reports: "Reports", exports: "Downloads", settings: "Settings" };
-const surfaceIcons: Record<string, IconName> = { map: "chart", routes: "voyage", watchlists: "anchorline", alerts: "bell", explorer: "float", reports: "logbook", exports: "export", settings: "compass" };
+const surfaceNames: Record<string, string> = { map: "Map", routes: "Routes", watchlists: "Places", explorer: "Research", reports: "Reports", exports: "Downloads", settings: "Settings" };
+const surfaceIcons: Record<string, IconName> = { map: "chart", routes: "voyage", watchlists: "anchorline", explorer: "float", reports: "logbook", exports: "export", settings: "compass" };
 const surfaces = [
   "map",
   "routes",
   "watchlists",
-  "alerts",
   "explorer",
   "reports",
   "exports",
@@ -85,21 +83,13 @@ function WorkspaceContent({
     <Routes account={account} tripPolicy={tripPolicy} releases={releases} />
   ) : surface === "watchlists" ? (
     <ObjectEditor account={account} kind="watchlists" policy={policy} />
-  ) : surface === "alerts" ? (
-    <>
-      <NotificationStatus account={account} />
-      <ObjectEditor account={account} kind="alert-rules" policy={policy} />
-      <AlertInbox account={account} />
-    </>
   ) : surface === "reports" || surface === "exports" ? (
     <JobCreator account={account} kind={surface} policy={policy} />
   ) : (
     <section>
       <h2>Your evidence workspace</h2>
       <p>
-        Saved routes, watchlists, rules, trip receipts and files belong to this
-        account. Notification evaluation and delivery are currently unavailable;
-        an empty inbox gives no assurance about conditions.
+        Saved routes, places, trip receipts and files belong to this account.
       </p>
       <div className="place-grid">
         {surfaces.map((s) => (
@@ -116,14 +106,12 @@ function WorkspaceContent({
                 ? "Save timed waypoints and retain exact trip receipts."
                 : s === "watchlists"
                   ? "Save a point, named location, polygon or owned route."
-                  : s === "alerts"
-                    ? "Manage personal rules and acknowledge retained evidence."
-                    : s === "exports"
+                  : s === "exports"
                       ? "Create bounded private source files with attribution."
                       : s === "reports"
                         ? "Capture versioned provenance and limitations."
                         : s === "settings"
-                          ? "Manage notifications, passwords and your account."
+                          ? "Change your password or delete your account."
                           : s === "explorer"
                             ? "Explore original depth records and diagnostics."
                             : "Public source evidence with explicit unknown layers."}
@@ -449,30 +437,20 @@ function ObjectEditor({
   policy,
 }: {
   account: AccountContext;
-  kind: "watchlists" | "alert-rules";
+  kind: "watchlists";
   policy: ProductPolicy | null;
 }) {
   const owned = useOwned(account, kind);
-  const refs = useOwned(
-    account,
-    kind === "watchlists" ? "routes" : "watchlists",
-  );
+  const refs = useOwned(account, "routes");
   const [old, setOld] = useState<SavedObject | null>(null);
   const [name, setName] = useState("");
-  const [type, setType] = useState(
-    kind === "watchlists" ? "point" : "official_advisory",
-  );
+  const [type, setType] = useState("point");
   const [lat, setLat] = useState("19");
   const [lon, setLon] = useState("72.3");
   const [radius, setRadius] = useState("10");
   const [place, setPlace] = useState("mumbai-offshore");
   const [polygon, setPolygon] = useState("");
   const [reference, setReference] = useState("");
-  const [variable, setVariable] = useState("wave_height_m");
-  const [limit, setLimit] = useState("2");
-  const [enabled, setEnabled] = useState(true);
-  const [channel, setChannel] = useState("in_app");
-  const [cooldown, setCooldown] = useState("60");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   function edit(o: SavedObject) {
@@ -484,22 +462,15 @@ function ObjectEditor({
     setRadius(String(o.data.radius_km ?? 10));
     setPlace(String(o.data.place ?? "mumbai-offshore"));
     setPolygon(o.data.polygon ? JSON.stringify(o.data.polygon) : "");
-    setReference(String(o.data.route_id ?? o.data.watchlist_id ?? ""));
-    setVariable(String(o.data.variable ?? "wave_height_m"));
-    setLimit(String(o.data.limit ?? 2));
-    setEnabled(o.data.enabled !== false);
-    setChannel(String(o.data.channel ?? "in_app"));
-    setCooldown(String(o.data.cooldown_minutes || 60));
+    setReference(String(o.data.route_id ?? ""));
     setMessage("");
   }
   async function save() {
     setBusy(true);
     owned.setError("");
     try {
-      let data: Record<string, unknown>;
-      if (kind === "watchlists") {
-        data = { type };
-        if (type === "point") {
+      const data: Record<string, unknown> = { type };
+      if (type === "point") {
           if (!lat.trim() || !lon.trim() || !radius.trim())
             throw Error("coordinates_and_radius_required");
           Object.assign(data, {
@@ -507,21 +478,9 @@ function ObjectEditor({
             longitude: Number(lon),
             radius_km: Number(radius),
           });
-        } else if (type === "place") data.place = place;
-        else if (type === "route") data.route_id = reference;
-        else data.polygon = JSON.parse(polygon);
-      } else {
-        if (!cooldown.trim() || !Number.isInteger(Number(cooldown))) throw Error("cooldown_minutes_required");
-        data = { type, watchlist_id: reference, channel, enabled, cooldown_minutes: Number(cooldown) };
-        if (type === "field_threshold") {
-          if (!limit.trim()) throw Error("personal_limit_required");
-          Object.assign(data, {
-            variable,
-            limit: Number(limit),
-            units: variable === "wave_height_m" ? "m" : "m s-1",
-          });
-        }
-      }
+      } else if (type === "place") data.place = place;
+      else if (type === "route") data.route_id = reference;
+      else data.polygon = JSON.parse(polygon);
       const obj = await owned.save(name, data, old);
       if (obj) {
         setOld(obj);
@@ -535,25 +494,16 @@ function ObjectEditor({
   }
   return (
     <section>
-      <h2>{kind === "watchlists" ? "Watchlists" : "Alert rules"}</h2>
-      {kind === "alert-rules" ? (
-        <p className="notice">
-          Enabled rules request bounded evidence evaluation. Personal limits are
-          preferences, not validated safety thresholds. Escalations bypass
-          cooldown; recovery requires two distinct fresh confirmations.
-          Inspect monitoring status and source age before interpreting an empty inbox.
-        </p>
-      ) : (
-        <p>
-          Save a point with a radius up to 100 km, a named location, a closed
-          polygon, or an owned timed route.
-        </p>
-      )}
+      <h2>Saved places</h2>
+      <p>
+        Save a point with a radius up to 100 km, a named location, a closed
+        polygon, or an owned timed route.
+      </p>
       <p role="status">{owned.error.replaceAll("_", " ") || message}</p>
       {owned.loading ? (
         <p>Loading owned objects…</p>
       ) : owned.items.length === 0 ? (
-        <p>No {kind} saved.</p>
+        <p>No places saved.</p>
       ) : (
         <ul className="owned-list">
           {owned.items.map((o) => (
@@ -579,7 +529,7 @@ function ObjectEditor({
           setMessage("");
         }}
       >
-        New {kind === "watchlists" ? "watchlist" : "rule"}
+        New place
       </button>
       <form
         onSubmit={(e) => {
@@ -600,17 +550,14 @@ function ObjectEditor({
           <label>
             Type
             <select value={type} onChange={(e) => setType(e.target.value)}>
-              {(kind === "watchlists"
-                ? ["point", "place", "polygon", "route"]
-                : ["official_advisory", "source_stale", "field_threshold"]
-              ).map((t) => (
+              {["point", "place", "polygon", "route"].map((t) => (
                 <option key={t} value={t}>
                   {t.replaceAll("_", " ")}
                 </option>
               ))}
             </select>
           </label>
-          {kind === "watchlists" && type === "point" ? (
+          {type === "point" ? (
             <>
               <label>
                 Latitude
@@ -650,7 +597,7 @@ function ObjectEditor({
               </label>
             </>
           ) : null}
-          {kind === "watchlists" && type === "place" ? (
+          {type === "place" ? (
             <label>
               Named place
               <select value={place} onChange={(e) => setPlace(e.target.value)}>
@@ -662,9 +609,9 @@ function ObjectEditor({
               </select>
             </label>
           ) : null}
-          {kind === "alert-rules" || type === "route" ? (
+          {type === "route" ? (
             <label>
-              {kind === "alert-rules" ? "Owned watchlist" : "Owned route"}
+              Owned route
               <select
                 required
                 value={reference}
@@ -679,37 +626,8 @@ function ObjectEditor({
               </select>
             </label>
           ) : null}
-          {kind === "alert-rules" && type === "field_threshold" ? (
-            <>
-              <label>
-                Personal variable
-                <select
-                  value={variable}
-                  onChange={(e) => setVariable(e.target.value)}
-                >
-                  {["wave_height_m", "wind_speed_m_s", "current_speed_m_s"].map(
-                    (v) => (
-                      <option key={v}>{v}</option>
-                    ),
-                  )}
-                </select>
-              </label>
-              <label>
-                Personal limit ({variable === "wave_height_m" ? "m" : "m s-1"})
-                <input
-                  required
-                  type="number"
-                  min={0}
-                  max={1000}
-                  step="any"
-                  value={limit}
-                  onInput={(e) => setLimit(e.currentTarget.value)}
-                />
-              </label>
-            </>
-          ) : null}
         </div>
-        {kind === "watchlists" && type === "polygon" ? (
+        {type === "polygon" ? (
           <label className="wide-label">
             Closed polygon: longitude, latitude pairs
             <textarea
@@ -721,159 +639,12 @@ function ObjectEditor({
             />
           </label>
         ) : null}
-        {kind === "alert-rules" ? (
-          <div className="field-controls">
-            <label>Delivery channel<select value={channel} onChange={(e) => setChannel(e.target.value)}><option value="in_app">In-app</option><option value="email">Email and retained inbox evidence</option><option value="both">In-app and email</option></select></label>
-            <label>Update cooldown (minutes)<input required type="number" min={1} max={1440} step={1} value={cooldown} onChange={(e) => setCooldown(e.target.value)} /></label>
-          <label>
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={(e) => setEnabled(e.target.checked)}
-            />{" "}
-            Enable evidence monitoring
-          </label>
-          </div>
-        ) : null}
         <p>
           <button disabled={busy}>
-            {busy
-              ? "Saving…"
-              : `Save ${kind === "watchlists" ? "watchlist" : "rule"}`}
+            {busy ? "Saving…" : "Save place"}
           </button>
         </p>
       </form>
-    </section>
-  );
-}
-type InboxItem = {
-  alert_id: string;
-  state: string;
-  created_at: string;
-  acknowledged_at: string | null;
-  evidence: unknown;
-  evidence_sha256: string;
-  rule_version: number;
-  event_revision: string;
-  supersedes: string | null;
-  deliveries: { channel: string; state: string; attempts: number; reason: string | null }[];
-};
-function AlertInbox({ account }: { account: AccountContext }) {
-  const requestSequence = useRef({ value: 0, active: true });
-  const paged = useRef(false);
-  const [items, setItems] = useState<InboxItem[]>([]);
-  const [error, setError] = useState("");
-  const [next, setNext] = useState<string | null>(null);
-  const session = account.session,
-    expire = account.expire;
-  const load = useCallback(
-    async (after?: string) => {
-      const scope = requestSequence.current;
-      const requestId = ++scope.value;
-      paged.current = Boolean(after);
-      try {
-        const d = await privateQuery<{
-          items: InboxItem[];
-          next_cursor: string | null;
-        }>(`alerts${after ? `?after=${after}` : ""}`, session);
-        if (!scope.active || requestId !== scope.value) return;
-        setError("");
-        setItems((old) => (after ? [...old, ...d.items] : d.items));
-        setNext(d.next_cursor);
-      } catch (e) {
-        if (!scope.active || requestId !== scope.value) return;
-        const m = e instanceof Error ? e.message : "inbox_unavailable";
-        setError(m);
-        if (m === "session_expired") expire();
-      }
-    },
-    [session, expire],
-  );
-  useEffect(() => {
-    const scope = requestSequence.current;
-    scope.active = true;
-    const requestId = ++scope.value;
-    privateQuery<{ items: InboxItem[]; next_cursor: string | null }>("alerts", session).then((d) => {
-      if (scope.active && requestId === scope.value) { setItems(d.items); setNext(d.next_cursor); setError(""); }
-    }).catch((e) => {
-      if (!scope.active || requestId !== scope.value) return;
-      const m = e instanceof Error ? e.message : "inbox_unavailable";
-      setError(m); if (m === "session_expired") expire();
-    });
-    const timer = setInterval(() => {
-      if (document.visibilityState === "visible" && !paged.current) void load();
-    }, 30000);
-    return () => {
-      clearInterval(timer);
-      scope.active = false;
-    };
-  }, [load, session, expire]);
-  return (
-    <section>
-      <h2>Retained alert inbox</h2>
-      <p role="status">{error}</p>
-      {items.length === 0 ? (
-        <p>
-          No retained alerts. Check each rule&apos;s monitoring status and source
-          coverage; an empty inbox does not establish safe conditions.
-        </p>
-      ) : (
-        items.map((i) => (
-          <article key={i.alert_id}>
-            <h3>{i.state}</h3>
-            <p>{i.state === "recovered" ? "Two distinct fresh confirmations resolved this rule's condition. Other inputs and safety remain unresolved." : i.state === "corrected" ? "Earlier authority evidence was revised or withdrawn. This correction is not an all-clear." : "Retained trigger evidence; current conditions may differ. Inspect source age and unresolved inputs."}</p>
-            <p>
-              {when(i.created_at)} · rule version {i.rule_version} · event revision{" "}
-              <span className="digest">{i.event_revision}</span>
-            </p>
-            {i.supersedes ? <p className="digest">Follows retained alert {i.supersedes}. Earlier evidence is preserved.</p> : null}
-            <ul>{i.deliveries.map((d) => <li key={d.channel}>{d.channel === "in_app" ? "In-app" : "Email"}: {d.state} · {d.attempts} transport attempts{d.reason ? ` · ${d.reason.replaceAll("_", " ")}` : ""}</li>)}</ul>
-            <details>
-              <summary>Immutable alert evidence</summary>
-              <pre className="audit-json">
-                {JSON.stringify(i.evidence, null, 2)}
-              </pre>
-              <p className="digest">{i.evidence_sha256}</p>
-              {(i.evidence as { observation?: { field_evidence_sha256?: string[] } } | null)?.observation?.field_evidence_sha256?.map((sha) => <p key={sha}><a href={`/api/product/notification-evidence/${sha}`} target="_blank" rel="noopener noreferrer">Inspect original private field evidence ({sha.slice(0, 12)})</a></p>)}
-            </details>
-            <button onClick={async () => {
-              try { const result = await privateQuery<{matched: boolean}>(`alerts/${i.alert_id}/replay`, session, "POST"); setError(result.matched ? "Frozen lifecycle replay matched. It does not refresh current conditions." : "Replay did not match."); }
-              catch (e) { const m = e instanceof Error ? e.message : "replay_unavailable"; setError(m); if (m === "session_expired") expire(); }
-            }}>Replay frozen lifecycle</button>{" "}
-            {i.deliveries.some((d) => d.channel === "email" && (d.state === "failed" || d.state === "blocked")) ? <button onClick={async () => {
-              try { await privateQuery(`alerts/${i.alert_id}/retry-email`, session, "POST"); await load(); }
-              catch (e) { const m = e instanceof Error ? e.message : "email_retry_unavailable"; setError(m.replaceAll("_", " ")); if (m === "session_expired") expire(); }
-            }}>Retry email with current verified recipient</button> : null}{" "}
-            {i.acknowledged_at ? (
-              <p>Acknowledged {i.acknowledged_at}</p>
-            ) : (
-              <button
-                onClick={async () => {
-                  try {
-                    await privateQuery(
-                      `alerts/${i.alert_id}/acknowledge`,
-                      session,
-                      "POST",
-                    );
-                    await load();
-                  } catch (e) {
-                    const m =
-                      e instanceof Error ? e.message : "ack_unavailable";
-                    setError(m);
-                    if (m === "session_expired") expire();
-                  }
-                }}
-              >
-                Acknowledge receipt
-              </button>
-            )}
-          </article>
-        ))
-      )}
-      {next ? (
-        <button onClick={() => void load(next)}>More alerts</button>
-      ) : null}
-      <button onClick={() => void load()}>Refresh inbox</button>
     </section>
   );
 }
@@ -912,7 +683,7 @@ function JobCreator({
       <p>
         Reports capture provenance, references, policy and owned state. Original
         accepted Argo observations can be exported from the research explorer.
-        Forecast and official advisory redistribution remain unavailable.
+        Forecast redistribution remains unavailable.
       </p>
       <div className="field-controls">
         <label>
@@ -985,9 +756,6 @@ function JobCreator({
   );
 }
 function Settings({ account }: { account: AccountContext }) {
-  const [notifications, setNotifications] = useState(
-    account.session.notifications_enabled,
-  );
   const [oldPassword, setOld] = useState("");
   const [newPassword, setNew] = useState("");
   const [deletePassword, setDelete] = useState("");
@@ -1011,22 +779,9 @@ function Settings({ account }: { account: AccountContext }) {
       setOld("");
       setNew("");
       setDelete("");
-      if (remove || result.sign_in_again) {
-        if (remove) account.clear();
-        else account.expire();
-        setMessage(
-          remove
-            ? "Account deleted. Private files are queued for removal."
-            : "Password changed. Sign in again.",
-        );
-      } else {
-        account.update({
-          ...account.session,
-          notifications_enabled: notifications,
-          version: result.version,
-        });
-        setMessage("Account preference saved.");
-      }
+      if (remove) account.clear();
+      else if (result.sign_in_again) account.expire();
+      setMessage(remove ? "Account deleted. Private files are queued for removal." : "Password changed. Sign in again.");
     } catch (e) {
       const m = e instanceof Error ? e.message : "account_unavailable";
       setMessage(m.replaceAll("_", " "));
@@ -1039,29 +794,10 @@ function Settings({ account }: { account: AccountContext }) {
     <>
       <h2>Account settings</h2>
       <p>
-        Local handle account: {account.session.handle}. This pilot has no
-        identity provider, MFA or password recovery. Notification email is verified separately.
+        Local handle account: {account.session.handle}. There is no
+        password recovery, so keep your password safe.
       </p>
       <p role="status">{message}</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void change({ notifications_enabled: notifications });
-        }}
-      >
-        <label>
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={(e) => setNotifications(e.target.checked)}
-          />{" "}
-          Allow notification delivery, including retries
-        </label>
-        <p>
-          <button disabled={busy}>Save notification preference</button>
-        </p>
-      </form>
-      <NotificationEmail account={account} />
       <h2>Change password</h2>
       <form
         onSubmit={(e) => {
@@ -1097,7 +833,7 @@ function Settings({ account }: { account: AccountContext }) {
       </form>
       <h2>Delete account</h2>
       <p>
-        Deletion removes saved objects, alert records and jobs, revokes all
+        Deletion removes saved objects and jobs, revokes all
         sessions and schedules private artifacts and claimed trip receipts for
         removal. Unlinked anonymous receipts keep their original retention.
       </p>

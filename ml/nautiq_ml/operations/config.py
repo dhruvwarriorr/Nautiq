@@ -9,8 +9,6 @@ KEYS = (
     "DATABASE_URL",
     "MINIO_ROOT_USER",
     "MINIO_ROOT_PASSWORD",
-    "SMTP_USERNAME",
-    "SMTP_PASSWORD",
 )
 
 

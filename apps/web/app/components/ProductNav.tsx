@@ -9,7 +9,6 @@ const primary: [string, string, IconName][] = [
   ["/locations", "Conditions", "buoy"],
   ["/map", "Map", "chart"],
   ["/trips", "Trips", "voyage"],
-  ["/advisories", "Warnings", "pennant"],
 ];
 export const behind: { title: string; links: [string, string, string, IconName][] }[] = [
   {

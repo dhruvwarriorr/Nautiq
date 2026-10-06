@@ -72,7 +72,7 @@ def validate(config, directory, host, domain, images):
             raise ValueError("backend_host_port_forbidden")
         if not re.fullmatch(r"[a-zA-Z0-9._:/-]+@sha256:[a-f0-9]{64}", images[name]):
             raise ValueError("registry_digest_required")
-    for name in ("api", "notifications", "web"):
+    for name in ("api", "web"):
         if not enabled[name].get("read_only") or "ALL" not in enabled[name].get(
             "cap_drop", []
         ):
@@ -84,7 +84,6 @@ def validate(config, directory, host, domain, images):
                 in {
                     "DATABASE_URL",
                     "MINIO_ROOT_PASSWORD",
-                    "SMTP_PASSWORD",
                     "POSTGRES_PASSWORD",
                 }
                 and value
@@ -153,8 +152,6 @@ def main():
         "-f",
         str(ROOT / "docker-compose.production.yml"),
     ]
-    if os.getenv("SMTP_HOST"):
-        command.extend(["-f", str(ROOT / "docker-compose.mail.yml")])
     result = subprocess.run(
         [*command, "config", "--format", "json"], capture_output=True, text=True
     )

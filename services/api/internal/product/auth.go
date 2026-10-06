@@ -15,7 +15,6 @@ import (
 	"github.com/minio/minio-go/v7"
 	"golang.org/x/crypto/argon2"
 	"io"
-	"nautiq.local/api/internal/notifications"
 	"net"
 	"net/http"
 	"net/url"
@@ -32,17 +31,15 @@ type Server struct {
 	slots     chan struct{}
 	hashSlots chan struct{}
 	cursorKey []byte
-	Mailer    notifications.Mailer
 	Language  *Extractor
 }
 type Identity struct {
-	ID            string    `json:"account_id"`
-	Handle        string    `json:"handle"`
-	Notifications bool      `json:"notifications_enabled"`
-	Version       int64     `json:"version"`
-	CSRF          string    `json:"csrf_token"`
-	Expires       time.Time `json:"expires_at"`
-	token         string
+	ID      string    `json:"account_id"`
+	Handle  string    `json:"handle"`
+	Version int64     `json:"version"`
+	CSRF    string    `json:"csrf_token"`
+	Expires time.Time `json:"expires_at"`
+	token   string
 }
 
 var handlePattern = regexp.MustCompile(`^[a-z0-9_]{3,32}$`)
@@ -57,14 +54,7 @@ func New(db *pgxpool.Pool, storage *minio.Client, origin string) (*Server, error
 	if e != nil {
 		return nil, e
 	}
-	mailer, e := notifications.SMTPFromEnv()
-	if e != nil {
-		return nil, e
-	}
 	server := &Server{DB: db, Storage: storage, Origin: origin, slots: make(chan struct{}, 12), hashSlots: make(chan struct{}, 2), cursorKey: key, Language: NewExtractorFromEnv()}
-	if mailer != nil {
-		server.Mailer = mailer
-	}
 	return server, nil
 }
 func (s *Server) Register(mux *http.ServeMux) {
@@ -75,7 +65,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 			fail(w, 400, "unknown_query")
 			return
 		}
-		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "notification_delivery_available": s.notificationAvailable(r), "language_model_parsing": s.Language.Enabled(), "as_of": time.Now().UTC()})
+		write(w, 200, map[string]any{"policy": json.RawMessage(PolicyJSON), "accounts_available": true, "language_model_parsing": s.Language.Enabled(), "as_of": time.Now().UTC()})
 	}))
 	mux.Handle("POST /api/v1/auth/register", s.bound(s.register))
 	mux.Handle("POST /api/v1/auth/login", s.bound(s.login))
@@ -83,7 +73,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.Handle("POST /api/v1/auth/logout", s.private(true, s.logout))
 	mux.Handle("PATCH /api/v1/account", s.private(true, s.account))
 	mux.Handle("DELETE /api/v1/account", s.private(true, s.deleteAccount))
-	for _, kind := range []string{"routes", "watchlists", "alert-rules"} {
+	for _, kind := range []string{"routes", "watchlists"} {
 		mux.Handle("GET /api/v1/"+kind, s.private(false, s.objects))
 		mux.Handle("POST /api/v1/"+kind, s.private(true, s.createObject))
 		mux.Handle("GET /api/v1/"+kind+"/{id}", s.private(false, s.object))
@@ -94,9 +84,6 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.Handle("POST /api/v1/saved-trips", s.private(true, s.saveTrip))
 	mux.Handle("GET /api/v1/saved-trips/{id}", s.private(false, s.savedTrip))
 	mux.Handle("DELETE /api/v1/saved-trips/{id}", s.private(true, s.forgetTrip))
-	mux.Handle("GET /api/v1/alerts", s.private(false, s.alerts))
-	mux.Handle("POST /api/v1/alerts/{id}/acknowledge", s.private(true, s.acknowledge))
-	s.registerNotifications(mux)
 	for _, kind := range []string{"reports", "exports"} {
 		mux.Handle("GET /api/v1/"+kind, s.private(false, s.jobs))
 		mux.Handle("POST /api/v1/"+kind, s.private(true, s.createJob))
@@ -293,7 +280,7 @@ func (s *Server) identity(r *http.Request) (Identity, error) {
 		return out, errors.New("session_required")
 	}
 	out.token = strings.TrimPrefix(h, "Bearer ")
-	e := s.DB.QueryRow(r.Context(), `SELECT a.account_id::text,a.handle,a.notifications_enabled,a.version,s.expires_at FROM product_sessions s JOIN product_accounts a USING(account_id) WHERE s.token_sha256=$1 AND s.expires_at>now() AND s.last_seen_at>now()-interval '30 minutes'`, Hash([]byte(out.token))).Scan(&out.ID, &out.Handle, &out.Notifications, &out.Version, &out.Expires)
+	e := s.DB.QueryRow(r.Context(), `SELECT a.account_id::text,a.handle,a.version,s.expires_at FROM product_sessions s JOIN product_accounts a USING(account_id) WHERE s.token_sha256=$1 AND s.expires_at>now() AND s.last_seen_at>now()-interval '30 minutes'`, Hash([]byte(out.token))).Scan(&out.ID, &out.Handle, &out.Version, &out.Expires)
 	if e != nil {
 		return out, e
 	}
@@ -357,9 +344,8 @@ func match(w http.ResponseWriter, r *http.Request, version int64) bool {
 }
 func (s *Server) account(w http.ResponseWriter, r *http.Request, u Identity) {
 	var v struct {
-		Notifications *bool  `json:"notifications_enabled"`
-		OldPassword   string `json:"old_password"`
-		NewPassword   string `json:"new_password"`
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
 	}
 	if !noQuery(w, r) || !body(w, r, &v) {
 		return
@@ -367,7 +353,7 @@ func (s *Server) account(w http.ResponseWriter, r *http.Request, u Identity) {
 	if !match(w, r, u.Version) {
 		return
 	}
-	if v.Notifications == nil && v.NewPassword == "" {
+	if v.NewPassword == "" {
 		fail(w, 400, "account_change_required")
 		return
 	}
@@ -417,12 +403,8 @@ func (s *Server) account(w http.ResponseWriter, r *http.Request, u Identity) {
 			_, e = tx.Exec(r.Context(), `DELETE FROM product_sessions WHERE account_id=$1`, u.ID)
 		}
 	}
-	notify := u.Notifications
-	if v.Notifications != nil {
-		notify = *v.Notifications
-	}
 	if e == nil {
-		_, e = tx.Exec(r.Context(), `UPDATE product_accounts SET password_salt=$2,password_hash=$3,notifications_enabled=$4,version=version+1 WHERE account_id=$1`, u.ID, salt, hash, notify)
+		_, e = tx.Exec(r.Context(), `UPDATE product_accounts SET password_salt=$2,password_hash=$3,version=version+1 WHERE account_id=$1`, u.ID, salt, hash)
 	}
 	if e == nil {
 		e = tx.Commit(r.Context())
@@ -431,7 +413,7 @@ func (s *Server) account(w http.ResponseWriter, r *http.Request, u Identity) {
 		fail(w, 503, "account_unavailable")
 		return
 	}
-	write(w, 200, map[string]any{"notifications_enabled": notify, "version": version + 1, "sign_in_again": v.NewPassword != ""})
+	write(w, 200, map[string]any{"version": version + 1, "sign_in_again": true})
 }
 func (s *Server) deleteAccount(w http.ResponseWriter, r *http.Request, u Identity) {
 	var v struct {

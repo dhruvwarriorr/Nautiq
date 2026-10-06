@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Answer, Fact } from "../../lib/ask-types";
-import { toReading, reasons, type Reading, type Measure } from "../../lib/humanize";
+import { toReading, type Reading, type Measure } from "../../lib/humanize";
 import Icon from "./ui/Icon";
-import { Signal, SignalShape } from "./ui/Signal";
+import { Signal } from "./ui/Signal";
 
 export { measureIcon } from "./readingIcons";
 import { measureIcon } from "./readingIcons";
@@ -17,7 +17,7 @@ function ReadingCell({ r }: { r: Reading }) {
           <Icon name={measureIcon[r.measure]} size={20} />
           {r.title}
         </span>
-        {r.status === "stale" || r.status === "warning" || r.status === "unknown" ? <Signal status={r.status} size={14} /> : null}
+        {r.status === "stale" || r.status === "unknown" ? <Signal status={r.status} size={14} /> : null}
       </div>
       {r.value ? (
         <p className="reading-value">
@@ -59,44 +59,6 @@ export function ReadingsBoard({ facts }: { facts: Fact[] }) {
       {board.map((r) => (
         <ReadingCell key={r.measure} r={r} />
       ))}
-    </section>
-  );
-}
-
-/** The official-warning line, stated first and plainly. */
-export function WarningVerdict({ facts }: { facts: Fact[] }) {
-  const fact = facts.find((f) => toReading(f).measure === "warnings");
-  if (!fact) return null;
-  const r = toReading(fact);
-  const why = reasons(r.note);
-  const title =
-    r.status === "warning" ? "An official warning applies" : r.status === "unknown" ? "Warnings: unknown" : r.status === "available" ? "No warning found in checked areas" : "Warnings: not available";
-  return (
-    <section className="verdict" data-status={r.status} aria-label="Official warnings">
-      <span className="verdict-shape">
-        <SignalShape status={r.status} size={30} />
-      </span>
-      <div>
-        <p className="verdict-title">{title}</p>
-        <p className="verdict-text">
-          {r.status === "unknown"
-            ? "We can’t confirm warnings here, so this is not an all-clear. Check IMD and INCOIS before you go."
-            : r.descriptor}
-        </p>
-        {why.length ? (
-          <details className="why">
-            <summary>Why it’s unknown</summary>
-            <ul>
-              {why.map((w) => (
-                <li key={w}>{w}</li>
-              ))}
-            </ul>
-          </details>
-        ) : null}
-      </div>
-      <Link className="text-link" href={fact.href ?? "/advisories"}>
-        See bulletins <Icon name="arrow" size={18} />
-      </Link>
     </section>
   );
 }

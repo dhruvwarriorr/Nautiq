@@ -32,11 +32,9 @@ TABLES = (
     "uncertainty_releases",
     "anomaly_releases",
     "field_releases",
-    "advisory_revisions",
     "event_runs",
     "product_accounts",
     "product_objects",
-    "product_alerts",
 )
 
 
@@ -351,7 +349,7 @@ def restore(archive, database, bucket):
             ):
                 raise ValueError("restore_sql_contract")
             db.execute(
-                "UPDATE operations_controls SET paused=jsonb_build_object('science',true,'product_writes',true,'notification_evaluation',true,'email_delivery',true),revision=revision+1,updated_at=now() WHERE singleton"
+                "UPDATE operations_controls SET paused=jsonb_build_object('science',true,'product_writes',true),revision=revision+1,updated_at=now() WHERE singleton"
             )
             db.execute(
                 "DELETE FROM product_sessions; DELETE FROM product_download_grants"

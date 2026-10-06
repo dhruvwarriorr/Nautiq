@@ -9,20 +9,20 @@ import type { AnswerResponse } from "../../../lib/ask-types";
 import { coords, headline, when } from "../../../lib/humanize";
 import { PageHead, TechDetail, Notice } from "../../components/ui/Bits";
 import Icon from "../../components/ui/Icon";
-import { ReadingsBoard, WarningVerdict, QuietFacts, Limits } from "../../components/Readings";
+import { ReadingsBoard, QuietFacts, Limits } from "../../components/Readings";
 import { Hoist, type HoistMark } from "../../components/ui/Signal";
 import { toReading } from "../../../lib/humanize";
 import type { Answer } from "../../../lib/ask-types";
 
 function placeMarks(answer: Answer): HoistMark[] {
   const rs = answer.facts.map((f) => toReading(f));
-  const w = rs.find((r) => r.measure === "warnings");
+  const t = rs.find((r) => r.measure === "sst");
   const sea = rs.filter((r) => ["waves", "wind", "current", "sst"].includes(r.measure));
   const have = sea.filter((r) => r.value).length;
   const f = rs.find((r) => r.measure === "float");
   return [
-    { key: "w", label: "Official warnings", status: w?.status ?? "unknown", word: w?.status === "warning" ? "Warning in force" : w?.status === "available" ? "None found" : "Unknown" },
     { key: "s", label: "Sea readings", status: have ? "available" : "unavailable", word: sea.length ? `${have} of ${sea.length} in` : "None" },
+    { key: "t", label: "Sea temperature", status: t?.value ? t.status : "unavailable", word: t?.value || "Not available" },
     { key: "f", label: "Nearest float", status: f?.status === "available" ? "available" : "unavailable", word: f?.status === "available" ? "Within 100 km" : "None nearby" },
   ];
 }
@@ -85,10 +85,7 @@ export default async function Location({ params }: { params: Promise<{ slug: str
 
       {answer ? (
         <>
-          <WarningVerdict facts={answer.facts} />
-          <div style={{ marginTop: 18 }}>
-            <ReadingsBoard facts={answer.facts} />
-          </div>
+          <ReadingsBoard facts={answer.facts} />
           <QuietFacts facts={answer.facts} />
           <Limits answer={answer} />
           <p className="answer-meta">

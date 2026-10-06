@@ -163,7 +163,7 @@ def main():
     assert config["networks"]["default"]["internal"] is True
     for name, service in config["services"].items():
         assert not service.get("ports") or name == "gateway"
-    for name in ("api", "notifications", "web"):
+    for name in ("api", "web"):
         assert config["services"][name]["read_only"]
     assert config["services"]["api"]["environment"]["DATABASE_URL"] == ""
     assert config["services"]["api"]["environment"]["DATABASE_URL_FILE"]

@@ -34,7 +34,7 @@ export type Fact = {
   label: string;
   value: string;
   detail?: string;
-  status: "available" | "stale" | "unknown" | "unavailable" | "warning";
+  status: "available" | "stale" | "unknown" | "unavailable";
   href?: string;
 };
 export type Answer = {

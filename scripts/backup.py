@@ -9,13 +9,11 @@ from pathlib import Path
 
 WRITERS = {
     "api",
-    "notifications",
     "ingestion",
     "normalizer",
     "field-ingestion",
     "ml-inference",
     "export-worker",
-    "advisory-worker",
     "event-worker",
 }
 ROOT = Path(__file__).resolve().parents[1]

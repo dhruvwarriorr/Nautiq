@@ -2,7 +2,6 @@ package trips
 
 import (
 	"math"
-	"nautiq.local/api/internal/advisories"
 	"sort"
 	"time"
 )
@@ -29,14 +28,13 @@ type Field struct {
 	EvidenceSHA         string     `json:"evidence_sha256"`
 }
 type Input struct {
-	AsOf              time.Time        `json:"as_of"`
-	Request           Request          `json:"request"`
-	Policy            Policy           `json:"policy"`
-	Expected          []Point          `json:"expected_points"`
-	Sampling          Sampling         `json:"sampling"`
-	Advisory          advisories.State `json:"advisory_state"`
-	Fields            []Field          `json:"fields"`
-	AcquisitionIssues []string         `json:"acquisition_issues"`
+	AsOf              time.Time `json:"as_of"`
+	Request           Request   `json:"request"`
+	Policy            Policy    `json:"policy"`
+	Expected          []Point   `json:"expected_points"`
+	Sampling          Sampling  `json:"sampling"`
+	Fields            []Field   `json:"fields"`
+	AcquisitionIssues []string  `json:"acquisition_issues"`
 }
 type Rule struct {
 	ID       string   `json:"rule_id"`
@@ -123,21 +121,6 @@ func Evaluate(input Input) Verdict {
 	if effective.MaxHorizon <= 0 || input.Request.Waypoints[len(input.Request.Waypoints)-1].Time.Sub(input.Request.Waypoints[0].Time) > time.Duration(effective.MaxHorizon*float64(time.Hour)) {
 		out.Missing = append(out.Missing, "policy_trip_horizon")
 	}
-	if input.Advisory.Status != "known_none_intersecting" && input.Advisory.Status != "official_warning" {
-		out.Missing = append(out.Missing, "advisory_coverage_unknown")
-	}
-	if !input.Advisory.AsOf.Equal(input.AsOf) || !input.Advisory.Start.Equal(input.Request.Waypoints[0].Time) || !input.Advisory.End.Equal(input.Request.Waypoints[len(input.Request.Waypoints)-1].Time) {
-		out.Missing = append(out.Missing, "advisory_window_or_as_of_mismatch")
-	}
-	if input.Advisory.Status == "official_warning" && len(input.Advisory.Warnings) == 0 {
-		out.Missing = append(out.Missing, "advisory_warning_evidence_missing")
-	}
-	for _, reason := range input.Advisory.Unknown {
-		out.Missing = append(out.Missing, "advisory:"+reason)
-	}
-	if input.Advisory.Status == "known_none_intersecting" && !input.Advisory.ProductionApproved {
-		out.Missing = append(out.Missing, "advisory_operational_approval_missing")
-	}
 	fields := map[string]Field{}
 	for _, f := range input.Fields {
 		if _, ok := fields[f.Variable]; ok {
@@ -161,9 +144,6 @@ func Evaluate(input Input) Verdict {
 		}
 		if f.ProductID != spec.ProductID || f.ReleaseID == "" || len(f.ManifestSHA) != 64 {
 			out.Missing = append(out.Missing, spec.Variable+":source_pin_mismatch")
-		}
-		if spec.Required && !f.OperationalApproved {
-			out.Missing = append(out.Missing, spec.Variable+":forecast_operational_approval_missing")
 		}
 		stale := f.Cycle == nil || f.Cycle.After(input.AsOf) || input.AsOf.Sub(*f.Cycle) > time.Duration(spec.MaxAge*float64(time.Hour))
 		if spec.Required && stale {
@@ -190,7 +170,7 @@ func Evaluate(input Input) Verdict {
 			if out.EngineAvailable && spec.Critical != nil && *s.Value >= *spec.Critical {
 				critical = true
 				point := s.Point
-				origin := "reviewed_policy"
+				origin := "default_policy"
 				if pref, ok := input.Request.Preferences[spec.Variable]; ok && pref.Critical != nil {
 					origin = "personal_preference"
 				}
@@ -198,7 +178,7 @@ func Evaluate(input Input) Verdict {
 			} else if out.EngineAvailable && spec.Caution != nil && *s.Value >= *spec.Caution {
 				caution = true
 				point := s.Point
-				origin := "reviewed_policy"
+				origin := "default_policy"
 				if pref, ok := input.Request.Preferences[spec.Variable]; ok && pref.Caution != nil {
 					origin = "personal_preference"
 				}
@@ -235,7 +215,7 @@ func Evaluate(input Input) Verdict {
 				}
 				if met {
 					point := p
-					out.Rules = append(out.Rules, Rule{ID: combo.ID, Verdict: combo.Verdict, Origin: "reviewed_policy", Point: &point, Evidence: "all combination terms reached at the same retained route sample"})
+					out.Rules = append(out.Rules, Rule{ID: combo.ID, Verdict: combo.Verdict, Origin: "default_policy", Point: &point, Evidence: "all combination terms reached at the same retained route sample"})
 					critical = critical || combo.Verdict == "unfavorable"
 					caution = caution || combo.Verdict == "caution"
 				}
@@ -270,16 +250,13 @@ func Evaluate(input Input) Verdict {
 					if change >= d.ChangeAtLeast {
 						point := b.Point
 						limit := d.ChangeAtLeast
-						out.Rules = append(out.Rules, Rule{d.ID, "caution", d.Variable, "reviewed_policy", &change, &limit, b.Units, &point, "reviewed increase over retained timed samples"})
+						out.Rules = append(out.Rules, Rule{d.ID, "caution", d.Variable, "default_policy", &change, &limit, b.Units, &point, "reviewed increase over retained timed samples"})
 						caution = true
 						break
 					}
 				}
 			}
 		}
-	}
-	for _, w := range input.Advisory.Warnings {
-		out.Rules = append(out.Rules, Rule{ID: "official_warning", Verdict: "official_warning", Origin: "official_advisory", Evidence: w.RevisionID + ":" + w.Event})
 	}
 	sort.Strings(out.Missing)
 	unique := out.Missing[:0]
@@ -289,9 +266,7 @@ func Evaluate(input Input) Verdict {
 		}
 	}
 	out.Missing = unique
-	if len(input.Advisory.Warnings) > 0 {
-		out.Status = "official_warning"
-	} else if len(out.Missing) > 0 {
+	if len(out.Missing) > 0 {
 		out.Status = "insufficient_data"
 	} else if critical {
 		out.Status = "unfavorable"
@@ -301,7 +276,7 @@ func Evaluate(input Input) Verdict {
 		out.Status = "favorable"
 		out.ProductionApproved = true
 	}
-	wording := map[string]string{"official_warning": "A relevant official warning intersects the supplied trip window. Follow the issuing agency's instructions.", "insufficient_data": "The trip cannot be assessed because required evidence or an approved decision policy is unavailable.", "unfavorable": "Retained forecast samples meet or exceed an approved critical rule for this activity.", "caution": "Retained forecast samples meet or exceed an approved caution rule for this activity.", "favorable": "Retained samples meet the approved policy throughout the supplied trip; forecast and unsampled local conditions remain uncertain."}
+	wording := map[string]string{"insufficient_data": "The trip cannot be checked because a forecast is missing, out of date or does not cover the whole route.", "unfavorable": "Somewhere on the route the forecast reaches a “too rough” limit for this activity.", "caution": "Somewhere on the route the forecast reaches a caution limit for this activity.", "favorable": "The forecast stays within your limits along the whole route. Conditions between samples and local hazards are still uncertain."}
 	out.Wording = wording[out.Status]
 	return out
 }

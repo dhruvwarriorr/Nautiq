@@ -10,7 +10,7 @@ import (
 
 // Secret files are mounted read-only; values never appear in errors or logs.
 func LoadSecrets() error {
-	for _, key := range []string{"DATABASE_URL", "MINIO_ROOT_USER", "MINIO_ROOT_PASSWORD", "SMTP_USERNAME", "SMTP_PASSWORD", "NAUTIQ_LLM_API_KEY"} {
+	for _, key := range []string{"DATABASE_URL", "MINIO_ROOT_USER", "MINIO_ROOT_PASSWORD", "NAUTIQ_LLM_API_KEY"} {
 		path := os.Getenv(key + "_FILE")
 		if path == "" {
 			continue

@@ -113,8 +113,9 @@ export function humanizeText(text: string, now = new Date()): string {
 }
 
 const labels: Record<string, string> = {
-  official_warning: "Official warning",
-  known_none_intersecting: "No warning found in checked areas",
+  favorable: "Within your limits",
+  caution: "Take care",
+  unfavorable: "Too rough",
   unknown: "Unknown",
   available: "Available",
   unavailable: "Unavailable",
@@ -161,12 +162,13 @@ export function label(value: string | null | undefined): string {
 }
 
 const sources: Record<string, string> = {
+  cmems_wave: "Copernicus Marine wave forecast",
+  cmems_currents: "Copernicus Marine current forecast",
+  cmems_sst: "Copernicus Marine sea-temperature forecast",
   noaa_oisst: "NOAA daily sea temperature",
   noaa_gfs_wave: "NOAA wave forecast",
   noaa_gfs_weather: "NOAA wind & weather forecast",
   hycom_espc: "HYCOM ocean-current forecast",
-  ndma_cap_rss: "NDMA national alerts (Sachet)",
-  incois_advisories: "INCOIS ocean advisories",
   argo_gdac: "Argo float network",
 };
 export function sourceName(id: string | null | undefined): string {
@@ -230,16 +232,17 @@ export function seaState(m: number): string {
 /** First characters of a digest, for technical views only. */
 export const short = (hash: string | null | undefined, n = 8) => (hash ? hash.slice(0, n) : "—");
 
-export type Status = Fact["status"];
+/** Fact statuses plus "warning", which marks a trip that is too rough for your limits. */
+export type Status = Fact["status"] | "warning";
 export const statusWord: Record<Status, string> = {
   available: "Available",
   stale: "Out of date",
   unknown: "Unknown",
   unavailable: "Not available",
-  warning: "Official warning",
+  warning: "Too rough",
 };
 
-export type Measure = "waves" | "wind" | "current" | "sst" | "warnings" | "float" | "normal" | "other";
+export type Measure = "waves" | "wind" | "current" | "sst" | "float" | "normal" | "other";
 export type Reading = {
   measure: Measure;
   title: string;
@@ -264,7 +267,6 @@ function measureOf(labelText: string): Measure {
   if (l.includes("wave")) return "waves";
   if (l.includes("wind")) return "wind";
   if (l.includes("current")) return "current";
-  if (l.includes("warning")) return "warnings";
   if (l.includes("observation") || l.includes("profile") || l.includes("float")) return "float";
   if (l.includes("normal")) return "normal";
   return "other";
@@ -274,7 +276,6 @@ const titles: Record<Measure, string> = {
   wind: "Wind",
   current: "Current",
   sst: "Sea temperature",
-  warnings: "Official warnings",
   float: "Nearest float",
   normal: "Compared with normal",
   other: "",

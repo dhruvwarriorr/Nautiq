@@ -21,17 +21,14 @@ func Status(db *pgxpool.Pool) http.HandlerFunc {
 			json.NewEncoder(w).Encode(map[string]any{"status": "unavailable"})
 			return
 		}
-		var sources, queues []byte
-		e = db.QueryRow(ctx, `SELECT json_build_object('fields',COALESCE((SELECT json_agg(json_build_object('product_id',p.product_id,'release_id',r.release_id,'status',COALESCE(r.status,'unavailable'),'cycle',r.cycle,'valid_time_end',r.valid_time_end,'fresh',COALESCE(COALESCE(r.cycle,r.valid_time_end)+make_interval(hours=>(r.manifest->'metadata'->>'max_age_hours')::integer)>=now(),false))) FROM field_products p LEFT JOIN field_selection s USING(product_id) LEFT JOIN field_releases r USING(release_id)),'[]'),'advisories',COALESCE((SELECT json_agg(json_build_object('source_id',source_id,'transport',transport,'checked_at',checked_at,'integrity',COALESCE((SELECT integrity FROM advisory_runs WHERE run_id=latest_run_id),'unavailable'))) FROM advisory_sources),'[]'))`).Scan(&sources)
-		if e == nil {
-			e = db.QueryRow(ctx, `SELECT json_build_object('notifications',EXISTS(SELECT 1 FROM notification_worker_health WHERE success_at>now()-interval '90 seconds' AND heartbeat_at>now()-interval '90 seconds'),'email_configured',COALESCE((SELECT smtp_configured FROM notification_worker_health ORDER BY heartbeat_at DESC LIMIT 1),false))`).Scan(&queues)
-		}
+		var sources []byte
+		e = db.QueryRow(ctx, `SELECT json_build_object('fields',COALESCE((SELECT json_agg(json_build_object('product_id',p.product_id,'release_id',r.release_id,'status',COALESCE(r.status,'unavailable'),'cycle',r.cycle,'valid_time_end',r.valid_time_end,'fresh',COALESCE(COALESCE(r.cycle,r.valid_time_end)+make_interval(hours=>(r.manifest->'metadata'->>'max_age_hours')::integer)>=now(),false))) FROM field_products p LEFT JOIN field_selection s USING(product_id) LEFT JOIN field_releases r USING(release_id) WHERE COALESCE((p.metadata->>'refresh')::boolean,false)),'[]'))`).Scan(&sources)
 		if e != nil {
 			w.WriteHeader(503)
 			json.NewEncoder(w).Encode(map[string]any{"status": "unavailable"})
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]any{"status": "available", "as_of": time.Now().UTC(), "controls": state, "sources": json.RawMessage(sources), "workers": json.RawMessage(queues), "production_approved": false, "scientific_approved": false})
+		json.NewEncoder(w).Encode(map[string]any{"status": "available", "as_of": time.Now().UTC(), "controls": state, "sources": json.RawMessage(sources), "production_approved": false, "scientific_approved": false})
 	}
 }
 func Capabilities(db *pgxpool.Pool, next http.Handler) http.Handler {
@@ -57,8 +54,6 @@ func Capabilities(db *pgxpool.Pool, next http.Handler) http.Handler {
 						scope = "field_sampling"
 					case "regional_events", "event_detection_diagnostics":
 						scope = "events"
-					case "official_advisories", "advisory_diagnostics":
-						scope = "advisories"
 					case "trip_assessment", "trip_diagnostics":
 						scope = "trips"
 					}

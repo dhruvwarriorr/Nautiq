@@ -15,17 +15,10 @@ const sources: { name: string; who: string; what: string; icon: IconName; links:
   },
   {
     name: "Forecasts and sea temperature",
-    who: "NOAA (OISST, GFS-Wave, GFS) and HYCOM",
-    what: "Daily satellite sea temperature, and forecasts for waves, wind and surface currents. Their update schedule and redistribution terms are still being reviewed.",
+    who: "Copernicus Marine Service and NOAA (GFS)",
+    what: "Copernicus Marine global forecasts on a 1/12° grid for waves, surface currents and sea temperature, up to three days ahead; NOAA GFS for wind. Copernicus data is used under its free licence with credit to the E.U. Copernicus Marine Service.",
     icon: "waves",
     links: [["/fields", "Forecast layers"]],
-  },
-  {
-    name: "Official warnings",
-    who: "NDMA (Sachet) and INCOIS",
-    what: "Bulletins from Indian agencies, kept exactly as issued. NDMA alerts are connected; INCOIS ocean advisories aren’t yet. Bulletins that only name places are never drawn as invented areas.",
-    icon: "pennant",
-    links: [["/advisories", "Official warnings and feed health"]],
   },
 ];
 export default async function Page() {
@@ -69,7 +62,7 @@ export default async function Page() {
         )}
       </section>
       {policy ? (
-        <TechDetail summary="Account, export and alert limits">
+        <TechDetail summary="Account and export limits">
           <ul>
             {policy.policy.limitations.map((v) => (
               <li key={v}>{v}</li>

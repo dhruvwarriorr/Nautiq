@@ -13,17 +13,17 @@ const parts = [
   },
   {
     title: "Models are tested, not trusted",
-    text: "The historical normal, expected ranges and unusual-float ranks are diagnostics you can inspect. A rank is not a probability. Scientific approval, confidence levels and trip limits are still pending.",
+    text: "The historical normal, expected ranges and unusual-float ranks are diagnostics you can inspect. A rank is not a probability. Scientific approval and confidence levels are still pending.",
     href: "/models", link: "Models", icon: "logbook" as const,
   },
   {
-    title: "Official warnings come first, and unknown stays unknown",
-    text: "Agency bulletins stay attached to their exact wording and revision. If coverage of the sea can’t be confirmed, Nautiq never says “no warning”. Trip checks sample both legs, and replaying a saved trip never refreshes its data.",
-    href: "/advisories", link: "Official warnings", icon: "pennant" as const,
+    title: "Trips are checked against limits you can see",
+    text: "Every leg, out and back, is sampled against wave, wind and current limits. The defaults suit small open boats and you can tighten them. Nautiq does not read official warnings, so check INCOIS and IMD before you go. Replaying a saved trip never refreshes its data.",
+    href: "/trips", link: "Plan a trip", icon: "voyage" as const,
   },
   {
     title: "Your saved things are private",
-    text: "Saved routes, places, alerts, reports and downloads belong to your account only. Float exports include credit to the Argo programme. Downloads expire after 72 hours.",
+    text: "Saved routes, places, reports and downloads belong to your account only. Float exports include credit to the Argo programme. Downloads expire after 72 hours.",
     href: "/data-sources", link: "Data sources and terms", icon: "lock" as const,
   },
 ];

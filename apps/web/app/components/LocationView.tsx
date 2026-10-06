@@ -68,26 +68,6 @@ export function ConditionSummary({ value }: { value: Conditions }) {
           </tbody>
         </table>
       </div>
-      <h3>Official warning state</h3>
-      <p>
-        <Signal status={value.advisory.status === "official_warning" ? "warning" : value.advisory.status === "known_none_intersecting" ? "available" : "unknown"}>
-          {label(value.advisory.status)}
-        </Signal>
-      </p>
-      {value.advisory.unknown_reasons?.length ? (
-        <ul className="muted">
-          {value.advisory.unknown_reasons.slice(0, 6).map((r) => (
-            <li key={r}>{humanizeText(r.replaceAll("_", " "))}</li>
-          ))}
-        </ul>
-      ) : null}
-      {value.advisory.warnings?.map((w) => (
-        <p key={w.revision_id}>
-          <Link href={`/advisories/${w.revision_id}`}>
-            {w.event} · {label(w.severity)} · until {w.expires ? when(w.expires) : "unknown"}
-          </Link>
-        </p>
-      ))}
     </>
   );
 }

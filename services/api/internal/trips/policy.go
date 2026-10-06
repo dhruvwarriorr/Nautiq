@@ -86,7 +86,7 @@ func (p Policy) Available() bool {
 	}
 	seen := map[string]bool{}
 	for _, s := range p.Inputs {
-		if seen[s.Variable] || s.Units == "" || s.ProductID == "" || !finite(s.MaxAge) || s.MaxAge <= 0 || s.Caution == nil || s.Critical == nil || !finite(*s.Caution) || !finite(*s.Critical) || *s.Caution < 0 || *s.Critical < *s.Caution || s.Origin != "reviewed_policy" {
+		if seen[s.Variable] || s.Units == "" || s.ProductID == "" || !finite(s.MaxAge) || s.MaxAge <= 0 || s.Caution == nil || s.Critical == nil || !finite(*s.Caution) || !finite(*s.Critical) || *s.Caution < 0 || *s.Critical < *s.Caution || s.Origin != "default_policy" {
 			return false
 		}
 		seen[s.Variable] = true
@@ -147,7 +147,13 @@ func (p Policy) WithPreferences(preferences map[string]Preference) (Policy, erro
 				out.Inputs[i].Critical = pref.Critical
 			}
 			if *out.Inputs[i].Critical < *out.Inputs[i].Caution {
-				return out, errors.New("preference_threshold_order")
+				// A stricter "too rough" limit pulls the default caution limit down with it;
+				// only an explicit caution above the explicit critical is contradictory.
+				if pref.Caution != nil && pref.Critical != nil {
+					return out, errors.New("preference_threshold_order")
+				}
+				critical := *out.Inputs[i].Critical
+				out.Inputs[i].Caution = &critical
 			}
 		}
 		if !found {

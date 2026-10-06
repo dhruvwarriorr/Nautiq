@@ -12,17 +12,16 @@ import { Signal } from "../components/ui/Signal";
 
 type LayerKey = "waves" | "wind" | "current" | "sst" | "none";
 const layerDefs: { key: Exclude<LayerKey, "none">; label: string; icon: IconName; product: string; variable: string }[] = [
-  { key: "waves", label: "Waves", icon: "waves", product: "noaa_gfs_wave", variable: "wave_height_m" },
+  { key: "waves", label: "Waves", icon: "waves", product: "cmems_wave", variable: "wave_height_m" },
   { key: "wind", label: "Wind", icon: "windsock", product: "noaa_gfs_weather", variable: "wind_speed_m_s" },
-  { key: "current", label: "Currents", icon: "current", product: "hycom_espc", variable: "current_speed_m_s" },
-  { key: "sst", label: "Sea temp", icon: "thermo", product: "noaa_oisst", variable: "sst_c" },
+  { key: "current", label: "Currents", icon: "current", product: "cmems_currents", variable: "current_speed_m_s" },
+  { key: "sst", label: "Sea temp", icon: "thermo", product: "cmems_sst", variable: "sst_c" },
 ];
 const INDIA: LngLatBoundsLike = [[60, 2], [96, 26]];
 
 type Selected =
   | { kind: "float"; id: string; platform: string; observed: string; lat: number; lon: number }
   | { kind: "event"; id: string; title: string; start: string; end: string }
-  | { kind: "area"; id: string; event: string; severity: string; effective: string; expires: string | null }
   | { kind: "probe"; lat: number; lon: number; loading: boolean; sample: FieldSample | null; error?: string };
 
 function geometry(value: { type: string; coordinates: unknown } | null): GeoJSON.Geometry | null {
@@ -30,16 +29,6 @@ function geometry(value: { type: string; coordinates: unknown } | null): GeoJSON
   if (["Polygon", "MultiPolygon", "MultiPoint", "Point", "LineString"].includes(value.type))
     return value as unknown as GeoJSON.Geometry;
   return null;
-}
-function circleRing(center: number[], radiusKm: number): number[][] {
-  const [lon, lat] = center.map((v) => (v * Math.PI) / 180);
-  const d = radiusKm / 6371;
-  return Array.from({ length: 65 }, (_, i) => {
-    const b = (i / 64) * 2 * Math.PI;
-    const y = Math.asin(Math.sin(lat) * Math.cos(d) + Math.cos(lat) * Math.sin(d) * Math.cos(b));
-    const x = lon + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(lat), Math.cos(d) - Math.sin(lat) * Math.sin(y));
-    return [((((x * 180) / Math.PI) + 540) % 360) - 180, (y * 180) / Math.PI];
-  });
 }
 const fc = (features: GeoJSON.Feature[]): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features });
 
@@ -64,7 +53,6 @@ export default function OceanMap({ value }: { value: MapOverview }) {
   const [layer, setLayer] = useState<LayerKey>("waves");
   const [showFloats, setFloats] = useState(true);
   const [showEvents, setEvents] = useState(true);
-  const [showAreas, setAreas] = useState(true);
   const [selected, setSelected] = useState<Selected | null>(null);
   const [playing, setPlaying] = useState(false);
   // null = automatic: open on desktop, closed on phones (decided in CSS, so server and client agree).
@@ -111,20 +99,7 @@ export default function OceanMap({ value }: { value: MapOverview }) {
         return g ? [{ type: "Feature" as const, geometry: g, properties: { id: e.event_id, title: label(e.kind), start: e.start, end: e.end } }] : [];
       }),
     );
-    const areas = fc([
-      ...value.advisory_polygons.flatMap((p, i) => {
-        const g = geometry(p.geometry);
-        return g ? [{ type: "Feature" as const, geometry: g, properties: { id: p.revision_id, key: `${p.revision_id}-${i}`, event: p.event, severity: p.severity, effective: p.effective, expires: p.expires ?? "" } }] : [];
-      }),
-      ...(value.advisory_circles ?? [])
-        .filter((c) => c.circle.center.length === 2 && c.circle.center.every(Number.isFinite) && Number.isFinite(c.circle.radius_km))
-        .map((c) => ({
-          type: "Feature" as const,
-          geometry: { type: "Polygon" as const, coordinates: [circleRing(c.circle.center, c.circle.radius_km)] },
-          properties: { id: c.revision_id, event: c.event, severity: c.severity, effective: c.effective, expires: c.expires ?? "" },
-        })),
-    ]);
-    return { floats, events, areas };
+    return { floats, events };
   }, [value]);
 
   // Create the map once.
@@ -154,7 +129,6 @@ export default function OceanMap({ value }: { value: MapOverview }) {
         map.on("load", () => {
           if (!map) return;
           map.addSource("events", { type: "geojson", data: data.events });
-          map.addSource("areas", { type: "geojson", data: data.areas });
           map.addSource("floats", { type: "geojson", data: data.floats, cluster: true, clusterRadius: 44, clusterMaxZoom: 6 });
           map.addSource("probe", { type: "geojson", data: fc([]) });
           // Forecast coverage is a fixed box; frame it as a chart neatline so its edge reads as intended.
@@ -174,8 +148,6 @@ export default function OceanMap({ value }: { value: MapOverview }) {
           map.addLayer({ id: "events-fill", type: "fill", source: "events", filter: ["==", ["geometry-type"], "Polygon"], paint: { "fill-color": "#9fd0f5", "fill-opacity": 0.14 } });
           map.addLayer({ id: "events-line", type: "line", source: "events", filter: ["==", ["geometry-type"], "Polygon"], paint: { "line-color": "#9fd0f5", "line-width": 1.6, "line-dasharray": [2, 1.5] } });
           map.addLayer({ id: "events-points", type: "circle", source: "events", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-radius": 7, "circle-color": "rgba(159,208,245,0.16)", "circle-stroke-color": "#9fd0f5", "circle-stroke-width": 1.6 } });
-          map.addLayer({ id: "areas-fill", type: "fill", source: "areas", paint: { "fill-color": "#d23f2a", "fill-opacity": 0.22 } });
-          map.addLayer({ id: "areas-line", type: "line", source: "areas", paint: { "line-color": "#d23f2a", "line-width": 2 } });
           map.addLayer({ id: "floats-cluster", type: "circle", source: "floats", filter: ["has", "point_count"], paint: { "circle-radius": ["step", ["get", "point_count"], 13, 10, 16, 30, 20], "circle-color": "rgba(238,244,248,0.14)", "circle-stroke-color": "#eef4f8", "circle-stroke-width": 1.4 } });
           map.addLayer({ id: "floats-count", type: "symbol", source: "floats", filter: ["has", "point_count"], layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": 12 }, paint: { "text-color": "#eef4f8" } });
           map.addLayer({ id: "floats-halo", type: "circle", source: "floats", filter: ["!", ["has", "point_count"]], paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 6, 8, 11], "circle-color": "rgba(238,244,248,0.16)" } });
@@ -183,7 +155,7 @@ export default function OceanMap({ value }: { value: MapOverview }) {
           map.addLayer({ id: "probe-staff", type: "circle", source: "probe", paint: { "circle-radius": 14, "circle-color": "rgba(255,255,255,0.18)", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2 } });
           map.addLayer({ id: "probe", type: "circle", source: "probe", paint: { "circle-radius": 5, "circle-color": "#ffffff", "circle-stroke-color": "#0b2341", "circle-stroke-width": 1.5 } });
           for (const l of labelLayers) map.addLayer(l);
-          const hit = ["floats-cluster", "floats", "events-fill", "events-points", "areas-fill"];
+          const hit = ["floats-cluster", "floats", "events-fill", "events-points"];
           for (const id of hit) {
             map.on("mouseenter", id, () => map && (map.getCanvas().style.cursor = "pointer"));
             map.on("mouseleave", id, () => map && (map.getCanvas().style.cursor = ""));
@@ -204,8 +176,7 @@ export default function OceanMap({ value }: { value: MapOverview }) {
               if (f.layer.id === "floats") {
                 const [lon, lat] = (f.geometry as GeoJSON.Point).coordinates;
                 setSelected({ kind: "float", id: p.id, platform: p.platform, observed: p.observed, lat, lon });
-              } else if (f.layer.id.startsWith("events")) setSelected({ kind: "event", id: p.id, title: p.title, start: p.start, end: p.end });
-              else setSelected({ kind: "area", id: p.id, event: p.event, severity: p.severity, effective: p.effective, expires: p.expires || null });
+              } else setSelected({ kind: "event", id: p.id, title: p.title, start: p.start, end: p.end });
               return;
             }
             const { lng, lat } = e.lngLat;
@@ -292,8 +263,7 @@ export default function OceanMap({ value }: { value: MapOverview }) {
     const vis = (ids: string[], on: boolean) => ids.forEach((id) => map.getLayer(id) && map.setLayoutProperty(id, "visibility", on ? "visible" : "none"));
     vis(["floats", "floats-halo", "floats-cluster", "floats-count"], showFloats);
     vis(["events-fill", "events-line", "events-points"], showEvents);
-    vis(["areas-fill", "areas-line"], showAreas);
-  }, [showFloats, showEvents, showAreas, ready]);
+  }, [showFloats, showEvents, ready]);
 
   // Play through forecast hours.
   useEffect(() => {
@@ -302,7 +272,6 @@ export default function OceanMap({ value }: { value: MapOverview }) {
     return () => window.clearInterval(id);
   }, [playing, times.length, nearest]);
 
-  const areaCount = value.advisory_polygons.length + (value.advisory_circles?.length ?? 0);
   const zoom = (d: number) => mapRef.current?.easeTo({ zoom: (mapRef.current.getZoom() ?? 4) + d, duration: 300 });
 
   return (
@@ -424,17 +393,9 @@ export default function OceanMap({ value }: { value: MapOverview }) {
               </span>
               <input type="checkbox" role="switch" checked={showEvents} onChange={(e) => setEvents(e.target.checked)} />
             </label>
-            <label className="toggle">
-              <span className="toggle-icon toggle-area" aria-hidden="true" />
-              <span className="toggle-text">
-                <b>Official warning areas</b>
-                <span>{areaCount ? `${areaCount} mapped` : "None mapped"} · coverage {value.advisory_state === "unknown" ? "unknown" : label(value.advisory_state).toLowerCase()}</span>
-              </span>
-              <input type="checkbox" role="switch" checked={showAreas} onChange={(e) => setAreas(e.target.checked)} />
-            </label>
           </fieldset>
           <p className="map-note">
-            <Icon name="info" size={16} /> Floats and patches cover {span(value.start, value.end)}. An empty area never means an all-clear.
+            <Icon name="info" size={16} /> Floats and patches cover {span(value.start, value.end)}.
           </p>
         </div>
       </aside>
@@ -459,13 +420,6 @@ export default function OceanMap({ value }: { value: MapOverview }) {
               <p>{span(selected.start, selected.end)}</p>
               <p className="muted">Found in past data. It is not a live warning.</p>
               <Link className="btn" href={`/events/${selected.id}`}>Open the evidence <Icon name="arrow" size={18} /></Link>
-            </>
-          ) : selected.kind === "area" ? (
-            <>
-              <p className="map-card-kind warn"><Icon name="pennant" size={18} /> Official warning area</p>
-              <h2>{selected.event}</h2>
-              <p>{label(selected.severity)} · from {when(selected.effective)}{selected.expires ? ` until ${when(selected.expires)}` : ""}</p>
-              <Link className="btn" href={`/advisories/${selected.id}`}>Read the bulletin <Icon name="arrow" size={18} /></Link>
             </>
           ) : (
             <>

@@ -5,7 +5,7 @@ import type { AnswerResponse } from "../../lib/ask-types";
 import { ConditionSummary } from "../components/LocationView";
 import { headline } from "../../lib/humanize";
 import { PageHead, TechDetail, Notice } from "../components/ui/Bits";
-import { ReadingsBoard, WarningVerdict } from "../components/Readings";
+import { ReadingsBoard } from "../components/Readings";
 import Icon from "../components/ui/Icon";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Compare places · Nautiq" };
@@ -90,7 +90,6 @@ export default async function Compare({ searchParams }: { searchParams: Promise<
               {res?.answer ? (
                 <>
                   <p className="muted">{headline(res.answer.headline)}</p>
-                  <WarningVerdict facts={res.answer.facts} />
                   <div style={{ marginTop: 14 }}>
                     <ReadingsBoard facts={res.answer.facts} />
                   </div>

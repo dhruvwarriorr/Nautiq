@@ -1,5 +1,8 @@
-"""Bounded NOAA and single-run HYCOM adapters with provider-derived valid times."""
+"""Bounded NOAA, HYCOM and Copernicus Marine adapters with provider-derived valid times."""
 
+import hashlib
+import json
+import os
 import re
 import tempfile
 import urllib.parse
@@ -19,10 +22,106 @@ HYCOM_RUNS = (
 )
 HOSTS = ["www.ncei.noaa.gov", "nomads.ncep.noaa.gov", "tds.hycom.org", "ncss.hycom.org"]
 
+# Copernicus Marine global forecasts on a 1/12° grid. Each run of the toolbox is retained as a raw
+# receipt under a canonical cmems:// request URL so replay never needs the network or credentials.
+CMEMS = {
+    "cmems_wave": {
+        "dataset": "cmems_mod_glo_wav_anfc_0.083deg_PT3H-i",
+        "step_hours": 3,
+        "hours": 48,
+        "depth": False,
+        "variables": {
+            "VHM0": ("wave_height_m", ("m",)),
+            "VTM10": ("primary_wave_mean_period_s", ("s",)),
+            "VMDR": ("primary_wave_direction_from_deg", ("degree", "degrees")),
+        },
+    },
+    "cmems_currents": {
+        "dataset": "cmems_mod_glo_phy-cur_anfc_0.083deg_PT6H-i",
+        "step_hours": 6,
+        "hours": 72,
+        "depth": True,
+        "variables": {
+            "uo": ("current_east_m_s", ("m s-1",)),
+            "vo": ("current_north_m_s", ("m s-1",)),
+        },
+    },
+    "cmems_sst": {
+        "dataset": "cmems_mod_glo_phy-thetao_anfc_0.083deg_PT6H-i",
+        "step_hours": 6,
+        "hours": 72,
+        "depth": True,
+        "variables": {"thetao": ("sst_c", ("degrees_C", "degree_Celsius"))},
+    },
+}
+
+
+def cmems_url(dataset, action, params):
+    return f"cmems://{dataset}/{action}?" + urllib.parse.urlencode(sorted(params.items()))
+
+
+def cmems_request(url, directory):
+    """Run one Copernicus Marine toolbox call for a canonical cmems:// URL and return its bytes."""
+    import copernicusmarine
+
+    parsed = urllib.parse.urlsplit(url)
+    dataset, action = parsed.netloc, parsed.path.strip("/")
+    if dataset not in {spec["dataset"] for spec in CMEMS.values()}:
+        raise FieldError("source_url_denied")
+    if action == "describe":
+        catalogue = copernicusmarine.describe(
+            dataset_id=dataset, disable_progress_bar=True
+        )
+        version = catalogue.products[0].datasets[0].versions[0]
+        part = version.parts[0]
+        if not part.arco_updated_date:
+            raise FieldError("cmems_update_time_missing")
+        return json.dumps(
+            {
+                "dataset_id": dataset,
+                "version": version.label,
+                "arco_updated_date": part.arco_updated_date,
+            },
+            sort_keys=True,
+        ).encode()
+    if action != "subset":
+        raise FieldError("source_url_denied")
+    username, password = os.getenv("CMEMS_USERNAME"), os.getenv("CMEMS_PASSWORD")
+    if not username or not password:
+        raise FieldError("cmems_credentials_missing")
+    q = {k: v[0] for k, v in urllib.parse.parse_qs(parsed.query).items()}
+    depth = {"minimum_depth": 0, "maximum_depth": 1} if q.get("depth") == "surface" else {}
+    try:
+        result = copernicusmarine.subset(
+            dataset_id=dataset,
+            variables=q["variables"].split(","),
+            minimum_longitude=float(q["west"]),
+            maximum_longitude=float(q["east"]),
+            minimum_latitude=float(q["south"]),
+            maximum_latitude=float(q["north"]),
+            start_datetime=q["start"],
+            end_datetime=q["end"],
+            output_directory=directory,
+            output_filename="cmems.nc",
+            username=username,
+            password=password,
+            disable_progress_bar=True,
+            overwrite=True,
+            **depth,
+        )
+    except Exception:
+        raise FieldError("cmems_unavailable") from None
+    path = Path(result.file_path)
+    if not path.is_file() or path.stat().st_size > POLICY["limits"]["raw_bytes"]:
+        raise FieldError("object_too_large")
+    data = path.read_bytes()
+    path.unlink()
+    return data
+
 
 class Acquisition:
     def __init__(self, directory, s3=None):
-        self.s3, self.receipts = s3, []
+        self.s3, self.receipts, self.directory = s3, [], directory
         self.store = Store(
             Path(directory),
             {
@@ -36,11 +135,24 @@ class Acquisition:
         )
 
     def fetch(self, url):
-        try:
-            path, receipt = self.store.fetch(url, HOSTS)
-        except ProbeError as error:
-            raise FieldError(str(error)) from None
-        data = path.read_bytes()
+        if url.startswith("cmems://"):
+            data = cmems_request(url, self.directory)
+            receipt = {
+                "url": url,
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "bytes": len(data),
+                "last_modified": None,
+                "etag": None,
+                "content_type": "application/json"
+                if "/describe?" in url
+                else "application/x-netcdf",
+            }
+        else:
+            try:
+                path, receipt = self.store.fetch(url, HOSTS)
+            except ProbeError as error:
+                raise FieldError(str(error)) from None
+            data = path.read_bytes()
         key = "fields/raw/" + receipt["sha256"]
         if self.s3:
             put_immutable(self.s3, key, data)
@@ -422,7 +534,82 @@ def hycom(acquire, cycle, leads, bbox):
     return validate_grid(lat, lon, times, arrays, "hycom_espc", cycle), "forecast"
 
 
-def acquire_product(acquire, product, cycle=None, day=None, hours=24, bbox=None):
+def cmems(acquire, product, cycle, hours, bbox, start=None):
+    spec = CMEMS[product]
+    west, south, east, north = bbox_values(bbox)
+    info = json.loads(acquire.fetch(cmems_url(spec["dataset"], "describe", {})))
+    if info.get("dataset_id") != spec["dataset"]:
+        raise FieldError("cmems_catalog_mismatch")
+    step = spec["step_hours"] * 3600
+    if start is None:
+        now = datetime.now(timezone.utc).timestamp()
+        first = now // step * step
+    else:
+        first = utc(start).timestamp()
+        if first % step:
+            raise FieldError("invalid_forecast_start")
+    # The dataset's last update stands in for the forecast cycle; it never post-dates the first time.
+    updated = utc(info["arco_updated_date"]).timestamp() // 3600 * 3600
+    issued = min(updated, first)
+    if cycle and utc(cycle).timestamp() != issued:
+        raise FieldError("netcdf_cycle_mismatch")
+    last = first + hours * 3600
+    params = {
+        "variables": ",".join(spec["variables"]),
+        "west": west,
+        "south": south,
+        "east": east,
+        "north": north,
+        "start": iso(first),
+        "end": iso(last),
+    }
+    if spec["depth"]:
+        params["depth"] = "surface"
+    data = acquire.fetch(cmems_url(spec["dataset"], "subset", params))
+    with netCDF4.Dataset("cmems.nc", memory=data) as ds:
+        lat, lon = np.asarray(ds["latitude"][:]), np.asarray(ds["longitude"][:])
+        if lat.ndim != 1 or lon.ndim != 1:
+            raise FieldError("curvilinear_or_coordinate_budget")
+        if getattr(ds["latitude"], "units", "") not in (
+            "degrees_north",
+            "degree_north",
+        ) or getattr(ds["longitude"], "units", "") not in (
+            "degrees_east",
+            "degree_east",
+        ):
+            raise FieldError("coordinate_units")
+        times = epochs(ds["time"])
+        expected = np.arange(first, last + 1, step)
+        if not np.array_equal(times, expected):
+            raise FieldError("incomplete_single_run_horizon")
+        arrays = {}
+        for name, (out, units) in spec["variables"].items():
+            var = ds[name]
+            if getattr(var, "units", "") not in units:
+                raise FieldError("variable_units")
+            dims = list(var.dimensions)
+            index = []
+            for d in dims:
+                if d == "depth":
+                    # CMEMS's top model level is about 0.5 m; accept nothing deeper than 1 m.
+                    if len(ds["depth"]) < 1 or float(ds["depth"][0]) > 1:
+                        raise FieldError("surface_depth_required")
+                    index.append(0)
+                elif d in ("time", "latitude", "longitude"):
+                    index.append(slice(None))
+                else:
+                    raise FieldError("unsupported_dimension_order")
+            values = np.asarray(np.ma.filled(var[tuple(index)], np.nan), dtype="float32")
+            kept = [d for d in dims if d != "depth"]
+            arrays[out] = np.transpose(
+                values, [kept.index(d) for d in ("time", "latitude", "longitude")]
+            )
+    return validate_grid(lat, lon, times, arrays, product, iso(issued)), "forecast"
+
+
+def acquire_product(
+    acquire, product, cycle=None, day=None, hours=24, bbox=None, start=None
+):
     bbox = bbox or POLICY["bbox"]
     if (
         product not in POLICY["products"]
@@ -433,6 +620,10 @@ def acquire_product(acquire, product, cycle=None, day=None, hours=24, bbox=None)
     ):
         raise FieldError("invalid_product_or_horizon")
     leads = list(range(0, hours + 1, 3))
+    if product in CMEMS:
+        if day:
+            raise FieldError("forecast_requires_cycle")
+        return cmems(acquire, product, cycle, hours, bbox, start)
     if product == "noaa_oisst":
         if cycle:
             raise FieldError("analysis_has_no_forecast_cycle")

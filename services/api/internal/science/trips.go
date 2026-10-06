@@ -24,22 +24,20 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 	pb "nautiq.local/api/gen/nautiq/platform/v1"
-	"nautiq.local/api/internal/advisories"
 	"nautiq.local/api/internal/trips"
 )
 
-//go:embed trips.go advisories.go fields.go science.go events.go
+//go:embed trips.go fields.go science.go events.go
 var tripIntegration embed.FS
 
 func tripCodeSHA() string {
 	h := sha256.New()
-	for _, n := range []string{"advisories.go", "events.go", "fields.go", "science.go", "trips.go"} {
+	for _, n := range []string{"events.go", "fields.go", "science.go", "trips.go"} {
 		b, _ := tripIntegration.ReadFile(n)
 		h.Write([]byte(n))
 		h.Write(b)
 	}
 	h.Write([]byte(trips.CodeSHA()))
-	h.Write([]byte(advisories.CodeSHA()))
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -55,15 +53,13 @@ func tripRuntime() string {
 }
 
 type tripReceipt struct {
-	SchemaVersion    int                     `json:"schema_version"`
-	Kind             string                  `json:"kind"`
-	CodeSHA          string                  `json:"code_sha256"`
-	Runtime          string                  `json:"runtime"`
-	Input            trips.Input             `json:"input"`
-	AdvisorySnapshot advisories.Snapshot     `json:"advisory_snapshot"`
-	AdvisoryHits     map[string]map[int]bool `json:"advisory_hits"`
-	FieldEvidence    []json.RawMessage       `json:"field_evidence"`
-	Output           trips.Verdict           `json:"output"`
+	SchemaVersion int               `json:"schema_version"`
+	Kind          string            `json:"kind"`
+	CodeSHA       string            `json:"code_sha256"`
+	Runtime       string            `json:"runtime"`
+	Input         trips.Input       `json:"input"`
+	FieldEvidence []json.RawMessage `json:"field_evidence"`
+	Output        trips.Verdict     `json:"output"`
 }
 
 func (s *Server) tripPolicy(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +67,7 @@ func (s *Server) tripPolicy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p := trips.DefaultPolicy()
-	advisoryJSON(w, map[string]any{"policy": p, "engine_available": p.Available(), "code_sha256": tripCodeSHA(), "as_of": time.Now().UTC(), "limits": map[string]any{"waypoints": 32, "samples": 512, "distance_km": 1000, "hours": 24, "spacing_km": []float64{0.5, 5}, "step_minutes": []float64{1, 30}}, "private_receipts": "A random access token is returned once. It must be supplied as a Bearer header for evidence or replay; tokens and routes are not public calculation records."})
+	writeJSON(w, map[string]any{"policy": p, "engine_available": p.Available(), "code_sha256": tripCodeSHA(), "as_of": time.Now().UTC(), "limits": map[string]any{"waypoints": 32, "samples": 512, "distance_km": 1000, "hours": 24, "spacing_km": []float64{0.5, 5}, "step_minutes": []float64{1, 30}}, "private_receipts": "A random access token is returned once. It must be supplied as a Bearer header for evidence or replay; tokens and routes are not public calculation records."})
 }
 
 // Reject duplicate keys as well as unknown fields; never silently resolve ambiguous user inputs.
@@ -189,82 +185,6 @@ func decodeTrip(w http.ResponseWriter, r *http.Request) (trips.Request, bool) {
 		return req, false
 	}
 	return req, true
-}
-
-// Each CAP info window clips complete timed great-circle legs, including stationary stops.
-// Intersections use PostGIS geography, rather than testing only discrete forecast samples.
-func (s *Server) tripAdvisoryHits(r *http.Request, snapshot advisories.Snapshot, req trips.Request) (map[string]map[int]bool, error) {
-	type pair struct {
-		ID       string                `json:"id"`
-		Index    int                   `json:"index"`
-		Polygons []advisories.Geometry `json:"polygons"`
-		Circles  []advisories.Circle   `json:"circles"`
-		Routes   []map[string]any      `json:"routes"`
-	}
-	pairs := []pair{}
-	for _, b := range snapshot.Items {
-		if b.Lifecycle.State != "active" || !b.Message.Operational {
-			continue
-		}
-		for ii, info := range b.Message.Infos {
-			p := pair{ID: b.Message.RevisionID, Index: ii, Polygons: []advisories.Geometry{}, Circles: []advisories.Circle{}, Routes: []map[string]any{}}
-			for _, a := range info.Areas {
-				p.Polygons = append(p.Polygons, a.Polygons...)
-				p.Circles = append(p.Circles, a.Circles...)
-			}
-			if len(p.Polygons)+len(p.Circles) == 0 {
-				continue
-			}
-			for i := 1; i < len(req.Waypoints); i++ {
-				a, z := req.Waypoints[i-1], req.Waypoints[i]
-				start, end := a.Time, z.Time
-				if info.Effective.After(start) {
-					start = info.Effective
-				}
-				if info.Expires != nil && info.Expires.Before(end) {
-					end = *info.Expires
-				}
-				if end.Before(start) || (info.Expires != nil && !info.Expires.After(start)) {
-					continue
-				}
-				one := trips.Interpolate(a, z, float64(start.Sub(a.Time))/float64(z.Time.Sub(a.Time)))
-				two := trips.Interpolate(a, z, float64(end.Sub(a.Time))/float64(z.Time.Sub(a.Time)))
-				geo := map[string]any{"type": "LineString", "coordinates": [][]float64{{one.Longitude, one.Latitude}, {two.Longitude, two.Latitude}}}
-				if trips.Distance(one, two) < 1e-8 {
-					geo = map[string]any{"type": "Point", "coordinates": []float64{one.Longitude, one.Latitude}}
-				}
-				p.Routes = append(p.Routes, geo)
-			}
-			if len(p.Routes) > 0 {
-				pairs = append(pairs, p)
-			}
-		}
-	}
-	data, _ := json.Marshal(pairs)
-	if len(pairs) > 1024 || len(data) > 4<<20 {
-		return nil, errors.New("advisory_route_intersection_budget")
-	}
-	rows, err := s.DB.Query(r.Context(), `SELECT DISTINCT p->>'id',(p->>'index')::int FROM jsonb_array_elements($1::jsonb) p WHERE
- EXISTS(SELECT 1 FROM jsonb_array_elements(p->'routes') r WHERE
- EXISTS(SELECT 1 FROM jsonb_array_elements(p->'polygons') g WHERE ST_Intersects(ST_SetSRID(ST_GeomFromGeoJSON(g::text),4326)::geography,ST_SetSRID(ST_GeomFromGeoJSON(r::text),4326)::geography)) OR
- EXISTS(SELECT 1 FROM jsonb_array_elements(p->'circles') c WHERE ST_DWithin(ST_SetSRID(ST_MakePoint((c->'center'->>0)::float8,(c->'center'->>1)::float8),4326)::geography,ST_SetSRID(ST_GeomFromGeoJSON(r::text),4326)::geography,(c->>'radius_km')::float8*1000)))`, data)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	hits := map[string]map[int]bool{}
-	for rows.Next() {
-		var id string
-		var ii int
-		if err = rows.Scan(&id, &ii); err != nil {
-			return nil, err
-		}
-		if hits[id] == nil {
-			hits[id] = map[int]bool{}
-		}
-		hits[id][ii] = true
-	}
-	return hits, rows.Err()
 }
 
 type tripFieldResponse struct {
@@ -386,29 +306,6 @@ func (s *Server) assessTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	input := trips.Input{AsOf: asOf, Request: req, Policy: trips.DefaultPolicy(), Expected: points, Sampling: sampling, Fields: []trips.Field{}, AcquisitionIssues: []string{}}
-	snapshot, err := s.advisorySnapshot(r)
-	hits := map[string]map[int]bool{}
-	if err != nil {
-		snapshot = advisories.Snapshot{AsOf: asOf, Sources: []advisories.Source{}, Items: []advisories.Bulletin{}, Issues: []string{"advisory_evidence_unavailable"}}
-		input.AcquisitionIssues = append(input.AcquisitionIssues, "advisory_evidence_unavailable")
-	} else {
-		asOf = snapshot.AsOf
-		input.AsOf = asOf
-		points, sampling, err = trips.Points(req, asOf)
-		if err != nil {
-			problem(w, 400, err.Error())
-			return
-		}
-		input.Expected = points
-		input.Sampling = sampling
-		hits, err = s.tripAdvisoryHits(r, snapshot, req)
-		if err != nil {
-			input.AcquisitionIssues = append(input.AcquisitionIssues, "advisory_route_geometry_unavailable")
-			snapshot.Issues = append(snapshot.Issues, "advisory_route_geometry_unavailable")
-			hits = map[string]map[int]bool{}
-		}
-	}
-	input.Advisory = advisories.Evaluate(snapshot, req.Waypoints[0].Time, req.Waypoints[len(req.Waypoints)-1].Time, hits)
 	// Independent pinned field requests share the overall deadline and retain individual failures.
 	type result struct {
 		field trips.Field
@@ -432,7 +329,7 @@ func (s *Server) assessTrip(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	receipt := tripReceipt{SchemaVersion: 1, Kind: "trip_assessment", CodeSHA: tripCodeSHA(), Runtime: tripRuntime(), Input: input, AdvisorySnapshot: snapshot, AdvisoryHits: hits, FieldEvidence: raw}
+	receipt := tripReceipt{SchemaVersion: 2, Kind: "trip_assessment", CodeSHA: tripCodeSHA(), Runtime: tripRuntime(), Input: input, FieldEvidence: raw}
 	receipt.Output = trips.Evaluate(input)
 	data, err := json.Marshal(receipt)
 	if err != nil || len(data) > 8<<20 {
@@ -463,18 +360,6 @@ func (s *Server) assessTrip(w http.ResponseWriter, r *http.Request) {
 		problem(w, 503, "trip_publication_unavailable")
 		return
 	}
-	// A source revision arriving while fields were sampled invalidates this request before publication.
-	for _, src := range snapshot.Sources {
-		var current *string
-		var currentPolicy []byte
-		err = tx.QueryRow(r.Context(), "SELECT latest_run_id::text,policy FROM advisory_sources WHERE source_id=$1", src.ID).Scan(&current, &currentPolicy)
-		var frozenPolicy, livePolicy any
-		policyChanged := json.Unmarshal(src.Policy, &frozenPolicy) != nil || json.Unmarshal(currentPolicy, &livePolicy) != nil || !reflect.DeepEqual(frozenPolicy, livePolicy)
-		if err != nil || policyChanged || (current == nil) != (src.RunID == nil) || current != nil && *current != *src.RunID {
-			problem(w, 409, "advisory_snapshot_changed_retry")
-			return
-		}
-	}
 	if _, err = tx.Exec(r.Context(), `INSERT INTO calculations(calculation_id,calculation_sha256,kind,method_version,manifest,manifest_key,manifest_sha256,state) VALUES($1,$2,'trip_assessment',$3,$4,$5,$2,'frozen')`, id, sha, input.Policy.Method, data, key); err != nil {
 		problem(w, 503, "trip_publication_unavailable")
 		return
@@ -491,7 +376,7 @@ func (s *Server) assessTrip(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusCreated)
-	advisoryJSON(w, map[string]any{"calculation_id": id, "access_token": token, "manifest_sha256": sha, "verdict": receipt.Output})
+	writeJSON(w, map[string]any{"calculation_id": id, "access_token": token, "manifest_sha256": sha, "verdict": receipt.Output})
 }
 func (s *Server) privateTrip(w http.ResponseWriter, r *http.Request) (string, tripReceipt, bool) {
 	var receipt tripReceipt
@@ -516,7 +401,7 @@ func (s *Server) privateTrip(w http.ResponseWriter, r *http.Request) (string, tr
 		problem(w, 404, "evidence_not_found")
 		return "", receipt, false
 	}
-	data, err := s.readAdvisoryJSON(r, key, sha)
+	data, err := s.readStoredJSON(r, key, sha)
 	if err != nil || len(data) > 8<<20 || json.Unmarshal(data, &receipt) != nil || trips.Hash(receipt) != hexSHA(data) {
 		problem(w, 503, "trip_evidence_unavailable")
 		return "", receipt, false
@@ -538,7 +423,7 @@ func (s *Server) tripEvidence(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	advisoryJSON(w, map[string]any{"calculation_id": id, "manifest_sha256": trips.Hash(receipt), "receipt": receipt, "freshness": "frozen_as_of; request a new calculation for current conditions"})
+	writeJSON(w, map[string]any{"calculation_id": id, "manifest_sha256": trips.Hash(receipt), "receipt": receipt, "freshness": "frozen_as_of; request a new calculation for current conditions"})
 }
 func (s *Server) replayTrip(w http.ResponseWriter, r *http.Request) {
 	if _, ok := query(w, r); !ok {
@@ -581,12 +466,33 @@ func (s *Server) replayTrip(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	state := advisories.Evaluate(receipt.AdvisorySnapshot, receipt.Input.Request.Waypoints[0].Time, receipt.Input.Request.Waypoints[len(receipt.Input.Request.Waypoints)-1].Time, receipt.AdvisoryHits)
-	if trips.Hash(state) != trips.Hash(receipt.Input.Advisory) || trips.Hash(trips.Evaluate(receipt.Input)) != trips.Hash(receipt.Output) {
+	if trips.Hash(trips.Evaluate(receipt.Input)) != trips.Hash(receipt.Output) {
 		problem(w, 503, "trip_replay_mismatch")
 		return
 	}
-	advisoryJSON(w, map[string]any{"calculation_id": id, "replayed": true, "freshness_renewed": false, "verdict": receipt.Output})
+	writeJSON(w, map[string]any{"calculation_id": id, "replayed": true, "freshness_renewed": false, "verdict": receipt.Output})
 }
 
 // Keep imports and runtime checks explicit: JSON cannot carry NaN/Inf and stored samples are bounded.
+
+func (s *Server) readStoredJSON(r *http.Request, key, sha string) ([]byte, error) {
+	if s.Storage == nil {
+		return nil, errors.New("storage_unavailable")
+	}
+	object, err := s.Storage.GetObject(r.Context(), "nautiq", key, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	defer object.Close()
+	data, err := io.ReadAll(io.LimitReader(object, (32<<20)+1))
+	if err != nil || len(data) > 32<<20 || hexSHA(data) != sha {
+		return nil, errors.New("stored_checksum")
+	}
+	return data, nil
+}
+
+func writeJSON(w http.ResponseWriter, value any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	json.NewEncoder(w).Encode(value)
+}

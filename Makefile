@@ -43,15 +43,6 @@ build:
 logs:
 	docker compose logs --tail=100 -f
 
-.PHONY: phase13-verify phase13-reliability phase13-smoke
-phase13-verify:
-	cd services/api && go run -race ./cmd/verify-notifications --offline
-	.venv/bin/python scripts/verify_phase13.py
-phase13-reliability:
-	docker compose run --rm --no-deps -T notification-verifier
-phase13-smoke:
-	.venv/bin/python scripts/verify_phase13_smoke.py
-
 .PHONY: phase12-verify phase12-reliability phase12-smoke
 phase12-verify:
 	.venv/bin/python scripts/verify_phase12.py
@@ -253,25 +244,6 @@ event-dataset-verify:
 event-dataset-replay:
 	@test -n '$(DATASET_ID)' || (echo 'Set DATASET_ID'; exit 1)
 	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline replay-dataset '$(DATASET_ID)'
-
-.PHONY: phase10-verify phase10-reliability phase10-smoke advisory-refresh advisory-verify advisory-replay advisory-maintain
-phase10-verify:
-	cd services/api && go run ./cmd/verify-advisories
-	.venv/bin/python scripts/verify_phase10.py
-phase10-reliability:
-	.venv/bin/python scripts/verify_phase10_reliability.py
-phase10-smoke:
-	.venv/bin/python scripts/verify_phase10_smoke.py
-advisory-refresh:
-	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline refresh
-advisory-verify:
-	@test -n '$(RUN_ID)' || (echo 'Set RUN_ID'; exit 1)
-	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline verify '$(RUN_ID)'
-advisory-replay:
-	@test -n '$(RUN_ID)' || (echo 'Set RUN_ID'; exit 1)
-	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline replay '$(RUN_ID)'
-advisory-maintain:
-	docker compose run --rm -T advisory-worker python -m nautiq_ml.advisories.pipeline maintain
 
 .PHONY: phase11-verify phase11-reliability phase11-smoke
 phase11-verify:

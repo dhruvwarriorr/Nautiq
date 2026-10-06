@@ -14,20 +14,18 @@ const titles: Record<string, string> = {
   map: "Your map",
   routes: "Saved routes",
   watchlists: "Watched places",
-  alerts: "Alerts",
   explorer: "Research",
   reports: "Reports",
   exports: "Downloads",
   settings: "Settings",
 };
 const ledes: Record<string, string> = {
-  overview: "Your private routes, places, alerts and downloads, in one place.",
+  overview: "Your private routes, places and downloads, in one place.",
   routes: "Timed routes you saved, ready to check again.",
   watchlists: "Places you keep an eye on.",
-  alerts: "Your own alert limits. They never override an official warning.",
   reports: "Private reports of trips and readings.",
   exports: "Files you asked for. They expire after 72 hours.",
-  settings: "Your account and notification choices.",
+  settings: "Your password and account.",
 };
 export default async function Page({
   params,
@@ -43,7 +41,6 @@ export default async function Page({
       "map",
       "routes",
       "watchlists",
-      "alerts",
       "explorer",
       "reports",
       "exports",
@@ -84,7 +81,7 @@ export default async function Page({
       <PageHead
         icon="logbook"
         title={titles[surface] ?? "Your workspace"}
-        lede={ledes[surface] ?? "Your private routes, places, alerts and downloads."}
+        lede={ledes[surface] ?? "Your private routes, places and downloads."}
         compact
       />
       <PrivateWorkspace

@@ -13,7 +13,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc/metadata"
 	"log/slog"
-	"nautiq.local/api/internal/notifications"
 	"nautiq.local/api/internal/operations"
 	"net/http"
 	"net/http/httptest"
@@ -78,7 +77,7 @@ func main() {
 	defer db.Close()
 	files, e := filepath.Glob("/migrations/*.sql")
 	must(e)
-	check(len(files) == 17, "migration chain")
+	check(len(files) == 19, "migration chain")
 	_, e = db.Exec(ctx, "CREATE TABLE platform_migrations(version integer PRIMARY KEY,sha256 text NOT NULL,applied_at timestamptz DEFAULT now())")
 	must(e)
 	for i, file := range files {
@@ -126,53 +125,8 @@ func main() {
 	check(request() == 503, "null pause fails closed")
 	_, e = db.Exec(ctx, `UPDATE operations_controls SET paused='{}'`)
 	must(e)
-	account, watch, rule := uuid.NewString(), uuid.NewString(), uuid.NewString()
-	_, e = db.Exec(ctx, "INSERT INTO product_accounts(account_id,handle,password_salt,password_hash) VALUES($1,'synthetic_ops',decode(repeat('01',16),'hex'),decode(repeat('01',32),'hex'))", account)
-	must(e)
-	_, e = db.Exec(ctx, `INSERT INTO product_objects(object_id,owner_id,kind,name,data) VALUES($1,$2,'watchlists','Fixture','{"type":"point","latitude":12,"longitude":72,"radius_km":0}')`, watch, account)
-	must(e)
-	data, _ := json.Marshal(notifications.Rule{WatchlistID: watch, Type: "source_stale", Channel: "both", Enabled: true})
-	_, e = db.Exec(ctx, "INSERT INTO product_objects(object_id,owner_id,kind,name,data) VALUES($1,$2,'alert-rules','Fixture',$3)", rule, account, data)
-	must(e)
-	worker := &notifications.Worker{DB: db, ID: uuid.NewString()}
-	in, e := worker.Claim(ctx)
-	must(e)
-	check(in != nil, "initial rule claim")
-	_, e = db.Exec(ctx, `UPDATE operations_controls SET paused='{"notification_evaluation":true}'`)
-	must(e)
-	obs := notifications.Evidence{Outcome: "triggered", AsOf: time.Now().UTC(), Fingerprint: notifications.Hash([]byte("revision")), Severity: 1, Facts: json.RawMessage(`{}`)}
-	ok, e := worker.Publish(ctx, *in, obs)
-	must(e)
-	check(!ok, "in-flight publication withheld on pause")
-	var count int
-	must(db.QueryRow(ctx, "SELECT count(*) FROM product_alerts").Scan(&count))
-	check(count == 0, "paused publication leaves no inbox side effect")
-	_, e = db.Exec(ctx, `UPDATE operations_controls SET paused='{}'`)
-	must(e)
-	ok, e = worker.Publish(ctx, *in, obs)
-	must(e)
-	check(ok, "same valid lease resumes after pause")
-	_, e = db.Exec(ctx, `UPDATE operations_controls SET paused='{"email_delivery":true}'`)
-	must(e)
-	ok, e = worker.DeliverOne(ctx)
-	must(e)
-	check(!ok, "mail pause leaves queue pending")
-	must(db.QueryRow(ctx, "SELECT attempts FROM notification_deliveries WHERE channel='email'").Scan(&count))
-	check(count == 0, "mail pause consumes no attempts")
-	var delivery string
-	must(db.QueryRow(ctx, "SELECT delivery_id::text FROM notification_deliveries WHERE channel='email'").Scan(&delivery))
-	lease := uuid.NewString()
-	_, e = db.Exec(ctx, `UPDATE notification_deliveries SET state='sending',lease_id=$1,lease_expires_at=now()+interval '90 seconds',attempts=1 WHERE delivery_id=$2`, lease, delivery)
-	must(e)
-	for i := 0; i < 2; i++ {
-		ok, e = worker.DeliverClaim(ctx, delivery, account, lease)
-		must(e)
-		check(!ok, "pause between claim and SMTP withheld")
-		must(db.QueryRow(ctx, "SELECT attempts FROM notification_deliveries WHERE delivery_id=$1", delivery).Scan(&count))
-		check(count == 0, "unattempted paused claim refunded only once")
-	}
 	_, e = db.Exec(ctx, `DELETE FROM operations_controls`)
 	must(e)
 	check(request() == 503, "missing control row fails closed")
-	fmt.Println("Disposable operations verification passed: migrations, serving and capability pauses, corrupt/missing control refusal, in-flight notification fence and retry-preserving mail pause.")
+	fmt.Println("Disposable operations verification passed: migrations, serving and capability pauses, and corrupt/missing control refusal.")
 }

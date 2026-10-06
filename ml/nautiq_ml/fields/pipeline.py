@@ -15,7 +15,7 @@ from psycopg.types.json import Jsonb
 
 from ..argo.storage import digest, put_immutable, read_object, store
 from .core import FieldError, POLICY, VERSION, canonical, freshness, utc
-from .providers import Acquisition, acquire_product
+from .providers import CMEMS, Acquisition, acquire_product
 from .storage import open_grid, stage
 
 
@@ -314,6 +314,7 @@ def replay(db, s3, rid):
         else None,
         hours=hours,
         bbox=metadata["extent"],
+        start=metadata["times"][0] if metadata["product_id"] in CMEMS else None,
     )
     if source_version != row["source_version"]:
         raise FieldError("retained_source_version_mismatch")
@@ -342,14 +343,14 @@ def main():
         for sig in (signal.SIGTERM, signal.SIGINT):
             signal.signal(sig, lambda *_: stopped.set())
         while not stopped.is_set():
-            for product in POLICY["products"]:
+            for product in [p for p, spec in POLICY["products"].items() if spec.get("refresh")]:
                 if stopped.is_set():
                     break
                 try:
                     with connection() as db:
-                        # HYCOM runs arrive about a day late, so currents need 72 h to cover
-                        # tomorrow; 48 h does the same for the six-hourly GFS cycles.
-                        hours = 72 if product == "hycom_espc" else 48
+                        # 48 h keeps "tomorrow" covered for the six-hourly GFS cycles; CMEMS
+                        # products set their own horizon.
+                        hours = CMEMS[product]["hours"] if product in CMEMS else 48
                         result = ingest(db, store(), product, hours=hours)
                     print(
                         json.dumps(

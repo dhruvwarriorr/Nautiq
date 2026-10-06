@@ -31,10 +31,10 @@ export default async function Trips({ searchParams }: { searchParams: Promise<Re
       <PageHead
         icon="voyage"
         title="Plan a trip"
-        lede="Enter your stops and times, out and back. Nautiq checks every leg against the forecast and official warnings, and lists what it couldn’t check."
+        lede="Enter your stops and times, out and back. Nautiq checks every leg against the forecast, and lists what it couldn’t check."
       />
       <Notice tone="caution" title="Nautiq won’t call a trip safe">
-        <p>Trip limits are still being reviewed by marine and legal experts, so trips come back as “not enough data” unless an official warning applies. Use this to see the conditions, not to decide.</p>
+        <p>It checks the forecast against wave, wind and current limits. The defaults suit small open boats; set your own in Advanced settings. Nautiq doesn’t read official warnings, so check INCOIS and IMD before you go.</p>
       </Notice>
       {prefill ? (
         <Notice title="We started your route for you">
