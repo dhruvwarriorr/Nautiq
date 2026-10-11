@@ -1,5 +1,7 @@
 # Deployment and recovery runbook
 
+> Historical operations template. The public repository excludes local-only verification and production preflight programs, and this document still references workflows retired from the current product (official advisories, personal alerts, and email). Do not use it as a current deployment procedure. The [release review](25-Release-Review.md) records the current product boundary and pending approvals.
+
 Use a trusted single host with Compose 2.24.4+, a private administrative shell and restricted Docker access. Docker access is privileged. The production overlay is a deployment template, not an automatic deployment or scientific release. Read the [delivery boundaries](23-Phase-14-Delivery.md) and [release review register](25-Release-Review.md) first.
 
 ## Prepare a separate deployment

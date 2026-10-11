@@ -1,5 +1,7 @@
 # Product completion delivery
 
+> Historical delivery record from 2026-10-04. The current product later removed official warnings and personal alerts. Local-only test and verification harnesses are no longer distributed in the public repository. See the [current README](../README.md).
+
 This closes the gaps recorded in [26-Gap-Analysis.md](26-Gap-Analysis.md) that code can close. It does not, and cannot, close the scientific, licensing, security-review or deployment gates, which stay explicit and false. Local implementation evidence is not independent review.
 
 ## What was delivered
@@ -65,4 +67,4 @@ Migration `017_model_monitoring.sql` adds `model_monitoring_reports` and the `mo
 
 Unchanged and external: promotion of any residual model (needs an untouched audit block and reviewed gates); calibrated uncertainty (needs trusted delayed-mode outcomes); qualified anomaly or event verdicts (expert labels, quiet-period false-alert rates, independent audit); sparse functional PCA validation; coastal validation; approved trip thresholds and wording; INCOIS machine access and NDMA marine completeness; repeated cadence evidence; redistribution and commercial rights, including ETOPO terms review; independent security review of public identity; real host/TLS, offsite restore and on-call ownership. See the registers in [25-Release-Review.md](25-Release-Review.md) and [26-Gap-Analysis.md](26-Gap-Analysis.md).
 
-Test files are ignored by this repository's `.gitignore` (`**/tests/`, `*_test.go`, `test_*.py`, `*.test.*`); the new unit tests exist in the working tree but will not appear in `git status`.
+At the time of delivery, unit tests were ignored by `.gitignore` and kept in the local working tree. The public source tree later also stopped tracking the phase verification harnesses; older Git commits retain their historical copies.

@@ -1,284 +1,120 @@
 # Nautiq
 
-Ocean and marine-condition intelligence. Start with the [document index](docs/01-Nautiq-Project-Overview.md), [execution contracts](docs/08-Execution-Contracts.md) and [failure register](docs/09-Edge-Case-Register.md). Designs, delivered code and measured readiness are distinct.
+<div align="center">
 
-## Phase 0: source and scientific feasibility
+**Understand what the sea is doing, and where the evidence runs out.**
 
-Requires [uv](https://docs.astral.sh/uv/) and Python 3.12; Docker, Go and Node are not required for this offline track. On macOS LightGBM also needs `brew install libomp`; Linux needs its OpenMP runtime (`libgomp1`). Dependencies are pinned in `ml/requirements-phase0.lock`.
+An ocean conditions explorer for India's coast, built around clear answers, source times, and visible uncertainty.
 
-```sh
-make phase0          # Install dependencies, acquire/cache real samples, benchmark
-make phase0-replay   # Verify hashes and rerun entirely offline
-make phase0-gate     # Exit 2 while any readiness gate remains unproven
+</div>
+
+---
+
+## What is Nautiq?
+
+Waves, wind, currents, sea temperature, and float observations come from different sources and cover different places and times. Nautiq brings them into one map and explains what is available for a place or trip. Every answer can lead back to its source, valid time, and calculation.
+
+This repository contains a **local diagnostic product**. Its scientific models and trip limits are research and engineering prototypes. Nautiq does not track official marine warnings, and it is not approved as a public marine safety service.
+
+## What you can do
+
+- **Ask about a place and time.** Type a question about conditions near Mumbai, Goa, Kerala, the Arabian Sea, or the Bay of Bengal. Review and correct the place, time, and question type before seeing an answer assembled from stored evidence.
+- **Explore the ocean map.** Switch between wave, wind, current, and sea temperature layers, inspect forecast times, and find Argo float readings.
+- **Trace an observation.** Inspect original float levels, quality flags, revisions, and the raw and derived evidence behind a profile.
+- **Compare with history.** See how a reading differs from a fixed seasonal reference and inspect diagnostic model and anomaly evidence without treating it as a warning.
+- **Check a timed route.** Add outward and return stops, compare forecasts with configurable wave, wind, and current limits, and see missing inputs. A result is never a declaration that a trip is safe.
+- **Keep a private workspace.** Save routes, places, and bounded research exports in a local account. Public account recovery and MFA are not implemented.
+
+## How it works
+
+```text
+Argo observations + forecast providers
+                │
+                ▼
+     ingestion and immutable evidence
+                │
+                ▼
+  PostgreSQL/PostGIS/TimescaleDB + MinIO
+                │
+                ▼
+     Go API + Python scientific services
+                │
+                ▼
+    Next.js map, Ask, trips, and research
 ```
 
-The catalog pins a historical Argo pilot, NOAA OISST analysis, wave/wind forecast samples and NDMA RSS candidate. The tool preserves immutable raw bytes and receipts under ignored `artifacts/phase0/`, writes a QC-passed Parquet snapshot, and evaluates train-only harmonic climatology, HGBR/LightGBM residual candidates, predictive calibration and profile structure. Reports distinguish access from cadence/licenses/coverage/scientific release. A partial report is an expected truthful outcome, not a fabricated successful release.
+Ask turns a question into a bounded, editable query. The answer is built from typed data and fixed templates. An optional language model can label the question's intent, place, and time; it does not produce measurements or write the answer. With no API key, built-in rules handle questions locally.
 
-`make phase0` reuses verified cached bytes; it does not claim each rerun refreshes live forecasts. For a new acquisition use `.venv/bin/python -m nautiq_ml.phase0.cli --output artifacts/phase0/new-run-name`. Replay an existing acquisition with `--output` and `--offline`; preserve `catalog.json`, raw objects and receipts. Hash/code/environment changes identify a new scientific snapshot. Full reports are local artifacts; a compact checked-in summary and limits are in [Phase 0 delivery](docs/10-Phase-0-Delivery.md).
+Scientific releases are selected by exact ID. A running service or a passing local check does not qualify a model for scientific use. See the [historical architecture design](docs/04-Nautiq-System-Architecture.md) and [current release review](docs/25-Release-Review.md).
 
-## Phase 1: local platform
+## Run locally
 
-Prerequisites: Docker with Compose and a running daemon, Go 1.26+, Node.js 24+, npm, and [uv](https://docs.astral.sh/uv/). Setup uses Python 3.12 (uv can obtain it) and installs pinned Go protobuf generators inside `.tools/`.
-
-```sh
-make setup
-make up
-```
-
-`make up` builds and starts the stack, then waits for real dependency checks and checks the rendered status page. On first launch, source builds and image downloads can take several minutes.
-
-- Web: http://localhost:3000
-- Dependency health page: http://localhost:3000/status
-- Core API readiness: http://localhost:8080/api/v1/health
-- Core API liveness: http://localhost:8080/health/live
-- Core API traffic readiness: http://localhost:8080/health/ready
-- Implemented capabilities: http://localhost:8080/api/v1/capabilities
-- MinIO console: http://localhost:9001
-
-Copying `.env.example` is handled by setup without overwriting an existing `.env`. Its credentials are for local development. Services are reachable through the Compose network; web, API, MLflow and the MinIO console are exposed, bound to loopback. Change `WEB_PORT` or `API_PORT` in `.env` if needed. Passwords embedded in `DATABASE_URL` must be URL-safe (or percent-encoded).
-
-```sh
-make test       # Go race tests, Python gRPC round trip, frontend health contracts
-make lint       # Go format/vet, Ruff, ESLint, TypeScript, Compose validation
-make build      # Native Go and production Next.js builds
-make proto      # Regenerate both Go and Python contracts
-make smoke      # Recheck the running platform and status page
-make logs
-make down       # Stops containers; preserves data volumes
-make migrate    # Ordered transactional upgrades on existing volumes
-make test-migrations # Fresh/legacy/checksum/rollback tests in a disposable database
-```
-
-Generated protobuf code is retained in the repository so container builds require no generation toolchain. After contract edits, run `make proto`. Generation runs locally; it does not depend on a remote plugin service.
-
-## Phase 2: Argo observation slice
+You need Docker with Compose and a running daemon, Go 1.26+, Node.js 24+, npm, and [uv](https://docs.astral.sh/uv/). Setup creates a Python 3.12 environment and copies `.env.example` to `.env` if needed.
 
 ```sh
 make setup
 make up
-make ingest             # One bounded live batch
-make reconcile          # One bounded historical batch and repair
-make phase2-verify      # Offline NetCDF contracts
-make phase2-reliability # Disposable DB/object replay and recovery checks
-make phase2-broker      # Brief local broker outage; restores services afterward
-make phase2-smoke       # Live API, rendered pages and exact raw SHA verification
 ```
 
-Open http://localhost:3000/profiles for real Argo positions and original-level temperature/salinity charts. Each profile includes source QC, parameter modes, timestamps, method versions and raw/canonical/Parquet hashes. The raw download is pinned to the displayed revision. List queries require a bounding box and UTC start/end, accept at most 366 days and use signed snapshot pagination. The [Phase 2 delivery](docs/11-Phase-2-Delivery.md) records implementation, measured verification and limits.
+Open [Nautiq](http://localhost:3000), the [getting-started guide](http://localhost:3000/start), or the [service status](http://localhost:3000/status). The API is at `http://localhost:8080`. Check the status page after startup; first startup can take several minutes while images and dependencies build.
 
-The source config is `packages/source-catalog/argo.json`: three workers, at most 20 files per run, six-hour live polling and daily historical reconciliation. `ARGO_OBSERVED_SINCE` fixes a persistent scope start (local default 2025-10-01); these batches do not establish complete source coverage. Raw artifacts remain immutable in MinIO; migrations preserve existing volumes. Display QC accepts source QC 1 with per-variable missingness; Phase 0 training keeps its separate strict D-only policy.
-
-## Phase 3: correctness and reproducibility
-
-Open http://localhost:3000/data to inspect source timing, QC audit groups and frozen training snapshots. Profile pages link to retained revisions and durable calculation evidence. See [delivery and measured verification](docs/12-Phase-3-Delivery.md).
+The default credentials in `.env.example` are **local development values**. Keep real credentials in the ignored `.env` file. Copernicus Marine wave, current, and sea temperature downloads need a [Copernicus Marine account](https://data.marine.copernicus.eu/register) and `CMEMS_USERNAME` / `CMEMS_PASSWORD` in `.env`. Without provider credentials or fresh acquisitions, related readings can correctly appear unavailable or out of date.
 
 ```sh
-make phase3-verify      # Frozen real-source fixture and offline policies
-make phase3-reliability # Disposable DB: revisions, late jobs, frozen snapshots
-make argo-replay        # Reprocess up to 1,000 retained raw files without refetching
-make science-maintain  # Drain up to 500 summary jobs and refresh source monitor
-make training-snapshot AS_OF=2026-10-02T04:45:13.911676Z
-make verify-snapshot SNAPSHOT_ID=3b606239-35ae-53ae-938d-5c0935385a00
-make phase3-smoke       # Evidence APIs, rendered pages and exact Parquet bytes
+make ingest        # Acquire one bounded Argo batch
+make field-refresh # Acquire configured forecast products
+make down          # Stop containers and preserve data volumes
 ```
 
-Snapshot commands require an explicit UTC selection time. Selection uses retained revision history at that time; inputs, method/code/runtime/QC/source policy and output checksums are frozen. The strict policy in `packages/source-catalog/argo-training.json` uses delayed-mode adjusted QC 1 labels and the documented 2005–2024 temporal splits. Temperature and salinity remain independently nullable. This is an original-level dataset; the separate standard-grid and climatology artifacts below preserve it unchanged. Default selection is at most 500 profiles, hard maximum 2,000 profiles/100,000 candidate levels/128 MiB Parquet; exceeding a budget fails rather than truncating.
+The [documentation index](docs/README.md) separates current behavior from historical design and delivery records. The [operations runbook](docs/24-Operations-Runbook.md) is a historical template for migrations, recovery, and deployment controls; its private verification tools are not distributed in this repository.
 
-A successful backfill/replay never renews live-source freshness. Monitoring separates local fetch age, observation time, expected cadence and verified provider freshness; provider cadence and coverage remain explicitly unverified. Frozen evidence does not approve a scientific release.
+## Project layout
 
-## Historical normal and profile differences
-
-Open http://localhost:3000/climatology to review frozen seasonal references and their held-out evaluation. Profile pages compare observed standard-depth values with the expected conditional mean and report signed temperature/salinity differences, support, fallbacks and uncalibrated training residual spread. Original levels remain separately visible. See [delivery, fixed scientific policy and real-data measurements](docs/13-Phase-4-Delivery.md).
-
-```sh
-make phase4-verify
-make phase4-reliability
-make climatology-build SNAPSHOT_ID=3b606239-35ae-53ae-938d-5c0935385a00
-make climatology-verify REFERENCE_ID=dd46a816-fa5b-5d4f-a296-9c2025d10c61
-make climatology-select REFERENCE_ID=dd46a816-fa5b-5d4f-a296-9c2025d10c61
-make climatology-maintain
-make phase4-smoke
-```
-
-IDs refer to retained local data; fresh installations use their own verified snapshot and returned reference IDs. The historical dataset baseline is 2005–2024, while fitting uses only 2005–2016. Tuning/calibration/test years never alter coefficients, support or spread. Reference selection is an explicit local prototype action; scientific production approval remains false. Unsupported coverage returns null without suppressing original observations. Residual candidate evaluation and serving are described below; unqualified models retain climatology. Qualified anomaly, advisory and trip verdicts remain unavailable. Field sampling is implemented below.
-
-## Residual expected means and model evidence
-
-Open http://localhost:3000/models to compare LightGBM, HGBR and climatology, inspect exact release/MLflow pins and review grouped evaluations. Profile pages show diagnostic candidates, model explanations and the active serving mean. Both candidates failed the configured promotion checks, so climatology remains active. The reused historical test block cannot authorize promotion. See [delivery and real-data evidence](docs/14-Phase-5-Delivery.md).
-
-```sh
-make expected-setup
-make phase5-verify
-make phase5-reliability
-make expected-build REFERENCE_ID=<verified-selected-climatology-id>
-make expected-verify MODEL_ID=<returned-model-id>
-make expected-select MODEL_ID=<returned-model-id>
-# Set ML_RELEASE_ID=<same exact model ID> in .env, then restart:
-docker compose up -d --no-deps ml-inference
-make expected-maintain
-make phase5-smoke
-```
-
-MLflow is available at http://localhost:5001, with persistent local SQLite metadata and proxied artifacts. `MLFLOW_PORT` changes its loopback port. Serving uses the exact `ML_RELEASE_ID` and verified native model bundle, never a latest registry version. An unset or mismatched runtime pin leaves inference unavailable while observations remain readable. `make expected-log MODEL_ID=...` retries experiment/registry logging without changing the scientific release. `expected_state` reports the implemented mean service; `ml_residual` remains false until a candidate qualifies. Static coastal features and anomaly verdicts remain unavailable. Diagnostic predictive intervals have a separate release and coverage gate, described below.
-
-## Using Nautiq: ask, navigate, learn
-
-Start at http://localhost:3000. The home page explains the five state labels (Available, Stale, Unknown, Unavailable, Too rough) and links to a two-minute guide at `/start`. Navigation groups the everyday surfaces (Ask, Conditions, Map, Plan a trip, Observations) and tucks evidence, models and methods under **More**.
-
-`/ask` answers questions such as “How are the waves near Goa tomorrow morning?”, “What is the wind near Kerala tonight?”, “Show unusual temperature profiles in the Arabian Sea this week” or “Why is Nautiq showing caution?”. A question becomes a validated **frame** (intent, place, time, variable) from closed vocabularies; relative times resolve to an explicit UTC window shown to you; every field can be corrected before you rely on the answer; the answer is assembled from existing typed evidence with fixed templates. Trip questions hand off to the timed-route form with place and time prefilled. Nautiq does not track official warnings; questions about them are answered with a pointer to INCOIS and IMD. The latest answer is kept on the device as a labelled, never-refreshed copy for weak connectivity.
-
-By default questions are read by built-in rules and never leave the server. To let a language model *label* the question (it never writes the answer), set `NAUTIQ_LLM_API_KEY` (optionally `NAUTIQ_LLM_MODEL`, `NAUTIQ_LLM_BASE_URL`, `NAUTIQ_LLM_RATE_PER_MINUTE`) in `.env` and recreate the API. Output that is not valid JSON, names an unknown place/field, contains a date the user did not write, or is rate-limited falls back to the built-in rules. Production overlays blank these settings; supply `NAUTIQ_LLM_API_KEY_FILE` deliberately if wanted. See [the product completion delivery](docs/27-Product-Completion-Delivery.md) and [question/answer contract](packages/schemas/ask.openapi.json).
-
-## Model monitoring and profile evidence categories
-
-`/models/monitoring` shows the unified monitor from design section 22: input availability and drift against the training grid, expected-value error against outcomes with delayed-mode verification lag, profile-rank tail shares against the frozen reference, and interval calibration. Run it with `make model-monitor` (optionally `WINDOW_DAYS=...`); it is read-only, writes an immutable report (schema 17) and never retrains, recalibrates, selects or promotes anything. Thresholds are unreviewed engineering defaults recorded with each report. Contract: [monitoring.openapi.json](packages/schemas/monitoring.openapi.json).
-
-Profile pages now summarise their stored ranks as Typical / Elevated / Unusual / Strongly unusual with every component visible (`profile-evidence-category-v1`). Categories are descriptive ranks, are capped when the reference is too small to resolve a band, and are not event probabilities.
-
-`make static-features-experiment REFERENCE_ID=<climatology-id>` runs the documented static coastal-feature (bathymetry, distance to coast) comparison against real NOAA ETOPO 2022 data. It creates no release; results are in [the delivery record](docs/27-Product-Completion-Delivery.md).
-
-## Local services
-
-| Service | Purpose |
+| Path | Purpose |
 | --- | --- |
-| Next.js | Observation explorer, profile charts and dependency status page |
-| Go API | Bounded profile/provenance API and dependency probes |
-| Go ingestion | GDAC discovery, immutable raw acquisition and leased outbox publisher |
-| Python normalizer | Durable Argo consumer, canonical revisions and immutable Parquet |
-| Python ML runtime | Pinned native residual candidates and historical fallback via typed gRPC |
-| MLflow | Persistent experiment metrics, exact native bundles and registry versions |
-| Python field runtime | Independent read-only Zarr sampling and native raster tiles |
-| Field ingestion | Bounded hourly provider refresh (`field-ingestion`), started by default |
-| PostgreSQL 17 | Operational storage, PostGIS and TimescaleDB extensions |
-| MinIO | Private `nautiq` S3 bucket, initialized idempotently |
-| Redis | Cache runtime |
-| NATS | JetStream enabled with persistent local storage |
+| `apps/web/` | Next.js product and research pages |
+| `services/api/` | Go APIs, product rules, and trip engine |
+| `services/ingestion/` | Argo discovery and acquisition |
+| `ml/` | Python normalization, field sampling, and scientific models |
+| `migrations/` | Ordered PostgreSQL schema upgrades |
+| `packages/` | Source catalogs, API schemas, and scientific fixtures |
+| `infrastructure/` | Local storage build and private deployment configuration |
+| `docs/` | Design, delivery evidence, limitations, and runbooks |
 
-The diagnostic health API returns HTTP 200 only when all checks pass; failures return HTTP 503 and the status page shows them. Traffic readiness checks the required DB/schema capabilities; Redis/NATS/ML/web failure does not remove API readiness. Error responses suppress connection details and credentials. Scientific gRPC and public capability flags distinguish implemented observation/profile/field evidence from qualified models, official advisories and trip assessments. Supported gridded releases are available locally; scientific production approval and operational source coverage remain separate gates.
+## Data, limitations, and attribution
 
-MinIO Community is source-only; the local Dockerfile builds the pinned server release rather than relying on unavailable registry images. See [the upstream release instructions](https://github.com/minio/minio/releases). This establishes the requested local runtime, not a production storage recommendation.
+Nautiq distinguishes an observation from a forecast, a historical comparison from a prediction, and missing data from a favorable result. The current product does **not** ingest official warnings. Check [INCOIS](https://incois.gov.in/) and [IMD](https://mausam.imd.gov.in/) before any real trip, along with local authorities and conditions.
 
-## Database and persistence
+Argo profile data is credited to the [International Argo Program and contributing national programs](https://doi.org/10.17882/42182). Forecast layers use [Copernicus Marine](https://marine.copernicus.eu/) and NOAA products as identified in the [source catalog](packages/source-catalog/fields.json). Source attribution, terms, and redistribution rights require review before a public data service or commercial use. The repository includes selected historical evidence summaries, but no raw provider datasets or private user data.
 
-The PostgreSQL entrypoint initializes a new volume with migration 001. `make up` then applies ordered upgrades using `scripts/migrate.py`, with a transaction advisory lock, SHA-256 verification and rollback on failure. Existing v1 volumes are adopted and upgraded through schema 17 without deleting data; later applied-file edits and newer database versions are refused. Schema 2 adds outbox/inbox foundations; schema 3 adds Argo raw/canonical/revision storage and lease tokens. Phase 2 supplies the publisher, consumer and reconciliation. Schema 4 adds versioned QC audit, calculation manifests, revision-safe summary jobs, source monitoring and frozen training snapshots. Schema 5 adds immutable climatology references, explicit local selection and revision/reference-safe comparison jobs. Schema 6 adds expected-mean releases, MLflow metadata and leased profile comparison jobs; schema 7 invalidates/restores comparisons atomically when the historical reference changes. Schema 8 adds predictive interval releases and monitoring; schema 9 adds profile anomaly diagnostics; schema 10 adds field catalog/releases, per-product selection and acquisition runs; schema 11 adds immutable event history/baselines/runs, spatial event projections and frozen profile snapshot inputs; schemas 12–16 add advisories, trips, product accounts, notifications and operations controls; schema 17 adds unified model-monitoring reports. `make down` preserves volumes. Never reset volumes to apply an upgrade.
+The code can be viewed publicly without operating Nautiq as a public service. The [release review](docs/25-Release-Review.md) records pending scientific validation, source cadence and rights, independent security review, and real deployment and recovery checks. `packages/source-catalog/production.json` keeps production and scientific approval false.
 
-## Scope
+## FAQ
 
-Phase 0 feasibility tooling and the real-source pilot, Phase 1 local platform Phase 2 Argo observation slice and Phase 3 correctness/reproducibility and Phase 4 train-only climatology/comparisons are implemented. The residual expected-mean model slice is implemented with explicit release loading and qualified climatology fallback. Predictive quantile/CQR intervals and residual/PCA profile diagnostics are implemented with their own frozen releases. Regional SST/wave/weather/current adapters, immutable Zarr releases, field sampling and the raster explorer are implemented. Fixed-reference SST persistence and separate sparse-profile grouping are implemented as diagnostic candidates. Qualified uncertainty/anomaly/event verdicts, advisory ingestion and trip assessments remain unavailable. Health reports runtime connectivity, not scientific readiness. Operational source coverage, commercial/redistribution approvals and release audits remain explicit blocked gates. Argo workers and the coordinate map run locally; MLflow runs locally; scientific production approval and production operations remain outstanding.
+**Is there a live public app?**
 
-See [Phase 1 delivery and verification](docs/07-Phase-1-Delivery.md) and the [implementation blueprint](docs/06-Nautiq-Implementation-Blueprint.md).
+No public deployment is claimed here. Run the project locally to explore it.
 
-### Predictive interval evidence
+**Does Nautiq decide whether it is safe to go to sea?**
 
-Nautiq supports native LightGBM/CatBoost quantile comparisons, profile-based Mondrian CQR, explicit hierarchical calibration fallback, pinned typed inference and fixed-reference coverage monitoring. Inspect [delivery and validation](docs/15-Phase-6-Delivery.md), [measured evidence](docs/evidence/phase6-summary.json), the [API contract](packages/schemas/uncertainty.openapi.json), and `/uncertainty` in the local explorer. Mean and median are separate estimates. Diagnostic interval availability does not establish qualified coverage or scientific production approval.
+No. Trip checks compare forecast samples with unreviewed limits and show what they could not check. They do not include official warnings, vessel details, or every local hazard.
 
-```sh
-make uncertainty-setup
-make phase6-verify phase6-reliability phase6-smoke
-make uncertainty-build MODEL_ID=<selected-expected-release-id>
-make uncertainty-verify INTERVAL_ID=<interval-release-id>
-make uncertainty-log INTERVAL_ID=<interval-release-id>
-make uncertainty-benchmark INTERVAL_ID=<interval-release-id>
-make uncertainty-select INTERVAL_ID=<interval-release-id>
-# Set exact UNCERTAINTY_RELEASE_ID and matching ML_RELEASE_ID in local .env, then restart inference.
-make uncertainty-maintain uncertainty-monitor
-```
+**Does AI invent the answers?**
 
-The Nautiq rename covers technical namespaces and fresh-stack defaults. Existing local data was preserved in renamed runtime resources; original resources remain backups. Immutable release bytes and historical registry receipts are retained.
+No. The optional model only labels a question. Nautiq validates that label and builds the response from stored evidence.
 
+**Can I reuse the data?**
 
-## Profile magnitude and structure
+Each source has its own terms. Review those terms before redistribution; the repository's source catalogs and release review record known limits.
 
-The complete-case 10–500 m profile system is implemented: local uncertainty-normalized signed residuals, depth-weighted magnitude, Ledoit–Wolf correlated distance and a weighted discrete FPCA prototype. Separate historical ranks disclose comparison support; Z-scores and safely exported Isolation Forest remain comparison baselines. Review [delivery and validation](docs/16-Phase-7-Delivery.md), [measured evidence](docs/evidence/phase7-summary.json), [the API contract](packages/schemas/anomaly.openapi.json), and [/anomalies](http://localhost:3000/anomalies). Every supported profile shows its depth contributions and reconstruction. Missing layers retain explicit unavailable aggregate scores.
+**Can I reuse the code?**
 
-```sh
-make anomaly-build INTERVAL_ID=<selected-uncertainty-release-id>
-make anomaly-verify ANOMALY_ID=<profile-release-id>
-make anomaly-log ANOMALY_ID=<profile-release-id>
-make anomaly-benchmark ANOMALY_ID=<profile-release-id>
-make anomaly-select ANOMALY_ID=<profile-release-id>
-# Set ANOMALY_RELEASE_ID, retain its exact uncertainty/mean pins and restart ml-inference.
-make anomaly-maintain
-make phase7-verify phase7-reliability phase7-smoke
-```
+Copyright © 2026 Dhruv Kumar. All rights reserved. This public repository grants no license to use, modify, or redistribute the code.
 
-`profile_anomaly_diagnostics` means supported local implementation with exact selected/runtime pins and current revision evidence. Scientific `profile_anomaly` remains false: interval qualification, expert-reviewed events, quiet-period false-alert rates, independent audits and a new untouched test have not established a qualified anomaly verdict. Historical ranks are descriptive, not event probabilities. Fixed references never adapt automatically during an event.
+---
 
-## Ocean and marine weather fields
+<div align="center">
 
-Open [the field explorer](http://localhost:3000/fields) for Copernicus Marine (CMEMS) wave, surface-current and sea-temperature forecasts on a 1/12° grid, and NOAA GFS wind. CMEMS downloads need a free account: set `CMEMS_USERNAME` and `CMEMS_PASSWORD` in `.env`. Each toolbox call is retained as a raw receipt under a canonical `cmems://` request, so replay and verification run without network access or credentials. The earlier NOAA OISST, GFS-Wave and HYCOM adapters remain for replaying retained releases but are no longer refreshed or served. Each release exposes exact provider/cycle/valid-time metadata, masks, native resolution, source revision and immutable hashes. The map supports variable/time selection, point inspection and timed route samples with return legs and stops. Polygon summaries are also available through the API. See [delivery and provider definitions](docs/17-Phase-8-Delivery.md), [measured evidence](docs/evidence/phase8-summary.json) and [OpenAPI](packages/schemas/fields.openapi.json).
+Built by **Dhruv Kumar**
 
-```sh
-make fields-setup
-make migrate
-docker compose up -d --build field-service api ingestion web
-make field-refresh
-make field-ingest PRODUCT=noaa_gfs_wave HOURS=24
-make field-verify FIELD_ID=<returned-release-id>
-make field-replay FIELD_ID=<retained-release-id>  # Exact retained raw bytes, no download
-make field-maintain
-make phase8-verify phase8-reliability phase8-smoke
-```
-
-Forecasts default to nine valid times across 24 hours. Point/route interpolation preserves masked support and rejects out-of-horizon queries; tiles retain transparent land. Wind/current speed and directions derive from components. NOAA PERPW is primary wave mean period. OISST is a daily blended analysis, not an independent satellite validation of Argo. Source-age budgets and sampled extrema remain prototype evidence, without event or trip verdicts.
-
-`field-refresh` performs one explicit acquisition. The separate hourly `field-ingestion` worker starts with the default stack and keeps 48 h of GFS wind and CMEMS waves (3-hourly) and 72 h of CMEMS currents and sea temperature (6-hourly). A one-time acquisition/replay proves local adapter and sampling behavior; sustained provider cadence, coastal validation, redistribution/commercial approval, scientific release and production operation remain unproven.
-
-## Persistent event evidence
-
-Open http://localhost:3000/events to inspect persistent native-grid SST candidates and distinct isolated/regional profile point groups. Daily NOAA PSL archive subsets supply a fixed 1982–2011 seasonal reference; no rolling baseline absorbs the detection window. Missing days stay unknown. Sparse profiles never produce dense heatwave polygons. See [delivery and validation](docs/18-Phase-9-Delivery.md), [measured evidence](docs/evidence/phase9-summary.json) and [API contract](packages/schemas/events.openapi.json).
-
-```sh
-docker compose build event-worker
-make phase9-verify phase9-reliability phase9-smoke
-make event-history START=1982-01-01 END=2011-12-31
-make event-baseline DATASET_ID=<retained-history-id>
-make event-history START=2026-09-01 END=2026-09-30
-make event-thermal BASELINE_ID=<baseline-id> HISTORY_ID=<daily-window-id>
-make event-profiles ANOMALY_ID=<exact-selected-anomaly-id> START=2025-10-01 END=2026-09-30
-make event-verify RUN_ID=<run-id>
-make event-replay RUN_ID=<run-id>
-make event-dataset-replay DATASET_ID=<history-or-baseline-id>
-make event-maintain
-```
-
-The optional `event-worker` tool runs with readonly filesystem and locked field dependencies. Acquisition caches verified requests for restart; `REFRESH=1` explicitly fetches a new source revision without changing retained datasets. Dataset replay uses recorded raw receipts without refetching. Run replay preserves exact inputs and frozen profile snapshot time; changed code creates a distinct immutable calculation. The default bounded SST pilot is 71–73°E, 11–13°N, native 0.25° resolution. Diagnostic availability is separate from scientific event approval, live monitoring and alerting.
-
-## Timed trip evidence
-
-Open http://localhost:3000/trips to inspect a complete timed outward/return route and stops against exact forecast releases. The deterministic Go engine records every rule, missing input, worst sampled value/time/location, source cycle, threshold version and calculation identity. See [implementation and validation](docs/20-Phase-11-Delivery.md) and [API contract](packages/schemas/trips.openapi.json).
-
-```sh
-make migrate
-make phase11-verify
-docker compose build trip-verifier
-make phase11-reliability phase11-smoke
-```
-
-Default limits suit small open boats (waves 1.5 m caution / 2.5 m too rough, wind 8 / 12 m/s, current 0.75 / 1.25 m/s; see `services/api/internal/trips/policy.json`). They are not expert-reviewed. Each trip can tighten them under Advanced settings; a stricter “too rough” limit pulls the caution limit down with it. Trips do not consider official warnings. Trip receipts are private: creation returns a random access token, and evidence/replay requires its Bearer header. Public calculation pages exclude trip inputs. The browser keeps access in page memory and clears obsolete results when inputs change; saved authenticated trips are separate work. Frozen replay never renews freshness.
-
-## Product workspace and original-observation exports
-
-The ocean map, named locations, research explorer, typed query preview and private workspace are available at `/map`, `/locations`, `/research`, `/query` and `/app`. Local handle accounts own routes, saved places, receipts and file jobs. Account proofs stay in HttpOnly cookies; writes require the configured `PRODUCT_WEB_ORIGIN` and session-bound CSRF proof.
-
-```sh
-make migrate
-# Includes the durable export worker in the default stack.
-docker compose up --build -d
-make phase12-verify phase12-reliability phase12-smoke
-```
-
-Accepted original Argo research data can be exported privately as CSV, JSON, Parquet or NetCDF with source credit and QC. Forecast redistribution, public identity operations, scientific promotion and public deployment retain separate gates. See [product delivery and exact bounds](docs/21-Phase-12-Delivery.md) and the [typed API](packages/schemas/product.openapi.json).
-
-## Production operations
-
-[Delivery and acceptance](docs/23-Phase-14-Delivery.md), [deployment/incident/recovery runbook](docs/24-Operations-Runbook.md), and [release review register](docs/25-Release-Review.md) describe schema 16 controls. The production Compose overlay supplies mounted secrets, restricted SQL/storage identities, private backend ports and a certificate-backed HTTPS gateway. It does not deploy automatically or grant public/scientific approval.
-
-```sh
-make operations-setup
-make phase14-verify phase14-reliability phase14-production
-make phase14-restore # briefly quiesces local writers, restores only new isolated targets
-make production-gate # expected exit 2 while release approval remains false
-```
-
-`/status` separates service connectivity, source age/integrity, worker health and incident pauses. The operator CLI supports revision-fenced pause/resume; retained-lineage rollback keeps science paused. Coordinated encrypted backups cover SQL and all retained objects; restored sessions are revoked. Keep secret files, backup keys, plaintext staging and archives outside Git/build contexts.
+</div>

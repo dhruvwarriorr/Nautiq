@@ -9,6 +9,24 @@ artifacts
 .pytest_cache
 .ruff_cache
 
+# Local-only tests, verification harnesses, fixtures and review sessions
+**/tests
+**/*_test.go
+**/*_test.py
+**/test_*.py
+**/*.test.*
+**/*.spec.*
+scripts/verify_*.py
+scripts/smoke.py
+scripts/production_gate.py
+scripts/production_preflight.py
+services/api/cmd/verify-*
+services/api/*Verify.Dockerfile
+ml/nautiq_ml/operations/verify_rollback.py
+packages/scientific-fixtures
+.claude
+.impeccable
+
 secrets
 backups
 .env.production

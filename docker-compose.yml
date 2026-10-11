@@ -186,26 +186,6 @@ services:
       nats: {condition: service_started}
       ml-inference: {condition: service_started}
       field-service: {condition: service_started}
-  trip-verifier:
-    build: {context: ., dockerfile: services/api/TripVerify.Dockerfile}
-    environment: *api_environment
-    profiles: [trip-tools]
-    read_only: true
-    tmpfs: ['/tmp:size=64m,mode=1777']
-    mem_limit: 512m
-    cpus: 1
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
-  product-verifier:
-    build: {context: ., dockerfile: services/api/ProductVerify.Dockerfile}
-    environment: *api_environment
-    profiles: [product-tools]
-    read_only: true
-    tmpfs: ['/tmp:size=64m,mode=1777']
-    mem_limit: 512m
-    cpus: 1
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
   export-worker:
     build: {context: ., dockerfile: ml/Product.Dockerfile}
     environment: *api_environment
@@ -219,15 +199,6 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
-  operations-verifier:
-    build: {context: ., dockerfile: services/api/Dockerfile}
-    entrypoint: ['/verify-operations']
-    environment: *api_environment
-    profiles: [operations-tools]
-    read_only: true
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
-    mem_limit: 256m
   operations-tools:
     build: {context: ., dockerfile: infrastructure/production/Operations.Dockerfile}
     environment: *api_environment

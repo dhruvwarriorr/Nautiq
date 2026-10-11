@@ -1,4 +1,4 @@
-.PHONY: setup up down test lint proto build smoke logs migrate test-migrations phase0-setup phase0 phase0-replay phase0-gate
+.PHONY: setup up down lint proto build logs migrate phase0-setup phase0 phase0-replay phase0-gate
 setup:
 	bash scripts/setup.sh
 proto:
@@ -7,11 +7,8 @@ up:
 	docker compose up -d postgres
 	$(MAKE) migrate
 	docker compose up --build -d
-	$(MAKE) smoke
 migrate:
 	.venv/bin/python scripts/migrate.py
-test-migrations:
-	.venv/bin/python scripts/verify_migrations.py
 phase0-setup:
 	@if [ ! -x .venv/bin/python ]; then uv venv --python 3.12 .venv; fi
 	uv pip install --python .venv/bin/python -r ml/requirements-phase0.lock -e ./ml
@@ -21,15 +18,8 @@ phase0-replay:
 	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python -m nautiq_ml.phase0.cli --offline
 phase0-gate:
 	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python -m nautiq_ml.phase0.cli --offline --require-ready
-smoke:
-	bash -c 'set -a; source .env; set +a; .venv/bin/python scripts/smoke.py'
 down:
 	docker compose down
-test:
-	cd services/api && go test -race ./...
-	cd services/ingestion && go test -race ./...
-	@if [ -d ml/tests ]; then OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python -m pytest ml/tests; else echo "Existing Python tests are absent in this checkout; Phase 2 has separate verification commands."; fi
-	@if [ -d apps/web/tests ]; then cd apps/web && npm test; else echo "Existing frontend tests are absent in this checkout; run phase2-smoke for the data slice."; fi
 lint:
 	cd services/api && test -z "$$(gofmt -l cmd internal)" && go vet ./...
 	cd services/ingestion && test -z "$$(gofmt -l cmd)" && go vet ./...
@@ -43,15 +33,8 @@ build:
 logs:
 	docker compose logs --tail=100 -f
 
-.PHONY: phase12-verify phase12-reliability phase12-smoke
-phase12-verify:
-	.venv/bin/python scripts/verify_phase12.py
-phase12-reliability:
-	.venv/bin/python scripts/verify_phase12_reliability.py
-phase12-smoke:
-	.venv/bin/python scripts/verify_phase12_smoke.py
 
-.PHONY: argo-setup ingest reconcile phase2-smoke phase2-verify
+.PHONY: argo-setup ingest reconcile
 argo-setup:
 	uv pip install --python .venv/bin/python -r ml/requirements-argo.lock -e ./ml
 ingest:
@@ -59,27 +42,10 @@ ingest:
 reconcile:
 	docker compose run --rm ingestion --once --reconcile
 	docker compose exec -T normalizer python -m nautiq_ml.argo.worker repair
-phase2-smoke:
-	.venv/bin/python scripts/verify_phase2.py
-phase2-verify:
-	.venv/bin/python scripts/verify_argo_parser.py
-	.venv/bin/python scripts/verify_argo_ingestion.py
 
-.PHONY: phase2-reliability
-phase2-reliability:
-	.venv/bin/python scripts/verify_phase2_reliability.py
 
-.PHONY: phase2-broker
-phase2-broker:
-	.venv/bin/python scripts/verify_phase2_broker.py
 
-.PHONY: phase3-verify phase3-reliability phase3-smoke argo-replay science-maintain training-snapshot verify-snapshot
-phase3-verify:
-	.venv/bin/python scripts/verify_phase3.py
-phase3-reliability:
-	.venv/bin/python scripts/verify_phase3_reliability.py
-phase3-smoke:
-	.venv/bin/python scripts/verify_phase3_smoke.py
+.PHONY: argo-replay science-maintain training-snapshot verify-snapshot
 argo-replay:
 	docker compose exec -T normalizer python -m nautiq_ml.argo.tools replay --limit 1000
 science-maintain:
@@ -91,13 +57,7 @@ verify-snapshot:
 	@test -n "$(SNAPSHOT_ID)" || (echo 'Supply SNAPSHOT_ID'; exit 2)
 	docker compose exec -T normalizer python -m nautiq_ml.argo.tools verify-snapshot '$(SNAPSHOT_ID)'
 
-.PHONY: phase4-verify phase4-reliability phase4-smoke climatology-build climatology-verify climatology-select climatology-maintain
-phase4-verify:
-	.venv/bin/python scripts/verify_phase4.py
-phase4-reliability:
-	.venv/bin/python scripts/verify_phase4_reliability.py
-phase4-smoke:
-	.venv/bin/python scripts/verify_phase4_smoke.py
+.PHONY: climatology-build climatology-verify climatology-select climatology-maintain
 climatology-build:
 	@test -n "$(SNAPSHOT_ID)" || (echo 'Supply SNAPSHOT_ID'; exit 2)
 	docker compose exec -T normalizer python -m nautiq_ml.climatology.pipeline build '$(SNAPSHOT_ID)'
@@ -110,15 +70,9 @@ climatology-select:
 climatology-maintain:
 	docker compose exec -T normalizer python -m nautiq_ml.climatology.pipeline maintain --limit 500
 
-.PHONY: expected-setup phase5-verify phase5-reliability phase5-smoke expected-build expected-verify expected-select expected-log expected-maintain
+.PHONY: expected-setup expected-build expected-verify expected-select expected-log expected-maintain
 expected-setup:
 	uv pip install --python .venv/bin/python -r ml/requirements-expected.lock -e ./ml
-phase5-verify:
-	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase5.py
-phase5-reliability:
-	.venv/bin/python scripts/verify_phase5_reliability.py
-phase5-smoke:
-	.venv/bin/python scripts/verify_phase5_smoke.py
 expected-build:
 	@test -n "$(REFERENCE_ID)" || (echo 'Supply REFERENCE_ID'; exit 2)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" ml-inference python -m nautiq_ml.expected_state.pipeline build '$(REFERENCE_ID)'
@@ -134,15 +88,9 @@ expected-log:
 expected-maintain:
 	docker compose exec -T ml-inference python -m nautiq_ml.expected_state.pipeline maintain --limit 500
 
-.PHONY: uncertainty-setup phase6-verify phase6-reliability phase6-smoke uncertainty-build uncertainty-verify uncertainty-select uncertainty-log uncertainty-maintain uncertainty-monitor uncertainty-benchmark
+.PHONY: uncertainty-setup uncertainty-build uncertainty-verify uncertainty-select uncertainty-log uncertainty-maintain uncertainty-monitor uncertainty-benchmark
 uncertainty-setup:
 	uv pip install --python .venv/bin/python -r ml/requirements-uncertainty.lock -e ./ml
-phase6-verify:
-	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase6.py
-phase6-reliability:
-	.venv/bin/python scripts/verify_phase6_reliability.py
-phase6-smoke:
-	.venv/bin/python scripts/verify_phase6_smoke.py
 uncertainty-build:
 	@test -n "$(MODEL_ID)" || (echo 'Supply selected MODEL_ID'; exit 2)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" ml-inference python -m nautiq_ml.uncertainty.pipeline build '$(MODEL_ID)'
@@ -163,13 +111,7 @@ uncertainty-maintain:
 uncertainty-monitor:
 	docker compose exec -T normalizer python -c 'import json; from nautiq_ml.uncertainty.monitoring import monitor; print(json.dumps(monitor(), sort_keys=True, indent=2))'
 
-.PHONY: phase7-verify phase7-reliability phase7-smoke anomaly-build anomaly-verify anomaly-select anomaly-log anomaly-maintain anomaly-benchmark
-phase7-verify:
-	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase7.py
-phase7-reliability:
-	.venv/bin/python scripts/verify_phase7_reliability.py
-phase7-smoke:
-	.venv/bin/python scripts/verify_phase7_smoke.py
+.PHONY: anomaly-build anomaly-verify anomaly-select anomaly-log anomaly-maintain anomaly-benchmark
 anomaly-build:
 	@test -n '$(INTERVAL_ID)' || (echo 'Set INTERVAL_ID to an exact uncertainty release'; exit 1)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" ml-inference python -m nautiq_ml.anomaly.pipeline build '$(INTERVAL_ID)'
@@ -188,15 +130,9 @@ anomaly-benchmark:
 anomaly-maintain:
 	docker compose exec -T ml-inference python -m nautiq_ml.anomaly.pipeline maintain --limit 500
 
-.PHONY: fields-setup phase8-verify phase8-reliability phase8-smoke field-ingest field-refresh field-verify field-maintain field-replay
+.PHONY: fields-setup field-ingest field-refresh field-verify field-maintain field-replay
 fields-setup:
 	uv pip install --python .venv/bin/python -r ml/requirements-fields.lock -e ./ml
-phase8-verify:
-	.venv/bin/python scripts/verify_phase8.py
-phase8-reliability:
-	.venv/bin/python scripts/verify_phase8_reliability.py
-phase8-smoke:
-	.venv/bin/python scripts/verify_phase8_smoke.py
 field-ingest:
 	@test -n '$(PRODUCT)' || (echo 'Set PRODUCT to a catalog product ID'; exit 1)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline ingest '$(PRODUCT)' $(if $(CYCLE),--cycle '$(CYCLE)') $(if $(DAY),--day '$(DAY)') $(if $(HOURS),--hours '$(HOURS)')
@@ -211,13 +147,7 @@ field-replay:
 	@test -n '$(FIELD_ID)' || (echo 'Set FIELD_ID to an immutable field release'; exit 1)
 	docker compose exec -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" field-service python -m nautiq_ml.fields.pipeline replay '$(FIELD_ID)'
 
-.PHONY: phase9-verify phase9-reliability phase9-smoke event-history event-baseline event-thermal event-profiles event-verify event-replay event-maintain event-dataset-verify event-dataset-replay
-phase9-verify:
-	OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/verify_phase9.py
-phase9-reliability:
-	.venv/bin/python scripts/verify_phase9_reliability.py
-phase9-smoke:
-	.venv/bin/python scripts/verify_phase9_smoke.py
+.PHONY: event-history event-baseline event-thermal event-profiles event-verify event-replay event-maintain event-dataset-verify event-dataset-replay
 event-history:
 	@test -n '$(START)' -a -n '$(END)' || (echo 'Set explicit START and END UTC dates'; exit 1)
 	docker compose run --rm -T -e SOURCE_GIT_COMMIT="$$(git rev-parse HEAD)" event-worker python -m nautiq_ml.events.pipeline history --start '$(START)' --end '$(END)' $(if $(BBOX),--bbox $(BBOX)) $(if $(REFRESH),--refresh)
@@ -245,29 +175,10 @@ event-dataset-replay:
 	@test -n '$(DATASET_ID)' || (echo 'Set DATASET_ID'; exit 1)
 	docker compose run --rm -T event-worker python -m nautiq_ml.events.pipeline replay-dataset '$(DATASET_ID)'
 
-.PHONY: phase11-verify phase11-reliability phase11-smoke
-phase11-verify:
-	cd services/api && go run -race ./cmd/verify-trips
-	.venv/bin/python scripts/verify_phase11.py
-phase11-reliability:
-	.venv/bin/python scripts/verify_phase11_reliability.py
-phase11-smoke:
-	.venv/bin/python scripts/verify_phase11_smoke.py
 
-.PHONY: operations-setup phase14-verify phase14-reliability phase14-production phase14-restore production-gate
+.PHONY: operations-setup
 operations-setup:
 	uv pip install --python .venv/bin/python -r infrastructure/production/requirements.lock
-phase14-verify:
-	cd services/api && go run -race ./cmd/verify-operations --offline
-	.venv/bin/python scripts/verify_phase14.py
-phase14-reliability:
-	docker compose run --rm --no-deps -T operations-verifier
-phase14-production:
-	.venv/bin/python scripts/verify_phase14_production.py
-phase14-restore:
-	.venv/bin/python scripts/verify_phase14_restore.py
-production-gate:
-	.venv/bin/python scripts/production_gate.py
 
 .PHONY: model-monitor
 # Read-only: summarizes input drift, outcomes, profile ranks and calibration into an immutable report.

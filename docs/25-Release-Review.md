@@ -1,48 +1,37 @@
-# Release wording and external review register
+# Release review
 
-Production and scientific approval remain false in `packages/source-catalog/production.json`. Local automated acceptance is implementation evidence. `make production-gate` emits missing review records and exits 2 even if records are supplied; review evidence never silently changes runtime capability flags or release policy.
+Nautiq's source code may be visible in a public repository while the **product remains a local diagnostic prototype**. Public repository visibility does not authorize a public marine service, scientific model promotion, forecast redistribution, or operational trip advice.
 
-## Product wording review
+The current policy in `packages/source-catalog/production.json` sets both `production_approved` and `scientific_approved` to `false`. No local build, synthetic test, or checked-in evidence changes those flags.
 
-| Surface | Required interpretation | Release limitation |
-| --- | --- | --- |
-| Trip assessment | Provisional diagnostic evidence with timestamps, source coverage, unsupported inputs, uncertainty and official authority references. Unknown is an unavailable result, not a favorable condition. | Never imply navigational authorization, a safe voyage, complete warnings or personalized vessel certification. Independent marine/domain review of thresholds and wording remains required. |
-| Personal alerts | User-selected preferences with frozen evidence; fresh positive confirmation is needed for recovery. | Personal limits are not validated operational safety thresholds. Source recovery is not safe-weather clearance. |
-| Regional events/models | Diagnostic anomaly/event classifications with immutable lineage. | No production promotion from synthetic tests or local implementation. Scientific calibration, independent validation and cadence remain required. |
-| Status | Connection availability, integrity, source age, worker activity and pauses. | A green dependency/transport check does not establish scientific accuracy, rights or warning completeness. |
-| Official advisories | Source authority attribution, original validity/revision and links; preserve cancellation/correction semantics. | The configured transport may be incomplete. Absence of a matching advisory never establishes absence of hazards. |
-| Email | Generic private inbox link only. | External mail deliverability is unproven; at-least-once acceptance can repeat mail. No forecast/bulletin/private-coordinate content in email. |
+## Current product boundary
 
-The current UI and policies preserve these limitations. The review register is a source-traced engineering wording assessment, not a lawyer's or maritime professional's approval.
+- The product displays Argo observations, gridded forecasts, historical comparisons, diagnostic model results, research pages, and timed trip checks.
+- Ask validates a bounded question frame and builds an answer from typed evidence. Its optional language model labels questions only. Enabling it sends question text to the configured provider and requires a separate privacy and egress decision.
+- The product **does not ingest official marine warnings** or send personal alerts. Check INCOIS, IMD, and local authorities for current warnings.
+- Trip checks compare forecast samples with configurable but unreviewed limits. Unknown or stale information is never an all-clear. Results do not certify a vessel, route, or voyage.
+- Original Argo research exports have a documented attribution path. Forecast data and other provider products have separate terms; public redistribution and commercial use require source-specific review.
 
-## Redistribution boundary
+Older design and delivery documents describe previously implemented warnings, alerts, and email workflows. Those are historical records, not current product capabilities.
 
-Preserve original source attribution and acquisition receipts. Raw advisory access is for reproducibility under the configured diagnostic interface; do not launch public redistribution or include third-party bulletin text in exports/email without a recorded permission basis. Review each authority separately, including RSS/CAP completeness, copyright, attribution, permitted reuse, retention and geographic coverage. Forecast/analysis availability is also distinct from reuse rights. Disable the `advisories` scope if rights or bulletin integrity are disputed; preserve original evidence privately for investigation according to the approved retention basis.
+## External decisions still pending
 
-## Review record format
-
-Operator-owned evidence can be supplied to `scripts/production_gate.py --evidence /private/reviews.json` as an object keyed by each `required_external_gates` entry. Each entry needs `approved: true`, a reviewer identifier, protected evidence URI and SHA-256; do not include private source text or credentials. These records are references for an explicit future release-policy review, not an automatic approval mechanism.
-
-| External gate | Current acceptance |
+| Area | Needed before a public marine service |
 | --- | --- |
-| Scientific validation | Pending independent domain review |
-| Repeated source cadence | Pending repeated real acquisitions/coverage evidence |
-| Marine advisory completeness | Pending authority-by-authority coverage/transport evidence |
-| Source rights | Pending authoritative licensing/redistribution review |
-| Trip thresholds and wording | Pending marine/domain and legal sign-off |
-| Public identity/security | Pending abuse, recovery, retention and independent security review |
-| Deployment TLS/network | Local disposable HTTPS passed; actual host/domain/certificate/firewall acceptance pending |
-| Offsite backup restore | Local isolated restore drill; offsite retention, key escrow and target-host recovery pending |
-| Incident ownership/response | Runbooks supplied; named on-call ownership, alert routing and response exercises pending |
+| Scientific models | Independent validation on suitable untouched evidence, calibration and failure review |
+| Providers | Repeated acquisition and coverage evidence; source-specific attribution, retention, and redistribution rights |
+| Trips and wording | Marine/domain and legal review of thresholds, limitations, and user-facing claims |
+| Identity and security | Abuse, recovery, retention, privacy, and independent security review; local accounts currently have no MFA or password recovery |
+| Deployment | Real host, DNS, TLS, network/firewall, and end-to-end acceptance |
+| Recovery and response | Protected offsite backup and restore drill, key escrow, named incident owner and response exercise |
 
-Until all applicable reviews authorize an explicit policy change, operate as a private diagnostic product. Public deployment is not implied by completing this implementation.
+The production policy still lists a legacy `marine_advisory_completeness` gate from the retired warning feature. It remains fail-closed until an authorized release-policy review explicitly updates the gate list. Its presence does not mean Nautiq currently reads warnings.
 
-## Additional wording review — question answers, categories, monitoring
+## Before changing repository visibility
 
-| Surface | Required interpretation | Release limitation |
-| --- | --- | --- |
-| Ask answers | Fixed templates over retained evidence with an explicit window and limits list. | Not a forecast service or a safety statement; official warning completeness unverified. Needs the same independent wording review as trips. |
-| Language-model labelling | Optional, off by default; labels only. | Sends question text to a third party when enabled: privacy notice, provider terms and egress approval are release decisions. |
-| Evidence category | Descriptive rank band with components. | Not an event, probability or alert; band cut-offs are unreviewed. |
-| Model monitoring | Starts investigations. | Thresholds unreviewed; "not enough evidence" is expected until trusted delayed-mode outcomes exist. |
-| ETOPO bathymetry | Offline experiment input. | Terms and redistribution review pending before any serving or export use. |
+1. Review **the entire Git history**, not only the latest file tree. Files removed from tracking remain in older commits. The local-only verification harnesses and design-session artifacts removed from the current tree are still in history unless the repository is republished with a reviewed fresh history.
+2. Confirm that no real credentials, private data, provider artifacts, or unlicensed third-party content appear in any commit, branch, tag, or release asset. The ignored local `.env`, `artifacts/`, `secrets/`, and `backups/` directories must stay outside publication.
+3. Keep the public README aligned with the current application. Do not advertise a live site or scientific approval without evidence.
+4. The code is **all rights reserved**. Public visibility grants no reuse license. Third-party software and source data retain their own terms.
+
+The public repository and a public operating service have different readiness decisions. Neither repository visibility nor the local verification record should be treated as permission to deploy Nautiq for decisions at sea.

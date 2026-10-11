@@ -1,5 +1,7 @@
 # Nautiq — Project Overview
 
+> Historical target design. For current capabilities and release limits, start with the [project README](../README.md) and [release review](25-Release-Review.md). Official warning ingestion and personal alerts described below were later removed.
+
 > **Purpose:** Define exactly what Nautiq is, who it is for, what it does, and what it does not do.\
 > **Product name:** Nautiq\
 > **Initial operating geography:** India and the Northern Indian Ocean, with geography kept configurable so the platform can expand globally.  

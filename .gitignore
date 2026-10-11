@@ -19,6 +19,20 @@ artifacts/
 **/*.test.*
 **/*.spec.*
 
+# Local-only verification harnesses and their fixtures
+/scripts/verify_*.py
+/scripts/smoke.py
+/scripts/production_gate.py
+/scripts/production_preflight.py
+/services/api/cmd/verify-*/
+/services/api/*Verify.Dockerfile
+/ml/nautiq_ml/operations/verify_rollback.py
+/packages/scientific-fixtures/
+
+# Local design/review sessions
+/.claude/
+/.impeccable/
+
 # Private deployment secrets, certificates and encrypted backup artifacts
 secrets/
 backups/

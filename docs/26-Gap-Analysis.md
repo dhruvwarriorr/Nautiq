@@ -1,5 +1,7 @@
 # Gap analysis and completion record
 
+> Historical audit from 2026-10-04. The current product later removed official warnings and personal alerts and changed forecast providers. See the [current README](../README.md) and [release review](25-Release-Review.md).
+
 Audit date: 2026-10-04. Sources: documents 01–25, the delivered code, the running local stack (`/api/v1/capabilities`, live data) and checked-in evidence under `docs/evidence/`. Each row is a claim about the repository at the start of this audit unless the **Status** column says otherwise. Statuses are updated at the end of the work in the "Completion record" section.
 
 ## What Nautiq is meant to be
